@@ -412,35 +412,35 @@ CONTAINS
          IF(lwp) WRITE(numout,*) '   orca_r1: increase friction near the following straits : '
          IF(lwp) WRITE(numout,*) '      Gibraltar '
          ii0 = 282           ;   ii1 = 283        ! Gibraltar Strait 
-         ij0 = 201 + isrow   ;   ij1 = 241 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 2._wp  
+         ij0 = 241 - isrow   ;   ij1 = 241 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 2._wp  
 
          IF(lwp) WRITE(numout,*) '      Bhosporus '
          ii0 = 314           ;   ii1 = 315        ! Bhosporus Strait 
-         ij0 = 208 + isrow   ;   ij1 = 248 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 2._wp  
+         ij0 = 248 - isrow   ;   ij1 = 248 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 2._wp  
 
          IF(lwp) WRITE(numout,*) '      Makassar (Top) '
          ii0 =  48           ;   ii1 =  48        ! Makassar Strait (Top) 
-         ij0 = 149 + isrow   ;   ij1 = 190 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 3._wp  
+         ij0 = 189 - isrow   ;   ij1 = 190 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 3._wp  
 
          IF(lwp) WRITE(numout,*) '      Lombok '
          ii0 =  44           ;   ii1 =  44        ! Lombok Strait 
-         ij0 = 124 + isrow   ;   ij1 = 165 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 2._wp  
+         ij0 = 164 - isrow   ;   ij1 = 165 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 2._wp  
 
          IF(lwp) WRITE(numout,*) '      Ombai '
          ii0 =  53           ;   ii1 =  53        ! Ombai Strait 
-         ij0 = 124 + isrow   ;   ij1 = 165 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 2._wp  
+         ij0 = 164 - isrow   ;   ij1 = 165 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 2._wp  
 
          IF(lwp) WRITE(numout,*) '      Timor Passage '
          ii0 =  56           ;   ii1 =  56        ! Timor Passage 
-         ij0 = 124 + isrow   ;   ij1 = 165 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 2._wp  
+         ij0 = 164 - isrow   ;   ij1 = 165 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 2._wp  
 
          IF(lwp) WRITE(numout,*) '      West Halmahera '
          ii0 =  58           ;   ii1 =  58        ! West Halmahera Strait 
-         ij0 = 141 + isrow   ;   ij1 = 182 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 3._wp  
+         ij0 = 181 - isrow   ;   ij1 = 182 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 3._wp  
 
          IF(lwp) WRITE(numout,*) '      East Halmahera '
          ii0 =  55           ;   ii1 =  55        ! East Halmahera Strait 
-         ij0 = 141 + isrow   ;   ij1 = 182 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 3._wp  
+         ij0 = 181 - isrow   ;   ij1 = 182 - isrow   ;   fmask( mi0(ii0):mi1(ii1),mj0(ij0):mj1(ij1),1:jpk ) = 3._wp  
          !
       ENDIF
       !
