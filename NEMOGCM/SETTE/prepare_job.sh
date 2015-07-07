@@ -279,7 +279,7 @@ fi
                                    echo 'Normal Queue'
                                 fi
                                 ;;
-                        ifort_MERCATOR_CLUSTER)
+                        openmpi_NAVITI_MERCATOR)
                                 echo NB_PROCS ${NB_PROC}
                                 echo NB_NODES ${NB_NODES}
                                 echo  NB_PROC ${NB_PROC}
@@ -288,14 +288,14 @@ fi
                                    QUEUE=monoproc
                                    NB_PROC_NODE=${NB_PROC}
                                 else
-                                   if [ ${NB_PROC} -le 8 ] ; then
+                                   if [ ${NB_PROC} -le 16 ] ; then
                                       NB_NODES=1
                                       QUEUE=mono
                                       NB_PROC_NODE=${NB_PROC}
                                    else
-                                      NB_NODES=$( echo $NB_PROC | awk '{print $1 - $1 % 8}'  | awk '{print $1 / 8 }')
+                                      NB_NODES=$( echo $NB_PROC | awk '{print $1 - $1 % 16}'  | awk '{print $1 / 16 }')
                                       QUEUE=multi
-                                      NB_PROC_NODE=8
+                                      NB_PROC_NODE=16
                                   fi
                                 fi
                                 echo NB_PROCS     ${NB_PROC}
@@ -323,10 +323,7 @@ fi
              -e"s:DEF_CMP_NAM:${CMP_NAM}:" -e"s:DEF_TEST_NAME:${TEST_NAME}:" > run_sette_test.job
 
         case ${COMPILER} in
-              ifort_MERCATOR_CLUSTER)
-                    #cat run_sette_test.job | sed -e"s:QUEUE:${QUEUE}:" > run_sette_test1.job 
-                    #cat run_sette_test.job | sed -e"s/NPROC_NODE/${NB_PROC_NODE}/" > run_sette_test1.job 
-                                                 #-e"s/NPROC_NODE/${NB_PROC_NODE}/" > run_sette_test1.job
+              openmpi_NAVITI_MERCATOR)
                     cat run_sette_test.job | sed -e"s/NPROC_NODE/${NB_PROC_NODE}/" \
                                                  -e"s:QUEUE:${QUEUE}:" > run_sette_test1.job
                     mv run_sette_test1.job run_sette_test.job
