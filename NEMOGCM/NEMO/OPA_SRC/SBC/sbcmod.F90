@@ -178,10 +178,11 @@ CONTAINS
       IF( sbc_oce_alloc() /= 0 )   CALL ctl_stop( 'STOP', 'sbc_init : unable to allocate sbc_oce arrays' )
 
       !                          ! Checks:
-      IF( nn_isf .EQ. 0 ) THEN                      ! no specific treatment in vicinity of ice shelf 
+      IF( nn_isf .EQ. 0 ) THEN                      ! variable initialisation if no ice shelf 
          IF( sbc_isf_alloc() /= 0 )   CALL ctl_stop( 'STOP', 'sbc_init : unable to allocate sbc_isf arrays' )
          fwfisf  (:,:) = 0.0_wp
          fwfisf_b(:,:) = 0.0_wp
+         rdivisf       = 0.0_wp
       END IF
       IF( nn_ice == 0 .AND. nn_components /= jp_iam_opa )   fr_i(:,:) = 0.e0 ! no ice in the domain, ice fraction is always zero
 
