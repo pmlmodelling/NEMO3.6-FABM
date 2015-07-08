@@ -437,9 +437,7 @@ CONTAINS
       ! Define frequency of output and means
       zdt = rdt
       IF( nacc == 1 ) zdt = rdtmin
-      IF( ln_mskland )   THEN   ;   clop = "only(x)"   ! put 1.e+20 on land (very expensive!!)
-      ELSE                      ;   clop = "x"         ! no use of the mask value (require less cpu time)
-      ENDIF
+      clop = "x"         ! no use of the mask value (require less cpu time, and otherwise the model crashes)
 #if defined key_diainstant
       zsto = nwrite * zdt
       clop = "inst("//TRIM(clop)//")"
