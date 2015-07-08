@@ -141,7 +141,7 @@ cp BATCH_TEMPLATE/${JOB_PREFIX}-${COMPILER} job_batch_template || exit
 # ISOMIP          :13 & 14
 # ORCA2_LIM_OBS:   15
 # ORCA2_AGRIF_LIM :16
-for config in  1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+for config in  1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
 
 do
 
