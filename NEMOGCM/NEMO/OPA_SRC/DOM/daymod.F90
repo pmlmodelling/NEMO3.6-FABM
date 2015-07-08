@@ -72,6 +72,11 @@ CONTAINS
       REAL(wp) ::   zjul
       !!----------------------------------------------------------------------
       !
+      ! max number of seconds between each restart
+      IF( REAL( nitend - nit000 + 1 ) * rdt > REAL( HUGE( nsec1jan000 ) ) ) THEN
+         CALL ctl_stop( 'The number of seconds between each restart exceeds the integer 4 max value: 2^31-1. ',   &
+            &           'You must do a restart at higher frequency (or remove this stop and recompile the code in I8)' )
+      ENDIF
       ! all calendar staff is based on the fact that MOD( rday, rdttra(1) ) == 0
       IF( MOD( rday     , rdttra(1) ) /= 0. )   CALL ctl_stop( 'the time step must devide the number of second of in a day' )
       IF( MOD( rday     , 2.        ) /= 0. )   CALL ctl_stop( 'the number of second of in a day must be an even number'    )
@@ -237,11 +242,6 @@ CONTAINS
                nmonth    = 1
                nday_year = 1
                nsec_year = ndt05
-               IF( nsec1jan000 >= 2 * (2**30 - nsecd * nyear_len(1) / 2 ) ) THEN   ! test integer 4 max value
-                  CALL ctl_stop( 'The number of seconds between Jan. 1st 00h of nit000 year and Jan. 1st 00h ',   &
-                     &           'of the current year is exceeding the INTEGER 4 max VALUE: 2^31-1 -> 68.09 years in seconds', &
-                     & 'You must do a restart at higher frequency (or remove this STOP and recompile everything in I8)' )
-               ENDIF
                nsec1jan000 = nsec1jan000 + nsecd * nyear_len(1)
                IF( nleapy == 1 )   CALL day_mth
             ENDIF
