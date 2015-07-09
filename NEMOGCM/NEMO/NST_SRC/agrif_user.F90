@@ -16,7 +16,6 @@ SUBROUTINE Agrif_InitWorkspace
    !!----------------------------------------------------------------------
    USE par_oce
    USE dom_oce
-   USE Agrif_Util
    USE nemogcm
    !
    IMPLICIT NONE

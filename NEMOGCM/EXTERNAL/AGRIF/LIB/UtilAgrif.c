@@ -412,7 +412,12 @@ void  AddUseAgrifUtil_0(FILE *fileout)
      while ( parcours && strcasecmp(parcours->o_nom,subroutinename) )
                                                     parcours = parcours -> suiv;
      if ( parcours && parcours->o_val != 0 )
-                                   fprintf(fileout,"\n      USE Agrif_Util \n");
+       {
+        if( strcasecmp(subroutinename,"Agrif_InvLoc") )	 
+       fprintf(fileout,"\n      USE Agrif_Util \n");
+       else fprintf(fileout,"\n      USE Agrif_Types \n");
+
+       }
   }
 }
 
@@ -436,7 +441,9 @@ void  AddUseAgrifUtilBeforeCall_0(FILE *fileout)
      }
      if ( out == 0 )
      {
-        fprintf(fileout,"\n      USE Agrif_Util \n");
+       if( strcasecmp(subroutinename,"Agrif_InitWorkspace") )	 
+       fprintf(fileout,"\n      USE Agrif_Util \n");
+       else fprintf(fileout,"\n      USE Agrif_Types \n");
      }
   }
 }
