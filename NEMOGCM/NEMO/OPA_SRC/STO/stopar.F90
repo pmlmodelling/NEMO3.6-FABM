@@ -848,7 +848,7 @@ CONTAINS
    END SUBROUTINE sto_par_flt
 
 
-   REAL(wp) FUNCTION sto_par_flt_fac( kpasses )
+   FUNCTION sto_par_flt_fac( kpasses )
       !!----------------------------------------------------------------------
       !!                  ***  FUNCTION sto_par_flt_fac  ***
       !!
@@ -857,6 +857,7 @@ CONTAINS
       !!                of the Laplacian filter
       !!----------------------------------------------------------------------
       INTEGER, INTENT(in) :: kpasses
+      REAL(wp) :: sto_par_flt_fac
       !!
       INTEGER :: jpasses, ji, jj, jflti, jfltj
       INTEGER, DIMENSION(-1:1,-1:1) :: pflt0
