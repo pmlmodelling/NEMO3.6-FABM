@@ -439,6 +439,90 @@ NEXT2:
     endif
   endif
 
+
+  if ( -d ./WORCA2AGUL_LONG ) then
+    set dorv = `ls -1rtd ./WORCA2AGUL_LONG/{$mach}/* | tail -1l `
+    set dorv = $dorv:t
+    set f1o = ./WORCA2AGUL_LONG/{$mach}/{$dorv}/LONG/ocean.output
+    set f1s = ./WORCA2AGUL_LONG/{$mach}/{$dorv}/LONG/solver.stat
+    set f2o = ./WORCA2AGUL_LONG/{$mach}/{$dorv}/SHORT/ocean.output
+    set f2s = ./WORCA2AGUL_LONG/{$mach}/{$dorv}/SHORT/solver.stat
+  
+    set nl = `wc -l $f2s`
+    tail -$nl[1] $f1s > f1.tmp$$
+    cmp -s f1.tmp$$ $f2s
+    if ( $status == 0 ) then
+      echo "ORCA2_LIM_AGRIF restartability  passed"
+    else
+      echo "ORCA2_LIM_AGRIF restartability  FAILED"
+      if ( $pass == 1 ) then
+        echo "<return> to view solver.stat differences"
+        set y = $<
+        sdiff f1.tmp$$ $f2s
+        echo "<return> to view ocean.output differences"
+        set y = $<
+        sdiff $f1o $f2o | grep "|"
+        echo "<return> to continue"
+        set y = $<
+      endif
+    endif
+    rm f1.tmp$$
+  endif
+
+  if ( -d ./WORCA2AGUL_16 ) then
+    set dorv = `ls -1rtd ./WORCA2AGUL_16/{$mach}/* | tail -1l `
+    set dorv = $dorv:t
+    set f1o = ./WORCA2AGUL_16/{$mach}/{$dorv}/REPRO_2_8/ocean.output
+    set f1s = ./WORCA2AGUL_16/{$mach}/{$dorv}/REPRO_2_8/solver.stat
+    set f2o = ./WORCA2AGUL_16/{$mach}/{$dorv}/REPRO_4_4/ocean.output
+    set f2s = ./WORCA2AGUL_16/{$mach}/{$dorv}/REPRO_4_4/solver.stat
+  
+    cmp -s $f1s $f2s
+    if ( $status == 0 ) then
+      echo "ORCA2_LIM_AGRIF reproducibility passed"
+    else
+      echo "ORCA2_LIM_AGRIF reproducibility FAILED"
+      if ( $pass == 1 ) then
+        echo "<return> to view solver.stat differences"
+        set y = $<
+        sdiff $f1s $f2s
+        echo "<return> to view ocean.output differences"
+        set y = $<
+        sdiff $f1o $f2o | grep "|"
+        echo "<return> to continue"
+        set y = $<
+      endif
+    endif
+  endif
+
+  if ( -d ./WORCA2AGUL_2_2_NAG ) then
+    set dorv = `ls -1rtd ./WORCA2AGUL_2_2_NAG/{$mach}/* | tail -1l `
+    set dorv = $dorv:t
+    set f1o = ./WORCA2AGUL_2_2_NAG/{$mach}/{$dorv}/SHORT_NOAGRIF/ocean.output
+    set f1s = ./WORCA2AGUL_2_2_NAG/{$mach}/{$dorv}/SHORT_NOAGRIF/solver.stat
+    set dorv = `ls -1rtd ./WORCA2AGUL_2_2/{$mach}/* | tail -1l `
+    set dorv = $dorv:t
+    set f2o = ./WORCA2AGUL_2_2/{$mach}/{$dorv}/SHORT_NOZOOM/ocean.output
+    set f2s = ./WORCA2AGUL_2_2/{$mach}/{$dorv}/SHORT_NOZOOM/solver.stat
+  
+    cmp -s $f1s $f2s
+    if ( $status == 0 ) then
+      echo "ORCA2_LIM_AGRIF code corruption test passed"
+    else
+      echo "ORCA2_LIM_AGRIF code corruption test FAILED"
+      if ( $pass == 1 ) then
+        echo "<return> to view solver.stat differences"
+        set y = $<
+        sdiff $f1s $f2s
+        echo "<return> to view ocean.output differences"
+        set y = $<
+        sdiff $f1o $f2o | grep "|"
+        echo "<return> to continue"
+        set y = $<
+      endif
+    endif
+  endif
+
   echo "<return> for second (more detailed) pass (y/n)"
   set y = $<
   if ( $y != "y" ) exit

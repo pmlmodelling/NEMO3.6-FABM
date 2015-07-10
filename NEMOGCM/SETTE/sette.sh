@@ -139,8 +139,9 @@ cp BATCH_TEMPLATE/${JOB_PREFIX}-${COMPILER} job_batch_template || exit
 # AMM12           : 9 & 10
 # SAS             :11 & 12
 # ISOMIP          :13 & 14
-# ORCA2_LIM_OBS:   15
-# ORCA2_AGRIF_LIM :16
+# ORCA2_LIM_OBS   :15
+# ORCA2_AGRIF_LIM :16 & 17 
+#                  18 & 19 
 for config in  1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
 
 do
@@ -1236,10 +1237,238 @@ if [ ${config} -eq 16 ] ;  then
     set_namelist namelist_cfg jpni 1
     set_namelist namelist_cfg jpnj 2
     set_namelist namelist_cfg jpnij 2
+#
     set_namelist 1_namelist_cfg nn_it000 1
     set_namelist 1_namelist_cfg nn_itend 150
     set_namelist 1_namelist_cfg ln_ctl .false.
     set_namelist 1_namelist_cfg ln_clobber .true.
+
+    if [ ${USING_MPMD} == "yes" ] ; then
+       set_xio_using_server iodef.xml true
+    else
+       set_xio_using_server iodef.xml false
+    fi
+    cd ${SETTE_DIR}
+    . ./prepare_job.sh input_ORCA2_LIM_AGRIF.cfg $NPROC ${TEST_NAME} ${MPIRUN_FLAG} ${JOB_FILE} ${NUM_XIOSERVERS}
+    cd ${SETTE_DIR}
+    . ./fcm_job.sh $NPROC ${JOB_FILE} ${INTERACT_FLAG} ${MPIRUN_FLAG}
+fi
+
+# test code corruption with AGRIF
+# Compile and run with or without AGRIF ORCA2_LIM
+if [ ${config} -eq 17 ] ;  then
+    # First run same as 16 but without zoom
+    export TEST_NAME="SHORT_NOZOOM"
+    cd ${CONFIG_DIR}
+    . ./makenemo -m ${CMP_NAM} -n ORCA2AGUL_2_2 -r ORCA2_LIM -j 8 add_key "key_mpp_rep key_agrif" del_key "key_zdftmx" del_key ${DEL_KEYS}
+    cd ${SETTE_DIR}
+    . ./param.cfg
+    . ./all_functions.sh
+    . ./prepare_exe_dir.sh
+    JOB_FILE=${EXE_DIR}/run_job.sh
+    NPROC=4
+    if [ -f ${JOB_FILE} ] ; then \rm ${JOB_FILE} ; fi
+    cd ${EXE_DIR}
+    set_namelist namelist_cfg nn_it000 1
+    set_namelist namelist_cfg nn_itend 75
+    set_namelist namelist_cfg ln_ctl .false.
+    set_namelist namelist_cfg ln_clobber .true.
+    set_namelist namelist_cfg nn_fwb 0
+    set_namelist namelist_cfg jpni 2
+    set_namelist namelist_cfg jpnj 2
+    set_namelist namelist_cfg jpnij 4
+# 
+#   Set the number of fine grids to zero:    
+    sed -i "1s/.*/0/" ${EXE_DIR}/AGRIF_FixedGrids.in
+
+    if [ ${USING_MPMD} == "yes" ] ; then
+       set_xio_using_server iodef.xml true
+    else
+       set_xio_using_server iodef.xml false
+    fi
+    cd ${SETTE_DIR}
+    . ./prepare_job.sh input_ORCA2_LIM_AGRIF.cfg $NPROC ${TEST_NAME} ${MPIRUN_FLAG} ${JOB_FILE} ${NUM_XIOSERVERS}
+    cd ${SETTE_DIR}
+    . ./fcm_job.sh $NPROC ${JOB_FILE} ${INTERACT_FLAG} ${MPIRUN_FLAG}
+
+    export TEST_NAME="SHORT_NOAGRIF"
+    cd ${CONFIG_DIR}
+    . ./makenemo -m ${CMP_NAM} -n ORCA2AGUL_2_2_NAG -r ORCA2_LIM -j 8 add_key "key_mpp_rep" del_key "key_zdftmx" del_key ${DEL_KEYS}
+    cd ${SETTE_DIR}
+    . ./param.cfg
+    . ./all_functions.sh
+    . ./prepare_exe_dir.sh
+    JOB_FILE=${EXE_DIR}/run_job.sh
+    NPROC=4
+    if [ -f ${JOB_FILE} ] ; then \rm ${JOB_FILE} ; fi
+    cd ${EXE_DIR}
+    set_namelist namelist_cfg nn_it000 1
+    set_namelist namelist_cfg nn_itend 75
+    set_namelist namelist_cfg ln_ctl .false.
+    set_namelist namelist_cfg ln_clobber .true.
+    set_namelist namelist_cfg nn_fwb 0
+    set_namelist namelist_cfg jpni 2
+    set_namelist namelist_cfg jpnj 2
+    set_namelist namelist_cfg jpnij 4
+#
+    if [ ${USING_MPMD} == "yes" ] ; then
+       set_xio_using_server iodef.xml true
+    else
+       set_xio_using_server iodef.xml false
+    fi
+    cd ${SETTE_DIR}
+    . ./prepare_job.sh input_ORCA2_LIM_AGRIF.cfg $NPROC ${TEST_NAME} ${MPIRUN_FLAG} ${JOB_FILE} ${NUM_XIOSERVERS}
+    cd ${SETTE_DIR}
+    . ./fcm_job.sh $NPROC ${JOB_FILE} ${INTERACT_FLAG} ${MPIRUN_FLAG}
+
+fi
+
+## Restartability tests for ORCA2_LIM_AGRIF 
+if [ ${config} -eq 18 ] ;  then
+    export TEST_NAME="LONG"
+    cd ${CONFIG_DIR}
+    . ./makenemo -m ${CMP_NAM} -n ORCA2AGUL_LONG -r ORCA2_LIM -j 8 add_key "key_mpp_rep key_agrif" del_key "key_zdftmx" del_key ${DEL_KEYS}
+    cd ${SETTE_DIR}
+    . ./param.cfg
+    . ./all_functions.sh
+    . ./prepare_exe_dir.sh
+    JOB_FILE=${EXE_DIR}/run_job.sh
+    NPROC=4
+    if [ -f ${JOB_FILE} ] ; then \rm ${JOB_FILE} ; fi
+    cd ${EXE_DIR}
+    set_namelist namelist_cfg cn_exp \"O2LP_LONG\"
+    set_namelist namelist_cfg nn_it000 1
+    set_namelist namelist_cfg nn_itend 150
+    set_namelist namelist_cfg nn_stock 75
+    set_namelist namelist_cfg ln_clobber .true.
+    set_namelist namelist_cfg nn_fwb 0
+    set_namelist namelist_cfg jpni 2
+    set_namelist namelist_cfg jpnj 2
+    set_namelist namelist_cfg jpnij 4
+    set_namelist namelist_cfg nn_solv 2
+#
+    set_namelist 1_namelist_cfg cn_exp \"O2LP_LONG\"
+    set_namelist 1_namelist_cfg nn_it000 1
+    set_namelist 1_namelist_cfg nn_itend 300
+    set_namelist 1_namelist_cfg nn_stock 150
+    set_namelist 1_namelist_cfg ln_ctl .false.
+    set_namelist 1_namelist_cfg ln_clobber .true.
+#
+    if [ ${USING_MPMD} == "yes" ] ; then
+       set_xio_using_server iodef.xml true
+    else
+       set_xio_using_server iodef.xml false
+    fi
+    cd ${SETTE_DIR}
+    . ./prepare_job.sh input_ORCA2_LIM_AGRIF.cfg $NPROC ${TEST_NAME} ${MPIRUN_FLAG} ${JOB_FILE} ${NUM_XIOSERVERS}
+    
+    cd ${SETTE_DIR}
+    export TEST_NAME="SHORT"
+    . ./prepare_exe_dir.sh
+    cd ${EXE_DIR}
+    set_namelist namelist_cfg cn_exp \"O2LP_SHORT\"
+    set_namelist namelist_cfg nn_it000 76
+    set_namelist namelist_cfg nn_itend 150
+    set_namelist namelist_cfg nn_stock 75
+    set_namelist namelist_cfg ln_rstart .true.
+    set_namelist namelist_cfg nn_rstctl 2
+    set_namelist namelist_cfg ln_clobber .true.
+    set_namelist namelist_cfg nn_fwb 0
+    set_namelist namelist_cfg jpni 2
+    set_namelist namelist_cfg jpnj 2
+
+    set_namelist namelist_cfg jpnij 4
+    set_namelist namelist_cfg nn_solv 2
+    set_namelist 1_namelist_cfg cn_exp \"O2LP_SHORT\"
+    set_namelist 1_namelist_cfg nn_it000 151
+    set_namelist 1_namelist_cfg nn_itend 300
+    set_namelist 1_namelist_cfg nn_stock 150
+    set_namelist 1_namelist_cfg ln_rstart .true.
+    set_namelist 1_namelist_cfg nn_rstctl 2
+    set_namelist 1_namelist_cfg ln_clobber .true.
+    set_namelist namelist_cfg cn_ocerst_in \"O2LP_LONG_00000075_restart\"
+    set_namelist namelist_ice_cfg cn_icerst_in \"O2LP_LONG_00000075_restart_ice\"
+
+    set_namelist 1_namelist_cfg cn_ocerst_in \"O2LP_LONG_00000150_restart\"
+
+    for (( i=1; i<=$NPROC; i++)) ; do
+        L_NPROC=$(( $i - 1 ))
+        L_NPROC=`printf "%04d\n" ${L_NPROC}`
+        ln -sf ../LONG/O2LP_LONG_00000075_restart_${L_NPROC}.nc .
+        ln -sf ../LONG/O2LP_LONG_00000075_restart_ice_${L_NPROC}.nc .
+        ln -sf ../LONG/1_O2LP_LONG_00000150_restart_${L_NPROC}.nc .
+    done
+    if [ ${USING_MPMD} == "yes" ] ; then
+       set_xio_using_server iodef.xml true
+    else
+       set_xio_using_server iodef.xml false
+    fi
+    cd ${SETTE_DIR}
+    . ./prepare_job.sh input_ORCA2_LIM_AGRIF.cfg $NPROC ${TEST_NAME} ${MPIRUN_FLAG} ${JOB_FILE} ${NUM_XIOSERVERS}
+    cd ${SETTE_DIR}
+    . ./fcm_job.sh $NPROC ${JOB_FILE} ${INTERACT_FLAG} ${MPIRUN_FLAG}
+fi
+
+## Reproducibility tests for ORCA2_LIM_AGRIF
+if [ ${config} -eq 19 ] ;  then
+    export TEST_NAME="REPRO_4_4"
+    cd ${CONFIG_DIR}
+    . ./makenemo -m ${CMP_NAM} -n ORCA2AGUL_16 -r ORCA2_LIM -j 8 add_key "key_mpp_rep key_agrif" del_key "key_zdftmx" del_key ${DEL_KEYS}
+    cd ${SETTE_DIR}
+    . ./param.cfg
+    . ./all_functions.sh
+    . ./prepare_exe_dir.sh
+    JOB_FILE=${EXE_DIR}/run_job.sh
+    NPROC=16
+    if [ -f ${JOB_FILE} ] ; then \rm ${JOB_FILE} ; fi
+    cd ${EXE_DIR}
+    set_namelist namelist_cfg nn_it000 1
+    set_namelist namelist_cfg nn_itend 75
+    set_namelist namelist_cfg ln_ctl .false.
+    set_namelist namelist_cfg ln_clobber .true.
+    set_namelist namelist_cfg nn_fwb 0
+    set_namelist namelist_cfg jpni 4
+    set_namelist namelist_cfg jpnj 4
+    set_namelist namelist_cfg jpnij 16
+    set_namelist namelist_cfg nn_solv 2
+#
+    set_namelist 1_namelist_cfg nn_it000 1
+    set_namelist 1_namelist_cfg nn_itend 150
+    set_namelist 1_namelist_cfg ln_ctl .false.
+    set_namelist 1_namelist_cfg ln_clobber .true.
+
+    if [ ${USING_MPMD} == "yes" ] ; then
+       set_xio_using_server iodef.xml true
+    else
+       set_xio_using_server iodef.xml false
+    fi
+    cd ${SETTE_DIR}
+    . ./prepare_job.sh input_ORCA2_LIM_AGRIF.cfg $NPROC ${TEST_NAME} ${MPIRUN_FLAG} ${JOB_FILE} ${NUM_XIOSERVERS}
+    cd ${SETTE_DIR}
+    . ./fcm_job.sh $NPROC ${JOB_FILE} ${INTERACT_FLAG} ${MPIRUN_FLAG}
+
+    cd ${SETTE_DIR}
+    export TEST_NAME="REPRO_2_8"
+    . ./prepare_exe_dir.sh
+    JOB_FILE=${EXE_DIR}/run_job.sh
+    NPROC=16
+    if [ -f ${JOB_FILE} ] ; then \rm ${JOB_FILE} ; fi
+    cd ${EXE_DIR}
+    set_namelist namelist_cfg nn_it000 1
+    set_namelist namelist_cfg nn_itend 75
+    set_namelist namelist_cfg ln_ctl .false.
+    set_namelist namelist_cfg ln_clobber .true.
+    set_namelist namelist_cfg nn_fwb 0
+    set_namelist namelist_cfg jpni 2
+    set_namelist namelist_cfg jpnj 8
+    set_namelist namelist_cfg jpnij 16
+    set_namelist namelist_cfg nn_solv 2
+#
+    set_namelist 1_namelist_cfg nn_it000 1
+    set_namelist 1_namelist_cfg nn_itend 150
+    set_namelist 1_namelist_cfg ln_ctl .false.
+    set_namelist 1_namelist_cfg ln_clobber .true.
+
     if [ ${USING_MPMD} == "yes" ] ; then
        set_xio_using_server iodef.xml true
     else
