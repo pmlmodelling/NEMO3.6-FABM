@@ -402,6 +402,10 @@ CONTAINS
          CALL iom_put( "qns_oce" ,   qns  )                 ! output downward non solar heat over the ocean
          CALL iom_put( "qsr_oce" ,   qsr  )                 ! output downward solar heat over the ocean
          CALL iom_put( "qt_oce"  ,   qns+qsr )              ! output total downward heat over the ocean
+         tprecip(:,:) = sf(jp_prec)%fnow(:,:,1) * rn_pfac   ! output total precipitation [kg/m2/s]
+         sprecip(:,:) = sf(jp_snow)%fnow(:,:,1) * rn_pfac   ! output solid precipitation [kg/m2/s]
+         CALL iom_put( 'snowpre', sprecip * 86400. )        ! Snow
+         CALL iom_put( 'precip' , tprecip * 86400. )        ! Total precipitation
       ENDIF
       !
       IF(ln_ctl) THEN
