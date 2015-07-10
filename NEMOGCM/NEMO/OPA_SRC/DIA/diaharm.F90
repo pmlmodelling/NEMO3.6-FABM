@@ -195,11 +195,9 @@ CONTAINS
                DO jj = 1,jpj
                   DO ji = 1,jpi
                      ! Elevation
-                     ana_temp(ji,jj,nhc,1) = ana_temp(ji,jj,nhc,1) + ztemp*sshn(ji,jj)           *tmask_i(ji,jj)        
-#if defined key_dynspg_ts
-                     ana_temp(ji,jj,nhc,2) = ana_temp(ji,jj,nhc,2) + ztemp*un_b(ji,jj)*hur(ji,jj)*umask_i(ji,jj)
-                     ana_temp(ji,jj,nhc,3) = ana_temp(ji,jj,nhc,3) + ztemp*vn_b(ji,jj)*hvr(ji,jj)*vmask_i(ji,jj)
-#endif
+                     ana_temp(ji,jj,nhc,1) = ana_temp(ji,jj,nhc,1) + ztemp*sshn(ji,jj)*tmask_i(ji,jj)        
+                     ana_temp(ji,jj,nhc,2) = ana_temp(ji,jj,nhc,2) + ztemp*un_b(ji,jj)*umask_i(ji,jj)
+                     ana_temp(ji,jj,nhc,3) = ana_temp(ji,jj,nhc,3) + ztemp*vn_b(ji,jj)*vmask_i(ji,jj)
                   END DO
                END DO
                !
