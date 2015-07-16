@@ -214,6 +214,8 @@ CONTAINS
          !
          CALL iom_rstput( 0, 0, inum4, 'gdept_1d' , gdept_1d )  !    ! stretched system
          CALL iom_rstput( 0, 0, inum4, 'gdepw_1d' , gdepw_1d )
+         CALL iom_rstput( 0, 0, inum4, 'gdept_0', gdept_0, ktype = jp_r4 )     
+         CALL iom_rstput( 0, 0, inum4, 'gdepw_0', gdepw_0, ktype = jp_r4 )     
       ENDIF
       
       IF( ln_zps ) THEN                                         ! z-coordinate - partial steps
