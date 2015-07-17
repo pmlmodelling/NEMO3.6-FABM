@@ -24,13 +24,15 @@ MODULE phycst
    PUBLIC :: dp_eps     !< epsilon value
    PUBLIC :: dp_rearth  !< earth radius (km)
    PUBLIC :: dp_deg2rad !< degree to radian ratio 
+   PUBLIC :: dp_rad2deg !< radian to degree ratio 
    PUBLIC :: dp_delta   !<  
 
    REAL(dp), PARAMETER :: dp_pi = 3.14159274101257_dp
    REAL(dp), PARAMETER :: dp_eps = EPSILON(1._dp)
    REAL(dp), PARAMETER :: dp_rearth = 6871._dp
    REAL(dp), PARAMETER :: dp_deg2rad = dp_pi/180.0
+   REAL(dp), PARAMETER :: dp_rad2deg = 180.0/dp_pi
 
-   REAL(dp), PARAMETER :: dp_delta=1.e-2
+   REAL(dp), PARAMETER :: dp_delta=1.e-6
 END MODULE phycst
 

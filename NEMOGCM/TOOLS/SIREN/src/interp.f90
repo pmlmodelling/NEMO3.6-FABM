@@ -26,7 +26,7 @@
 !>    Interplation method could be specify for each variable in namelist _namvar_,
 !>    defining string character _cn\_varinfo_.<br/>
 !>    Example:
-!>       - cn_varinfo='varname1:cubic/rhoi', 'varname2:linear' 
+!>       - cn_varinfo='varname1:int=cubic/rhoi', 'varname2:int=linear' 
 !>
 !>    to create mixed grid (with coarse grid point needed to compute
 !> interpolation):<br/>
@@ -946,6 +946,7 @@ CONTAINS
       ENDIF
 
       DEALLOCATE(il_detect)
+
       !4- save useful domain (remove offset)
       CALL interp_clean_mixed_grid( tl_mix, td_var, &
       &                             id_rho(:), id_offset(:,:)  )  

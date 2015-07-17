@@ -25,9 +25,9 @@
 !>       - ld_east  is logical to force used of north boundary [optional]
 !>       - ld_west  is logical to force used of north boundary [optional]
 !>       - cd_north is string character description of north boundary [optional]
-!>       - cd_south is string character description of north boundary [optional]
-!>       - cd_east  is string character description of north boundary [optional]
-!>       - cd_west  is string character description of north boundary [optional]
+!>       - cd_south is string character description of south boundary [optional]
+!>       - cd_east  is string character description of east  boundary [optional]
+!>       - cd_west  is string character description of west  boundary [optional]
 !>       - ld_oneseg is logical to force to use only one segment for each boundary [optional]
 !>
 !>    to get boundary cardinal:<br/>
@@ -35,6 +35,9 @@
 !>
 !>    to know if boundary is use:<br/>
 !>    - tl_bdy\%l_use
+!>
+!>    to know if boundary come from namelist (cn_north,..):<br/>
+!>    - tl_bdy\%l_nam
 !>
 !>    to get the number of segment in boundary:<br/>
 !>    - tl_bdy\%i_nseg
@@ -104,8 +107,14 @@
 !> @author J.Paul
 ! REVISION HISTORY:
 !> @date November, 2013 - Initial Version
-!> @date September, 2014 - add boundary description
-!> @date November, 2014 - Fix memory leaks bug
+!> @date September, 2014 
+!> - add boundary description
+!> @date November, 2014 
+!> - Fix memory leaks bug
+!> @date February, 2015 
+!> - Do not change indices read from namelist
+!> - Change string character format of boundary read from namelist, 
+!>  see boundary__get_info
 !> 
 !> @todo add schematic to boundary structure description
 !> 
@@ -156,7 +165,7 @@ MODULE boundary
    
    PRIVATE :: seg__init       ! initialise segment structure
    PRIVATE :: seg__clean      ! clean segment structure
-   PRIVATE :: seg__clean_unit ! clean segment structure
+   PRIVATE :: seg__clean_unit ! clean one segment structure
    PRIVATE :: seg__clean_arr  ! clean array of segment structure
    PRIVATE :: seg__copy       ! copy segment structure in another
    PRIVATE :: seg__copy_unit  ! copy segment structure in another
@@ -172,10 +181,12 @@ MODULE boundary
    TYPE TBDY !< boundary structure
       CHARACTER(LEN=lc) :: c_card = ''          !< boundary cardinal
       LOGICAL           :: l_use  = .FALSE.     !< boundary use or not 
+      LOGICAL           :: l_nam  = .FALSE.     !< boundary get from namelist
       INTEGER(i4)       :: i_nseg = 0           !< number of segment in boundary
       TYPE(TSEG), DIMENSION(:), POINTER :: t_seg => NULL() !<  array of segment structure
    END TYPE TBDY
 
+   ! module variable
    INTEGER(i4), PARAMETER :: im_width=10
 
    INTERFACE boundary_init
@@ -222,7 +233,7 @@ CONTAINS
    !> @author J.Paul
    !> @date November, 2013 - Initial Version
    !> @date November, 2014
-   !>    - use function instead of overload assignment operator 
+   !> - use function instead of overload assignment operator 
    !> (to avoid memory leak)
    !
    !> @param[in] td_bdy   array of boundary structure
@@ -259,7 +270,7 @@ CONTAINS
    !> @author J.Paul
    !> @date November, 2013 - Initial Version
    !> @date November, 2014
-   !>    - use function instead of overload assignment operator 
+   !> - use function instead of overload assignment operator 
    !> (to avoid memory leak)
    !
    !> @param[in] td_bdy   boundary structure
@@ -352,10 +363,22 @@ CONTAINS
 
    END SUBROUTINE boundary__clean_arr
    !------------------------------------------------------------------- 
-   !> @brief This function put cardinal name inside file name.
+   !> @brief This function put cardinal name and date inside file name.
    ! 
    !> @details 
-   ! 
+   !>    Examples :
+   !>       cd_file="boundary.nc"
+   !>       cd_card="west" 
+   !>       id_seg =2
+   !>       cd_date=y2015m07d16
+   !> 
+   !>       function return "boundary_west_2_y2015m07d16.nc"
+   !> 
+   !>       cd_file="boundary.nc"
+   !>       cd_card="west" 
+   !> 
+   !>       function return "boundary_west.nc"
+   !> 
    !> @author J.Paul 
    !> @date November, 2013 - Initial Version 
    ! 
@@ -384,6 +407,10 @@ CONTAINS
       CHARACTER(LEN=lc) :: cl_segnum
       CHARACTER(LEN=lc) :: cl_date
       CHARACTER(LEN=lc) :: cl_name
+
+      INTEGER(i4)       :: il_ind
+      INTEGER(i4)       :: il_indend
+
       ! loop indices 
       !---------------------------------------------------------------- 
       ! init
@@ -399,20 +426,33 @@ CONTAINS
          cl_base  =fct_split(TRIM(cl_basename),1,'.')
          cl_suffix=fct_split(TRIM(cl_basename),2,'.')
          
+         ! add segment number
          IF( PRESENT(id_seg) )THEN
-            cl_segnum="_"//TRIM(fct_str(id_seg))//"_"
+            cl_segnum="_"//TRIM(fct_str(id_seg))
          ELSE
             cl_segnum=""
          ENDIF
 
+         ! add date
          IF( PRESENT(cd_date) )THEN
-            cl_date=TRIM(ADJUSTL(cd_date))
+            cl_date="_"//TRIM(ADJUSTL(cd_date))
          ELSE
             cl_date=""
          ENDIF
 
-         cl_name=TRIM(cl_base)//"_"//TRIM(cd_card)//TRIM(cl_segnum)//&
-         &        TRIM(cl_date)//"."//TRIM(cl_suffix)
+         ! special case for obcdta
+         il_ind=INDEX(cl_base,'_obcdta_')
+         IF( il_ind/=0 )THEN
+            il_ind=il_ind-1+8
+            il_indend=LEN_TRIM(cl_base)
+
+            cl_name=TRIM(cl_base(1:il_ind))//TRIM(cd_card)//&
+               &     TRIM(cl_segnum)//"_"//TRIM(cl_base(il_ind+1:il_indend))//&
+               &     TRIM(cl_date)//"."//TRIM(cl_suffix)
+         ELSE
+            cl_name=TRIM(cl_base)//"_"//TRIM(cd_card)//TRIM(cl_segnum)//&
+               &     TRIM(cl_date)//"."//TRIM(cl_suffix)
+         ENDIF
 
          boundary_set_filename=TRIM(cl_dirname)//"/"//TRIM(cl_name)
       ELSE
@@ -441,8 +481,8 @@ CONTAINS
    !> specify it for each segment.
    !> ex : cn_north='index1,first1,last1(width)|index2,first2,last2'
    !>
-   !> @note boundaries are compute on T point. change will be done to get data
-   !> on other point when need be. 
+   !> @note Boundaries are compute on T point, but expressed on U,V point.
+   !> change will be done to get data on other point when need be. 
    !>
    !> @author J.Paul 
    !> @date November, 2013 - Initial Version 
@@ -580,10 +620,15 @@ CONTAINS
             IF( tl_bdy(jk)%l_use )THEN
 
                ! get namelist information
-               tl_tmp=boundary__get_info(cl_card(jk))
+               tl_tmp=boundary__get_info(cl_card(jk),jk)
+
+               ! get segments indices
                DO ji=1,tl_tmp%i_nseg
                   CALL boundary__add_seg(tl_bdy(jk),tl_tmp%t_seg(ji))
                ENDDO
+               ! indices from namelist or not
+               tl_bdy(jk)%l_nam=tl_tmp%l_nam
+
                CALL boundary_clean(tl_tmp)
 
                IF( tl_bdy(jk)%i_nseg == 0 )THEN
@@ -641,11 +686,12 @@ CONTAINS
    !> @param[in]  td_seg   segment structure
    !> @return boundary structure
    !------------------------------------------------------------------- 
-   FUNCTION boundary__init( cd_card, ld_use, td_seg ) 
+   FUNCTION boundary__init( cd_card, ld_use, ld_nam, td_seg ) 
       IMPLICIT NONE 
       ! Argument
       CHARACTER(LEN=*), INTENT(IN) :: cd_card
       LOGICAL         , INTENT(IN), OPTIONAL :: ld_use 
+      LOGICAL         , INTENT(IN), OPTIONAL :: ld_nam 
       TYPE(TSEG)      , INTENT(IN), OPTIONAL :: td_seg
 
       ! function 
@@ -663,6 +709,9 @@ CONTAINS
 
             boundary__init%l_use=.TRUE.
             IF( PRESENT(ld_use) ) boundary__init%l_use=ld_use
+
+            boundary__init%l_nam=.FALSE.
+            IF( PRESENT(ld_nam) ) boundary__init%l_nam=ld_nam
 
             IF( PRESENT(td_seg) )THEN
                CALL boundary__add_seg(boundary__init, td_seg)
@@ -777,18 +826,23 @@ CONTAINS
    !> This string character that will be passed through namelist could contains
    !> orthogonal index, first and last indices, of each segment. 
    !> And also the width of all segments of this boundary.
-   !>   cn_north='index1,first1,last1(width)|index2,first2,last2'
+   !>   cn_north='index1,first1:last1(width)|index2,first2:last2'
    !> 
    !> @author J.Paul 
    !> @date November, 2013 - Initial Version 
+   !> @date february, 2015 
+   !> - do not change indices read from namelist
+   !> - change format cn_north
    ! 
    !> @param[in] cd_card   boundary description
+   !> @param[in] id_jcard  boundary index
    !> @return boundary structure
    !------------------------------------------------------------------- 
-   FUNCTION boundary__get_info(cd_card) 
+   FUNCTION boundary__get_info(cd_card, id_jcard) 
       IMPLICIT NONE 
       ! Argument 
       CHARACTER(LEN=lc), INTENT(IN) :: cd_card
+      INTEGER(i4)      , INTENT(IN) :: id_jcard
 
       ! function 
       TYPE(TBDY) :: boundary__get_info
@@ -801,6 +855,7 @@ CONTAINS
       CHARACTER(LEN=lc) :: cl_seg
       CHARACTER(LEN=lc) :: cl_index
       CHARACTER(LEN=lc) :: cl_width
+      CHARACTER(LEN=lc) :: cl_tmp
       CHARACTER(LEN=lc) :: cl_first
       CHARACTER(LEN=lc) :: cl_last 
 
@@ -817,6 +872,11 @@ CONTAINS
       ! look for segment width 
       ! width should be the same for all segment of one boundary
       IF( TRIM(cl_seg)   /= '' )THEN
+
+         ! initialise boundary
+         ! temporaty boundary, so it doesn't matter which caridnal is used
+         boundary__get_info=boundary__init('north',ld_nam=.TRUE.)
+
          il_ind1=SCAN(fct_lower(cl_seg),'(')
          IF( il_ind1 /=0 )THEN
             cl_width=TRIM(cl_seg(il_ind1+1:))
@@ -830,6 +890,7 @@ CONTAINS
                &  " check namelist. ")
             ENDIF
          ENDIF
+
       ENDIF 
 
       DO WHILE( TRIM(cl_seg) /= '' )
@@ -838,7 +899,7 @@ CONTAINS
          ! remove potential width information
          il_ind1=SCAN(fct_lower(cl_index),'(')
          IF( il_ind1 /=0 )THEN
-            il_ind2=SCAN(fct_lower(cl_index),'(')
+            il_ind2=SCAN(fct_lower(cl_index),')')
             IF( il_ind2 /=0 )THEN
                cl_index=TRIM(cl_index(:il_ind1-1))//TRIM(cl_index(il_ind2+1:))
             ELSE
@@ -847,11 +908,15 @@ CONTAINS
             ENDIF
          ENDIF
       
-         cl_first=fct_split(cl_seg,2,',')
+         
+         cl_tmp=fct_split(cl_seg,2,',')
+
+
+         cl_first=fct_split(cl_tmp,1,':')
          ! remove potential width information
          il_ind1=SCAN(fct_lower(cl_first),'(')
          IF( il_ind1 /=0 )THEN
-            il_ind2=SCAN(fct_lower(cl_first),'(')
+            il_ind2=SCAN(fct_lower(cl_first),')')
             IF( il_ind2 /=0 )THEN
                cl_first=TRIM(cl_first(:il_ind1-1))//TRIM(cl_first(il_ind2+1:))
             ELSE
@@ -860,11 +925,11 @@ CONTAINS
             ENDIF
          ENDIF         
          
-         cl_last =fct_split(cl_seg,3,',')
+         cl_last =fct_split(cl_tmp,2,':')
          ! remove potential width information
          il_ind1=SCAN(fct_lower(cl_last),'(')
          IF( il_ind1 /=0 )THEN
-            il_ind2=SCAN(fct_lower(cl_last),'(')
+            il_ind2=SCAN(fct_lower(cl_last),')')
             IF( il_ind2 /=0 )THEN
                cl_last=TRIM(cl_last(:il_ind1-1))//TRIM(cl_last(il_ind2+1:))
             ELSE
@@ -878,6 +943,12 @@ CONTAINS
          IF( TRIM(cl_index) /= '' ) READ(cl_index,*) tl_seg%i_index
          IF( TRIM(cl_first) /= '' ) READ(cl_first,*) tl_seg%i_first
          IF( TRIM(cl_last)  /= '' ) READ(cl_last ,*) tl_seg%i_last
+
+         ! index expressed on U,V point, move on T point.
+         SELECT CASE(id_jcard)
+            CASE(jp_north, jp_east)
+               tl_seg%i_index=tl_seg%i_index+1
+         END SELECT
 
          IF( (tl_seg%i_first == 0 .AND.  tl_seg%i_last == 0) .OR. &
          &   (tl_seg%i_first /= 0 .AND.  tl_seg%i_last /= 0) )THEN
@@ -942,7 +1013,7 @@ CONTAINS
       IF( PRESENT(ld_oneseg) ) ll_oneseg=ld_oneseg
 
       DO jk=1,ip_ncard
-         IF( .NOT. td_bdy(jk)%l_use .OR. td_bdy(jk)%i_nseg > 1 )THEN
+         IF( .NOT. td_bdy(jk)%l_use .OR. td_bdy(jk)%l_nam )THEN
             ! nothing to be done
          ELSE
 
@@ -1479,7 +1550,7 @@ CONTAINS
       il_max(jp_south)=td_var%t_dim(1)%i_len
       il_max(jp_east )=td_var%t_dim(2)%i_len
       il_max(jp_west )=td_var%t_dim(2)%i_len
-      
+ 
       il_maxindex(jp_north)=td_var%t_dim(2)%i_len-ip_ghost
       il_maxindex(jp_south)=td_var%t_dim(2)%i_len-ip_ghost
       il_maxindex(jp_east )=td_var%t_dim(1)%i_len-ip_ghost
@@ -1514,7 +1585,7 @@ CONTAINS
             ENDIF
          ENDIF
       ENDDO
-      
+ 
       CALL boundary_check_corner(td_bdy, td_var)
 
    END SUBROUTINE boundary_check
@@ -1649,7 +1720,7 @@ CONTAINS
    !> @author J.Paul
    !> @date November, 2013 - Initial Version
    !> @date November, 2014
-   !>    - use function instead of overload assignment operator 
+   !> - use function instead of overload assignment operator 
    !> (to avoid memory leak)
    !
    !> @param[in] td_seg   segment structure
@@ -1686,7 +1757,7 @@ CONTAINS
    !> @author J.Paul
    !> @date November, 2013 - Initial Version
    !> @date November, 2014
-   !>    - use function instead of overload assignment operator 
+   !> - use function instead of overload assignment operator 
    !> (to avoid memory leak)
    !
    !> @param[in] td_seg   segment structure

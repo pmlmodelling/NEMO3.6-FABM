@@ -23,6 +23,9 @@
 !>    ./SIREN/bin/create_coord create_coord.nam
 !> @endcode
 !>    
+!> @note 
+!>    you could find a template of the namelist in templates directory.
+!>
 !>    create_coord.nam comprise 6 namelists:<br/>
 !>       - logger namelist (namlog)
 !>       - config namelist (namcfg)
@@ -38,7 +41,7 @@
 !>    * _logger namelist (namlog)_:<br/>
 !>       - cn_logfile   : log filename
 !>       - cn_verbosity : verbosity ('trace','debug','info',
-!> 'warning','error','fatal')
+!> 'warning','error','fatal','none')
 !>       - in_maxerror  : maximum number of error allowed
 !>
 !>    * _config namelist (namcfg)_:<br/>
@@ -53,13 +56,14 @@
 !>    * _variable namelist (namvar)_:<br/>
 !>       - cn_varinfo : list of variable and extra information about request(s)
 !> to be used.<br/>
-!>          each elements of *cn_varinfo* is a string character.<br/>
+!>          each elements of *cn_varinfo* is a string character 
+!>          (separated by ',').<br/>
 !>          it is composed of the variable name follow by ':', 
 !>          then request(s) to be used on this variable.<br/> 
 !>          request could be:
-!>             - interpolation method
-!>             - extrapolation method
-!>             - filter method
+!>             - int = interpolation method
+!>             - ext = extrapolation method
+!>             - flt = filter method
 !> 
 !>                requests must be separated by ';' .<br/>
 !>                order of requests does not matter.<br/>
@@ -67,8 +71,8 @@
 !>          informations about available method could be find in @ref interp,
 !>          @ref extrap and @ref filter modules.<br/>
 !>
-!>          Example: 'votemper: linear; hann(2,3); dist_weight', 
-!>          'vosaline: cubic'<br/>
+!>          Example: 'votemper: int=linear; flt=hann(2,3); ext=dist_weight', 
+!>          'vosaline: int=cubic'<br/>
 !>          @note 
 !>             If you do not specify a method which is required, 
 !>             default one is applied.
@@ -89,7 +93,7 @@
 !>       \image latex grid_zoom_40.png
 !>
 !>    * _output namelist (namout)_:
-!>       - cn_fileout : output coordinate file
+!>       - cn_fileout : output coordinate file name
 !>
 !> @author J.Paul
 ! REVISION HISTORY:
@@ -151,30 +155,27 @@ PROGRAM create_coord
    TYPE(TMPP)                                           :: tl_coord0
    TYPE(TFILE)                                          :: tl_fileout
 
-   ! check 
-!   INTEGER(i4)                                          :: il_imin0
-!   INTEGER(i4)                                          :: il_imax0
-!   INTEGER(i4)                                          :: il_jmin0
-!   INTEGER(i4)                                          :: il_jmax0
-!   INTEGER(i4)      , DIMENSION(2,2)                    :: il_ind2
-!   TYPE(TMPP)                                           :: tl_mppout
-
    ! loop indices
    INTEGER(i4) :: ji
    INTEGER(i4) :: jj
 
    ! namelist variable
+   ! namlog
    CHARACTER(LEN=lc) :: cn_logfile = 'create_coord.log' 
    CHARACTER(LEN=lc) :: cn_verbosity = 'warning' 
    INTEGER(i4)       :: in_maxerror = 5
 
+   ! namcfg
+   CHARACTER(LEN=lc) :: cn_varcfg = '../cfg/variable.cfg' 
+
+   ! namcrs
    CHARACTER(LEN=lc) :: cn_coord0 = '' 
    INTEGER(i4)       :: in_perio0 = -1
 
-   CHARACTER(LEN=lc) :: cn_varcfg = '../cfg/variable.cfg' 
-
+   ! namvar
    CHARACTER(LEN=lc), DIMENSION(ip_maxvar) :: cn_varinfo = ''
 
+   !namnst
    INTEGER(i4)       :: in_imin0 = 0
    INTEGER(i4)       :: in_imax0 = 0
    INTEGER(i4)       :: in_jmin0 = 0
@@ -182,6 +183,7 @@ PROGRAM create_coord
    INTEGER(i4)       :: in_rhoi  = 1
    INTEGER(i4)       :: in_rhoj  = 1
 
+   !namout
    CHARACTER(LEN=lc) :: cn_fileout= 'coord_fine.nc'
    !-------------------------------------------------------------------
 
@@ -304,7 +306,6 @@ PROGRAM create_coord
       il_rho(jp_J)=in_rhoj      
 
       il_offset(:,:,:)=create_coord_get_offset(il_rho(:))
-
    ENDIF
 
    ! check domain validity
@@ -347,10 +348,6 @@ PROGRAM create_coord
       ! remove extraband added to domain
       CALL dom_del_extra( tl_var(ji), tl_dom, il_rho(:), .true. )
 
-      ! do not add ghost cell. 
-      ! ghost cell already replace by value for coordinates 
-      ! CALL grid_add_ghost(tl_var(ji),tl_dom%i_ghost(:,:))
-
       ! filter
       CALL filter_fill_value(tl_var(ji))      
 
@@ -374,11 +371,10 @@ PROGRAM create_coord
    ENDDO
 
    ! add variables
-   DO ji=1,il_nvar
+   DO ji=il_nvar,1,-1
       CALL file_add_var(tl_fileout, tl_var(ji))
+      CALL var_clean(tl_var(ji))
    ENDDO
-
-   ! recompute some attribute
 
    ! add some attribute
    tl_att=att_init("Created_by","SIREN create_coord")
@@ -439,39 +435,6 @@ PROGRAM create_coord
    DEALLOCATE( tl_var) 
 
    CALL file_clean(tl_fileout)
-
-!   ! check domain
-!   tl_coord0=mpp_init( file_init(TRIM(cn_coord0)), id_perio=in_perio0)
-!   tl_mppout=mpp_init( file_init(TRIM(cn_fileout)) )
-!   CALL grid_get_info(tl_coord0)
-!   CALL iom_mpp_open(tl_mppout)
-!
-!   il_ind2(:,:)=grid_get_coarse_index( tl_coord0, tl_mppout, &
-!   &                                   id_rho=il_rho(:) )
-!
-!   il_imin0=il_ind2(1,1) ; il_imax0=il_ind2(1,2)
-!   il_jmin0=il_ind2(2,1) ; il_jmax0=il_ind2(2,2)
-!
-!   IF( il_imin0 /= in_imin0 .OR. &
-!   &   il_imax0 /= in_imax0 .OR. &
-!   &   il_jmin0 /= in_jmin0 .OR. &
-!   &   il_jmax0 /= in_jmax0 )THEN
-!      CALL logger_debug("CREATE COORD: output indices ("//&
-!      &                 TRIM(fct_str(il_imin0))//","//&
-!      &                 TRIM(fct_str(il_imax0))//") ("//&
-!      &                 TRIM(fct_str(il_jmin0))//","//&
-!      &                 TRIM(fct_str(il_jmax0))//")" ) 
-!      CALL logger_debug("CREATE COORD: input indices ("//&
-!      &                 TRIM(fct_str(in_imin0))//","//&
-!      &                 TRIM(fct_str(in_imax0))//") ("//&
-!      &                 TRIM(fct_str(in_jmin0))//","//&
-!      &                 TRIM(fct_str(in_jmax0))//")" ) 
-!      CALL logger_fatal("CREATE COORD: output domain not confrom "//&
-!      &                 "with input indices")
-!   ENDIF
-!
-!   CALL iom_mpp_close(tl_coord0)
-!   CALL iom_mpp_close(tl_mppout)
 
    ! close log file
    CALL logger_footer()
@@ -538,6 +501,8 @@ CONTAINS
    !> @param[in] id_offset offset between fine grid and coarse grid
    !> @param[in] id_iext   number of points to be extrapolated in i-direction
    !> @param[in] id_jext   number of points to be extrapolated in j-direction
+   !>
+   !> @todo check if mask is really needed
    !-------------------------------------------------------------------
    SUBROUTINE create_coord_interp( td_var,          &
    &                               id_rho,          &
@@ -625,7 +590,7 @@ CONTAINS
          CALL extrap_add_extrabands(td_var, il_iext, il_jext)
 
          ! extrapolate variable
-         CALL extrap_fill_value( td_var, id_iext=il_iext, id_jext=il_jext )
+         CALL extrap_fill_value( td_var )
 
          ! interpolate variable
          CALL interp_fill_value( td_var, id_rho(:), &

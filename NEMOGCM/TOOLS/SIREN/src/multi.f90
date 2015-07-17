@@ -169,6 +169,7 @@ CONTAINS
    !>
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date July, 2015 - check if variable to be read is in file
    !>
    !> @param[in] cd_varfile   variable location information (from namelist) 
    !> @return multi file structure
@@ -189,6 +190,7 @@ CONTAINS
       CHARACTER(LEN=lc) :: cl_matrix
 
       INTEGER(i4)       :: il_nvar
+      INTEGER(i4)       :: il_varid
 
       LOGICAL           :: ll_dim
 
@@ -241,6 +243,14 @@ CONTAINS
 
                   ! define variable
                   IF( TRIM(fct_lower(cl_lower)) /= 'all' )THEN
+
+                     ! check if variable is in file
+                     il_varid=var_get_index(tl_mpp%t_proc(1)%t_var(:),cl_lower)
+                     IF( il_varid == 0 )THEN
+                        CALL logger_fatal("MULTI INIT: variable "//&
+                           & TRIM(cl_name)//" not in file "//&
+                           & TRIM(cl_file) )
+                     ENDIF
 
                      ! clean var
                      CALL mpp_del_var(tl_mpp)

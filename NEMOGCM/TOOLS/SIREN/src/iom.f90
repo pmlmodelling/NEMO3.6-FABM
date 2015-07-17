@@ -563,23 +563,29 @@ CONTAINS
    END FUNCTION iom__read_var_name
    !-------------------------------------------------------------------
    !> @brief This subroutine write file structure in an opened file.
-   !
+   !>
+   !> @details
+   !> optionally, you could specify dimension order (default 'xyzt')
+   !>
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date July, 2015 - add dimension order option
    !
    !> @param[in] td_file   file structure
    !-------------------------------------------------------------------
-   SUBROUTINE iom_write_file(td_file)
+   SUBROUTINE iom_write_file(td_file, cd_dimorder)
       IMPLICIT NONE
       ! Argument      
-      TYPE(TFILE), INTENT(INOUT) :: td_file
+      TYPE(TFILE)     , INTENT(INOUT) :: td_file
+      CHARACTER(LEN=*), INTENT(IN   ), OPTIONAL :: cd_dimorder
       !----------------------------------------------------------------
 
       ! open file
       SELECT CASE(TRIM(td_file%c_type))
          CASE('cdf')
-            CALL iom_cdf_write_file(td_file)
+            CALL iom_cdf_write_file(td_file, cd_dimorder)
          CASE('dimg')
+            ! note: can not change dimension order in restart dimg file
             CALL iom_rstdimg_write_file(td_file)
          CASE DEFAULT
             CALL logger_error( " IOM WRITE: can't write file "//&

@@ -79,7 +79,7 @@ line.<br/>
 _Note that using doxygen (see [header](#header)), we will use symbol !< instead of !: as separator_
 
 # Implicit none {#implicit}
-All subroutines and functions will include an IMPLICTI NONE statement.
+All subroutines and functions will include an IMPLICIT NONE statement.
 
 # Header {#header}
 

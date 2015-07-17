@@ -280,6 +280,10 @@
 !>  - add var_reorder
 !> @date November, 2014 
 !> - Fix memory leaks bug
+!> @date June, 2015
+!> - change way to get variable information in namelist
+!> @date July, 2015 
+!> - add subroutine var_chg_unit to change unit of output variable
 !
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -292,6 +296,7 @@ MODULE var
    USE fct                             ! basic useful function
    USE att                             ! attribute manager
    USE dim                             ! dimension manager
+   USE math                            ! mathematical function
    IMPLICIT NONE
    ! NOTE_avoid_public_variables_if_possible
 
@@ -317,6 +322,7 @@ MODULE var
    PUBLIC :: var_chg_FillValue !< change FillValue to standard NETCDF Fill Value
    PUBLIC :: var_concat        !< concatenate two variables
    PUBLIC :: var_limit_value   !< forced min and max value
+   PUBLIC :: var_chg_unit      !< change variable unit and value
    PUBLIC :: var_max_dim       !< get array of maximum dimension use
    PUBLIC :: var_reorder       !< reorder table of value in variable structure
    PUBLIC :: var_get_index     !< return the variable index, in an array of variable structure 
@@ -381,6 +387,8 @@ MODULE var
    PRIVATE :: var__concat_l      ! concatenate varibales in l-direction
    PRIVATE :: var__get_max       ! get maximum value from namelist 
    PRIVATE :: var__get_min       ! get minimum value from namelist
+   PRIVATE :: var__get_unf       ! get scale factor value from namelist
+   PRIVATE :: var__get_unt       ! get unit from namelist
    PRIVATE :: var__get_interp    ! get interpolation method from namelist
    PRIVATE :: var__get_extrap    ! get extrapolation method from namelist
    PRIVATE :: var__get_filter    ! get filter method from namelist
@@ -400,7 +408,7 @@ MODULE var
       INTEGER(i4)       :: i_ndim = 0           !< number of dimensions
       TYPE(TATT), DIMENSION(:), POINTER :: t_att => NULL() !< variable attributes
       TYPE(TDIM), DIMENSION(ip_maxdim)  :: t_dim           !< variable dimension
-      
+ 
       LOGICAL           :: l_file = .FALSE.  !< variable read in a file
 
       ! highlight some attributes
@@ -413,7 +421,10 @@ MODULE var
       REAL(dp)          :: d_fill= 0.           !< fill value     ! NF90_FILL_DOUBLE 
       REAL(dp)          :: d_min = dp_fill      !< minimum value 
       REAL(dp)          :: d_max = dp_fill      !< maximum value 
-      
+ 
+      CHARACTER(LEN=lc) :: c_unt = ''           !< new variables units (linked to units factor)
+      REAL(dp)          :: d_unf = 1._dp        !< units factor
+
       !!! netcdf4
       LOGICAL           :: l_contiguous = .FALSE. !< use contiguous storage or not
       LOGICAL           :: l_shuffle    = .FALSE. !< shuffle filter is turned on or not
@@ -548,6 +559,9 @@ CONTAINS
       var__copy_unit%d_min      = td_var%d_min
       var__copy_unit%d_max      = td_var%d_max
 
+      var__copy_unit%c_unt      = TRIM(td_var%c_unt)
+      var__copy_unit%d_unf      = td_var%d_unf
+
       var__copy_unit%i_type     = td_var%i_type
       var__copy_unit%i_natt     = td_var%i_natt
       var__copy_unit%i_ndim     = td_var%i_ndim
@@ -576,6 +590,7 @@ CONTAINS
       var__copy_unit%c_longname = TRIM(td_var%c_longname)
       var__copy_unit%c_units    = TRIM(td_var%c_units)
       var__copy_unit%c_axis     = TRIM(td_var%c_axis)
+      var__copy_unit%d_unf      = td_var%d_unf
       var__copy_unit%d_scf      = td_var%d_scf
       var__copy_unit%d_ofs      = td_var%d_ofs
       var__copy_unit%d_fill     = td_var%d_fill
@@ -787,6 +802,7 @@ CONTAINS
    !>   - cd_point : one character for ARAKAWA C-grid point name (T,U,V,F).
    !>   - id_id : variable id (read from a file).
    !>   - id_ew : number of point composing east west wrap band.
+   !>   - dd_unf : real(8) value for units factor attribute.
    !>   - dd_scf : real(8) value for scale factor attribute.
    !>   - dd_ofs : real(8) value for add offset attribute.
    !>   - id_rec : record id (for rstdimg file).
@@ -800,12 +816,16 @@ CONTAINS
    !>   - cd_interp  : a array of character defining interpolation method.
    !>   - cd_extrap  : a array of character defining extrapolation method.
    !>   - cd_filter  : a array of character defining filtering method.
+   !>   - cd_unt : a string character to define output unit
+   !>   - dd_unf : real(8) factor applied to change unit
    !>
    !>  @note most of these optionals arguments will be inform automatically,
    !>  when reading variable from a file, or using confiuguration file variable.cfg.
    !>
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date February, 2015 - Bug fix: conversion of the FillValue type (float case)
+   !> @date June, 2015 - add unit factor (to change unit)
    !>
    !> @param[in] cd_name         variable name
    !> @param[in] id_type         variable type 
@@ -832,6 +852,8 @@ CONTAINS
    !> @param[in] cd_interp       interpolation method
    !> @param[in] cd_extrap       extrapolation method
    !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init( cd_name, id_type, td_dim, &
@@ -842,7 +864,8 @@ CONTAINS
    &                              dd_min, dd_max,           &
    &                              ld_contiguous, ld_shuffle,&
    &                              ld_fletcher32, id_deflvl, id_chunksz, &
-   &                              cd_interp, cd_extrap, cd_filter )
+   &                              cd_interp, cd_extrap, cd_filter, &
+   &                              cd_unt, dd_unf )
       IMPLICIT NONE
       ! Argument
       CHARACTER(LEN=*),                       INTENT(IN) :: cd_name
@@ -870,6 +893,8 @@ CONTAINS
       CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
       CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
       CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
 
       ! local variable
@@ -932,9 +957,9 @@ CONTAINS
             CASE(NF90_INT)
                tl_att=att_init('_FillValue', INT(dd_fill,i4) )
             CASE(NF90_FLOAT)
-               tl_att=att_init('_FillValue', INT(dd_fill,sp) )
+               tl_att=att_init('_FillValue', REAL(dd_fill,sp) )
             CASE DEFAULT ! NF90_DOUBLE
-                     tl_att=att_init('_FillValue', dd_fill )
+               tl_att=att_init('_FillValue', dd_fill )
          END SELECT
          CALL var_move_att(var__init, tl_att)
       ELSE
@@ -1037,6 +1062,18 @@ CONTAINS
          var__init%c_filter(:)=cd_filter(:)
       ENDIF
 
+      ! units factor
+      IF( PRESENT(dd_unf) )THEN
+         tl_att=att_init('units_factor',dd_unf)
+         CALL var_move_att(var__init, tl_att)
+      ENDIF
+
+      ! new units (linked to units factor)
+      IF( PRESENT(cd_unt) )THEN
+         tl_att=att_init('new_units',cd_units)
+         CALL var_move_att(var__init, tl_att)
+      ENDIF
+
       ! add extra information
       CALL var__get_extra(var__init)
 
@@ -1046,6 +1083,8 @@ CONTAINS
       CALL var_del_att(var__init, 'extrapolation')
       CALL var_del_att(var__init, 'filter')
       CALL var_del_att(var__init, 'src_file')
+      CALL var_del_att(var__init, 'src_i_indices')
+      CALL var_del_att(var__init, 'src_j_indices')
       CALL var_del_att(var__init, 'valid_min')
       CALL var_del_att(var__init, 'valid_max')
       CALL var_del_att(var__init, 'missing_value')
@@ -1072,7 +1111,11 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
-   !
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
+   !>
    !> @param[in] cd_name         variable name
    !> @param[in] dd_value        1D array of real(8) value
    !> @param[in] id_start        index in the variable from which the data values 
@@ -1099,6 +1142,11 @@ CONTAINS
    !> @param[in] ld_fletcher32   fletcher32 filter is turned on or not
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_1D_dp( cd_name, dd_value,        &
@@ -1109,7 +1157,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
       IMPLICIT NONE
       ! Argument
       CHARACTER(LEN=*),                       INTENT(IN) :: cd_name
@@ -1137,6 +1187,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                    :: il_type
@@ -1192,7 +1247,11 @@ CONTAINS
       &                          ld_shuffle=ld_shuffle,              &
       &                          ld_fletcher32=ld_fletcher32,        &
       &                          id_deflvl=id_deflvl,                &
-      &                          id_chunksz=id_chunksz(:))
+      &                          id_chunksz=id_chunksz(:),           &
+      &                          cd_interp=cd_interp(:),             &
+      &                          cd_extrap=cd_extrap(:),             &
+      &                          cd_filter=cd_filter(:),             &
+      &                          cd_unt=cd_unt, dd_unf=dd_unf )
    
       ! add value
       ALLOCATE( dl_value(tl_dim(1)%i_len, &
@@ -1239,6 +1298,13 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date February, 2015 - bug fix: array initialise with dimension
+   !> array not only one value
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> - Bux fix: dimension array initialise not only one value
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] dd_value        1D array of real(8) value
@@ -1268,6 +1334,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates 
    !> no deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_2D_dp( cd_name, dd_value,        &
@@ -1278,7 +1349,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
       IMPLICIT NONE
       ! Argument
       CHARACTER(LEN=*),                       INTENT(IN) :: cd_name
@@ -1306,6 +1379,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                    :: il_type
@@ -1349,7 +1427,7 @@ CONTAINS
          ENDIF
       ENDIF
 
-      il_count(:)=tl_dim(1)%i_len
+      il_count(:)=tl_dim(:)%i_len
       IF( PRESENT(id_count) )THEN
          IF( SIZE(id_count(:)) /= 2 )THEN
             CALL logger_error("VAR INIT: dimension of count array "//&
@@ -1380,7 +1458,11 @@ CONTAINS
       &                          ld_shuffle=ld_shuffle,              &
       &                          ld_fletcher32=ld_fletcher32,        &
       &                          id_deflvl=id_deflvl,                &
-      &                          id_chunksz=id_chunksz(:))
+      &                          id_chunksz=id_chunksz(:),           &
+      &                          cd_interp=cd_interp(:),             &
+      &                          cd_extrap=cd_extrap(:),             &
+      &                          cd_filter=cd_filter(:),             &
+      &                          cd_unt=cd_unt, dd_unf=dd_unf )
    
       ! add value
       ALLOCATE( dl_value(tl_dim(1)%i_len, &
@@ -1431,7 +1513,11 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
-   !
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
+   !>
    !> @param[in] cd_name         variable name
    !> @param[in] dd_value        1D array of real(8) value
    !> @param[in] id_start        index in the variable from which the 
@@ -1460,6 +1546,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_3D_dp( cd_name, dd_value,        &
@@ -1470,7 +1561,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
       IMPLICIT NONE
       ! Argument
       CHARACTER(LEN=*),                       INTENT(IN) :: cd_name
@@ -1498,6 +1591,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                    :: il_type
@@ -1576,7 +1674,11 @@ CONTAINS
       &                          ld_shuffle=ld_shuffle,              &
       &                          ld_fletcher32=ld_fletcher32,        &
       &                          id_deflvl=id_deflvl,                &
-      &                          id_chunksz=id_chunksz(:))
+      &                          id_chunksz=id_chunksz(:),           &
+      &                          cd_interp=cd_interp(:),             &
+      &                          cd_extrap=cd_extrap(:),             &
+      &                          cd_filter=cd_filter(:),             &
+      &                          cd_unt=cd_unt, dd_unf=dd_unf )
    
       ! add value
       ALLOCATE( dl_value(tl_dim(1)%i_len, &
@@ -1623,7 +1725,11 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
-   !
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
+   !>
    !> @param[in] cd_name         variable name
    !> @param[in] dd_value        4D array of real(8) value
    !> @param[in] id_start        index in the variable from which the 
@@ -1652,6 +1758,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_dp( cd_name, dd_value,        &
@@ -1662,7 +1773,9 @@ CONTAINS
    &                                 dd_scf, dd_ofs,  id_rec,  &
    &                                 dd_min, dd_max,           &
    &                                 ld_contiguous, ld_shuffle,&
-   &                                 ld_fletcher32, id_deflvl, id_chunksz)
+   &                                 ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                 cd_interp, cd_extrap, cd_filter, &
+   &                                 cd_unt, dd_unf )
       IMPLICIT NONE
       ! Argument
       CHARACTER(LEN=*),                       INTENT(IN) :: cd_name
@@ -1690,6 +1803,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4), DIMENSION(ip_maxdim) :: il_shape
@@ -1722,7 +1840,11 @@ CONTAINS
       &                       ld_shuffle=ld_shuffle,              &
       &                       ld_fletcher32=ld_fletcher32,        &
       &                       id_deflvl=id_deflvl,                &
-      &                       id_chunksz=id_chunksz(:))
+      &                       id_chunksz=id_chunksz(:),           &
+      &                       cd_interp=cd_interp(:),             &
+      &                       cd_extrap=cd_extrap(:),             &
+      &                       cd_filter=cd_filter(:),             &
+      &                       cd_unt=cd_unt, dd_unf=dd_unf )
  
       ! add value
       IF( .NOT. PRESENT(td_dim) )THEN
@@ -1758,6 +1880,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] rd_value        1D array of real(4) value
@@ -1787,6 +1913,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_1D_sp( cd_name, rd_value,        &
@@ -1797,7 +1928,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -1826,6 +1959,12 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
+
 
       ! local variable
       INTEGER(i4)                                       :: il_type
@@ -1869,7 +2008,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf )
  
       DEALLOCATE( dl_value )
  
@@ -1892,6 +2035,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         : variable name
    !> @param[in] rd_value        : 2D array of real(4) value
@@ -1921,6 +2068,11 @@ CONTAINS
    !> @param[in] id_deflvl       : deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      : chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_2D_sp( cd_name, rd_value,        &
@@ -1931,7 +2083,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -1960,6 +2114,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                  :: il_type
@@ -2005,7 +2164,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf )
       
       DEALLOCATE( dl_value )
       
@@ -2028,6 +2191,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         : variable name
    !> @param[in] rd_value        : 2D array of real(4) value
@@ -2057,6 +2224,11 @@ CONTAINS
    !> @param[in] id_deflvl       : deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      : chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_3D_sp( cd_name, rd_value,        &
@@ -2067,7 +2239,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -2096,6 +2270,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                  :: il_type
@@ -2142,7 +2321,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -2165,6 +2348,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] rd_value        4D array of real(4) value
@@ -2194,6 +2381,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_sp( cd_name, rd_value,        &
@@ -2204,7 +2396,9 @@ CONTAINS
    &                                 dd_scf, dd_ofs,  id_rec,  &
    &                                 dd_min, dd_max,           &
    &                                 ld_contiguous, ld_shuffle,&
-   &                                 ld_fletcher32, id_deflvl, id_chunksz)
+   &                                 ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                 cd_interp, cd_extrap, cd_filter, &
+   &                                 cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -2233,6 +2427,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                       :: il_type
@@ -2280,7 +2479,11 @@ CONTAINS
       &                      ld_shuffle=ld_shuffle,              &
       &                      ld_fletcher32=ld_fletcher32,        &
       &                      id_deflvl=id_deflvl,                &
-      &                      id_chunksz=id_chunksz(:))
+      &                      id_chunksz=id_chunksz(:),           &
+      &                      cd_interp=cd_interp(:),             &
+      &                      cd_extrap=cd_extrap(:),             &
+      &                      cd_filter=cd_filter(:),             &
+      &                      cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -2303,6 +2506,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         : variable name
    !> @param[in] kd_value        : 1D array of integer(8) value
@@ -2332,6 +2539,11 @@ CONTAINS
    !> @param[in] id_deflvl       : deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      : chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_1D_i8( cd_name, kd_value,        &
@@ -2342,7 +2554,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -2371,6 +2585,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                       :: il_type
@@ -2414,7 +2633,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
  
       DEALLOCATE( dl_value )
  
@@ -2437,6 +2660,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] kd_value        2D array of integer(8) value
@@ -2464,6 +2691,11 @@ CONTAINS
    !> @param[in] ld_fletcher32   fletcher32 filter is turned on or not
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_2D_i8( cd_name, kd_value,        &
@@ -2474,7 +2706,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -2503,6 +2737,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                  :: il_type
@@ -2548,7 +2787,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -2571,6 +2814,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] kd_value        2D array of integer(8) value
@@ -2600,6 +2847,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_3D_i8( cd_name, kd_value,        &
@@ -2610,7 +2862,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -2639,6 +2893,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                  :: il_type
@@ -2685,7 +2944,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -2708,6 +2971,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] kd_value        4D array of integer(8) value
@@ -2737,6 +3004,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_i8( cd_name, kd_value,        &
@@ -2747,7 +3019,9 @@ CONTAINS
    &                                 dd_scf, dd_ofs,  id_rec,  &
    &                                 dd_min, dd_max,           &
    &                                 ld_contiguous, ld_shuffle,&
-   &                                 ld_fletcher32, id_deflvl, id_chunksz)
+   &                                 ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                 cd_interp, cd_extrap, cd_filter, &
+   &                                 cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -2776,6 +3050,12 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
+
 
       ! local variable
       INTEGER(i4)                                       :: il_type
@@ -2823,7 +3103,11 @@ CONTAINS
       &                      ld_shuffle=ld_shuffle,              &
       &                      ld_fletcher32=ld_fletcher32,        &
       &                      id_deflvl=id_deflvl,                &
-      &                      id_chunksz=id_chunksz(:))
+      &                      id_chunksz=id_chunksz(:),           &
+      &                      cd_interp=cd_interp(:),             &
+      &                      cd_extrap=cd_extrap(:),             &
+      &                      cd_filter=cd_filter(:),             &
+      &                      cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -2846,6 +3130,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] id_value        1D array of integer(4) value
@@ -2875,6 +3163,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_1D_i4( cd_name, id_value,        &
@@ -2885,7 +3178,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -2914,6 +3209,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                       :: il_type
@@ -2957,7 +3257,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
  
       DEALLOCATE( dl_value )
  
@@ -2980,6 +3284,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] id_value        2D array of integer(4) value
@@ -3009,6 +3317,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_2D_i4( cd_name, id_value,        &
@@ -3019,7 +3332,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -3048,6 +3363,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                  :: il_type
@@ -3093,7 +3413,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -3116,6 +3440,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] id_value        3D array of integer(4) value
@@ -3145,6 +3473,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_3D_i4( cd_name, id_value,        &
@@ -3155,7 +3488,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -3184,6 +3519,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                  :: il_type
@@ -3230,7 +3570,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -3253,6 +3597,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] id_value        4D array of integer(4) value
@@ -3282,6 +3630,12 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
+
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_i4( cd_name, id_value,        &
@@ -3292,7 +3646,9 @@ CONTAINS
    &                                 dd_scf, dd_ofs,  id_rec,  &
    &                                 dd_min, dd_max,           &
    &                                 ld_contiguous, ld_shuffle,&
-   &                                 ld_fletcher32, id_deflvl, id_chunksz)
+   &                                 ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                 cd_interp, cd_extrap, cd_filter, &
+   &                                 cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -3321,6 +3677,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                       :: il_type
@@ -3368,7 +3729,11 @@ CONTAINS
       &                      ld_shuffle=ld_shuffle,              &
       &                      ld_fletcher32=ld_fletcher32,        &
       &                      id_deflvl=id_deflvl,                &
-      &                      id_chunksz=id_chunksz(:))
+      &                      id_chunksz=id_chunksz(:),           &
+      &                      cd_interp=cd_interp(:),             &
+      &                      cd_extrap=cd_extrap(:),             &
+      &                      cd_filter=cd_filter(:),             &
+      &                      cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -3391,6 +3756,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] sd_value        1D array of integer(2) value
@@ -3420,6 +3789,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_1D_i2( cd_name, sd_value,        &
@@ -3430,7 +3804,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -3459,6 +3835,12 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
+
 
       ! local variable
       INTEGER(i4)                                       :: il_type
@@ -3502,7 +3884,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
  
       DEALLOCATE( dl_value )
  
@@ -3525,6 +3911,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] sd_value        2D array of integer(2) value
@@ -3554,6 +3944,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_2D_i2( cd_name, sd_value,        &
@@ -3564,7 +3959,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -3593,6 +3990,12 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
+
 
       ! local variable
       INTEGER(i4)                                  :: il_type
@@ -3638,7 +4041,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -3661,6 +4068,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] sd_value        3D array of integer(2) value
@@ -3690,6 +4101,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_3D_i2( cd_name, sd_value,        &
@@ -3700,7 +4116,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -3729,6 +4147,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                  :: il_type
@@ -3775,7 +4198,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -3798,6 +4225,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] sd_value        4D array of integer(2) value
@@ -3827,6 +4258,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_i2( cd_name, sd_value,        &
@@ -3837,7 +4273,9 @@ CONTAINS
    &                                 dd_scf, dd_ofs,  id_rec,  &
    &                                 dd_min, dd_max,           &
    &                                 ld_contiguous, ld_shuffle,&
-   &                                 ld_fletcher32, id_deflvl, id_chunksz)
+   &                                 ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                 cd_interp, cd_extrap, cd_filter, &
+   &                                 cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -3866,6 +4304,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                       :: il_type
@@ -3913,7 +4356,11 @@ CONTAINS
       &                      ld_shuffle=ld_shuffle,              &
       &                      ld_fletcher32=ld_fletcher32,        &
       &                      id_deflvl=id_deflvl,                &
-      &                      id_chunksz=id_chunksz(:))
+      &                      id_chunksz=id_chunksz(:),           &
+      &                      cd_interp=cd_interp(:),             &
+      &                      cd_extrap=cd_extrap(:),             &
+      &                      cd_filter=cd_filter(:),             &
+      &                      cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -3936,6 +4383,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] bd_value        1D array of integer(1) value
@@ -3965,6 +4416,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_1D_i1( cd_name, bd_value,        &
@@ -3975,7 +4431,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -4004,6 +4462,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                       :: il_type
@@ -4047,7 +4510,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
  
       DEALLOCATE( dl_value )
  
@@ -4070,6 +4537,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] bd_value        2D array of integer(1) value
@@ -4099,6 +4570,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_2D_i1( cd_name, bd_value,        &
@@ -4109,7 +4585,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -4138,6 +4616,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                  :: il_type
@@ -4183,7 +4666,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -4206,6 +4693,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] bd_value        3D array of integer(1) value
@@ -4235,6 +4726,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_3D_i1( cd_name, bd_value,        &
@@ -4245,7 +4741,9 @@ CONTAINS
    &                                    dd_scf, dd_ofs,  id_rec,  &
    &                                    dd_min, dd_max,           &
    &                                    ld_contiguous, ld_shuffle,&
-   &                                    ld_fletcher32, id_deflvl, id_chunksz)
+   &                                    ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                    cd_interp, cd_extrap, cd_filter, &
+   &                                    cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -4274,6 +4772,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                  :: il_type
@@ -4320,7 +4823,11 @@ CONTAINS
       &                         ld_shuffle=ld_shuffle,              &
       &                         ld_fletcher32=ld_fletcher32,        &
       &                         id_deflvl=id_deflvl,                &
-      &                         id_chunksz=id_chunksz(:))
+      &                         id_chunksz=id_chunksz(:),           &
+      &                         cd_interp=cd_interp(:),             &
+      &                         cd_extrap=cd_extrap(:),             &
+      &                         cd_filter=cd_filter(:),             &
+      &                         cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -4343,6 +4850,10 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015
+   !> - add interp, extrap, and filter argument
+   !> @date July, 2015
+   !> - add unit factor (to change unit)
    !
    !> @param[in] cd_name         variable name
    !> @param[in] bd_value        4D array of integer(1) value
@@ -4372,6 +4883,11 @@ CONTAINS
    !> @param[in] id_deflvl       deflate level from 0 to 9, 0 indicates no 
    !> deflation is in use
    !> @param[in] id_chunksz      chunk size
+   !> @param[in] cd_interp       interpolation method
+   !> @param[in] cd_extrap       extrapolation method
+   !> @param[in] cd_filter       filter method
+   !> @param[in] cd_unt          new units (linked to units factor)
+   !> @param[in] dd_unf          units factor
    !> @return variable structure
    !-------------------------------------------------------------------
    TYPE(TVAR) FUNCTION var__init_i1( cd_name, bd_value,        &
@@ -4382,7 +4898,9 @@ CONTAINS
    &                                 dd_scf, dd_ofs,  id_rec,  &
    &                                 dd_min, dd_max,           &
    &                                 ld_contiguous, ld_shuffle,&
-   &                                 ld_fletcher32, id_deflvl, id_chunksz)
+   &                                 ld_fletcher32, id_deflvl, id_chunksz, &
+   &                                 cd_interp, cd_extrap, cd_filter, &
+   &                                 cd_unt, dd_unf)
 
       IMPLICIT NONE
       ! Argument
@@ -4411,6 +4929,11 @@ CONTAINS
       LOGICAL         ,                       INTENT(IN), OPTIONAL :: ld_fletcher32
       INTEGER(i4)     ,                       INTENT(IN), OPTIONAL :: id_deflvl
       INTEGER(i4)     , DIMENSION(ip_maxdim), INTENT(IN), OPTIONAL :: id_chunksz
+      CHARACTER(LEN=*), DIMENSION(2)        , INTENT(IN), OPTIONAL :: cd_interp
+      CHARACTER(LEN=*), DIMENSION(1)        , INTENT(IN), OPTIONAL :: cd_extrap
+      CHARACTER(LEN=*), DIMENSION(5)        , INTENT(IN), OPTIONAL :: cd_filter
+      CHARACTER(LEN=*),                       INTENT(IN), OPTIONAL :: cd_unt
+      REAL(dp)        ,                       INTENT(IN), OPTIONAL :: dd_unf
 
       ! local variable
       INTEGER(i4)                                       :: il_type
@@ -4458,7 +4981,11 @@ CONTAINS
       &                      ld_shuffle=ld_shuffle,              &
       &                      ld_fletcher32=ld_fletcher32,        &
       &                      id_deflvl=id_deflvl,                &
-      &                      id_chunksz=id_chunksz(:))
+      &                      id_chunksz=id_chunksz(:),           &
+      &                      cd_interp=cd_interp(:),             &
+      &                      cd_extrap=cd_extrap(:),             &
+      &                      cd_filter=cd_filter(:),             &
+      &                      cd_unt=cd_unt, dd_unf=dd_unf)
       
       DEALLOCATE( dl_value )
       
@@ -4820,6 +5347,7 @@ CONTAINS
    !>
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date June, 2015 - add all element of the array in the same time
    !>
    !> @param[inout] td_var variable structure
    !> @param[in] td_att    array of attribute structure
@@ -4832,6 +5360,9 @@ CONTAINS
 
       ! local variable
       INTEGER(i4) :: il_natt
+      INTEGER(i4) :: il_status
+      INTEGER(i4) :: il_ind
+      TYPE(TATT), DIMENSION(:), ALLOCATABLE :: tl_att
 
       ! loop indices
       INTEGER(i4) :: ji
@@ -4839,9 +5370,105 @@ CONTAINS
 
       il_natt=SIZE(td_att(:))
 
+      IF( td_var%i_natt > 0 )THEN
+      ! already other attribute in variable structure
+         ALLOCATE( tl_att(td_var%i_natt), stat=il_status )
+         IF(il_status /= 0 )THEN
+
+            CALL logger_error( &
+            &  " VAR ADD ATT: not enough space to put attributes from "//&
+            &  TRIM(td_var%c_name)//" in temporary attribute structure")
+
+         ELSE
+
+            ! save temporary global attribute's variable structure
+            tl_att(:)=att_copy(td_var%t_att(:))
+
+            CALL att_clean(td_var%t_att(:))
+            DEALLOCATE( td_var%t_att )
+            ALLOCATE( td_var%t_att(td_var%i_natt+il_natt), stat=il_status )
+            IF(il_status /= 0 )THEN
+
+               CALL logger_error( &
+               &  " VAR ADD ATT: not enough space to put attributes "//&
+               &  "in variable structure "//TRIM(td_var%c_name) )
+
+            ENDIF
+
+            ! copy attribute in variable before
+            td_var%t_att(1:td_var%i_natt)=att_copy(tl_att(:))
+
+            ! clean
+            CALL att_clean(tl_att(:))
+            DEALLOCATE(tl_att)
+            
+         ENDIF
+      ELSE
+      ! no attribute in variable structure
+         IF( ASSOCIATED(td_var%t_att) )THEN
+            CALL att_clean(td_var%t_att(:))
+            DEALLOCATE(td_var%t_att)
+         ENDIF
+         ALLOCATE( td_var%t_att(td_var%i_natt+il_natt), stat=il_status )
+         IF(il_status /= 0 )THEN
+
+            CALL logger_error( &
+            &  " VAR ADD ATT: not enough space to put attributes "//&
+            &  "in variable structure "//TRIM(td_var%c_name) )
+
+         ENDIF
+      ENDIF
+
+      ALLOCATE( tl_att(il_natt) )
+      tl_att(:)=att_copy(td_att(:))
+
+      ! check if attribute already in variable structure
       DO ji=1,il_natt
-         CALL var_add_att(td_var, td_att(ji))
+         il_ind=0
+         il_ind=att_get_index( td_var%t_att(:), tl_att(ji)%c_name )
+         IF( il_ind /= 0 )THEN
+            CALL logger_error( &
+            &  " VAR ADD ATT: attribute "//TRIM(tl_att(ji)%c_name)//&
+            &  ", already in variable "//TRIM(td_var%c_name) )
+            CALL att_clean(tl_att(ji))
+         ENDIF
       ENDDO
+
+      ! add new attributes
+      td_var%t_att(td_var%i_natt+1:td_var%i_natt+il_natt)=att_copy(tl_att(:))
+
+      DEALLOCATE(tl_att)
+
+      DO ji=1,il_natt
+         ! highlight some attribute
+         IF( ASSOCIATED(td_var%t_att(td_var%i_natt+ji)%d_value) .OR. &
+           & td_var%t_att(td_var%i_natt+ji)%c_value /= 'none' )THEN
+            SELECT CASE(TRIM(td_var%t_att(td_var%i_natt+ji)%c_name))
+
+               CASE("add_offset")
+                  td_var%d_ofs = td_var%t_att(td_var%i_natt+ji)%d_value(1)
+               CASE("scale_factor")
+                  td_var%d_scf = td_var%t_att(td_var%i_natt+ji)%d_value(1)
+               CASE("_FillValue")
+                  td_var%d_fill = td_var%t_att(td_var%i_natt+ji)%d_value(1)
+               CASE("ew_overlap")
+                  td_var%i_ew = INT(td_var%t_att(td_var%i_natt+ji)%d_value(1),i4) 
+               CASE("standard_name")
+                  td_var%c_stdname = TRIM(td_var%t_att(td_var%i_natt+ji)%c_value)
+               CASE("long_name")
+                  td_var%c_longname = TRIM(td_var%t_att(td_var%i_natt+ji)%c_value)
+               CASE("units")
+                  td_var%c_units = TRIM(td_var%t_att(td_var%i_natt+ji)%c_value)
+               CASE("grid_point")
+                  td_var%c_point = TRIM(td_var%t_att(td_var%i_natt+ji)%c_value)
+
+            END SELECT
+         ENDIF
+      ENDDO
+
+      ! update number of attribute
+      td_var%i_natt=td_var%i_natt+il_natt
+
 
    END SUBROUTINE var__add_att_arr
    !-------------------------------------------------------------------
@@ -4849,7 +5476,8 @@ CONTAINS
    !> in a variable structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
+   !> @date June, 2015 - use var__add_att_arr subroutine
    !
    !> @param[inout] td_var variable structure
    !> @param[in] td_att    attribute structure
@@ -4861,119 +5489,16 @@ CONTAINS
       TYPE(TATT), INTENT(IN)    :: td_att
 
       ! local variable
-      INTEGER(i4) :: il_status
-      INTEGER(i4) :: il_ind
-      TYPE(TATT), DIMENSION(:), ALLOCATABLE :: tl_att
+      TYPE(TATT), DIMENSION(1) :: tl_att
 
       ! loop indices
-      INTEGER(i4) :: ji
       !----------------------------------------------------------------
 
-      ! check if attribute already in variable structure
-      il_ind=0
-      IF( ASSOCIATED(td_var%t_att) )THEN
-         il_ind=att_get_index( td_var%t_att(:), td_att%c_name )
-      ENDIF
+      ! copy structure in an array
+      tl_att(1)=att_copy(td_att)
 
-      IF( il_ind /= 0 )THEN
-
-         CALL logger_error( &
-         &  " VAR ADD ATT: attribute "//TRIM(td_att%c_name)//&
-         &  ", already in variable "//TRIM(td_var%c_name) )
-
-         DO ji=1,td_var%i_natt
-            CALL logger_debug( &
-            &  " VAR ADD ATT: in variable "//TRIM(td_var%t_att(ji)%c_name) )
-         ENDDO
-
-      ELSE
-         
-         CALL logger_trace( &
-         &  " VAR ADD ATT: add attribute "//TRIM(td_att%c_name)//&
-         &  ", in variable "//TRIM(td_var%c_name) )
-
-         IF( td_var%i_natt > 0 )THEN
-         ! already other attribute in variable structure
-            ALLOCATE( tl_att(td_var%i_natt), stat=il_status )
-            IF(il_status /= 0 )THEN
-
-               CALL logger_error( &
-               &  " VAR ADD ATT: not enough space to put attributes from "//&
-               &  TRIM(td_var%c_name)//" in temporary attribute structure")
-
-            ELSE
-
-               ! save temporary global attribute's variable structure
-               tl_att(:)=att_copy(td_var%t_att(:))
-
-               CALL att_clean(td_var%t_att(:))
-               DEALLOCATE( td_var%t_att )
-               ALLOCATE( td_var%t_att(td_var%i_natt+1), stat=il_status )
-               IF(il_status /= 0 )THEN
-
-                  CALL logger_error( &
-                  &  " VAR ADD ATT: not enough space to put attributes "//&
-                  &  "in variable structure "//TRIM(td_var%c_name) )
-
-               ENDIF
-
-               ! copy attribute in variable before
-               td_var%t_att(1:td_var%i_natt)=att_copy(tl_att(:))
-
-               ! clean
-               CALL att_clean(tl_att(:))
-               DEALLOCATE(tl_att)
-               
-            ENDIF
-         ELSE
-         ! no attribute in variable structure
-            IF( ASSOCIATED(td_var%t_att) )THEN
-               CALL att_clean(td_var%t_att(:))
-               DEALLOCATE(td_var%t_att)
-            ENDIF
-            ALLOCATE( td_var%t_att(td_var%i_natt+1), stat=il_status )
-            IF(il_status /= 0 )THEN
-
-               CALL logger_error( &
-               &  " VAR ADD ATT: not enough space to put attributes "//&
-               &  "in variable structure "//TRIM(td_var%c_name) )
-
-            ENDIF
-         ENDIF
-         ! update number of attribute
-         td_var%i_natt=td_var%i_natt+1
-
-         ! add new attribute
-         td_var%t_att(td_var%i_natt)=att_copy(td_att)
-
-         !! add new attribute id
-         !td_var%t_att(td_var%i_natt)%i_id=att_get_unit(td_var%t_att(:))
-
-         ! highlight some attribute
-         IF( ASSOCIATED(td_var%t_att(td_var%i_natt)%d_value) .OR. &
-           & td_var%t_att(td_var%i_natt)%c_value /= "none" )THEN
-            SELECT CASE(TRIM(td_var%t_att(td_var%i_natt)%c_name))
-
-               CASE("add_offset")
-                  td_var%d_ofs = td_var%t_att(td_var%i_natt)%d_value(1)
-               CASE("scale_factor")
-                  td_var%d_scf = td_var%t_att(td_var%i_natt)%d_value(1)
-               CASE("_FillValue")
-                  td_var%d_fill = td_var%t_att(td_var%i_natt)%d_value(1)
-               CASE("ew_overlap")
-                  td_var%i_ew = INT(td_var%t_att(td_var%i_natt)%d_value(1),i4) 
-               CASE("standard_name")
-                  td_var%c_stdname = TRIM(td_var%t_att(td_var%i_natt)%c_value)
-               CASE("long_name")
-                  td_var%c_longname = TRIM(td_var%t_att(td_var%i_natt)%c_value)
-               CASE("units")
-                  td_var%c_units = TRIM(td_var%t_att(td_var%i_natt)%c_value)
-               CASE("grid_point")
-                  td_var%c_point = TRIM(td_var%t_att(td_var%i_natt)%c_value)
-
-            END SELECT
-         ENDIF
-      ENDIF
+      ! 
+      CALL var_add_att( td_var, tl_att(:) )
 
    END SUBROUTINE var__add_att_unit
    !-------------------------------------------------------------------
@@ -4982,6 +5507,8 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date February, 2015 - define local attribute structure to avoid mistake 
+   !> with pointer
    !
    !> @param[inout] td_var variable structure
    !> @param[in] cd_name   attribute name
@@ -4995,6 +5522,7 @@ CONTAINS
       ! local variable
       INTEGER(i4) :: il_ind
 
+      TYPE(TATT)  :: tl_att
       ! loop indices
       !----------------------------------------------------------------
 
@@ -5006,13 +5534,14 @@ CONTAINS
 
       IF( il_ind == 0 )THEN
 
-         CALL logger_warn( &
+         CALL logger_debug( &
          &  " VAR DEL ATT: no attribute "//TRIM(cd_name)//&
          &  ", in variable "//TRIM(td_var%c_name) )
 
       ELSE
          
-         CALL var_del_att(td_var, td_var%t_att(il_ind))
+         tl_att=att_copy(td_var%t_att(il_ind))
+         CALL var_del_att(td_var, tl_att)
 
       ENDIF
 
@@ -5023,6 +5552,8 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date February, 2015 - delete highlight attribute too, when attribute 
+   !> is deleted
    !
    !> @param[inout] td_var variable structure
    !> @param[in] td_att    attribute structure
@@ -5039,7 +5570,6 @@ CONTAINS
       TYPE(TATT), DIMENSION(:), ALLOCATABLE :: tl_att
 
       ! loop indices
-      !INTEGER(i4) :: ji
       !----------------------------------------------------------------
 
       ! check if attribute already in variable structure
@@ -5050,7 +5580,7 @@ CONTAINS
 
       IF( il_ind == 0 )THEN
 
-         CALL logger_warn( &
+         CALL logger_debug( &
          &  " VAR DEL ATT: no attribute "//TRIM(td_att%c_name)//&
          &  ", in variable "//TRIM(td_var%c_name) )
 
@@ -5102,16 +5632,34 @@ CONTAINS
                ! copy attribute in variable before
                td_var%t_att(1:td_var%i_natt)=att_copy(tl_att(:))
 
-               !! change attribute id
-               !DO ji=1,td_var%i_natt
-               !   td_var%t_att(ji)%i_id=ji
-               !ENDDO
-
                ! clean
                CALL att_clean(tl_att(:))
                DEALLOCATE(tl_att)
             ENDIF 
          ENDIF
+
+         ! highlight attribute
+         SELECT CASE( TRIM(td_att%c_name) )
+
+            CASE("add_offset")
+               td_var%d_ofs = 0._dp
+            CASE("scale_factor")
+               td_var%d_scf = 1._dp
+            CASE("_FillValue")
+               td_var%d_fill = 0._dp
+            CASE("ew_overlap")
+               td_var%i_ew = -1 
+            CASE("standard_name")
+               td_var%c_stdname = ''
+            CASE("long_name")
+               td_var%c_longname = ''
+            CASE("units")
+               td_var%c_units = ''
+            CASE("grid_point")
+               td_var%c_point = ''
+
+         END SELECT
+
       ENDIF
 
    END SUBROUTINE var__del_att_str
@@ -5210,7 +5758,7 @@ CONTAINS
 
       !----------------------------------------------------------------
 
-      IF( td_var%i_ndim <= 4 )THEN
+      IF( td_var%i_ndim <= ip_maxdim )THEN
 
          ! check if dimension already used in variable structure
          il_ind=SCAN(TRIM(cp_dimorder),TRIM(td_dim%c_sname))
@@ -5226,8 +5774,9 @@ CONTAINS
             &  ", already used in variable "//TRIM(td_var%c_name) )
          ELSE
 
-         ! back to unorder dimension array 
-         CALL dim_unorder(td_var%t_dim(:))
+            ! back to disorder dimension array 
+            CALL dim_disorder(td_var%t_dim(:))
+
             ! add new dimension
             td_var%t_dim(td_var%i_ndim+1)=dim_copy(td_dim)
 
@@ -5271,7 +5820,7 @@ CONTAINS
 
       !----------------------------------------------------------------
 
-      IF( td_var%i_ndim <= 4 )THEN
+      IF( td_var%i_ndim <= ip_maxdim )THEN
 
          CALL logger_trace( &
          &  " VAR DEL DIM: delete dimension "//TRIM(td_dim%c_name)//&
@@ -6321,7 +6870,9 @@ CONTAINS
    !> global array of variable structure with extra information: tg_varextra.
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
+   !> @date June, 2015 
+   !> - new namelist format to get extra information (interpolation,...)
    !
    !> @param[in] cd_file   configuration file of variable
    !-------------------------------------------------------------------
@@ -6356,7 +6907,6 @@ CONTAINS
          ! get number of variable to be read
 
          il_fileid=fct_getunit()
-         CALL logger_trace("VAR DEF EXTRA: open "//TRIM(cd_file))
          OPEN( il_fileid, FILE=TRIM(cd_file), &
          &                FORM='FORMATTED',   &
          &                ACCESS='SEQUENTIAL',&
@@ -6365,7 +6915,8 @@ CONTAINS
          &                IOSTAT=il_status)
          CALL fct_err(il_status)
          IF( il_status /= 0 )THEN
-            CALL logger_error("VAR DEF EXTRA: opening file "//TRIM(cd_file))
+            CALL logger_fatal("VAR DEF EXTRA: can not open file "//&
+            &                 TRIM(cd_file))
          ENDIF
 
          ! read file
@@ -6374,7 +6925,7 @@ CONTAINS
          il_nvar=0
          DO WHILE( il_status == 0 )
 
-         ! search line do not beginning with comment character
+         ! search line not beginning with comment character
             IF( SCAN( TRIM(fct_concat(cp_com(:))) ,cl_line(1:1)) == 0 )THEN
                il_nvar=il_nvar+1
             ENDIF
@@ -6418,15 +6969,16 @@ CONTAINS
                   tg_varextra(ji)%c_units   =TRIM(fct_split(cl_line,2))
                   tg_varextra(ji)%c_axis    =TRIM(fct_split(cl_line,3))
                   tg_varextra(ji)%c_point   =TRIM(fct_split(cl_line,4))
-                  tg_varextra(ji)%c_stdname =TRIM(fct_split(cl_line,5))
-                  tg_varextra(ji)%c_longname=TRIM(fct_split(cl_line,6))
 
-                  cl_interp=TRIM(fct_split(cl_line,7))
+                  cl_interp='int='//TRIM(fct_split(cl_line,5))
                   tg_varextra(ji)%c_interp(:) = &
                   &  var__get_interp(TRIM(tg_varextra(ji)%c_name), cl_interp)
                   CALL logger_debug("VAR DEF EXTRA: "//&
                   &  TRIM(tg_varextra(ji)%c_name)//&
-                  &  " "//TRIM(cl_interp))
+                  &  " "//TRIM(tg_varextra(ji)%c_interp(1)))
+
+                  tg_varextra(ji)%c_longname=TRIM(fct_split(cl_line,6))
+                  tg_varextra(ji)%c_stdname =TRIM(fct_split(cl_line,7))
                ELSE
                   ji=ji-1
                ENDIF
@@ -6457,20 +7009,25 @@ CONTAINS
    !> 
    !> @details 
    !> string character format must be : <br/>
-   !> "varname:interp; filter; extrap; > min; < max"<br/>
+   !> "varname:int=interp; flt=filter; ext=extrap; min=min; max=max"<br/>
    !> you could specify only interpolation, filter or extrapolation method, 
    !> whatever the order. you could find more
    !> information about available method in \ref interp, \ref filter, and
    !> \ref extrap module.<br/>
    !> Examples: 
-   !> cn_varinfo='Bathymetry:2*hamming(2,3); > 10.'
-   !> cn_varinfo='votemper:cubic; dist_weight; <40.'
+   !> cn_varinfo='Bathymetry:flt=2*hamming(2,3); min=10.'
+   !> cn_varinfo='votemper:int=cubic; ext=dist_weight; max=40.'
+   !>
+   !>
+   !> @warning variable should be define in tg_varextra (ie in configuration
+   !> file, to be able to add information from namelist
    !>
    !> @note If you do not specify a method which is required, default one is
    !> apply.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
+   !> @date July, 2015 - get unit and unit factor (to change unit) 
    !
    !> @param[in] cd_varinfo   variable information from namelist
    !-------------------------------------------------------------------
@@ -6485,12 +7042,14 @@ CONTAINS
       CHARACTER(LEN=lc), DIMENSION(2)              :: cl_interp
       CHARACTER(LEN=lc), DIMENSION(1)              :: cl_extrap
       CHARACTER(LEN=lc), DIMENSION(5)              :: cl_filter
+      CHARACTER(LEN=lc)                            :: cl_unt
 
       INTEGER(i4)                                  :: il_ind
       INTEGER(i4)                                  :: il_nvar
 
       REAL(dp)                                     :: dl_min
       REAL(dp)                                     :: dl_max
+      REAL(dp)                                     :: dl_unf
 
       TYPE(TVAR)       , DIMENSION(:), ALLOCATABLE :: tl_varextra
 
@@ -6507,14 +7066,19 @@ CONTAINS
 
             dl_min=var__get_min(cl_name, cl_method)
             dl_max=var__get_max(cl_name, cl_method)
+            dl_unf=var__get_unf(cl_name, cl_method)
             cl_interp(:)=var__get_interp(cl_name, cl_method)
             cl_extrap(:)=var__get_extrap(cl_name, cl_method)
             cl_filter(:)=var__get_filter(cl_name, cl_method)
+            cl_unt=var__get_unt(cl_name, cl_method)
+
 
             il_ind=var_get_index(tg_varextra(:), TRIM(cl_name))
             IF( il_ind /= 0 )THEN
                IF( dl_min /= dp_fill ) tg_varextra(il_ind)%d_min=dl_min
                IF( dl_max /= dp_fill ) tg_varextra(il_ind)%d_max=dl_max
+               IF( dl_unf /= dp_fill ) tg_varextra(il_ind)%d_unf=dl_unf
+               IF(cl_unt      /='') tg_varextra(il_ind)%c_unt      =cl_unt
                IF(cl_interp(1)/='') tg_varextra(il_ind)%c_interp(:)=cl_interp(:)
                IF(cl_extrap(1)/='') tg_varextra(il_ind)%c_extrap(:)=cl_extrap(:)
                IF(cl_filter(1)/='') tg_varextra(il_ind)%c_filter(:)=cl_filter(:)
@@ -6550,26 +7114,36 @@ CONTAINS
                &                               cd_extrap=cl_extrap(:), &
                &                               cd_filter=cl_filter(:), &
                &                               dd_min = dl_min, &
-               &                               dd_max = dl_max )
+               &                               dd_max = dl_max, &
+               &                               cd_unt = cl_unt, &
+               &                               dd_unf = dl_unf )
 
             ENDIF
 
             ji=ji+1
-            CALL logger_trace( "VAR CHG EXTRA: name       "//&
+            CALL logger_debug( "VAR CHG EXTRA: name       "//&
             &                  TRIM(tg_varextra(il_ind)%c_name) )
-            CALL logger_trace( "VAR CHG EXTRA: interp     "//&
+            CALL logger_debug( "VAR CHG EXTRA: interp     "//&
             &                  TRIM(tg_varextra(il_ind)%c_interp(1)) )         
-            CALL logger_trace( "VAR CHG EXTRA: filter     "//&
+            CALL logger_debug( "VAR CHG EXTRA: filter     "//&
             &                  TRIM(tg_varextra(il_ind)%c_filter(1)) )         
-            CALL logger_trace( "VAR CHG EXTRA: extrap     "//&
+            CALL logger_debug( "VAR CHG EXTRA: extrap     "//&
             &                  TRIM(tg_varextra(il_ind)%c_extrap(1)) )
             IF( tg_varextra(il_ind)%d_min /= dp_fill )THEN
-               CALL logger_trace( "VAR CHG EXTRA: min value  "//&
+               CALL logger_debug( "VAR CHG EXTRA: min value  "//&
                &                  TRIM(fct_str(tg_varextra(il_ind)%d_min)) )
             ENDIF
             IF( tg_varextra(il_ind)%d_max /= dp_fill )THEN
-               CALL logger_trace( "VAR CHG EXTRA: max value  "//&
+               CALL logger_debug( "VAR CHG EXTRA: max value  "//&
                &                  TRIM(fct_str(tg_varextra(il_ind)%d_max)) )
+            ENDIF
+            IF( TRIM(tg_varextra(il_ind)%c_unt) /= '' )THEN
+               CALL logger_debug( "VAR CHG EXTRA: new unit  "//&
+               &                  TRIM(tg_varextra(il_ind)%c_unt) )
+            ENDIF
+            IF( tg_varextra(il_ind)%d_unf /= 1. )THEN
+               CALL logger_debug( "VAR CHG EXTRA: new unit factor  "//&
+               &                  TRIM(fct_str(tg_varextra(il_ind)%d_unf)) )
             ENDIF
          ENDDO
       ENDIF
@@ -6807,15 +7381,18 @@ CONTAINS
                td_var%d_max=tg_varextra(il_ind)%d_max
             ENDIF
 
-         CALL logger_trace("VAR GET EXTRA: name       "//TRIM(td_var%c_name))
-         CALL logger_trace("VAR GET EXTRA: stdname    "//TRIM(td_var%c_stdname))
-         CALL logger_trace("VAR GET EXTRA: longname   "//TRIM(td_var%c_longname))
-         CALL logger_trace("VAR GET EXTRA: units      "//TRIM(td_var%c_units))
-         CALL logger_trace("VAR GET EXTRA: point      "//TRIM(td_var%c_point))
-         CALL logger_trace("VAR GET EXTRA: interp     "//TRIM(td_var%c_interp(1)))
-         CALL logger_trace("VAR GET EXTRA: filter     "//TRIM(td_var%c_filter(1)))
-         CALL logger_trace("VAR GET EXTRA: min value  "//TRIM(fct_str(td_var%d_min)))
-         CALL logger_trace("VAR GET EXTRA: max value  "//TRIM(fct_str(td_var%d_max)))
+            ! unt
+            IF( TRIM(td_var%c_unt) == '' .AND. &
+            &   TRIM(tg_varextra(il_ind)%c_unt) /= '' )THEN
+               td_var%c_unt=TRIM(tg_varextra(il_ind)%c_unt)
+            ENDIF
+
+            ! units factor
+            IF( td_var%d_unf == 1._dp .AND. &
+            &   tg_varextra(il_ind)%d_unf /= 1._dp )THEN
+               td_var%d_unf=tg_varextra(il_ind)%d_unf
+            ENDIF
+
          ENDIF
 
       ELSE
@@ -6832,10 +7409,12 @@ CONTAINS
    !> minimum value and return it if true. 
    !> 
    !> @details
-   !> minimum value is assume to follow sign '>'
+   !> minimum value is assume to follow string "min ="
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
+   !> @date June, 2015 - change way to get information in namelist, 
+   !> value follows string "min ="
    !
    !> @param[in] cd_name      variable name
    !> @param[in] cd_varinfo   variable information read in namelist 
@@ -6866,9 +7445,9 @@ CONTAINS
       ji=1
       cl_tmp=fct_split(cd_varinfo,ji,';')
       DO WHILE( TRIM(cl_tmp) /= '' )
-         il_ind=SCAN(TRIM(cl_tmp),'>')
+         il_ind=INDEX(TRIM(cl_tmp),'min')
          IF( il_ind /= 0 )THEN
-            cl_min=TRIM(ADJUSTL(cl_tmp(il_ind+1:)))
+            cl_min=fct_split(cl_tmp,2,'=')
             EXIT
          ENDIF
          ji=ji+1
@@ -6876,7 +7455,7 @@ CONTAINS
       ENDDO
 
       IF( TRIM(cl_min) /= '' )THEN
-         IF( fct_is_num(cl_min) )THEN
+         IF( fct_is_real(cl_min) )THEN
             READ(cl_min,*) var__get_min
             CALL logger_debug("VAR GET MIN: will use minimum value of "//&
             &  TRIM(fct_str(var__get_min))//" for variable "//TRIM(cd_name) )
@@ -6893,10 +7472,12 @@ CONTAINS
    !> maximum value and return it if true. 
    !> 
    !> @details
-   !> maximum value is assume to follow sign '<'
+   !> maximum value is assume to follow string "max ="
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
+   !> @date June, 2015 - change way to get information in namelist, 
+   !> value follows string "max ="
    !
    !> @param[in] cd_name      variable name
    !> @param[in] cd_varinfo   variable information read in namelist 
@@ -6927,9 +7508,9 @@ CONTAINS
       ji=1
       cl_tmp=fct_split(cd_varinfo,ji,';')
       DO WHILE( TRIM(cl_tmp) /= '' )
-         il_ind=SCAN(TRIM(cl_tmp),'<')
+         il_ind=INDEX(TRIM(cl_tmp),'max')
          IF( il_ind /= 0 )THEN
-            cl_max=TRIM(ADJUSTL(cl_tmp(il_ind+1:)))
+            cl_max=fct_split(cl_tmp,2,'=')
             EXIT
          ENDIF
          ji=ji+1
@@ -6937,7 +7518,7 @@ CONTAINS
       ENDDO
 
       IF( TRIM(cl_max) /= '' )THEN
-         IF( fct_is_num(cl_max) )THEN
+         IF( fct_is_real(cl_max) )THEN
             READ(cl_max,*) var__get_max
             CALL logger_debug("VAR GET MAX: will use maximum value of "//&
             &  TRIM(fct_str(var__get_max))//" for variable "//TRIM(cd_name) )
@@ -6951,20 +7532,88 @@ CONTAINS
    !-------------------------------------------------------------------
    !> @brief
    !> This function check if variable information read in namelist contains 
+   !> units factor value and return it if true. 
+   !> 
+   !> @details
+   !> units factor value is assume to follow string "unf ="
+   !>
+   !> @author J.Paul
+   !> - June, 2015- Initial Version
+   !
+   !> @param[in] cd_name      variable name
+   !> @param[in] cd_varinfo   variable information read in namelist 
+   !> @return untis factor value to be used (FillValue if none)
+   !-------------------------------------------------------------------
+   FUNCTION var__get_unf( cd_name, cd_varinfo )
+      IMPLICIT NONE
+      ! Argument
+      CHARACTER(LEN=*), INTENT(IN   ) :: cd_name
+      CHARACTER(LEN=*), INTENT(IN   ) :: cd_varinfo
+
+      ! function
+      REAL(dp) :: var__get_unf
+
+      ! local variable
+      CHARACTER(LEN=lc) :: cl_tmp
+      CHARACTER(LEN=lc) :: cl_unf
+      
+      INTEGER(i4)       :: il_ind
+
+      REAL(dp)          :: rl_unf
+
+      ! loop indices
+      INTEGER(i4) :: ji
+      !----------------------------------------------------------------
+      ! init
+      cl_unf=''
+      var__get_unf=dp_fill
+
+      ji=1
+      cl_tmp=fct_split(cd_varinfo,ji,';')
+      DO WHILE( TRIM(cl_tmp) /= '' )
+         il_ind=INDEX(TRIM(cl_tmp),'unf')
+         IF( il_ind /= 0 )THEN
+            cl_unf=fct_split(cl_tmp,2,'=')
+            EXIT
+         ENDIF
+         ji=ji+1
+         cl_tmp=fct_split(cd_varinfo,ji,';')         
+      ENDDO
+
+      IF( TRIM(cl_unf) /= '' )THEN
+         rl_unf=math_compute(cl_unf)
+         IF( rl_unf /= dp_fill )THEN
+            var__get_unf = rl_unf
+            CALL logger_debug("VAR GET UNITS FACTOR: will use units factor "//&
+               &  "value of "//TRIM(fct_str(var__get_unf))//" for variable "//&
+               &   TRIM(cd_name) )
+         ELSE
+            CALL logger_error("VAR GET UNITS FACTOR: invalid units factor "//&
+               &  "value for variable "//TRIM(cd_name)//". check namelist." )
+         ENDIF
+      ENDIF
+
+   END FUNCTION var__get_unf
+   !-------------------------------------------------------------------
+   !> @brief
+   !> This function check if variable information read in namelist contains 
    !> interpolation method and return it if true. 
    !> 
    !> @details 
-   !> split namelist information, using ';' as separator.
+   !> interpolation method is assume to follow string "int ="
+   !>
    !> compare method name with the list of interpolation method available (see
    !> module global).
    !> check if factor (*rhoi, /rhoj..) are present.<br/>
    !> Example:<br/> 
-   !> - cubic/rhoi ; dist_weight
-   !> - bilin
+   !> - int=cubic/rhoi ; ext=dist_weight
+   !> - int=bilin
    !> see @ref interp module for more information.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
+   !> @date June, 2015 - change way to get information in namelist, 
+   !> value follows string "int ="
    !
    !> @param[in] cd_name      variable name
    !> @param[in] cd_varinfo   variable information read in namelist
@@ -6981,6 +7630,7 @@ CONTAINS
 
       ! local variable
       CHARACTER(LEN=lc) :: cl_tmp
+      CHARACTER(LEN=lc) :: cl_int
       CHARACTER(LEN=lc) :: cl_factor
       
       INTEGER(i4)       :: il_ind
@@ -6999,8 +7649,18 @@ CONTAINS
       ji=1
       cl_tmp=fct_split(cd_varinfo,ji,';')
       DO WHILE( TRIM(cl_tmp) /= '' )
+         il_ind=INDEX(TRIM(cl_tmp),'int')
+         IF( il_ind /= 0 )THEN
+            cl_int=fct_split(cl_tmp,2,'=')
+            EXIT
+         ENDIF
+         ji=ji+1
+         cl_tmp=fct_split(cd_varinfo,ji,';')         
+      ENDDO
+
+      IF( TRIM(cl_int) /= '' )THEN
          DO jj=1,ip_ninterp
-            il_ind= INDEX(fct_lower(cl_tmp),TRIM(cp_interp_list(jj)))
+            il_ind= INDEX(fct_lower(cl_int),TRIM(cp_interp_list(jj)))
             IF( il_ind /= 0 )THEN
 
                var__get_interp(1)=TRIM(cp_interp_list(jj))
@@ -7008,9 +7668,9 @@ CONTAINS
                
                ! look for factor
                IF( il_ind==1 )THEN
-                  cl_factor=cl_tmp(il_len+1:)
+                  cl_factor=cl_int(il_len+1:)
                ELSE
-                  cl_factor=cl_tmp(1:il_ind-1)
+                  cl_factor=cl_int(1:il_ind-1)
                ENDIF
                il_mul=SCAN(TRIM(cl_factor),'*')
                il_div=SCAN(TRIM(cl_factor),'/')
@@ -7051,10 +7711,7 @@ CONTAINS
                EXIT
             ENDIF
          ENDDO
-         IF( jj /= ip_ninterp + 1 ) EXIT
-         ji=ji+1
-         cl_tmp=fct_split(cd_varinfo,ji,';')         
-      ENDDO
+      ENDIF
 
    END FUNCTION var__get_interp
    !-------------------------------------------------------------------
@@ -7063,16 +7720,19 @@ CONTAINS
    !> extrapolation method and return it if true. 
    !> 
    !> @details 
-   !> split namelist information, using ';' as separator.
+   !> extrapolation method is assume to follow string "ext ="
+   !> 
    !> compare method name with the list of extrapolation method available (see
    !> module global).<br/>
    !> Example:<br/>
-   !> - cubic ; dist_weight
-   !> - min_error
+   !> - int=cubic ; ext=dist_weight
+   !> - ext=min_error
    !> see @ref extrap module for more information.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
+   !> @date June, 2015 - change way to get information in namelist, 
+   !> value follows string "ext ="
    !
    !> @param[in] cd_name      variable name
    !> @param[in] cd_varinfo   variable information read in namelist
@@ -7089,6 +7749,9 @@ CONTAINS
 
       ! local variable
       CHARACTER(LEN=lc) :: cl_tmp
+      CHARACTER(LEN=lc) :: cl_ext
+
+      INTEGER(i4)       :: il_ind
 
       ! loop indices
       INTEGER(i4) :: ji
@@ -7100,8 +7763,18 @@ CONTAINS
       ji=1
       cl_tmp=fct_split(cd_varinfo,ji,';')
       DO WHILE( TRIM(cl_tmp) /= '' )
+         il_ind=INDEX(TRIM(cl_tmp),'ext')
+         IF( il_ind /= 0 )THEN
+            cl_ext=fct_split(cl_tmp,2,'=')
+            EXIT
+         ENDIF
+         ji=ji+1
+         cl_tmp=fct_split(cd_varinfo,ji,';')         
+      ENDDO
+
+      IF( TRIM(cl_ext) /= '' )THEN
          DO jj=1,ip_nextrap
-            IF( TRIM(fct_lower(cl_tmp)) == TRIM(cp_extrap_list(jj)) )THEN
+            IF( TRIM(fct_lower(cl_ext)) == TRIM(cp_extrap_list(jj)) )THEN
                var__get_extrap(1)=TRIM(cp_extrap_list(jj))
 
                CALL logger_trace("VAR GET EXTRAP: variable "//TRIM(cd_name)//&
@@ -7110,10 +7783,7 @@ CONTAINS
                EXIT
             ENDIF
          ENDDO
-         IF( jj /= ip_nextrap + 1 ) EXIT
-         ji=ji+1
-         cl_tmp=fct_split(cd_varinfo,ji,';')         
-      ENDDO
+      ENDIF
 
 
    END FUNCTION var__get_extrap
@@ -7123,19 +7793,22 @@ CONTAINS
    !> filter method and return it if true 
    !> 
    !> @details 
-   !> split namelist information, using ';' as separator.
+   !> filter method is assume to follow string "flt ="
+   !>
    !> compare method name with the list of filter method available (see
    !> module global).
-   !> look for the number of turn, using '*' separator, and method parameters inside
+   !> look for the number of run, using '*' separator, and method parameters inside
    !> bracket.<br/>
    !> Example:<br/>
-   !> - cubic ; 2*hamming(2,3)
-   !> - hann
+   !> - int=cubic ; flt=2*hamming(2,3)
+   !> - flt=hann
    !> see @ref filter module for more information.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
-   !
+   !> - November, 2013 - Initial Version
+   !> @date June, 2015 - change way to get information in namelist, 
+   !> value follows string "flt ="
+   !>
    !> @param[in] cd_name      variable name
    !> @param[in] cd_varinfo   variable information read in namelist 
    !-------------------------------------------------------------------
@@ -7150,6 +7823,7 @@ CONTAINS
 
       ! local variable
       CHARACTER(LEN=lc) :: cl_tmp
+      CHARACTER(LEN=lc) :: cl_flt
       INTEGER(i4)       :: il_ind
 
       ! loop indices
@@ -7162,18 +7836,28 @@ CONTAINS
       ji=1
       cl_tmp=fct_split(cd_varinfo,ji,';')
       DO WHILE( TRIM(cl_tmp) /= '' )
+         il_ind=INDEX(TRIM(cl_tmp),'flt')
+         IF( il_ind /= 0 )THEN
+            cl_flt=fct_split(cl_tmp,2,'=')
+            EXIT
+         ENDIF
+         ji=ji+1
+         cl_tmp=fct_split(cd_varinfo,ji,';')         
+      ENDDO
+      
+      IF( TRIM(cl_flt) /= '' )THEN
          DO jj=1,ip_nfilter
-            il_ind=INDEX(fct_lower(cl_tmp),TRIM(cp_filter_list(jj)))
+            il_ind=INDEX(fct_lower(cl_flt),TRIM(cp_filter_list(jj)))
             IF( il_ind /= 0 )THEN
                var__get_filter(1)=TRIM(cp_filter_list(jj))
 
-               ! look for number of turn
-               il_ind=SCAN(fct_lower(cl_tmp),'*')
+               ! look for number of run
+               il_ind=SCAN(fct_lower(cl_flt),'*')
                IF( il_ind /=0 )THEN
-                  IF( fct_is_num(cl_tmp(1:il_ind-1)) )THEN
-                     var__get_filter(2)=TRIM(cl_tmp(1:il_ind-1))
-                  ELSE IF( fct_is_num(cl_tmp(il_ind+1:)) )THEN
-                     var__get_filter(2)=TRIM(cl_tmp(il_ind+1:))
+                  IF( fct_is_num(cl_flt(1:il_ind-1)) )THEN
+                     var__get_filter(2)=TRIM(cl_flt(1:il_ind-1))
+                  ELSE IF( fct_is_num(cl_flt(il_ind+1:)) )THEN
+                     var__get_filter(2)=TRIM(cl_flt(il_ind+1:))
                   ELSE
                      var__get_filter(2)='1'
                   ENDIF
@@ -7182,18 +7866,18 @@ CONTAINS
                ENDIF
 
                ! look for filter parameter
-               il_ind=SCAN(fct_lower(cl_tmp),'(')
+               il_ind=SCAN(fct_lower(cl_flt),'(')
                IF( il_ind /=0 )THEN
-                  cl_tmp=TRIM(cl_tmp(il_ind+1:))
-                  il_ind=SCAN(fct_lower(cl_tmp),')')
+                  cl_flt=TRIM(cl_flt(il_ind+1:))
+                  il_ind=SCAN(fct_lower(cl_flt),')')
                   IF( il_ind /=0 )THEN
-                     cl_tmp=TRIM(cl_tmp(1:il_ind-1))
+                     cl_flt=TRIM(cl_flt(1:il_ind-1))
                      ! look for cut-off frequency
-                     var__get_filter(3)=fct_split(cl_tmp,1,',')
+                     var__get_filter(3)=fct_split(cl_flt,1,',')
                      ! look for halo size
-                     var__get_filter(4)=fct_split(cl_tmp,2,',')
+                     var__get_filter(4)=fct_split(cl_flt,2,',')
                      ! look for alpha parameter
-                     var__get_filter(5)=fct_split(cl_tmp,3,',')
+                     var__get_filter(5)=fct_split(cl_flt,3,',')
                   ELSE
                      CALL logger_error("VAR GET FILTER: variable "//&
                      &  TRIM(cd_name)//&
@@ -7214,12 +7898,63 @@ CONTAINS
                EXIT
             ENDIF
          ENDDO
-         IF( jj /= ip_nfilter + 1 ) EXIT
+      ENDIF
+
+   END FUNCTION var__get_filter
+   !-------------------------------------------------------------------
+   !> @brief
+   !> This function check if variable information read in namelist contains 
+   !> unit and return it if true. 
+   !> 
+   !> @details 
+   !> unit is assume to follow string "unt ="
+   !>
+   !> @author J.Paul
+   !> - June, 2015- Initial Version
+   !
+   !> @param[in] cd_name      variable name
+   !> @param[in] cd_varinfo   variable information read in namelist
+   !> @return unit string character 
+   !-------------------------------------------------------------------
+   FUNCTION var__get_unt( cd_name, cd_varinfo )
+      IMPLICIT NONE
+      ! Argument
+      CHARACTER(LEN=*), INTENT(IN   ) :: cd_name
+      CHARACTER(LEN=*), INTENT(IN   ) :: cd_varinfo
+
+      ! function
+      CHARACTER(LEN=lc)               :: var__get_unt
+
+      ! local variable
+      CHARACTER(LEN=lc) :: cl_tmp
+      
+      INTEGER(i4)       :: il_ind
+
+      ! loop indices
+      INTEGER(i4) :: ji
+      !----------------------------------------------------------------
+
+      var__get_unt=''
+
+      ji=1
+      cl_tmp=fct_split(cd_varinfo,ji,';')
+      DO WHILE( TRIM(cl_tmp) /= '' )
+         il_ind=INDEX(TRIM(cl_tmp),'unt')
+         IF( il_ind /= 0 )THEN
+            var__get_unt=fct_split(cl_tmp,2,'=')
+            EXIT
+         ENDIF
          ji=ji+1
          cl_tmp=fct_split(cd_varinfo,ji,';')         
       ENDDO
 
-   END FUNCTION var__get_filter
+      IF( TRIM(var__get_unt) /= '' )THEN
+         CALL logger_debug("VAR GET UNIT: will use units "//&
+            &  TRIM(var__get_unt)//" for variable "//&
+            &  TRIM(cd_name) )
+      ENDIF
+
+   END FUNCTION var__get_unt
    !-------------------------------------------------------------------
    !> @brief 
    !> This function search and save the biggest dimensions use 
@@ -7320,6 +8055,57 @@ CONTAINS
    END SUBROUTINE var_limit_value
    !-------------------------------------------------------------------
    !> @brief
+   !> This subroutine replace unit name of the variable,
+   !> and apply unit factor to the value of this variable.
+   !> 
+   !> @details
+   !> new unit name (unt) and unit factor (unf) are read from the namelist.
+   !>
+   !> @note the variable value should be already read.
+   !>
+   !> @author J.Paul
+   !> - June, 2015- Initial Version
+   !
+   !> @param[inout] td_var variable structure
+   !-------------------------------------------------------------------
+   SUBROUTINE var_chg_unit( td_var )
+      IMPLICIT NONE
+      ! Argument
+      TYPE(TVAR), INTENT(INOUT) :: td_var
+
+      ! local variable
+      TYPE(TATT)                :: tl_att
+
+      ! loop indices
+      !----------------------------------------------------------------
+
+      IF( ASSOCIATED(td_var%d_value) )THEN
+         !- change value
+         IF( td_var%d_unf /= 1._dp )THEN
+            WHERE( td_var%d_value(:,:,:,:) /= td_var%d_fill )
+               td_var%d_value(:,:,:,:)=td_var%d_value(:,:,:,:)*td_var%d_unf
+            END WHERE
+
+            !- change scale factor and offset to avoid mistake
+            tl_att=att_init('scale_factor',1)
+            CALL var_move_att(td_var, tl_att)
+
+            tl_att=att_init('add_offset',0)
+            CALL var_move_att(td_var, tl_att)
+         ENDIF
+
+         !- change unit name 
+         IF( TRIM(td_var%c_unt) /= TRIM(td_var%c_units) .AND. &
+         &   TRIM(td_var%c_unt) /= '' )THEN
+            tl_att=att_init('units',TRIM(td_var%c_unt))
+            CALL var_move_att(td_var,tl_att)
+         ENDIF
+
+      ENDIF
+
+   END SUBROUTINE var_chg_unit
+   !-------------------------------------------------------------------
+   !> @brief
    !> This subroutine check variable dimension expected, as defined in
    !> file 'variable.cfg'.
    !> 
@@ -7413,7 +8199,8 @@ CONTAINS
    !> string character of dimension
    !> 
    !> @author J.Paul
-   !> - August, 2014- Initial Version
+   !> - August, 2014 - Initial Version
+   !> @date July 2015 - do not use dim_disorder anymore
    !
    !> @param[inout] td_var       variable structure
    !> @param[in]    cd_dimorder  string character of dimension order to be used
@@ -7437,9 +8224,11 @@ CONTAINS
       cl_dimorder=TRIM(cp_dimorder)
       IF( PRESENT(cd_dimorder) ) cl_dimorder=TRIM(ADJUSTL(cd_dimorder))
 
+      CALL logger_debug("VAR REORDER: work on "//TRIM(td_var%c_name)//&
+         &  " new dimension order "//TRIM(cl_dimorder))
+
       tl_dim(:)=dim_copy(td_var%t_dim(:))
 
-      CALL dim_unorder(tl_dim(:))
       CALL dim_reorder(tl_dim(:),TRIM(cl_dimorder))
 
       ALLOCATE(dl_value(tl_dim(1)%i_len, &

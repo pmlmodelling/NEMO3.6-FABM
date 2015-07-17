@@ -144,17 +144,25 @@ CONTAINS
    !>
    !> @author J.Paul
    !> - November, 2013- Initial Version
-   !
+   !> @date May, 2015 - add optional message to netcdf error message
+   !>
    !> @param[in] id_status error status
+   !> @param[in] cd_msg    message
    !-------------------------------------------------------------------
-   SUBROUTINE iom_cdf__check(id_status)
+   SUBROUTINE iom_cdf__check(id_status, cd_msg)
       IMPLICIT NONE
       ! Argument      
-      INTEGER(i4), INTENT(IN) :: id_status
+      INTEGER(i4)     , INTENT(IN)           :: id_status
+      CHARACTER(LEN=*), INTENT(IN), OPTIONAL :: cd_msg
+      ! local variable
+      CHARACTER(LEN=lc) :: cl_msg
       !----------------------------------------------------------------
 
+      cl_msg=""
+      IF( PRESENT(cd_msg) ) cl_msg=cd_msg
+
       IF( id_status /= NF90_NOERR )THEN
-         CALL logger_error(TRIM(NF90_STRERROR(id_status)))
+         CALL logger_error(TRIM(cl_msg)//TRIM(NF90_STRERROR(id_status)))
       ENDIF
 
    END SUBROUTINE iom_cdf__check
@@ -202,10 +210,11 @@ CONTAINS
 
             CALL logger_info( " IOM CDF CREATE: file "//TRIM(td_file%c_name) )
 
-            il_status = NF90_CREATE( TRIM(td_file%c_name),&
-            &                        NF90_WRITE,               &
-            &                        td_file%i_id)
-            CALL iom_cdf__check(il_status)
+            il_status = NF90_CREATE(TRIM(td_file%c_name),&
+            &                       cmode=NF90_64BIT_OFFSET,&
+            &                       ncid=td_file%i_id)
+         !NF90_WRITE,               &
+            CALL iom_cdf__check(il_status," IOM CDF CREATE: ")
 
             td_file%l_def=.TRUE.
 
@@ -227,9 +236,10 @@ CONTAINS
                il_status = NF90_OPEN( TRIM(td_file%c_name), &
                &                      NF90_NOWRITE,         &
                &                      td_file%i_id)
-               CALL iom_cdf__check(il_status)
+               CALL iom_cdf__check(il_status," IOM CDF OPEN: ")
 
-               CALL logger_trace("IOM CDF OPEN "//TRIM(td_file%c_name)//" "//TRIM(fct_str(td_file%i_id)))
+               CALL logger_trace("IOM CDF OPEN "//TRIM(td_file%c_name)//" "//&
+                  &  TRIM(fct_str(td_file%i_id)))
             ELSE
 
                CALL logger_info( "IOM CDF OPEN: file "//&
@@ -238,7 +248,7 @@ CONTAINS
                il_status = NF90_OPEN( TRIM(td_file%c_name), &
                &                      NF90_WRITE,           &
                &                      td_file%i_id)
-               CALL iom_cdf__check(il_status)
+               CALL iom_cdf__check(il_status,"IOM CDF OPEN: ")
 
             ENDIF
 
@@ -290,7 +300,7 @@ CONTAINS
          &  " IOM CDF CLOSE: file "//TRIM(td_file%c_name))
 
          il_status = NF90_CLOSE(td_file%i_id)
-         CALL iom_cdf__check(il_status)
+         CALL iom_cdf__check(il_status,"IOM CDF CLOSE: ")
 
          td_file%i_id = 0
 
@@ -325,7 +335,7 @@ CONTAINS
 
       il_status=NF90_INQUIRE(td_file%i_id, td_file%i_ndim, &
       &     td_file%i_nvar, td_file%i_natt, td_file%i_uldid, il_fmt)
-      CALL iom_cdf__check(il_status)
+      CALL iom_cdf__check(il_status,"IOM CDF GET INFO: ")
 
       SELECT CASE(il_fmt)
          CASE(nf90_format_classic, nf90_format_64bit)
@@ -479,20 +489,20 @@ CONTAINS
             END SELECT
 
             ! look for depth id
-            IF( INDEX(TRIM(td_file%t_var(ji)%c_name),'depth') /= 0 )THEN
+            IF( INDEX(TRIM(fct_lower(td_file%t_var(ji)%c_name)),'depth')/=0 )THEN
                IF( td_file%i_depthid == 0 )THEN
                   td_file%i_depthid=ji
                ELSE
                   IF( td_file%i_depthid /= ji )THEN
-                     CALL logger_error("IOM CDF GET FILE VAR: find more than one "//&
-                     &                 "depth variable in file "//&
-                     &                 TRIM(td_file%c_name) )
+                     CALL logger_error("IOM CDF GET FILE VAR: find more"//&
+                        &  " than one depth variable in file "//&
+                        &  TRIM(td_file%c_name) )
                   ENDIF
                ENDIF
             ENDIF
 
             ! look for time id
-            IF( INDEX(TRIM(td_file%t_var(ji)%c_name),'time') /= 0 )THEN
+            IF( INDEX(TRIM(fct_lower(td_file%t_var(ji)%c_name)),'time')/=0 )THEN
                IF( td_file%i_timeid == 0 )THEN
                   td_file%i_timeid=ji
                ELSE
@@ -503,9 +513,8 @@ CONTAINS
                   IF( il_attid /= 0 )THEN
                      td_file%i_timeid=ji
                   !ELSE
-                  !   print *,'error'
-                  !   CALL logger_error("IOM OPEN: find more than one "//&
-                  !   &                 "time variable in file "//&
+                  !   CALL logger_error("IOM CDF GET FILE VAR: find more "//&
+                  !   &                 "than one time variable in file "//&
                   !   &                 TRIM(td_file%c_name) )
                   ENDIF
                ENDIF
@@ -567,6 +576,8 @@ CONTAINS
    !
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date February, 2015 - create unused dimension, when reading dimension
+   !> of length less or equal to zero
    !
    !> @param[in] td_file   file structure
    !> @param[in] id_dimid  dimension id
@@ -582,6 +593,7 @@ CONTAINS
       INTEGER(i4)       :: il_status
       INTEGER(i4)       :: il_len
       CHARACTER(LEN=lc) :: cl_name
+      LOGICAL           :: ll_use
       !----------------------------------------------------------------
 
       ! check if file opened
@@ -600,9 +612,17 @@ CONTAINS
 
          il_status=NF90_INQUIRE_DIMENSION(td_file%i_id, id_dimid, &
          &                                cl_name, il_len )
-         CALL iom_cdf__check(il_status)
+         CALL iom_cdf__check(il_status,"IOM CDF READ DIM: ")
 
-         iom_cdf__read_dim_id=dim_init(cl_name, il_len)
+         ll_use=.TRUE.
+         IF( il_len <= 0 )THEN
+            CALL logger_warn( &
+         &  " IOM CDF READ DIM: dimension "//TRIM(fct_str(id_dimid))//&
+         &  " in file "//TRIM(td_file%c_name)//" is less or equel to zero")
+            il_len=1
+            ll_use=.FALSE.
+         ENDIF
+         iom_cdf__read_dim_id=dim_init(cl_name, il_len, ld_use=ll_use)
 
       ENDIF
 
@@ -612,7 +632,7 @@ CONTAINS
    !> given dimension name.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] cd_name   dimension name
@@ -633,13 +653,14 @@ CONTAINS
       IF( td_file%i_id == 0 )THEN
 
          CALL logger_error( &
-         &  " IOM CDF READ DIM: no id associated to file "//TRIM(td_file%c_name))
+         &  " IOM CDF READ DIM: no id associated to file "//&
+         &  TRIM(td_file%c_name))
 
       ELSE      
 
          il_status=NF90_INQ_DIMID( td_file%i_id, TRIM(ADJUSTL(cd_name)), &
          &                         il_dimid)
-         CALL iom_cdf__check(il_status)
+         CALL iom_cdf__check(il_status,"IOM CDF READ DIM: ")
 
          iom_cdf__read_dim_name=iom_cdf_read_dim(td_file, il_dimid)
 
@@ -713,11 +734,11 @@ CONTAINS
          &                                il_type,&
          &                                il_len, &
          &                                il_attid )
-         CALL iom_cdf__check(il_status)
+         CALL iom_cdf__check(il_status,"IOM CDF READ ATT: ")
 
          !! get attribute value
-         CALL logger_debug( " IOM CDF READ ATT: get attribute "//TRIM(cl_name)//&
-         &               " in file "//TRIM(td_file%c_name))
+         CALL logger_debug( " IOM CDF READ ATT: get attribute "//&
+            &            TRIM(cl_name)//" in file "//TRIM(td_file%c_name))
 
          SELECT CASE( il_type )
 
@@ -727,8 +748,8 @@ CONTAINS
                IF( LEN(cl_value) < il_len )THEN
 
                   CALL logger_error( &
-                  &  " IOM CDF READ ATT: not enough space to put attribute "//&
-                  &  TRIM(cl_name) )
+                  &  " IOM CDF READ ATT: not enough space to put "//&
+                  &  "attribute "//TRIM(cl_name) )
 
                ELSE
 
@@ -736,7 +757,7 @@ CONTAINS
                   il_status=NF90_GET_ATT(td_file%i_id, id_varid, &
                   &                      cl_name, &
                   &                      cl_value )
-                  CALL iom_cdf__check(il_status)
+                  CALL iom_cdf__check(il_status,"IOM CDF READ ATT: ")
 
                   iom_cdf__read_att_name=att_init(cl_name, cl_value)
 
@@ -757,7 +778,7 @@ CONTAINS
                   il_status=NF90_GET_ATT(td_file%i_id, id_varid, &
                   &                      cl_name, &
                   &                      bl_value(:))
-                  CALL iom_cdf__check(il_status)   
+                  CALL iom_cdf__check(il_status,"IOM CDF READ ATT: ")   
 
                   iom_cdf__read_att_name=att_init(cl_name, bl_value(:))
 
@@ -772,8 +793,8 @@ CONTAINS
                IF(il_status /= 0 )THEN
 
                   CALL logger_error( &
-                  &  " IOM CDF READ ATT: not enough space to put attribute "//&
-                  &  TRIM(cl_name) )
+                  &  " IOM CDF READ ATT: not enough space to put "//&
+                  &  "attribute "//TRIM(cl_name) )
 
                ELSE
 
@@ -781,7 +802,7 @@ CONTAINS
                   il_status=NF90_GET_ATT(td_file%i_id, id_varid, &
                   &                      cl_name, &
                   &                      sl_value(:))
-                  CALL iom_cdf__check(il_status)   
+                  CALL iom_cdf__check(il_status,"IOM CDF READ ATT: ")   
 
                   iom_cdf__read_att_name=att_init(cl_name, sl_value(:))
 
@@ -796,8 +817,8 @@ CONTAINS
                IF(il_status /= 0 )THEN
 
                   CALL logger_error( &
-                  &  " IOM CDF READ ATT: not enough space to put attribute "//&
-                  &  TRIM(cl_name) )
+                  &  " IOM CDF READ ATT: not enough space to put "//&
+                  &  "attribute "//TRIM(cl_name) )
 
                ELSE
 
@@ -805,7 +826,7 @@ CONTAINS
                   il_status=NF90_GET_ATT(td_file%i_id, id_varid, &
                   &                      cl_name, &
                   &                      il_value(:))
-                  CALL iom_cdf__check(il_status)   
+                  CALL iom_cdf__check(il_status,"IOM CDF READ ATT: ")   
 
                   iom_cdf__read_att_name=att_init(cl_name, il_value(:))
                ENDIF
@@ -819,8 +840,8 @@ CONTAINS
                IF(il_status /= 0 )THEN
 
                   CALL logger_error( &
-                  &  " IOM CDF READ ATT: not enough space to put attribute "//&
-                  &  TRIM(cl_name) )
+                  &  " IOM CDF READ ATT: not enough space to put "//&
+                  &  "attribute "//TRIM(cl_name) )
 
                ELSE
 
@@ -828,7 +849,7 @@ CONTAINS
                   il_status=NF90_GET_ATT(td_file%i_id, id_varid, &
                   &                      cl_name, &
                   &                      fl_value(:))
-                  CALL iom_cdf__check(il_status)   
+                  CALL iom_cdf__check(il_status,"IOM CDF READ ATT: ")   
 
                   iom_cdf__read_att_name=att_init(cl_name, fl_value(:))
 
@@ -843,8 +864,8 @@ CONTAINS
                IF(il_status /= 0 )THEN
 
                   CALL logger_error( &
-                  &  " IOM CDF READ ATT: not enough space to put attribute "//&
-                  &  TRIM(cl_name) )
+                  &  " IOM CDF READ ATT: not enough space to put "//&
+                  &  "attribute "//TRIM(cl_name) )
 
                ELSE
 
@@ -852,7 +873,7 @@ CONTAINS
                   il_status=NF90_GET_ATT(td_file%i_id, id_varid, &
                   &                      cl_name, &
                   &                      dl_value(:))
-                  CALL iom_cdf__check(il_status)   
+                  CALL iom_cdf__check(il_status,"IOM CDF READ ATT: ")   
 
                   iom_cdf__read_att_name=att_init(cl_name, dl_value(:))
 
@@ -901,7 +922,7 @@ CONTAINS
 
          ! get attribute name
          il_status=NF90_INQ_ATTNAME(td_file%i_id, id_varid, id_attid, cl_name)
-         CALL iom_cdf__check(il_status)
+         CALL iom_cdf__check(il_status,"IOM CDF READ ATT: ")
 
          ! read attribute
          iom_cdf__read_att_id=iom_cdf__read_att_name(td_file, id_varid, cl_name)
@@ -1239,7 +1260,7 @@ CONTAINS
       ELSE
 
          ! inquire variable
-         CALL logger_trace( &
+         CALL logger_debug( &
          &  " IOM CDF READ VAR META: inquire variable "//&
          &  TRIM(fct_str(id_varid))//&
          &  " in file "//TRIM(td_file%c_name))
@@ -1252,9 +1273,10 @@ CONTAINS
          &                                il_ndim,    &
          &                                il_dimid(:),&
          &                                il_natt )
-         CALL iom_cdf__check(il_status)
+         CALL iom_cdf__check(il_status,"IOM CDF READ VAR META: ")
          !!! fill variable dimension structure
          tl_dim(:)=iom_cdf__read_var_dim( td_file, il_ndim, il_dimid(:) )
+
          IF( il_natt /= 0 )THEN
             ALLOCATE( tl_att(il_natt) )
             !!! fill variable attribute structure
@@ -1275,12 +1297,12 @@ CONTAINS
                   &                 id_type=tl_att(il_attid)%i_type)
                ELSE
                   ! create attribute _FillValue
-                  SELECT CASE(TRIM(cl_name))
+                  SELECT CASE(TRIM(fct_lower(cl_name)))
                      CASE DEFAULT
                         CALL logger_info("IOM CDF READ VAR META: assume _FillValue is equal to "//&
                         &                "zero for variable "//TRIM(cl_name) )
                         tl_fill=att_init('_FillValue',0.)
-                     CASE('nav_lon','nav_lat', &
+                     CASE('nav_lon','nav_lat', 'nav_lev', &
                         &  'glamt','glamu','glamv','glamf', &
                         &  'gphit','gphiu','gphiv','gphif')
                         CALL logger_info("IOM CDF READ VAR META: assume _FillValue is equal to "//&
@@ -1310,7 +1332,7 @@ CONTAINS
          ELSE
             ALLOCATE(tl_att(il_natt+1) )
             ! create attribute _FillValue
-            SELECT CASE(TRIM(cl_name))
+            SELECT CASE(TRIM(fct_lower(cl_name)))
                CASE DEFAULT
                   CALL logger_info("IOM CDF READ VAR META: assume _FillValue is equal to "//&
                   &                "zero for variable "//TRIM(cl_name) )
@@ -1352,8 +1374,10 @@ CONTAINS
    !> dimension (use or not). 
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
-   !
+   !> - November, 2013 - Initial Version
+   !> @date July, 2015 
+   !> - Bug fix: use order to disorder table (see dim_init)
+   !>
    !> @param[in] td_file   file structure
    !> @param[in] id_ndim   number of dimension
    !> @param[in] id_dimid  array of dimension id
@@ -1370,7 +1394,7 @@ CONTAINS
       TYPE(TDIM), DIMENSION(ip_maxdim) :: iom_cdf__read_var_dim
 
       ! local variable
-      INTEGER(i4), DIMENSION(ip_maxdim) :: il_2xyzt
+      INTEGER(i4), DIMENSION(ip_maxdim) :: il_xyzt2
 
       TYPE(TDIM) , DIMENSION(ip_maxdim) :: tl_dim
 
@@ -1394,19 +1418,19 @@ CONTAINS
 
 
          DO ji = 1, id_ndim
-            CALL logger_trace( " IOM CDF READ VAR DIM: get variable dimension "//&
-            &               TRIM(fct_str(ji)) )
+            CALL logger_debug( " IOM CDF READ VAR DIM: get variable "//&
+               &  "dimension "//TRIM(fct_str(ji)) )
 
-            il_2xyzt(ji)=td_file%t_dim(id_dimid(ji))%i_2xyzt
+            il_xyzt2(ji)=td_file%t_dim(id_dimid(ji))%i_xyzt2
 
             ! read dimension information
-            tl_dim(ji) = dim_init( td_file%t_dim(il_2xyzt(ji))%c_name, &
-            &                      td_file%t_dim(il_2xyzt(ji))%i_len )
+            tl_dim(ji) = dim_init( td_file%t_dim(il_xyzt2(ji))%c_name, &
+            &                      td_file%t_dim(il_xyzt2(ji))%i_len )
          ENDDO
 
          ! reorder dimension to ('x','y','z','t')
          CALL dim_reorder(tl_dim(:))
-      
+ 
          iom_cdf__read_var_dim(:)=dim_copy(tl_dim(:))
 
          ! clean
@@ -1474,16 +1498,15 @@ CONTAINS
    !> could be specify in a 4 dimension array (/'x','y','z','t'/)
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
+   !> @date June, 2015 
+   !> - use scale factor and offset, as soon as read variable value
    !
    !> @param[in] td_file   file structure
    !> @param[inout] td_var variable structure
    !> @param[in] id_start  index in the variable from which the data values will be read
    !> @param[in] id_count  number of indices selected along each dimension
    !> @return variable structure completed 
-   !
-   !> @todo
-   !> - warning do not change fill value when use scale factor..
    !-------------------------------------------------------------------
    SUBROUTINE iom_cdf__read_var_value(td_file, td_var, &
    &                                  id_start, id_count )
@@ -1495,14 +1518,15 @@ CONTAINS
       INTEGER(i4), DIMENSION(:), INTENT(IN),   OPTIONAL :: id_count
 
       ! local variable
-      INTEGER(i4)                       :: il_status
-      INTEGER(i4)                       :: il_tmp1
-      INTEGER(i4)                       :: il_tmp2
-      INTEGER(i4)                       :: il_varid
-      INTEGER(i4), DIMENSION(ip_maxdim) :: il_start
-      INTEGER(i4), DIMENSION(ip_maxdim) :: il_count
-      INTEGER(i4), DIMENSION(ip_maxdim) :: il_start_ord
-      INTEGER(i4), DIMENSION(ip_maxdim) :: il_count_ord
+      INTEGER(i4)                                    :: il_status
+      INTEGER(i4)                                    :: il_tmp1
+      INTEGER(i4)                                    :: il_tmp2
+      INTEGER(i4)                                    :: il_varid
+      INTEGER(i4), DIMENSION(ip_maxdim)              :: il_start
+      INTEGER(i4), DIMENSION(ip_maxdim)              :: il_count
+      INTEGER(i4), DIMENSION(ip_maxdim)              :: il_start_ord
+      INTEGER(i4), DIMENSION(ip_maxdim)              :: il_count_ord
+
       REAL(dp)   , DIMENSION(:,:,:,:)  , ALLOCATABLE :: dl_value
       REAL(dp)   , DIMENSION(:,:,:,:)  , ALLOCATABLE :: dl_tmp
 
@@ -1517,16 +1541,16 @@ CONTAINS
          ! check id_count and id_start optionals parameters...
          IF( (       PRESENT(id_start)  .AND. (.NOT. PRESENT(id_count))) .OR. &
              ((.NOT. PRESENT(id_start)) .AND.        PRESENT(id_count) ) )THEN
-            CALL logger_warn( &
-            &  "IOM CDF READ VAR VALUE: id_start and id_count should be both specify")
+            CALL logger_warn( "IOM CDF READ VAR VALUE: id_start and id_count"//&
+               & " should be both specify")
          ENDIF
          IF( PRESENT(id_start).AND.PRESENT(id_count) )THEN
 
             IF( SIZE(id_start(:)) /= ip_maxdim .OR. &
             &   SIZE(id_count(:)) /= ip_maxdim )THEN
-               CALL logger_error("IOM CDF READ VAR: dimension of array start or count "//&
-               &      " are invalid to read variable "//TRIM(td_var%c_name)//&
-               &      " in file "//TRIM(td_file%c_name) )
+               CALL logger_error("IOM CDF READ VAR: dimension of array start"//&
+                  &  " or count are invalid to read variable "//&
+                  &  TRIM(td_var%c_name)//" in file "//TRIM(td_file%c_name) )
             ENDIF
 
             ! change dimension order from ('x','y','z','t')
@@ -1564,9 +1588,6 @@ CONTAINS
             &    td_var%t_dim( 4 )%i_len &
             &                                            /)) )THEN
 
-            CALL logger_error( "IOM CDF READ VAR VALUE: start + count exceed "//&
-            &  "variable dimension for "//TRIM(td_var%c_name) )
-
             DO ji = 1, ip_maxdim
                il_tmp1=il_start_ord(ji)+il_count_ord(ji)-1
                il_tmp2=td_var%t_dim(ji)%i_len
@@ -1574,10 +1595,12 @@ CONTAINS
                &  TRIM(fct_str(il_tmp1))//" variable dimension"//&
                &  TRIM(fct_str(il_tmp2)))
             ENDDO
+            CALL logger_error( "IOM CDF READ VAR VALUE: start + count exceed "//&
+            &  "variable dimension for "//TRIM(td_var%c_name) )
 
          ELSE
 
-            ! Allocate space to hold variable value (unorder)
+            ! Allocate space to hold variable value (disorder)
             ALLOCATE(dl_value( il_count(1), &
                &               il_count(2), &
                &               il_count(3), &
@@ -1600,7 +1623,7 @@ CONTAINS
             &                                       dl_value(:,:,:,:),  &
             &                                       start = il_start(:),&
             &                                       count = il_count(:) )
-            CALL iom_cdf__check(il_status)
+            CALL iom_cdf__check(il_status,"IOM CDF READ VAR VALUE: ")
 
             ! Allocate space to hold variable value in structure
             IF( ASSOCIATED(td_var%d_value) )THEN
@@ -1662,6 +1685,13 @@ CONTAINS
             IF( td_var%d_fill == 0._dp )THEN
                CALL var_chg_FillValue(td_var)
             ENDIF
+
+            ! use scale factor and offset
+            WHERE( td_var%d_value(:,:,:,:) /= td_var%d_fill )
+               td_var%d_value(:,:,:,:) = &
+               &  td_var%d_value(:,:,:,:)*td_var%d_scf + td_var%d_ofs
+            END WHERE
+
          ENDIF
       ELSE
          CALL logger_error( &
@@ -1672,19 +1702,27 @@ CONTAINS
    END SUBROUTINE iom_cdf__read_var_value
    !-------------------------------------------------------------------
    !> @brief This subroutine write file structure in an opened netcdf file.
-   !
+   !>
+   !> @details
+   !> optionally, you could specify dimension order (default 'xyzt')
+   !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
+   !> @date July, 2015 
+   !> - add dimension order option 
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
-   SUBROUTINE iom_cdf_write_file(td_file)
+   SUBROUTINE iom_cdf_write_file(td_file, cd_dimorder)
       IMPLICIT NONE
       ! Argument      
-      TYPE(TFILE), INTENT(INOUT) :: td_file
+      TYPE(TFILE)     , INTENT(INOUT) :: td_file
+      CHARACTER(LEN=*), INTENT(IN   ), OPTIONAL :: cd_dimorder
 
       ! local variable
       INTEGER(i4), DIMENSION(:), ALLOCATABLE :: il_value
+
+      CHARACTER(LEN=lc)                      :: cl_dimorder
 
       TYPE(TVAR)                             :: tl_var
 
@@ -1693,7 +1731,11 @@ CONTAINS
       ! loop indices
       INTEGER(i4) :: ji
       INTEGER(i4) :: jj
+      INTEGER(i4) :: jvar
       !----------------------------------------------------------------
+
+      cl_dimorder='xyzt'
+      IF( PRESENT(cd_dimorder) ) cl_dimorder=TRIM(cd_dimorder)
 
       ! check if file opened
       IF( td_file%i_id == 0 )THEN
@@ -1723,6 +1765,15 @@ CONTAINS
                ENDDO
                ! clean
                CALL dim_clean(tl_dim(:))
+            ENDIF
+
+            ! change dimension order
+            IF( TRIM(cl_dimorder) /= 'xyzt' )THEN
+               CALL dim_reorder(td_file%t_dim(:),TRIM(cl_dimorder))
+               DO jvar=1,td_file%i_nvar
+                  CALL logger_debug("VAR REORDER: "//TRIM(td_file%t_var(jvar)%c_name))
+                  CALL var_reorder(td_file%t_var(jvar),TRIM(cl_dimorder))
+               ENDDO
             ENDIF
 
             ! write dimension in file
@@ -1797,7 +1848,7 @@ CONTAINS
 
          ! Enter define mode
          il_status=NF90_REDEF(td_file%i_id)
-         CALL iom_cdf__check(il_status)
+         CALL iom_cdf__check(il_status,"IOM CDF WRITE FILE DIM: ")
 
          td_file%l_def=.TRUE.
 
@@ -1812,17 +1863,17 @@ CONTAINS
 
             il_status=NF90_DEF_DIM(td_file%i_id, fct_upper(td_dim%c_sname), &
             &                      NF90_UNLIMITED, td_dim%i_id)
-            CALL iom_cdf__check(il_status)
+            CALL iom_cdf__check(il_status,"IOM CDF WRITE FILE DIM: ")
 
          ELSE
             ! write not unlimited dimension
-            CALL logger_trace( &
+            CALL logger_debug( &
             &  "IOM CDF WRITE FILE DIM: write dimension "//TRIM(td_dim%c_name)//&
             &  " in file "//TRIM(td_file%c_name))
             
             il_status=NF90_DEF_DIM(td_file%i_id, fct_upper(td_dim%c_sname), &
             &                      td_dim%i_len, td_dim%i_id)
-            CALL iom_cdf__check(il_status)
+            CALL iom_cdf__check(il_status,"IOM CDF WRITE FILE DIM: ")
 
          ENDIF
       ENDIF
@@ -1858,7 +1909,7 @@ CONTAINS
 
          ! Enter define mode
          il_status=NF90_REDEF(td_file%i_id)
-         CALL iom_cdf__check(il_status)
+         CALL iom_cdf__check(il_status,"IOM CDF WRITE FILE ATT: ")
 
          td_file%l_def=.TRUE.
 
@@ -1875,13 +1926,13 @@ CONTAINS
             ! put the attribute
             il_status = NF90_PUT_ATT(td_file%i_id, id_varid, &
             &  td_att%c_name, td_att%c_value )
-            CALL iom_cdf__check(il_status)
+            CALL iom_cdf__check(il_status,"IOM CDF WRITE FILE ATT: ")
 
          CASE(NF90_BYTE, NF90_SHORT, NF90_INT, NF90_FLOAT, NF90_DOUBLE)
             ! put the attribute
             il_status = NF90_PUT_ATT(td_file%i_id, id_varid, &
             &  td_att%c_name, td_att%d_value )
-            CALL iom_cdf__check(il_status)
+            CALL iom_cdf__check(il_status,"IOM CDF WRITE FILE ATT: ")
 
       END SELECT
 
@@ -1916,12 +1967,12 @@ CONTAINS
 
          ! Enter define mode
          il_status=NF90_REDEF(td_file%i_id)
-         CALL iom_cdf__check(il_status)
+         CALL iom_cdf__check(il_status,"IOM CDF WRITE VAR: ")
 
          td_file%l_def=.TRUE.
 
       ENDIF
-      
+ 
       ! check if file and variable dimension conform
       IF( file_check_var_dim(td_file, td_var) )THEN
 
@@ -1937,12 +1988,17 @@ CONTAINS
                EXIT
             ENDIF
          ENDDO
+         ! ugly patch until NEMO do not force to use 0. as FillValue 
          IF( ll_chg )THEN
             ! not a dimension variable
             ! change FillValue
-
-            ! ugly patch until NEMO do not force to use 0. as FillValue 
-            CALL var_chg_FillValue(td_var,0._dp)
+            SELECT CASE( TRIM(fct_lower(td_var%c_name)) )
+               CASE DEFAULT
+                  CALL var_chg_FillValue(td_var,0._dp)
+               CASE('nav_lon','nav_lat', &
+                  & 'glamt','glamu','glamv','glamf', &
+                  & 'gphit','gphiu','gphiv','gphif')
+            END SELECT
          ENDIF
 
          ! define variable in file
@@ -1956,7 +2012,7 @@ CONTAINS
 
             ! Leave define mode
             il_status=NF90_ENDDEF(td_file%i_id)
-            CALL iom_cdf__check(il_status)
+            CALL iom_cdf__check(il_status,"IOM CDF WRITE VAR: ")
 
             td_file%l_def=.FALSE.
 
@@ -2001,11 +2057,19 @@ CONTAINS
       ! copy structure
       tl_var=var_copy(td_var)
 
+      ! forced to use float type
+      IF( tl_var%d_unf /= 1. .AND. tl_var%i_type==NF90_SHORT )THEN
+         tl_var%i_type=NF90_FLOAT
+      ENDIF
+
       IF( ALL( .NOT. tl_var%t_dim(:)%l_use ) )THEN
+         CALL logger_debug( &
+         &  "IOM CDF WRITE VAR DEF scalar: define variable "//&
+         &  TRIM(tl_var%c_name)//" in file "//TRIM(td_file%c_name))
          ! scalar value
          il_status = NF90_DEF_VAR(td_file%i_id, TRIM(tl_var%c_name), &
          &                        tl_var%i_type, varid=iom_cdf__write_var_def) 
-         CALL iom_cdf__check(il_status)
+         CALL iom_cdf__check(il_status,"IOM CDF WRITE VAR DEF: ")
       ELSE
 
          ! check which dimension use
@@ -2019,18 +2083,19 @@ CONTAINS
             ENDIF
          ENDDO
 
-         CALL logger_trace( &
+         CALL logger_debug( &
          &  "IOM CDF WRITE VAR DEF: define dimension to be used for variable "//&
          &  TRIM(tl_var%c_name)//" in file "//TRIM(td_file%c_name))
 
          DO ji=1,jj
-            CALL logger_trace("IOM CDF WRITE VAR DEF: dimid "//TRIM(fct_str(il_dimid(ji))) )
+            CALL logger_debug("IOM CDF WRITE VAR DEF: dimid "//TRIM(fct_str(il_dimid(ji))) )
          ENDDO
+
          il_status = NF90_DEF_VAR(td_file%i_id, TRIM(tl_var%c_name),     &
          &                        tl_var%i_type,                         &
          &                        il_dimid(1:jj),                        &
          &                        varid=iom_cdf__write_var_def           )
-         CALL iom_cdf__check(il_status)
+         CALL iom_cdf__check(il_status,"IOM CDF WRITE VAR DEF: ")
       ENDIF
 
       ! remove unuseful attribute
@@ -2042,17 +2107,22 @@ CONTAINS
       ENDIF
 
       DO ji = 1, tl_var%i_natt
-         CALL logger_trace( &
+         CALL logger_debug( &
          &  " IOM CDF WRITE VAR DEF: put attribute "//TRIM(tl_var%t_att(ji)%c_name)//&
          &  " for variable "//TRIM(tl_var%c_name)//&
          &  " in file "//TRIM(td_file%c_name) )
+
+         ! forced FillValue to have same type than variable
+         IF( TRIM(tl_var%t_att(ji)%c_name) == '_FillValue' )THEN
+            tl_var%t_att(ji)%i_type=tl_var%i_type
+         ENDIF
 
          IF( tl_var%t_att(ji)%i_type == NF90_CHAR )THEN
             IF( TRIM(tl_var%t_att(ji)%c_value) /= '' )THEN
                il_status = NF90_PUT_ATT(td_file%i_id, iom_cdf__write_var_def, &
                &                        TRIM(tl_var%t_att(ji)%c_name),        &
                &                        TRIM(tl_var%t_att(ji)%c_value)        )
-               CALL iom_cdf__check(il_status)
+               CALL iom_cdf__check(il_status,"IOM CDF WRITE VAR DEF: ")
             ENDIF
          ELSE
             SELECT CASE(tl_var%t_att(ji)%i_type)
@@ -2081,8 +2151,8 @@ CONTAINS
                   &                        iom_cdf__write_var_def,         &
                   &                        TRIM(tl_var%t_att(ji)%c_name),  &
                   &                        REAL(tl_var%t_att(ji)%d_value(:),dp))
-               END SELECT
-            CALL iom_cdf__check(il_status)
+            END SELECT
+            CALL iom_cdf__check(il_status,"IOM CDF WRITE VAR DEF: ")
          ENDIF
       ENDDO
 
@@ -2096,7 +2166,9 @@ CONTAINS
    !> replaced by default fill values defined in module netcdf for each type. 
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
+   !> @date June, 2015
+   !> - reuse scale factor and offset, before writing variable
    !
    !> @param[in] td_file   file structure
    !> @param[in] td_var    variable structure
@@ -2121,7 +2193,13 @@ CONTAINS
       CALL logger_trace( &
       &  "IOM CDF WRITE VAR VALUE: get dimension to be used for variable "//&
       &  TRIM(td_var%c_name)//" in file "//TRIM(td_file%c_name))
-
+   
+      ! use scale factor and offset
+      WHERE( td_var%d_value(:,:,:,:) /= td_var%d_fill )
+         td_var%d_value(:,:,:,:) = &
+         &  (td_var%d_value(:,:,:,:)-td_var%d_ofs)/td_var%d_scf
+      END WHERE
+      
       jj=0
       DO ji = 1, ip_maxdim
          IF( td_var%t_dim(ji)%l_use )THEN
@@ -2152,7 +2230,7 @@ CONTAINS
       &  "in file "//TRIM(td_file%c_name))
 
       il_status = NF90_PUT_VAR( td_file%i_id, td_var%i_id, dl_value(:,:,:,:))
-      CALL iom_cdf__check(il_status)
+      CALL iom_cdf__check(il_status,"IOM CDF WRITE VAR VALUE: ")
 
       DEALLOCATE( dl_value )
 

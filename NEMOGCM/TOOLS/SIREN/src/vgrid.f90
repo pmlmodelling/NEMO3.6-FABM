@@ -69,6 +69,7 @@
 !> @date November, 2013 - Initial Version
 !> @date Spetember, 2014
 !> - add header
+!> @date June, 2015 - update subroutine with NEMO 3.6
 !>
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -138,6 +139,7 @@ CONTAINS
    !> @param[in] dd_ppsur
    !-------------------------------------------------------------------
    SUBROUTINE vgrid_zgr_z( dd_gdepw, dd_gdept, dd_e3w, dd_e3t,          &
+   &                       dd_e3w_1d, dd_e3t_1d, &
    &                       dd_ppkth, dd_ppkth2, dd_ppacr, dd_ppacr2,    &
    &                       dd_ppdzmin, dd_pphmax, dd_pp_to_be_computed, &
    &                       dd_ppa0, dd_ppa1, dd_ppa2, dd_ppsur )
@@ -147,6 +149,8 @@ CONTAINS
       REAL(dp), DIMENSION(:), INTENT(INOUT) :: dd_gdept
       REAL(dp), DIMENSION(:), INTENT(INOUT) :: dd_e3w
       REAL(dp), DIMENSION(:), INTENT(INOUT) :: dd_e3t
+      REAL(dp), DIMENSION(:), INTENT(INOUT) :: dd_e3w_1d
+      REAL(dp), DIMENSION(:), INTENT(INOUT) :: dd_e3t_1d
 
       REAL(dp)              , INTENT(IN   ) :: dd_ppkth
       REAL(dp)              , INTENT(IN   ) :: dd_ppkth2
@@ -225,7 +229,7 @@ CONTAINS
          dl_za1 = dl_zhmax/REAL((il_jpk-1),dp) 
          DO jk = 1, il_jpk
             dl_zw = REAL(jk,dp)
-            dl_zt = REAL(jk,dp) + 0.5
+            dl_zt = REAL(jk,dp) + 0.5_dp
             dd_gdepw(jk) = ( dl_zw - 1.0 ) * dl_za1
             dd_gdept(jk) = ( dl_zt - 1.0 ) * dl_za1
             dd_e3w  (jk) =  dl_za1
@@ -236,7 +240,7 @@ CONTAINS
 
          DO jk = 1, il_jpk
             dl_zw = REAL( jk,dp)
-            dl_zt = REAL( jk,dp) + 0.5
+            dl_zt = REAL( jk,dp) + 0.5_dp
             dd_gdepw(jk) = ( dl_zsur + dl_za0 * dl_zw + &
             &                dl_za1 * dl_zacr * LOG( COSH( (dl_zw-dl_zkth)/dl_zacr ) ) + &
             &                dl_za2 * dl_zacr2* LOG( COSH( (dl_zw-dl_zkth2)/dl_zacr2 ) ) )
@@ -254,13 +258,30 @@ CONTAINS
 
       ENDIF
 
+   ! need to be like this to compute the pressure gradient with ISF.
+   ! If not, level beneath the ISF are not aligned (sum(e3t) /= depth)
+   ! define e3t_0 and e3w_0 as the differences between gdept and gdepw respectively
+      DO jk = 1, il_jpk-1
+         dd_e3t_1d(jk) = dd_gdepw(jk+1)-dd_gdepw(jk) 
+      END DO
+      dd_e3t_1d(il_jpk) = dd_e3t_1d(il_jpk-1) ! we don't care because this level is masked in NEMO
+
+      DO jk = 2, il_jpk
+         dd_e3w_1d(jk) = dd_gdept(jk) - dd_gdept(jk-1) 
+      END DO
+      dd_e3w_1d(1  ) = 2._dp * (dd_gdept(1) - dd_gdepw(1))
+
       ! Control and  print
       ! ==================
 
       DO jk = 1, il_jpk
          IF( dd_e3w(jk)  <= 0. .OR. dd_e3t(jk)  <= 0. )then
-            CALL logger_debug("VGRID ZGR Z: e3w or e3t =< 0 ")
+            CALL logger_debug("VGRID ZGR Z: e3w or e3t <= 0 ")
          ENDIF   
+
+         IF( dd_e3w_1d(jk)  <= 0. .OR. dd_e3t_1d(jk)  <= 0. )then
+            CALL logger_debug("VGRID ZGR Z: e3w_1d or e3t_1d <= 0 ")
+         ENDIF
 
          IF( dd_gdepw(jk) < 0. .OR. dd_gdept(jk) < 0. )then
             CALL logger_debug("VGRID ZGR Z: gdepw or gdept < 0 ")
@@ -268,6 +289,45 @@ CONTAINS
       END DO
 
    END SUBROUTINE vgrid_zgr_z
+   !-------------------------------------------------------------------
+   !-------------------------------------------------------------------
+   SUBROUTINE vgrid_zgr_bat( dd_bathy, dd_gdepw, dd_hmin, dd_fill )
+      IMPLICIT NONE
+      ! Argument
+      REAL(dp), DIMENSION(:,:), INTENT(INOUT) :: dd_bathy 
+      REAL(dp), DIMENSION(:)  , INTENT(IN   ) :: dd_gdepw 
+      REAL(dp)                , INTENT(IN   ) :: dd_hmin
+      REAL(dp)                , INTENT(IN   ), OPTIONAL :: dd_fill
+
+      ! local
+      INTEGER(i4) :: il_jpk
+      
+      REAL(dp)    :: dl_hmin
+      REAL(dp)    :: dl_fill
+
+      ! loop indices
+      INTEGER(i4) :: jk
+      !----------------------------------------------------------------
+      il_jpk = SIZE(dd_gdepw(:))
+
+      dl_fill=0._dp
+      IF( PRESENT(dd_fill) ) dl_fill=dd_fill
+
+      IF( dd_hmin < 0._dp ) THEN
+         jk = - INT( dd_hmin )     ! from a nb of level
+      ELSE
+         jk = MINLOC( dd_gdepw, mask = dd_gdepw > dd_hmin, dim = 1 )  ! from a depth
+      ENDIF
+      
+      dl_hmin = dd_gdepw(jk+1) ! minimum depth = ik+1 w-levels 
+      WHERE( dd_bathy(:,:) <= 0._wp .OR. dd_bathy(:,:) == dl_fill )
+         dd_bathy(:,:) = dl_fill                         ! min=0     over the lands
+      ELSE WHERE
+         dd_bathy(:,:) = MAX(  dl_hmin , dd_bathy(:,:)  )   ! min=dl_hmin over the oceans
+      END WHERE
+      WRITE(*,*) 'Minimum ocean depth: ', dl_hmin, ' minimum number of ocean levels : ', jk      
+
+   END SUBROUTINE vgrid_zgr_bat
    !-------------------------------------------------------------------
    !> @brief This subroutine set the depth and vertical scale factor in partial step
    !>      z-coordinate case 
@@ -326,8 +386,9 @@ CONTAINS
    !> @param[in] dd_e3zps_rat
    !-------------------------------------------------------------------
    SUBROUTINE vgrid_zgr_zps( id_mbathy, dd_bathy, id_jpkmax, &
-   &                         dd_gdepw, dd_e3t,               &
-   &                         dd_e3zps_min, dd_e3zps_rat )
+   &                          dd_gdepw, dd_e3t,               &
+   &                          dd_e3zps_min, dd_e3zps_rat,     &
+   &                          dd_fill )
       IMPLICIT NONE
       ! Argument      
       INTEGER(i4), DIMENSION(:,:), INTENT(  OUT) :: id_mbathy
@@ -335,13 +396,15 @@ CONTAINS
       INTEGER(i4)                , INTENT(INOUT) :: id_jpkmax
       REAL(dp)   , DIMENSION(:)  , INTENT(IN   ) :: dd_gdepw
       REAL(dp)   , DIMENSION(:)  , INTENT(IN   ) :: dd_e3t
-      REAL(dp)                                   :: dd_e3zps_min
-      REAL(dp)                                   :: dd_e3zps_rat
+      REAL(dp)                   , INTENT(IN   ) :: dd_e3zps_min
+      REAL(dp)                   , INTENT(IN   ) :: dd_e3zps_rat
+      REAL(dp)                   , INTENT(IN   ), OPTIONAL :: dd_fill
 
       ! local variable
       REAL(dp) :: dl_zmax     ! Maximum depth
-      REAL(dp) :: dl_zmin     ! Minimum depth
+      !REAL(dp) :: dl_zmin     ! Minimum depth
       REAL(dp) :: dl_zdepth   ! Ajusted ocean depth to avoid too small e3t 
+      REAL(dp) :: dl_fill     
 
       INTEGER(i4) :: il_jpk
       INTEGER(i4) :: il_jpkm1
@@ -358,9 +421,16 @@ CONTAINS
       il_jpiglo=SIZE(id_mbathy(:,:),DIM=1)
       il_jpjglo=SIZE(id_mbathy(:,:),DIM=2)
 
+      dl_fill=0._dp
+      IF( PRESENT(dd_fill) ) dl_fill=dd_fill
+
       ! Initialization of constant
-      dl_zmax = dd_gdepw(il_jpk) + dd_e3t(il_jpk)
-      dl_zmin = dd_gdepw(4)
+      dl_zmax = dd_gdepw(il_jpk) + dd_e3t(il_jpk) ! maximum depth (i.e. the last ocean level thickness <= 2*e3t_1d(jpkm1) )
+
+      ! bounded value of bathy (min already set at the end of zgr_bat)
+      WHERE( dd_bathy(:,:) /= dl_fill )
+         dd_bathy(:,:) = MIN( dl_zmax ,  dd_bathy(:,:) )
+      END WHERE
 
       ! bathymetry in level (from bathy_meter)
       ! ===================
@@ -371,21 +441,10 @@ CONTAINS
       ! storage of land and island's number (zera and negative values) in mbathy
       DO jj = 1, il_jpjglo
          DO ji= 1, il_jpiglo
-            IF( dd_bathy(ji,jj) <= 0. )   id_mbathy(ji,jj) = INT(dd_bathy(ji,jj),i4)
-         END DO
-      END DO
-
-      ! bounded value of bathy
-      ! minimum depth == 3 levels
-      ! maximum depth == gdepw(jpk)+e3t(jpk) 
-      ! i.e. the last ocean level thickness cannot exceed e3t(jpkm1)+e3t(jpk)
-      DO jj = 1, il_jpjglo
-         DO ji= 1, il_jpiglo
-            IF( dd_bathy(ji,jj) <= 0. ) THEN
-               dd_bathy(ji,jj) = 0.e0
-            ELSE
-               dd_bathy(ji,jj) = MAX( dd_bathy(ji,jj), dl_zmin )
-               dd_bathy(ji,jj) = MIN( dd_bathy(ji,jj), dl_zmax )
+            IF( dd_bathy(ji,jj) <= 0._dp )THEN
+               id_mbathy(ji,jj) = INT(dd_bathy(ji,jj),i4)
+            ELSEIF( dd_bathy(ji,jj) == dl_fill )THEN
+               id_mbathy(ji,jj) = 0_i4
             ENDIF
          END DO
       END DO
@@ -400,7 +459,10 @@ CONTAINS
 
          DO jj = 1, il_jpjglo
             DO ji = 1, il_jpiglo
-               IF( 0. < dd_bathy(ji,jj) .AND. dd_bathy(ji,jj) <= dl_zdepth ) id_mbathy(ji,jj) = jk-1
+               IF( dd_bathy(ji,jj) /= dl_fill )THEN
+                  IF( 0. < dd_bathy(ji,jj) .AND. &
+                  &       dd_bathy(ji,jj) <= dl_zdepth ) id_mbathy(ji,jj) = jk-1
+               ENDIF
             END DO
          END DO
       END DO
@@ -566,6 +628,8 @@ CONTAINS
       REAL(dp)   , DIMENSION(:)      , ALLOCATABLE :: dl_gdept 
       REAL(dp)   , DIMENSION(:)      , ALLOCATABLE :: dl_e3w 
       REAL(dp)   , DIMENSION(:)      , ALLOCATABLE :: dl_e3t
+      REAL(dp)   , DIMENSION(:)      , ALLOCATABLE :: dl_e3w_1d 
+      REAL(dp)   , DIMENSION(:)      , ALLOCATABLE :: dl_e3t_1d
 
       INTEGER(i4)                                  :: il_status
       INTEGER(i4)                                  :: il_fileid
@@ -709,7 +773,9 @@ CONTAINS
       ! compute vertical grid
       ALLOCATE( dl_gdepw(in_nlevel), dl_gdept(in_nlevel) ) 
       ALLOCATE(   dl_e3w(in_nlevel),   dl_e3t(in_nlevel) ) 
+      ALLOCATE(   dl_e3w_1d(in_nlevel),   dl_e3t_1d(in_nlevel) ) 
       CALL vgrid_zgr_z( dl_gdepw(:), dl_gdept(:), dl_e3w(:), dl_e3t(:), &
+      &                 dl_e3w_1d, dl_e3t_1d, &
       &                 dn_ppkth, dn_ppkth2, dn_ppacr, dn_ppacr2,       &
       &                 dn_ppdzmin, dn_pphmax, dn_pp_to_be_computed,    &
       &                 dn_ppa0, dn_ppa1, dn_ppa2, dn_ppsur )

@@ -136,8 +136,9 @@
 !> @author
 !> J.Paul
 ! REVISION HISTORY:
-!> @date November, 2013- Initial Version
-!> @date November, 2014 - Fix memory leaks bug
+!> @date November, 2013 - Initial Version
+!> @date November, 2014 
+!> - Fix memory leaks bug
 !>
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -287,9 +288,9 @@ CONTAINS
    !> this subroutine
    !>   
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date November, 2014
-   !>    - use function instead of overload assignment operator 
+   !> - use function instead of overload assignment operator 
    !> (to avoid memory leak)
    !
    !> @param[in] td_file  file structure
@@ -408,9 +409,9 @@ CONTAINS
    !> this subroutine
    !>   
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date November, 2014
-   !>    - use function instead of overload assignment operator 
+   !> - use function instead of overload assignment operator 
    !> (to avoid memory leak)
    !
    !> @param[in] td_file  file structure
@@ -603,8 +604,9 @@ CONTAINS
       ! local variable
       CHARACTER(LEN=lc) :: cl_dim
       LOGICAL           :: ll_error
+      LOGICAL           :: ll_warn 
 
-      INTEGER(i4) :: il_ind
+      INTEGER(i4)       :: il_ind
 
       ! loop indices
       INTEGER(i4) :: ji
@@ -613,28 +615,26 @@ CONTAINS
 
       ! check used dimension 
       ll_error=.FALSE.
+      ll_warn=.FALSE.
       DO ji=1,ip_maxdim
          il_ind=dim_get_index( td_file%t_dim(:), &
          &                     TRIM(td_var%t_dim(ji)%c_name), &
          &                     TRIM(td_var%t_dim(ji)%c_sname))
          IF( il_ind /= 0 )THEN
-         IF( td_var%t_dim(ji)%l_use  .AND. &
-         &   td_file%t_dim(il_ind)%l_use .AND. &
-         &   td_var%t_dim(ji)%i_len /= td_file%t_dim(il_ind)%i_len )THEN
-            ll_error=.TRUE.
-         ENDIF
+            IF( td_var%t_dim(ji)%l_use  .AND. &
+            &   td_file%t_dim(il_ind)%l_use .AND. &
+            &   td_var%t_dim(ji)%i_len /= td_file%t_dim(il_ind)%i_len )THEN
+               IF( INDEX( TRIM(td_var%c_axis), &
+               &          TRIM(fct_upper(td_var%t_dim(ji)%c_name))) == 0 )THEN
+                  ll_warn=.TRUE.
+               ELSE
+                  ll_error=.TRUE.
+               ENDIF
+            ENDIF
          ENDIF
       ENDDO
 
       IF( ll_error )THEN
-
-         file_check_var_dim=.FALSE.
-
-         CALL logger_error( &
-         &  " FILE CHECK VAR DIM: variable and file dimension differ"//&
-         &  " for variable "//TRIM(td_var%c_name)//&
-         &  " and file "//TRIM(td_file%c_name))
-
 
          cl_dim='(/'
          DO ji = 1, td_file%i_ndim
@@ -658,6 +658,19 @@ CONTAINS
          cl_dim=TRIM(cl_dim)//'/)'
          CALL logger_debug( " variable dimension: "//TRIM(cl_dim) )
 
+         file_check_var_dim=.FALSE.
+
+         CALL logger_error( &
+         &  " FILE CHECK VAR DIM: variable and file dimension differ"//&
+         &  " for variable "//TRIM(td_var%c_name)//&
+         &  " and file "//TRIM(td_file%c_name))
+
+      ELSEIF( ll_warn )THEN
+         CALL logger_warn( &
+         &  " FILE CHECK VAR DIM: variable and file dimension differ"//&
+         &  " for variable "//TRIM(td_var%c_name)//&
+         &  " and file "//TRIM(td_file%c_name)//". you should use"//&
+         &  " var_check_dim to remove useless dimension.")
       ELSE
 
          IF( td_var%i_ndim >  td_file%i_ndim )THEN
@@ -678,7 +691,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014
    !> - add dimension to file if need be
    !> - do not reorder dimension from variable, before put in file
@@ -706,9 +719,9 @@ CONTAINS
       ! check if file opened
       IF( TRIM(td_file%c_name) == '' )THEN
 
-         CALL logger_error( " FILE ADD VAR: structure file unknown" )
          CALL logger_debug( " FILE ADD VAR: you should have used file_init before "//&
          & "running file_add_var" )
+         CALL logger_error( " FILE ADD VAR: structure file unknown" )
 
       ELSE
          ! check if variable exist
@@ -722,7 +735,8 @@ CONTAINS
                il_ind=var_get_index( td_file%t_var(:), td_var%c_name,   &
                &                                       td_var%c_stdname )
             ENDIF
-
+            CALL logger_debug( &
+            &  " FILE ADD VAR: ind "//TRIM(fct_str(il_ind)) )
             IF( il_ind /= 0 )THEN
 
                CALL logger_error( &
@@ -738,7 +752,7 @@ CONTAINS
 
             ELSE
 
-               CALL logger_trace( &
+               CALL logger_debug( &
                &  " FILE ADD VAR: add variable "//TRIM(td_var%c_name)//&
                &  ", standard name "//TRIM(td_var%c_stdname)//&
                &  ", in file "//TRIM(td_file%c_name) )
@@ -769,8 +783,6 @@ CONTAINS
                         il_ind=td_file%i_n0d+td_file%i_n1d+td_file%i_n2d+td_file%i_n3d+1
                         !il_rec=td_file%t_dim(3)%i_len
                   END SELECT
-                  CALL logger_info( &
-                     &  " FILE ADD VAR: variable index "//TRIM(fct_str(il_ind)))
 
                   IF( td_file%i_nvar > 0 )THEN
                   ! already other variable in file structure
@@ -805,7 +817,7 @@ CONTAINS
                            td_file%t_var( 1:il_ind-1 ) = var_copy(tl_var(1:il_ind-1))
                         ENDIF
 
-                        IF( il_ind < td_file%i_nvar )THEN
+                        IF( il_ind < td_file%i_nvar+1 )THEN
                            ! variable with more dimension than new variable
                            td_file%t_var( il_ind+1 : td_file%i_nvar+1 ) = &
                            &        var_copy( tl_var(il_ind : td_file%i_nvar) )
@@ -892,7 +904,9 @@ CONTAINS
    !> in file structure, given variable name or standard name.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
+   !> @date February, 2015 
+   !> - define local variable structure to avoid mistake with pointer
    !
    !> @param[inout] td_file   file structure
    !> @param[in] cd_name      variable name or standard name
@@ -906,6 +920,7 @@ CONTAINS
 
       ! local variable
       INTEGER(i4)       :: il_ind
+      TYPE(TVAR)        :: tl_var
       !----------------------------------------------------------------
 
       ! check if file opened
@@ -927,11 +942,12 @@ CONTAINS
 
             IF( il_ind /= 0 )THEN
    
-               CALL file_del_var(td_file, td_file%t_var(il_ind))
+               tl_var=var_copy(td_file%t_var(il_ind))
+               CALL file_del_var(td_file, tl_var)
 
             ELSE
 
-               CALL logger_warn( &
+               CALL logger_debug( &
                &  " FILE DEL VAR NAME: there is no variable with name or "//&
                &  "standard name "//TRIM(cd_name)//" in file "//&
                &  TRIM(td_file%c_name))
@@ -1246,7 +1262,10 @@ CONTAINS
    !> in file structure, given attribute name.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
+   !> @date February, 2015 
+   !> - define local attribute structure to avoid mistake
+   !> with pointer
    !
    !> @param[inout] td_file   file structure
    !> @param[in] cd_name      attribute name
@@ -1260,6 +1279,7 @@ CONTAINS
 
       ! local variable
       INTEGER(i4)       :: il_ind
+      TYPE(TATT)        :: tl_att
       !----------------------------------------------------------------
 
       ! check if file opened
@@ -1281,11 +1301,12 @@ CONTAINS
 
             IF( il_ind /= 0 )THEN
    
-               CALL file_del_att(td_file, td_file%t_att(il_ind))
+               tl_att=att_copy(td_file%t_att(il_ind))
+               CALL file_del_att(td_file, tl_att)
 
             ELSE
 
-               CALL logger_warn( &
+               CALL logger_debug( &
                &  " FILE DEL ATT NAME: there is no attribute with name "//&
                &  TRIM(cd_name)//" in file "//TRIM(td_file%c_name))
 
@@ -1443,7 +1464,7 @@ CONTAINS
    !> Do not overwrite, if dimension already in file structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014
    !> - do not reorder dimension, before put in file
    !
@@ -1716,7 +1737,7 @@ CONTAINS
       IF( td_file%i_nvar /= 0 )THEN
          WRITE(*,'(/a)') " File variable"
          DO ji=1,td_file%i_nvar
-            CALL var_print(td_file%t_var(ji))!,.FALSE.)
+            CALL var_print(td_file%t_var(ji),.FALSE.)
          ENDDO
       ENDIF
 
@@ -1768,7 +1789,12 @@ CONTAINS
    !> separator could be '.' or '_'.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
+   !> @date February, 2015 
+   !> - add case to not return date (yyyymmdd) at the end of filename
+   !> @date February, 2015 
+   !> - add case to not return release number
+   !> we assume release number only on one digit (ex : file_v3.5.nc)
    !
    !> @param[in] cd_file   file name (without suffix)
    !> @return character file number.
@@ -1801,6 +1827,12 @@ CONTAINS
          READ( cd_file(il_indmax:),'(a)' ) file__get_number
 
          IF( .NOT. fct_is_num(file__get_number(2:)) )THEN
+            file__get_number=''
+         ELSEIF( LEN(TRIM(file__get_number))-1 == 8 )THEN
+            ! date case yyyymmdd
+            file__get_number=''
+         ELSEIF( LEN(TRIM(file__get_number))-1 == 1 )THEN
+            ! release number case 
             file__get_number=''
          ENDIF
       ELSE

@@ -50,6 +50,11 @@
 !>  ll_is_num=fct_is_num(cd_var)
 !> @endcode
 !>
+!>  to check if character is real
+!> @code
+!>  ll_is_real=fct_is_real(cd_var)
+!> @endcode
+!>
 !>  to split string into substring and return one of the element:<br/>  
 !> @code
 !>  cl_str=fct_split(cd_string ,id_ind [,cd_sep])
@@ -88,7 +93,8 @@
 !> J.Paul
 ! REVISION HISTORY:
 !> @date November, 2013 - Initial Version
-!> @date September, 2014 - add header
+!> @date September, 2014 
+!> - add header
 !
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -105,6 +111,7 @@ MODULE fct
    PUBLIC :: fct_upper    !< convert character from lower to upper case
    PUBLIC :: fct_lower    !< convert character from upper to lower case
    PUBLIC :: fct_is_num   !< check if character is numeric
+   PUBLIC :: fct_is_real  !< check if character is real
    PUBLIC :: fct_split    !< split string into substring
    PUBLIC :: fct_basename !< return basename (name without path)
    PUBLIC :: fct_dirname  !< return dirname (path without filename)
@@ -152,7 +159,7 @@ CONTAINS
    !> @brief This function concatenate character and integer(1) (as character). 
    ! 
    !> @author J.Paul 
-   !> - September, 2014- Initial Version 
+   !> @date September, 2014 - Initial Version 
    ! 
    !> @param[in] cd_char   string character
    !> @param[in] bd_val    integer(1) variable value
@@ -176,7 +183,7 @@ CONTAINS
    !> @brief This function concatenate character and integer(2) (as character). 
    ! 
    !> @author J.Paul 
-   !> - September, 2014- Initial Version 
+   !> @date September, 2014 - Initial Version 
    ! 
    !> @param[in] cd_char   string character
    !> @param[in] sd_val    integer(2) variable value
@@ -200,7 +207,7 @@ CONTAINS
    !> @brief This function concatenate character and integer(4) (as character). 
    ! 
    !> @author J.Paul 
-   !> - Nov, 2013- Initial Version 
+   !> @date November, 2013 - Initial Version 
    ! 
    !> @param[in] cd_char   string character
    !> @param[in] id_val    integer(4) variable value
@@ -224,7 +231,7 @@ CONTAINS
    !> @brief This function concatenate character and integer(8) (as character). 
    ! 
    !> @author J.Paul 
-   !> - November, 2013- Initial Version 
+   !> @date November, 2013 - Initial Version 
    ! 
    !> @param[in] cd_char   string character
    !> @param[in] kd_val    integer(8) variable value
@@ -248,7 +255,7 @@ CONTAINS
    !> @brief This function concatenate character and real(4) (as character). 
    ! 
    !> @author J.Paul 
-   !> - November, 2013- Initial Version 
+   !> @date November, 2013 - Initial Version 
    ! 
    !> @param[in] cd_char   string character
    !> @param[in] rd_val    real(4) variable value
@@ -272,7 +279,7 @@ CONTAINS
    !> @brief This function concatenate character and real(8) (as character). 
    !>
    !> @author J.Paul 
-   !> - November, 2013- Initial Version 
+   !> @date November, 2013 - Initial Version 
    !>
    !> @param[in] cd_char   string character
    !> @param[in] dd_val    real(8) variable value
@@ -296,7 +303,7 @@ CONTAINS
    !> @brief This function concatenate character and logical (as character). 
    !>
    !> @author J.Paul 
-   !> - November, 2013- Initial Version 
+   !> @date November, 2013 - Initial Version 
    !>
    !> @param[in] cd_char   string character
    !> @param[in] ld_val    logical variable value
@@ -320,7 +327,7 @@ CONTAINS
    !> @brief This function returns the next available I/O unit number. 
    !>
    !> @author J.Paul 
-   !> - November, 2013- Initial Version 
+   !> @date November, 2013 - Initial Version 
    !>
    !> @return file id 
    !------------------------------------------------------------------- 
@@ -343,7 +350,7 @@ CONTAINS
    !> @brief This subroutine handle Fortran status.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] id_status
    !-------------------------------------------------------------------
@@ -364,7 +371,7 @@ CONTAINS
    !> @brief This subroutine  create a pause statement
    !
    !> @author J.Paul
-   !> - November, 2014- Initial Version
+   !> @date November, 2014 - Initial Version
    !>
    !> @param[in] cd_msg optional message to be added
    !-------------------------------------------------------------------
@@ -386,7 +393,7 @@ CONTAINS
    !> @brief This function convert logical to string character.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] ld_var logical variable
    !> @return character of this integer variable
@@ -408,7 +415,7 @@ CONTAINS
    !> @brief This function convert integer(1) to string character.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] bd_var integer(1) variable
    !> @return character of this integer variable
@@ -430,7 +437,7 @@ CONTAINS
    !> @brief This function convert integer(2) to string character.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] sd_var integer(2) variable
    !> @return character of this integer variable
@@ -452,7 +459,7 @@ CONTAINS
    !> @brief This function convert integer(4) to string character.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] id_var integer(4) variable
    !> @return character of this integer variable
@@ -474,7 +481,7 @@ CONTAINS
    !> @brief This function convert integer(8) to string character.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] kd_var integer(8) variable
    !> @return character of this integer variable
@@ -496,7 +503,7 @@ CONTAINS
    !> @brief This function convert real(4) to string character.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] rd_var real(4) variable
    !> @return character of this real variable
@@ -518,7 +525,7 @@ CONTAINS
    !> @brief This function convert real(8) to string character.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] dd_var real(8) variable
    !> @return character of this real variable
@@ -543,7 +550,7 @@ CONTAINS
    !> optionnally a separator could be added between each element.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_arr array of character
    !> @param[in] cd_sep separator character
@@ -589,7 +596,7 @@ CONTAINS
    !> and the lowercase codes.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_var character
    !> @return lower case character
@@ -646,7 +653,7 @@ CONTAINS
    !> and the lowercase codes.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_var character
    !> @return upper case character
@@ -696,7 +703,7 @@ CONTAINS
    !> @brief This function check if character is numeric.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_var character
    !> @return character is numeric
@@ -722,12 +729,75 @@ CONTAINS
 
    END FUNCTION fct_is_num
    !-------------------------------------------------------------------
+   !> @brief This function check if character is real number.
+   !
+   !> @details
+   !> it allows exponantial and decimal number
+   !> exemple :  1e6, 2.3
+   !>
+   !> @author J.Paul
+   !> @date June, 2015 - Initial Version
+   !
+   !> @param[in] cd_var character
+   !> @return character is numeric
+   !-------------------------------------------------------------------
+   PURE LOGICAL FUNCTION fct_is_real(cd_var)
+      IMPLICIT NONE
+      ! Argument      
+      CHARACTER(LEN=*), INTENT(IN) :: cd_var
+   
+      ! local variables
+      LOGICAL :: ll_exp
+      LOGICAL :: ll_dec
+   
+      ! loop indices
+      INTEGER :: ji
+      !----------------------------------------------------------------
+   
+      ll_exp=.TRUE.
+      ll_dec=.FALSE.
+      DO ji=1,LEN(TRIM(cd_var))
+         IF( IACHAR(cd_var(ji:ji)) >= IACHAR('0') .AND. &
+         &   IACHAR(cd_var(ji:ji)) <= IACHAR('9') )THEN
+   
+            fct_is_real=.TRUE.
+            ll_exp=.FALSE.
+      
+         ELSEIF( TRIM(cd_var(ji:ji))=='e' )THEN
+         
+            IF( ll_exp .OR. ji== LEN(TRIM(cd_var)) )THEN
+               fct_is_real=.FALSE.
+               EXIT
+            ELSE 
+               ll_exp=.TRUE.
+            ENDIF
+   
+         ELSEIF( TRIM(cd_var(ji:ji))=='.' )THEN
+   
+            IF( ll_dec )THEN
+               fct_is_real=.FALSE.
+               EXIT
+            ELSE
+               fct_is_real=.TRUE.
+               ll_dec=.TRUE.
+            ENDIF
+   
+         ELSE
+   
+            fct_is_real=.FALSE.
+            EXIT
+   
+         ENDIF
+      ENDDO
+   
+   END FUNCTION fct_is_real
+   !-------------------------------------------------------------------
    !> @brief This function split string of character 
    !> using separator character, by default '|',
    !> and return the element on index ind.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_string string of character
    !> @param[in] id_ind    indice
@@ -807,7 +877,7 @@ CONTAINS
    !> and return the element on index ind.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_string string of character
    !> @param[in] id_ind    indice
@@ -872,7 +942,7 @@ CONTAINS
    !> and return last string character.<br/>
    !> Optionally you could specify another separator.
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_string filename
    !> @param[in] cd_sep    separator character
@@ -913,7 +983,7 @@ CONTAINS
    !> and return all except last string character.<br/>
    !> Optionally you could specify another separator.
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_string filename
    !> @param[in] cd_sep    separator character

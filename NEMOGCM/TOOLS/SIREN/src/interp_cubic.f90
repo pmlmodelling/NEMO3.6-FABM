@@ -25,6 +25,8 @@
 !> J.Paul
 ! REVISION HISTORY:
 !> @date September, 2014 -Initial version
+!> @date June, 2015
+!> - use math module
 !>
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -35,7 +37,7 @@ MODULE interp_cubic
    USE kind                            ! F90 kind parameter
    USE logger                          ! log file manager
    USE fct                             ! basic useful function
-   USE extrap                          ! extrapolation manager
+   USE math                            ! mathematical function
 
    IMPLICIT NONE
    ! NOTE_avoid_public_variables_if_possible
@@ -60,7 +62,9 @@ CONTAINS
    !> This subroutine compute horizontal cubic interpolation on 4D array of value. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
+   !> @date July, 2015 
+   !> - reinitialise detect array for each level
    !>
    !> @param[inout] dd_value  2D array of variable value 
    !> @param[in] dd_fill      FillValue of variable
@@ -81,13 +85,15 @@ CONTAINS
       LOGICAL                             , INTENT(IN   ), OPTIONAL :: ld_discont
 
       ! local variable
-      INTEGER(i4), DIMENSION(4)                :: il_shape
+      INTEGER(i4), DIMENSION(4)                  :: il_shape
 
-      LOGICAL                                  :: ll_discont
+      INTEGER(I4), DIMENSION(:,:,:), ALLOCATABLE :: il_detect
 
-      REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_weight_IJ
-      REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_weight_I
-      REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_weight_J
+      LOGICAL                                    :: ll_discont
+
+      REAL(dp)   , DIMENSION(:,:)  , ALLOCATABLE :: dl_weight_IJ
+      REAL(dp)   , DIMENSION(:,:)  , ALLOCATABLE :: dl_weight_I
+      REAL(dp)   , DIMENSION(:,:)  , ALLOCATABLE :: dl_weight_J
       
       ! loop indices
       INTEGER(i4) :: ji
@@ -112,31 +118,34 @@ CONTAINS
       CALL interp_cubic__get_weight1D(dl_weight_J(:,:), &
       &                               id_rho(jp_J), ld_even(jp_J))
 
+      ALLOCATE(il_detect(il_shape(1),il_shape(2),il_shape(3)))
+
       DO jl=1,il_shape(4)
+         il_detect(:,:,:)=id_detect(:,:,:)
          ! loop on vertical level
          DO jk=1,il_shape(3)
 
             ! I-J plan
             CALL interp_cubic__2D(dd_value(:,:,jk,jl), dd_fill, &
-            &                     id_detect(:,:,jk),            &
+            &                     il_detect(:,:,jk),            &
             &                     dl_weight_IJ(:,:),            &
             &                     id_rho(jp_I), id_rho(jp_J),   &
             &                     ll_discont)            
-            IF( ANY(id_detect(:,:,jk)==1) )THEN
+            IF( ANY(il_detect(:,:,jk)==1) )THEN
                ! I direction
                DO jj=1,il_shape(2)
                   CALL interp_cubic__1D( dd_value(:,jj,jk,jl), dd_fill, &
-                  &                      id_detect(:,jj,jk),            &
+                  &                      il_detect(:,jj,jk),            &
                   &                      dl_weight_I(:,:),              &
                   &                      id_rho(jp_I), ll_discont )
                ENDDO
-               IF( ALL(id_detect(:,:,jk)==0) )THEN
+               IF( ALL(il_detect(:,:,jk)==0) )THEN
                   CYCLE
                ELSE
                   ! J direction
                   DO ji=1,il_shape(1)
                      CALL interp_cubic__1D( dd_value(ji,:,jk,jl), dd_fill, &
-                     &                      id_detect(ji,:,jk),            &
+                     &                      il_detect(ji,:,jk),            &
                      &                      dl_weight_J(:,:),              &
                      &                      id_rho(jp_J), ll_discont )
                   ENDDO
@@ -145,6 +154,9 @@ CONTAINS
 
          ENDDO
       ENDDO
+
+      id_detect(:,:,:)=il_detect(:,:,:)
+      DEALLOCATE(il_detect)
 
       DEALLOCATE(dl_weight_IJ)
       DEALLOCATE(dl_weight_I)
@@ -158,7 +170,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[inout] dd_value  2D array of variable value 
    !> @param[in] dd_fill      FillValue of variable
@@ -180,7 +192,7 @@ CONTAINS
       REAL(dp)        , DIMENSION(:,:), INTENT(INOUT) :: dd_value 
       REAL(dp)                        , INTENT(IN   ) :: dd_fill 
       INTEGER(I4)     , DIMENSION(:,:), INTENT(INOUT) :: id_detect
-      REAL(dp)        , DIMENSION(:,:), INTENT(IN   ) :: dd_weight 
+      REAL(dp)        , DIMENSION(:,:), INTENT(IN   ) :: dd_weight
       INTEGER(I4)                     , INTENT(IN   ) :: id_rhoi
       INTEGER(I4)                     , INTENT(IN   ) :: id_rhoj
       LOGICAL                         , INTENT(IN   ) :: ld_discont
@@ -229,11 +241,11 @@ CONTAINS
          &         dl_d2fdxy(il_dim(1),il_dim(2)) )
 
          ! compute derivative on coarse grid
-         dl_dfdx(:,:)=extrap_deriv_2D(dl_coarse(:,:), dd_fill, 'I', ld_discont)
-         dl_dfdy(:,:)=extrap_deriv_2D(dl_coarse(:,:), dd_fill, 'J', ld_discont)
+         dl_dfdx(:,:)=math_deriv_2D(dl_coarse(:,:), dd_fill, 'I', ld_discont)
+         dl_dfdy(:,:)=math_deriv_2D(dl_coarse(:,:), dd_fill, 'J', ld_discont)
 
          ! compute cross derivative on coarse grid
-         dl_d2fdxy(:,:)=extrap_deriv_2D(dl_dfdx(:,:), dd_fill, 'J', ld_discont)
+         dl_d2fdxy(:,:)=math_deriv_2D(dl_dfdx(:,:), dd_fill, 'J', ld_discont)
 
          ALLOCATE( dl_tmp(2,2) )
          ALLOCATE( dl_coef(16) )
@@ -318,7 +330,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[inout] dd_value  1D array of variable value 
    !> @param[in] dd_fill      FillValue of variable
@@ -338,7 +350,7 @@ CONTAINS
       REAL(dp)        , DIMENSION(:)  , INTENT(INOUT) :: dd_value 
       REAL(dp)                        , INTENT(IN   ) :: dd_fill 
       INTEGER(I4)     , DIMENSION(:)  , INTENT(INOUT) :: id_detect
-      REAL(dp)        , DIMENSION(:,:), INTENT(IN   ) :: dd_weight 
+      REAL(dp)        , DIMENSION(:,:), INTENT(IN   ) :: dd_weight
       INTEGER(I4)                     , INTENT(IN   ) :: id_rhoi
       LOGICAL                         , INTENT(IN   ) :: ld_discont
 
@@ -375,7 +387,7 @@ CONTAINS
          ALLOCATE( dl_dfdx(il_dim(1)) )
 
          ! compute derivative on coarse grid
-         dl_dfdx(:)=extrap_deriv_1D(dl_coarse(:), dd_fill, ld_discont)
+         dl_dfdx(:)=math_deriv_1D(dl_coarse(:), dd_fill, ld_discont)
 
          ALLOCATE( dl_tmp(2) )
          ALLOCATE( dl_coef(4) )
@@ -439,7 +451,7 @@ CONTAINS
    !> This subroutine compute 2D array of coefficient for cubic interpolation.
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[in] dd_value  2D array of value
    !> @param[in] dd_dfdx   2D array of first derivative in i-direction 
@@ -502,7 +514,7 @@ CONTAINS
    !> This subroutine compute cubic interpolation of a 2D array of value. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[inout] dd_value  2D array of mixed grid value
    !> @param[inout] id_detect 2D array of point to be interpolated
@@ -564,7 +576,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[in] dd_value  1D array of value
    !> @param[in] dd_dfdx   1D array of first derivative 
@@ -607,7 +619,7 @@ CONTAINS
    !> This subroutine compute cubic interpolation of a 1D array of value. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[inout] dd_value  1D array of mixed grid value
    !> @param[inout] id_detect 1D array of point to be interpolated
@@ -658,7 +670,7 @@ CONTAINS
    !> This subroutine compute interpoaltion weight for 2D array. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[in] dd_weight interpolation weight of 2D array
    !> @param[in] ld_even   even refinment or not
@@ -739,7 +751,7 @@ CONTAINS
    !> This subroutine compute interpoaltion weight for 1D array. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[in] dd_weight interpolation weight of 1D array
    !> @param[in] ld_even   even refinment or not

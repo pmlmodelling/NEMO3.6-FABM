@@ -63,6 +63,7 @@ CONTAINS
    !>
    !> @author J.Paul
    !> - September, 2014- Initial Version
+   !> @date July, 2015 - reinitialise detect array for each level
    !>
    !> @param[inout] dd_value  2D array of variable value 
    !> @param[in] dd_fill      FillValue of variable
@@ -83,13 +84,15 @@ CONTAINS
       LOGICAL                             , INTENT(IN   ), OPTIONAL :: ld_discont
 
       ! local variable
-      INTEGER(i4), DIMENSION(4)                :: il_shape
+      INTEGER(i4), DIMENSION(4)                  :: il_shape
 
-      LOGICAL                                  :: ll_discont
-      
-      REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_weight_IJ
-      REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_weight_I
-      REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_weight_J
+      INTEGER(I4), DIMENSION(:,:,:), ALLOCATABLE :: il_detect
+
+      LOGICAL                                    :: ll_discont
+ 
+      REAL(dp)   , DIMENSION(:,:)  , ALLOCATABLE :: dl_weight_IJ
+      REAL(dp)   , DIMENSION(:,:)  , ALLOCATABLE :: dl_weight_I
+      REAL(dp)   , DIMENSION(:,:)  , ALLOCATABLE :: dl_weight_J
       
       ! loop indices
       INTEGER(i4) :: ji
@@ -103,42 +106,45 @@ CONTAINS
       il_shape(:)=SHAPE(dd_value)
 
       ! compute vect2D
-      ALLOCATE(dl_weight_IJ(16,((id_rho(jp_I)+1)*(id_rho(jp_J)+1))) )
+      ALLOCATE(dl_weight_IJ(4,((id_rho(jp_I)+1)*(id_rho(jp_J)+1))) )
       CALL interp_linear__get_weight2D(dl_weight_IJ(:,:), &
       &                               id_rho(:), ld_even(:))
 
-      ALLOCATE( dl_weight_I( 4,((id_rho(jp_I)+1)                 )) )
-      ALLOCATE( dl_weight_J( 4,(                 (id_rho(jp_J)+1))) )
+      ALLOCATE( dl_weight_I( 2,((id_rho(jp_I)+1)                 )) )
+      ALLOCATE( dl_weight_J( 2,(                 (id_rho(jp_J)+1))) )
       CALL interp_linear__get_weight1D(dl_weight_I(:,:), &
       &                               id_rho(jp_I), ld_even(jp_I))
       CALL interp_linear__get_weight1D(dl_weight_J(:,:), &
       &                               id_rho(jp_J), ld_even(jp_J))
 
+      ALLOCATE(il_detect(il_shape(1),il_shape(2),il_shape(3)))
+
       DO jl=1,il_shape(4)
+         il_detect(:,:,:)=id_detect(:,:,:)
          ! loop on vertical level
          DO jk=1,il_shape(3)
 
             ! I-J plan
             CALL interp_linear__2D(dd_value(:,:,jk,jl), dd_fill,&
-            &                     id_detect(:,:,jk),            &
+            &                     il_detect(:,:,jk),            &
             &                     dl_weight_IJ(:,:),            &
             &                     id_rho(jp_I), id_rho(jp_J),   &
             &                     ll_discont)            
-            IF( ANY(id_detect(:,:,jk)==1) )THEN
+            IF( ANY(il_detect(:,:,jk)==1) )THEN
                ! I direction
                DO jj=1,il_shape(2)
                   CALL interp_linear__1D( dd_value(:,jj,jk,jl), dd_fill,&
-                  &                       id_detect(:,jj,jk),           &
+                  &                       il_detect(:,jj,jk),           &
                   &                       dl_weight_I(:,:),             &
                   &                       id_rho(jp_I), ll_discont )
                ENDDO
-               IF( ALL(id_detect(:,:,jk)==0) )THEN
+               IF( ALL(il_detect(:,:,jk)==0) )THEN
                   CYCLE
                ELSE
                   ! J direction
                   DO ji=1,il_shape(1)
                      CALL interp_linear__1D( dd_value(ji,:,jk,jl), dd_fill,&
-                     &                       id_detect(ji,:,jk),           &
+                     &                       il_detect(ji,:,jk),           &
                      &                       dl_weight_J(:,:),             &
                      &                       id_rho(jp_J), ll_discont )
                   ENDDO
@@ -148,10 +154,13 @@ CONTAINS
          ENDDO
       ENDDO
 
+      id_detect(:,:,:)=il_detect(:,:,:)
+      DEALLOCATE(il_detect)
+
       DEALLOCATE(dl_weight_IJ)
       DEALLOCATE(dl_weight_I)
       DEALLOCATE(dl_weight_J)
-      
+ 
    END SUBROUTINE interp_linear_fill
    !-------------------------------------------------------------------
    !> @brief
@@ -234,7 +243,7 @@ CONTAINS
                ! check if point to be interpolated
                IF( ALL(id_detect(ji:ji+id_rhoi,   &
                &                 jj:jj+id_rhoj)==0) ) CYCLE
-               ! check data to needed to interpolate
+               ! check data needed to interpolate
                IF( ANY(dl_coarse(ii:ii+1,ij:ij+1)==dd_fill) ) CYCLE
                ! check longitude discontinuity
                dl_tmp(:,:)=dl_coarse(ii:ii+1,ij:ij+1)
@@ -445,7 +454,7 @@ CONTAINS
    !> 
    !> @author J.Paul
    !> - September, 2014- Initial Version
-   !> 
+   !>
    !> @param[inout] dd_value  2D array of mixed grid value
    !> @param[inout] id_detect 2D array of point to be interpolated
    !> @param[in] dd_coef      2D array of coefficient
@@ -476,27 +485,27 @@ CONTAINS
       INTEGER(i4) :: jj
       !----------------------------------------------------------------
 
-         IF( ANY( dd_coef(:)==dd_fill ) )THEN
-            CALL logger_error("INTERP LINEAR FILL: fill value detected in coef. "//&
-            &              "can not compute interpolation.")
-         ELSE
+      IF( ANY( dd_coef(:)==dd_fill ) )THEN
+         CALL logger_error("INTERP LINEAR FILL: fill value detected in coef. "//&
+         &              "can not compute interpolation.")
+      ELSE
 
-            ii=0
-            DO jj=1,id_rhoj+1
-               DO ji=1,id_rhoi+1
+         ii=0
+         DO jj=1,id_rhoj+1
+            DO ji=1,id_rhoi+1
 
-                  ii=ii+1
-                  IF(id_detect(ji,jj)==1)THEN
+               ii=ii+1
+               IF(id_detect(ji,jj)==1)THEN
 
-                     dd_value(ji,jj)=DOT_PRODUCT(dd_coef(:),dd_weight(:,ii))
-                     id_detect(ji,jj)=0
+                  dd_value(ji,jj)=DOT_PRODUCT(dd_coef(:),dd_weight(:,ii))
+                  id_detect(ji,jj)=0
 
-                  ENDIF
+               ENDIF
 
-               ENDDO
             ENDDO
+         ENDDO
 
-         ENDIF
+      ENDIF
 
    END SUBROUTINE interp_linear__2D_fill
    !-------------------------------------------------------------------

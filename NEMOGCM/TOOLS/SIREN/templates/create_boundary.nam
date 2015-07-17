@@ -59,9 +59,10 @@
    cn_east  = 
    cn_west  = 
    ln_oneseg= 
-   in_extrap= 
 /
 
 &namout
    cn_fileout="boundary_out.nc"      
+   dn_dayofs=
+   ln_extrap=
 /

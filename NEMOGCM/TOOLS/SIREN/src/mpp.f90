@@ -164,15 +164,13 @@
 !>
 !>    to get processors to be used:<br/>
 !> @code
-!>    CALL mpp_get_use( td_mpp, id_imin, id_imax, id_idim, & 
-!>    &                         id_jmin, id_jmax, id_jdim )
+!>    CALL mpp_get_use( td_mpp, id_imin, id_imax, & 
+!>    &                         id_jmin, id_jmax )
 !> @endcode
 !>       - id_imin 
 !>       - id_imax 
-!>       - id_idim 
 !>       - id_jmin 
 !>       - id_jmax 
-!>       - id_jdim 
 !>
 !>    to get sub domains which form global domain contour:<br/>
 !> @code
@@ -378,6 +376,7 @@ CONTAINS
 
       ! copy mpp variable
       mpp__copy_unit%c_name     = TRIM(td_mpp%c_name)
+      mpp__copy_unit%i_id       = td_mpp%i_id
       mpp__copy_unit%i_niproc   = td_mpp%i_niproc
       mpp__copy_unit%i_njproc   = td_mpp%i_njproc
       mpp__copy_unit%i_nproc    = td_mpp%i_nproc
@@ -494,7 +493,7 @@ CONTAINS
 
       ! print dimension
       IF(  td_mpp%i_ndim /= 0 )THEN
-         WRITE(*,'(/a)') " File dimension"
+         WRITE(*,'(/a)') " MPP dimension"
          DO ji=1,ip_maxdim
             IF( td_mpp%t_dim(ji)%l_use )THEN
                CALL dim_print(td_mpp%t_dim(ji))
@@ -697,7 +696,7 @@ CONTAINS
       ! clean
       CALL dim_clean(tl_dim)
 
-      IF( (       PRESENT(id_niproc)  .AND. (.NOT. PRESENT(id_niproc))) .OR. &
+      IF( (       PRESENT(id_niproc)  .AND. (.NOT. PRESENT(id_njproc))) .OR. &
           ((.NOT. PRESENT(id_niproc)) .AND.        PRESENT(id_njproc) ) )THEN
           CALL logger_warn( "MPP INIT: number of processors following I and J "//&
           & "should be both specified")
@@ -1027,31 +1026,31 @@ CONTAINS
 
             ! create some attributes for domain decomposition (use with dimg file)
             tl_att=att_init( "DOMAIN_number_total", mpp__init_file%i_nproc )
-            CALL mpp_add_att(mpp__init_file, tl_att)
+            CALL mpp_move_att(mpp__init_file, tl_att)
 
             tl_att=att_init( "DOMAIN_I_position_first", mpp__init_file%t_proc(:)%i_impp )
-            CALL mpp_add_att(mpp__init_file, tl_att)
+            CALL mpp_move_att(mpp__init_file, tl_att)
 
             tl_att=att_init( "DOMAIN_J_position_first", mpp__init_file%t_proc(:)%i_jmpp )
-            CALL mpp_add_att(mpp__init_file, tl_att)
+            CALL mpp_move_att(mpp__init_file, tl_att)
 
             tl_att=att_init( "DOMAIN_I_position_last", mpp__init_file%t_proc(:)%i_lci )
-            CALL mpp_add_att(mpp__init_file, tl_att)
+            CALL mpp_move_att(mpp__init_file, tl_att)
 
             tl_att=att_init( "DOMAIN_J_position_last", mpp__init_file%t_proc(:)%i_lcj )
-            CALL mpp_add_att(mpp__init_file, tl_att)
+            CALL mpp_move_att(mpp__init_file, tl_att)
 
             tl_att=att_init( "DOMAIN_I_halo_size_start", mpp__init_file%t_proc(:)%i_ldi )
-            CALL mpp_add_att(mpp__init_file, tl_att)
+            CALL mpp_move_att(mpp__init_file, tl_att)
 
             tl_att=att_init( "DOMAIN_J_halo_size_start", mpp__init_file%t_proc(:)%i_ldj )
-            CALL mpp_add_att(mpp__init_file, tl_att)
+            CALL mpp_move_att(mpp__init_file, tl_att)
 
             tl_att=att_init( "DOMAIN_I_halo_size_end", mpp__init_file%t_proc(:)%i_lei )
-            CALL mpp_add_att(mpp__init_file, tl_att)
+            CALL mpp_move_att(mpp__init_file, tl_att)
 
             tl_att=att_init( "DOMAIN_J_halo_size_end", mpp__init_file%t_proc(:)%i_lej )
-            CALL mpp_add_att(mpp__init_file, tl_att)
+            CALL mpp_move_att(mpp__init_file, tl_att)
             
             ! clean
             CALL mpp_clean(tl_mpp)
@@ -1121,7 +1120,6 @@ CONTAINS
       ! clean 
       CALL file_clean(tl_file)
 
-      CALL logger_debug("MPP INIT READ: fin init_read ")
    END FUNCTION mpp__init_file
    !-------------------------------------------------------------------
    !> @brief This function initalise a mpp structure, 
@@ -1130,7 +1128,8 @@ CONTAINS
    !> @details 
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
+   !> @date July, 2015 - add only use dimension in MPP structure
    !>
    !> @param[in] td_file   file strcuture
    !> @return mpp structure
@@ -1162,8 +1161,8 @@ CONTAINS
 
          IF( td_file%i_id == 0 )THEN
             CALL logger_info(" id "//TRIM(fct_str(td_file%i_id))) 
-            CALL logger_error("MPP INIT READ: netcdf file "//TRIM(td_file%c_name)//&
-            &  " not opened")
+            CALL logger_error("MPP INIT READ: netcdf file "//&
+               &  TRIM(td_file%c_name)//" not opened")
          ELSE
 
             ! get mpp name
@@ -1190,11 +1189,16 @@ CONTAINS
                tl_dim=dim_init( td_file%t_dim(2)%c_name, td_file%t_dim(2)%i_len)
                CALL mpp_add_dim(mpp__init_file_cdf,tl_dim)
             ENDIF
-            tl_dim=dim_init( td_file%t_dim(3)%c_name, td_file%t_dim(3)%i_len)
-            CALL mpp_add_dim(mpp__init_file_cdf,tl_dim)
 
-            tl_dim=dim_init( td_file%t_dim(4)%c_name, td_file%t_dim(4)%i_len)
-            CALL mpp_add_dim(mpp__init_file_cdf,tl_dim)
+            IF( td_file%t_dim(3)%l_use )THEN
+               tl_dim=dim_init( td_file%t_dim(3)%c_name, td_file%t_dim(3)%i_len)
+               CALL mpp_add_dim(mpp__init_file_cdf,tl_dim)
+            ENDIF
+
+            IF( td_file%t_dim(4)%l_use )THEN
+               tl_dim=dim_init( td_file%t_dim(4)%c_name, td_file%t_dim(4)%i_len)
+               CALL mpp_add_dim(mpp__init_file_cdf,tl_dim)
+            ENDIF
 
             ! initialise file/processor
             tl_proc=file_copy(td_file)
@@ -1623,16 +1627,15 @@ CONTAINS
 
             IF( il_varid /= 0 )THEN
 
-               CALL logger_error( " MPP ADD VAR: variable "//TRIM(td_var%c_name)//&
-               &  ", standard name "//TRIM(td_var%c_stdname)//&
-               &  ", already in mpp "//TRIM(td_mpp%c_name) )
-
                DO ji=1,td_mpp%t_proc(1)%i_nvar
                   CALL logger_debug( " MPP ADD VAR: in mpp structure : &
                   &  variable "//TRIM(td_mpp%t_proc(1)%t_var(ji)%c_name)//&
                   &  ", standard name "//&
                   &  TRIM(td_mpp%t_proc(1)%t_var(ji)%c_stdname) )
                ENDDO
+               CALL logger_error( " MPP ADD VAR: variable "//TRIM(td_var%c_name)//&
+               &  ", standard name "//TRIM(td_var%c_stdname)//&
+               &  ", already in mpp "//TRIM(td_mpp%c_name) )
 
             ELSE
             
@@ -1839,6 +1842,8 @@ CONTAINS
    !>
    !> @author J.Paul
    !> @date November, 2013 - Initial version
+   !> @date February, 2015 - define local variable structure to avoid mistake
+   !> with pointer
    !
    !> @param[inout] td_mpp    mpp strcuture
    !> @param[in]    cd_name   variable name
@@ -1851,6 +1856,7 @@ CONTAINS
 
       ! local variable
       INTEGER(i4)       :: il_varid
+      TYPE(TVAR)        :: tl_var
       !----------------------------------------------------------------
       ! check if mpp exist
       IF( .NOT. ASSOCIATED(td_mpp%t_proc) )THEN
@@ -1881,7 +1887,8 @@ CONTAINS
 
             ELSE
 
-               CALL mpp_del_var(td_mpp, td_mpp%t_proc(1)%t_var(il_varid)) 
+               tl_var=var_copy(td_mpp%t_proc(1)%t_var(il_varid))
+               CALL mpp_del_var(td_mpp, tl_var)
 
             ENDIF
          ENDIF
@@ -2193,6 +2200,7 @@ CONTAINS
    !>
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date July, 2015 - rewrite the same as way var_add_dim
    !>
    !> @param[inout] td_mpp mpp structure
    !> @param[in] td_dim    dimension structure
@@ -2207,53 +2215,35 @@ CONTAINS
       INTEGER(i4) :: il_ind
 
       ! loop indices
-      INTEGER(i4) :: ji
       !----------------------------------------------------------------
       IF( td_mpp%i_ndim <= ip_maxdim )THEN
 
-         ! check if dimension already in mpp structure
-         il_ind=dim_get_index(td_mpp%t_dim(:), td_dim%c_name, td_dim%c_sname)
-         IF( il_ind /= 0 )THEN
-
-            IF( td_mpp%t_dim(il_ind)%l_use )THEN
-               CALL logger_error( &
-               &  "MPP ADD DIM: dimension "//TRIM(td_dim%c_name)//&
-               &  ", short name "//TRIM(td_dim%c_sname)//&
-               &  ", already used in mpp "//TRIM(td_mpp%c_name) )
-            ELSE
-               ! replace dimension
-               td_mpp%t_dim(il_ind)=dim_copy(td_dim)
-               td_mpp%t_dim(il_ind)%i_id=il_ind
-               td_mpp%t_dim(il_ind)%l_use=.TRUE.
-            ENDIF
-
+         ! check if dimension already used in mpp structure
+         il_ind=SCAN(TRIM(cp_dimorder),TRIM(td_dim%c_sname))
+         IF( il_ind == 0 )THEN
+            CALL logger_warn( &
+            &  " MPP ADD DIM: dimension "//TRIM(td_dim%c_name)//&
+            &  ", short name "//TRIM(td_dim%c_sname)//&
+            &  ", will not be added in mpp "//TRIM(td_mpp%c_name) )
+         ELSEIF( td_mpp%t_dim(il_ind)%l_use )THEN
+            CALL logger_error( &
+            &  " MPP ADD DIM: dimension "//TRIM(td_dim%c_name)//&
+            &  ", short name "//TRIM(td_dim%c_sname)//&
+            &  ", already used in mpp "//TRIM(td_mpp%c_name) )
          ELSE
 
-            IF( td_mpp%i_ndim == ip_maxdim )THEN
-               CALL logger_error( &
-               &  "MPP ADD DIM: can not add dimension "//TRIM(td_dim%c_name)//&
-               &  ", short name "//TRIM(td_dim%c_sname)//&
-               &  ", in mpp "//TRIM(td_mpp%c_name)//". Already "//&
-               &  TRIM(fct_str(ip_maxdim))//" dimensions." )
-            ELSE
-               ! search empty dimension
-               DO ji=1,ip_maxdim
-                  IF( td_mpp%t_dim(ji)%i_id == 0 )THEN
-                     il_ind=ji 
-                     EXIT
-                  ENDIF
-               ENDDO
- 
-               ! add new dimension    
-               td_mpp%t_dim(il_ind)=dim_copy(td_dim)
-               ! update number of attribute
-               td_mpp%i_ndim=COUNT(td_mpp%t_dim(:)%l_use)
+            ! back to disorder dimension array 
+            CALL dim_disorder(td_mpp%t_dim(:))
 
-               td_mpp%t_dim(il_ind)%l_use=.TRUE.
-               td_mpp%t_dim(il_ind)%i_id=td_mpp%i_ndim
-            ENDIF
+            ! add new dimension
+            td_mpp%t_dim(td_mpp%i_ndim+1)=dim_copy(td_dim)
+
+            ! update number of attribute
+            td_mpp%i_ndim=COUNT(td_mpp%t_dim(:)%l_use)
 
          ENDIF
+         ! reorder dimension to ('x','y','z','t')
+         CALL dim_reorder(td_mpp%t_dim(:))
 
       ELSE
          CALL logger_error( &
@@ -2268,6 +2258,7 @@ CONTAINS
    !>
    !> @author J.Paul
    !> - November, 2013- Initial Version
+   !> @date July, 2015 - rewrite the same as way var_del_dim
    !>
    !> @param[inout] td_mpp mpp structure
    !> @param[in] td_dim    dimension structure
@@ -2279,57 +2270,36 @@ CONTAINS
       TYPE(TDIM), INTENT(IN)    :: td_dim
 
       ! local variable
-      INTEGER(i4) :: il_status
       INTEGER(i4) :: il_ind
-      TYPE(TDIM), DIMENSION(:), ALLOCATABLE  :: tl_dim
+      TYPE(TDIM)  :: tl_dim
 
       ! loop indices
-      INTEGER(i4) :: ji
       !----------------------------------------------------------------
-      ! check if dimension already in mpp structure
-      il_ind=dim_get_index(td_mpp%t_dim(:), td_dim%c_name, td_dim%c_sname)
-      IF( il_ind == 0 )THEN
 
-         CALL logger_error( &
-         &  "MPP DEL DIM: no dimension "//TRIM(td_dim%c_name)//&
+
+      IF( td_mpp%i_ndim <= ip_maxdim )THEN
+
+         CALL logger_trace( &
+         &  " MPP DEL DIM: delete dimension "//TRIM(td_dim%c_name)//&
          &  ", short name "//TRIM(td_dim%c_sname)//&
          &  ", in mpp "//TRIM(td_mpp%c_name) )
+         
+         ! check if dimension already in variable structure
+         il_ind=SCAN(TRIM(cp_dimorder),TRIM(td_dim%c_sname))
+
+         ! replace dimension by empty one
+         td_mpp%t_dim(il_ind)=dim_copy(tl_dim)
+
+         ! update number of dimension
+         td_mpp%i_ndim=COUNT(td_mpp%t_dim(:)%l_use)
+
+         ! reorder dimension to ('x','y','z','t')
+         CALL dim_reorder(td_mpp%t_dim)
 
       ELSE
-
-         ALLOCATE( tl_dim(td_mpp%i_ndim-1), stat=il_status )
-         IF(il_status /= 0 )THEN
-
-            CALL logger_error( &
-            &  "MPP DEL DIM: not enough space to put dimensions from "//&
-            &  TRIM(td_mpp%c_name)//" in temporary dimension structure")
-
-         ELSE
-
-            ! save temporary dimension's mpp structure
-            tl_dim( 1 : il_ind-1 ) = dim_copy(td_mpp%t_dim( 1 : il_ind-1 ))
-            tl_dim( il_ind : td_mpp%i_ndim-1 ) = &
-            &           dim_copy(td_mpp%t_dim( il_ind+1 : td_mpp%i_ndim ))
-
-            ! remove dimension from file
-            CALL dim_clean(td_mpp%t_dim(:))
-            ! copy dimension in file, except one
-            td_mpp%t_dim(1:td_mpp%i_ndim)=dim_copy(tl_dim(:))
-
-            ! update number of dimension
-            td_mpp%i_ndim=td_mpp%i_ndim-1
-
-            ! update dimension id
-            DO ji=1,td_mpp%i_ndim
-               td_mpp%t_dim(ji)%i_id=ji
-            ENDDO
-
-            ! clean
-            CALL dim_clean(tl_dim(:))
-            DEALLOCATE(tl_dim)
-
-         ENDIF
-
+         CALL logger_error( &
+         &  " MPP DEL DIM: too much dimension in mpp "//&
+         &  TRIM(td_mpp%c_name)//" ("//TRIM(fct_str(td_mpp%i_ndim))//")")
       ENDIF
 
    END SUBROUTINE mpp_del_dim
@@ -2487,10 +2457,10 @@ CONTAINS
             &  "MPP DEL VAR: no attribute "//TRIM(td_att%c_name)//&
             &  ", in mpp structure "//TRIM(td_mpp%c_name) )
 
-            IF( ASSOCIATED(td_mpp%t_proc(1)%t_var) )THEN
+            IF( ASSOCIATED(td_mpp%t_proc(1)%t_att) )THEN
                DO ji=1,td_mpp%t_proc(1)%i_natt
                   CALL logger_debug( "MPP DEL ATT: in mpp structure : &
-                  &  attribute : "//TRIM(td_mpp%t_proc(1)%t_var(ji)%c_name) )
+                  &  attribute : "//TRIM(td_mpp%t_proc(1)%t_att(ji)%c_name) )
                ENDDO
             ENDIF
 
@@ -2515,6 +2485,8 @@ CONTAINS
    !
    !> @author J.Paul
    !> @date November, 2013 - Initial version
+   !> @date February, 2015 - define local attribute structure to avoid mistake
+   !> with pointer
    !
    !> @param[inout] td_mpp    mpp strcuture
    !> @param[in]    cd_name   attribute name
@@ -2526,7 +2498,8 @@ CONTAINS
       CHARACTER(LEN=*) , INTENT(IN   ) :: cd_name
 
       ! local variable
-      INTEGER(i4)       :: il_attid
+      INTEGER(i4) :: il_attid
+      TYPE(TATT)  :: tl_att
       !----------------------------------------------------------------
       ! check if mpp exist
       IF( .NOT. ASSOCIATED(td_mpp%t_proc) )THEN
@@ -2550,14 +2523,15 @@ CONTAINS
 
             IF( il_attid == 0 )THEN
 
-               CALL logger_warn( &
+               CALL logger_debug( &
                &  "MPP DEL ATT : there is no attribute with "//&
                &  "name "//TRIM(cd_name)//" in mpp structure "//&
                &  TRIM(td_mpp%c_name))
 
             ELSE
 
-               CALL mpp_del_att(td_mpp, td_mpp%t_proc(1)%t_att(il_attid)) 
+               tl_att=att_copy(td_mpp%t_proc(1)%t_att(il_attid))
+               CALL mpp_del_att(td_mpp, tl_att) 
 
             ENDIF
          ENDIF
@@ -2862,10 +2836,15 @@ CONTAINS
             CALL mpp__del_land( tl_mpp, id_mask )
 
             CALL logger_info("MPP OPTIMIZ: number of processor "//&
-            &  TRIM(fct_str(tl_mpp%i_nproc)) )
+            &   TRIM(fct_str(ji))//"x"//TRIM(fct_str(jj))//"="//&
+            &   TRIM(fct_str(tl_mpp%i_nproc)) )
             IF( tl_mpp%i_nproc > td_mpp%i_nproc .AND. &
             &   tl_mpp%i_nproc <= il_maxproc )THEN
                ! save optimiz decomposition 
+
+               CALL logger_info("MPP OPTIMIZ:save this decomposition "//&
+               &   TRIM(fct_str(ji))//"x"//TRIM(fct_str(jj))//"="//&
+               &   TRIM(fct_str(tl_mpp%i_nproc)) )
 
                ! clean mpp
                CALL mpp_clean(td_mpp)
@@ -3416,7 +3395,6 @@ CONTAINS
       TYPE(TVAR), INTENT(IN) :: td_var
 
       ! local variable
-      INTEGER(i4) :: il_ndim
 
       ! loop indices
       INTEGER(i4) :: ji
@@ -3428,16 +3406,10 @@ CONTAINS
 
          mpp__check_var_dim=.FALSE.
 
-         CALL logger_error( &
-         &  "MPP CHECK DIM: variable and mpp dimension differ"//&
-         &  " for variable "//TRIM(td_var%c_name)//&
-         &  " and mpp "//TRIM(td_mpp%c_name))
-
          CALL logger_debug( &
          &  " mpp dimension: "//TRIM(fct_str(td_mpp%i_ndim))//&
          &  " variable dimension: "//TRIM(fct_str(td_var%i_ndim)) )
-         il_ndim=MIN(td_var%i_ndim, td_mpp%i_ndim )
-         DO ji = 1, il_ndim
+         DO ji = 1, ip_maxdim
             CALL logger_debug( &
             &  "MPP CHECK DIM: for dimension "//&
             &  TRIM(td_mpp%t_dim(ji)%c_name)//&
@@ -3447,6 +3419,12 @@ CONTAINS
             &  TRIM(fct_str(td_var%t_dim(ji)%i_len))//&
             &  ", variable used "//TRIM(fct_str(td_var%t_dim(ji)%l_use)))
          ENDDO
+
+         CALL logger_error( &
+         &  "MPP CHECK DIM: variable and mpp dimension differ"//&
+         &  " for variable "//TRIM(td_var%c_name)//&
+         &  " and mpp "//TRIM(td_mpp%c_name))
+
       ENDIF
 
    END FUNCTION mpp__check_var_dim

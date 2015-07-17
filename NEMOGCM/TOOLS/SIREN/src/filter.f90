@@ -17,7 +17,8 @@
 !>          - rad < cutoff : @f$ filter=0.54+0.46*COS(\pi*\frac{rad}{cutoff}) @f$
 !>          - rad > cutoff : @f$ filter=0 @f$               
 !>       - 'blackman'
-!>          - rad < cutoff : @f$ filter=0.42 + 0.5*COS(\pi*\frac{rad}{cutoff}) + 0.08*COS(2\pi*\frac{rad}{cutoff}) @f$
+!>          - rad < cutoff : @f$ filter=0.42 + 0.5*COS(\pi*\frac{rad}{cutoff}) + 
+!>                                      0.08*COS(2\pi*\frac{rad}{cutoff}) @f$
 !>          - rad > cutoff : @f$ filter=0 @f$
 !>       - 'gauss'
 !>          - @f$filter=exp(-(\alpha * rad^2) / (2*cutoff^2))@f$
@@ -28,9 +29,12 @@
 !>       with @f$ rad= \sqrt{(dist-radius)^2} @f$
 !>
 !>    td_var\%c_filter(2) string character is the number of turn to be done<br/>
-!>    td_var\%c_filter(3) string character is the cut-off frequency (count in number of mesh grid)<br/>
-!>    td_var\%c_filter(4) string character is the halo radius (count in number of mesh grid)<br/>
-!>    td_var\%c_filter(5) string character is the alpha parameter (for gauss and butterworth method)<br/>
+!>    td_var\%c_filter(3) string character is the cut-off frequency 
+! >                       (count in number of mesh grid)<br/>
+!>    td_var\%c_filter(4) string character is the halo radius 
+!>                        (count in number of mesh grid)<br/>
+!>    td_var\%c_filter(5) string character is the alpha parameter 
+!>                        (for gauss and butterworth method)<br/>
 !>    
 !>    @note Filter method could be specify for each variable in namelist _namvar_,
 !>    defining string character _cn\_varinfo_. None by default.<br/>
@@ -39,7 +43,8 @@
 !> 
 !>    The number of turn is specify using '*' separator.<br/>
 !>    Example:
-!>       - cn_varinfo='varname1:2*hamming(@f$cutoff@f$,@f$radius@f$)', 'varname2:gauss(@f$cutoff@f$,@f$radius@f$,@f$\alpha@f$)'
+!>       - cn_varinfo='varname1:flt=2*hamming(@f$cutoff@f$,@f$radius@f$)', 
+!>                    'varname2:flt=gauss(@f$cutoff@f$,@f$radius@f$,@f$\alpha@f$)'
 !>
 !>    to filter variable value:<br/>
 !> @code
@@ -105,7 +110,7 @@ CONTAINS
    !>  gets parameter value, and launch filter__fill_value 
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variable structure 
    !-------------------------------------------------------------------
@@ -249,7 +254,7 @@ CONTAINS
    !>    Finally extrabands are removed.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variable 
    !> @param[in] cd_name   filter name
@@ -295,7 +300,7 @@ CONTAINS
       DEALLOCATE(bl_mask)
 
       !3-extrapolate
-      CALL extrap_fill_value( td_var, id_iext=id_radius, id_jext=id_radius )
+      CALL extrap_fill_value( td_var ) !, id_iext=id_radius, id_jext=id_radius )
 
       !4-filtering
       DO jl=1,td_var%t_dim(4)%i_len
@@ -340,7 +345,7 @@ CONTAINS
    !> running this subroutine.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] dd_value  array of value to be filtered 
    !> @param[in] dd_fill      fill value 
@@ -392,7 +397,7 @@ CONTAINS
    !> running this subroutine.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] dd_value  array of value to be filtered 
    !> @param[in] dd_fill      fill value 
@@ -438,7 +443,7 @@ CONTAINS
    !> running this subroutine.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] dd_value  array of value to be filtered 
    !> @param[in] dd_fill      fill value 
@@ -481,7 +486,7 @@ CONTAINS
    !>    and apply coefficient 2D array on each point
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] dd_value  array of value to be filtered 
    !> @param[in] dd_fill      fill value 
@@ -536,7 +541,7 @@ CONTAINS
    !>    and apply coefficient 1D array on each point
    !>
    !> @author J.Paul
-   !> - Nov, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] dd_value  array of value to be filtered 
    !> @param[in] dd_fill      fill value 
@@ -589,7 +594,7 @@ CONTAINS
    !> As well as a filter parameter for gauss and butterworth filter
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_name   filter name
    !> @param[in] dd_cutoff cut-off frequency
@@ -648,7 +653,7 @@ CONTAINS
    !> As well as a filter parameter for gauss an butterworth filter
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_name   filter name
    !> @param[in] dd_cutoff cut-off frequency
@@ -694,7 +699,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] dd_cutoff cut-off frequency
    !> @param[in] id_radius filter halo radius
@@ -748,7 +753,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] dd_cutoff cut-off frequency
    !> @param[in] id_radius filter halo radius
@@ -807,7 +812,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] dd_cutoff cut-off frequency
    !> @param[in] id_radius filter halo radius
@@ -862,7 +867,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] dd_cutoff cut-off frequency
    !> @param[in] id_radius filter halo radius
@@ -921,7 +926,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] dd_cutoff cut-off frequency
    !> @param[in] id_radius filter halo radius
@@ -977,7 +982,7 @@ CONTAINS
    !> @details
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] dd_cutoff cut-off frequency
    !> @param[in] id_radius filter halo radius
@@ -1037,7 +1042,7 @@ CONTAINS
    !> @details
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] dd_cutoff cut-off frequency
    !> @param[in] id_radius filter halo radius
@@ -1089,7 +1094,7 @@ CONTAINS
    !> @details
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] dd_cutoff cut-off frequency
    !> @param[in] id_radius filter halo radius
@@ -1145,7 +1150,7 @@ CONTAINS
    !> @details
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] dd_cutoff cut-off frequency
    !> @param[in] id_radius filter halo radius
@@ -1197,7 +1202,7 @@ CONTAINS
    !> @details
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] dd_cutoff cut-off frequency
    !> @param[in] id_radius filter halo radius

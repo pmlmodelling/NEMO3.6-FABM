@@ -148,7 +148,7 @@
 !> @code
 !>    CALL grid_check_coincidence(td_coord0, td_coord1, 
 !>                                id_imin0, id_imax0, id_jmin0, id_jmax0
-!>                                [,id_rho])
+!>                                ,id_rho)
 !> @endcode
 !>       - td_coord0 is coarse grid coordinate mpp structure
 !>       - td_coord1 is fine   grid coordinate mpp structure
@@ -160,7 +160,7 @@
 !> domain
 !>       - id_jmax0  is coarse grid upper right corner j-indice of fine grid 
 !> domain 
-!>       - id_rho    is array of refinement factor (default 1)
+!>       - id_rho    is array of refinement factor 
 !>
 !>    to add ghost cell at boundaries:<br/>
 !> @code
@@ -212,6 +212,8 @@
 !> - add header
 !> @date October, 2014
 !> - use mpp file structure instead of file
+!> @date February, 2015
+!> - add function grid_fill_small_msk to fill small domain inside bigger one
 !
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -254,6 +256,7 @@ MODULE grid
    PUBLIC :: grid_get_ghost            !< return ghost cell factor
    PUBLIC :: grid_split_domain         !< compute closed sea domain 
    PUBLIC :: grid_fill_small_dom       !< fill small closed sea with fill value 
+   PUBLIC :: grid_fill_small_msk       !< fill small domain inside bigger one 
 
                                      ! get closest coarse grid indices of fine grid domain
    PRIVATE :: grid__get_coarse_index_ff ! - using coarse and fine grid coordinates files
@@ -465,7 +468,7 @@ CONTAINS
    !> - compute NEMO periodicity
    !> - compute East West overlap
    !>
-   !> @note need all processor files to be there
+   !> @note need all processor files
    !> @author J.Paul
    !> - October, 2014- Initial Version
    !>
@@ -495,6 +498,7 @@ CONTAINS
       il_perio=-1
       il_ew   =-1
 
+      CALL logger_info("GRID GET INFO: look for "//TRIM(td_mpp%c_name))
       ! copy structure
       tl_mpp=mpp_copy(td_mpp)
       ! select edge files
@@ -522,27 +526,32 @@ CONTAINS
          ENDIF
       ENDIF
 
+      CALL logger_info("GRID GET INFO: perio "//TRIM(fct_str(il_perio)))
+
       SELECT CASE(il_perio)
       CASE(3,4)
-         il_pivot=0
-      CASE(5,6)
          il_pivot=1
+      CASE(5,6)
+         il_pivot=0
       CASE(0,1,2)
          il_pivot=1
       END SELECT
 
       IF( il_pivot < 0 .OR. il_pivot > 1 )THEN
          ! get pivot
+         CALL logger_info("GRID GET INFO: look for pivot ")
          il_pivot=grid_get_pivot(tl_mpp)
       ENDIF
 
       IF( il_perio < 0 .OR. il_perio > 6 )THEN
          ! get periodicity
+         CALL logger_info("GRID GET INFO: look for perio ")
          il_perio=grid_get_perio(tl_mpp, il_pivot)
       ENDIF
 
       IF( il_ew < 0 )THEN
          ! get periodicity
+         CALL logger_info("GRID GET INFO: look for overlap ")
          il_ew=grid_get_ew_overlap(tl_mpp)
       ENDIF
 
@@ -594,7 +603,7 @@ CONTAINS
    !> - do not work with ORCA2 grid (T-point)
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !> @date September, 2014
    !> - add dummy loop in case variable not over right point.
    !> @date October, 2014
@@ -782,7 +791,7 @@ CONTAINS
          ENDDO
 
          IF( ll_check )THEN
-            CALL logger_info("GRID GET PIVOT: T-pivot")
+            CALL logger_info("GRID GET PIVOT: F-pivot")
             grid__get_pivot_varT=0
          ENDIF
 
@@ -875,7 +884,7 @@ CONTAINS
          ENDDO
 
          IF( ll_check )THEN
-            CALL logger_info("GRID GET PIVOT: T-pivot")
+            CALL logger_info("GRID GET PIVOT: F-pivot")
             grid__get_pivot_varU=0
          ENDIF
 
@@ -968,7 +977,7 @@ CONTAINS
          ENDDO
 
          IF( ll_check )THEN
-            CALL logger_info("GRID GET PIVOT: T-pivot")
+            CALL logger_info("GRID GET PIVOT: F-pivot")
             grid__get_pivot_varV=0
          ENDIF
 
@@ -1061,7 +1070,7 @@ CONTAINS
          ENDDO
 
          IF( ll_check )THEN
-            CALL logger_info("GRID GET PIVOT: T-pivot")
+            CALL logger_info("GRID GET PIVOT: F-pivot")
             grid__get_pivot_varF=0
          ENDIF
 
@@ -1276,15 +1285,15 @@ CONTAINS
    !> 0: closed boundaries
    !> 1: cyclic east-west boundary
    !> 2: symmetric boundary condition across the equator
-   !> 3: North fold boundary (with a F-point pivot)
-   !> 4: North fold boundary (with a F-point pivot) and cyclic east-west boundary
-   !> 5: North fold boundary (with a T-point pivot)
-   !> 6: North fold boundary (with a T-point pivot) and cyclic east-west boundary
+   !> 3: North fold boundary (with a T-point pivot)
+   !> 4: North fold boundary (with a T-point pivot) and cyclic east-west boundary
+   !> 5: North fold boundary (with a F-point pivot)
+   !> 6: North fold boundary (with a F-point pivot) and cyclic east-west boundary
    !>
    !> @warning pivot point should have been computed before run this script. see grid_get_pivot.
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !> @date October, 2014
    !> - work on variable structure instead of file structure
    !
@@ -1536,10 +1545,10 @@ CONTAINS
    !> 0: closed boundaries
    !> 1: cyclic east-west boundary
    !> 2: symmetric boundary condition across the equator
-   !> 3: North fold boundary (with a F-point pivot)
-   !> 4: North fold boundary (with a F-point pivot) and cyclic east-west boundary
-   !> 5: North fold boundary (with a T-point pivot)
-   !> 6: North fold boundary (with a T-point pivot) and cyclic east-west boundary
+   !> 3: North fold boundary (with a T-point pivot)
+   !> 4: North fold boundary (with a T-point pivot) and cyclic east-west boundary
+   !> 5: North fold boundary (with a F-point pivot)
+   !> 6: North fold boundary (with a F-point pivot) and cyclic east-west boundary
    !>
    !> @warning pivot point should have been computed before run this script. see grid_get_pivot.
    !>
@@ -1633,7 +1642,7 @@ CONTAINS
    !>
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date October, 2014
    !> - work on mpp file structure instead of file structure
    !>
@@ -1796,7 +1805,7 @@ CONTAINS
    !>
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date October, 2014
    !> - work on mpp file structure instead of file structure
    !>
@@ -1889,7 +1898,7 @@ CONTAINS
    !> @note Not able to manage north fold for now.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date October, 2014
    !> - work on mpp file structure instead of file structure
    !
@@ -1977,11 +1986,14 @@ CONTAINS
    !> work (default 'T')
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014
    !> - use grid point to read coordinates variable. 
    !> @date October, 2014
    !> - work on mpp file structure instead of file structure
+   !> @date February, 2015
+   !> - use longitude or latitude as standard name, if can not find 
+   !> longitude_T, latitude_T...
    !>
    !> @param[in] td_coord0 coarse grid coordinate mpp structure
    !> @param[in] td_coord1 fine grid coordinate mpp structure
@@ -2003,26 +2015,27 @@ CONTAINS
       INTEGER(i4), DIMENSION(2,2) :: grid__get_coarse_index_ff
 
       ! local variable
-      TYPE(TMPP) :: tl_coord0
-      TYPE(TMPP) :: tl_coord1
+      CHARACTER(LEN= 1)                        :: cl_point
+      CHARACTER(LEN=lc)                        :: cl_name
 
-      TYPE(TVAR)  :: tl_lon0
-      TYPE(TVAR)  :: tl_lat0
-      TYPE(TVAR)  :: tl_lon1
-      TYPE(TVAR)  :: tl_lat1
+      INTEGER(i4)                              :: il_imin0
+      INTEGER(i4)                              :: il_imax0
+      INTEGER(i4)                              :: il_jmin0
+      INTEGER(i4)                              :: il_jmax0
+      INTEGER(i4)                              :: il_ind
 
-      INTEGER(i4), DIMENSION(:), ALLOCATABLE :: il_rho
+      INTEGER(i4), DIMENSION(2,2)              :: il_xghost0
+      INTEGER(i4), DIMENSION(2,2)              :: il_xghost1
 
-      INTEGER(i4), DIMENSION(2,2)         :: il_xghost0
-      INTEGER(i4), DIMENSION(2,2)         :: il_xghost1
+      INTEGER(i4), DIMENSION(:)  , ALLOCATABLE :: il_rho
 
-      INTEGER(i4) :: il_imin0
-      INTEGER(i4) :: il_imax0
-      INTEGER(i4) :: il_jmin0
-      INTEGER(i4) :: il_jmax0
+      TYPE(TVAR)                               :: tl_lon0
+      TYPE(TVAR)                               :: tl_lat0
+      TYPE(TVAR)                               :: tl_lon1
+      TYPE(TVAR)                               :: tl_lat1
 
-      CHARACTER(LEN= 1) :: cl_point
-      CHARACTER(LEN=lc) :: cl_name
+      TYPE(TMPP)                               :: tl_coord0
+      TYPE(TMPP)                               :: tl_coord1
 
       ! loop indices
       !----------------------------------------------------------------
@@ -2056,8 +2069,23 @@ CONTAINS
 
          ! read coarse longitue and latitude
          WRITE(cl_name,*) 'longitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord0%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET COARSE INDEX: no variable "//&
+            &  TRIM(cl_name)//" in file "//TRIM(tl_coord0%c_name)//". &
+            &  try to use longitude.")
+            WRITE(cl_name,*) 'longitude'
+         ENDIF
          tl_lon0=iom_mpp_read_var(tl_coord0, TRIM(cl_name))
+
          WRITE(cl_name,*) 'latitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord0%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET COARSE INDEX: no variable "//&
+            &  TRIM(cl_name)//" in file "//TRIM(tl_coord0%c_name)//". &
+            &  try to use latitude.")
+            WRITE(cl_name,*) 'latitude'
+         ENDIF
          tl_lat0=iom_mpp_read_var(tl_coord0, TRIM(cl_name))
          
          CALL grid_del_ghost(tl_lon0, il_xghost0(:,:))
@@ -2076,8 +2104,23 @@ CONTAINS
 
          ! read fine longitue and latitude
          WRITE(cl_name,*) 'longitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord1%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET COARSE INDEX: no variable "//&
+            &  TRIM(cl_name)//" in file "//TRIM(tl_coord1%c_name)//". &
+            &  try to use longitude.")
+            WRITE(cl_name,*) 'longitude'
+         ENDIF
          tl_lon1=iom_mpp_read_var(tl_coord1, TRIM(cl_name)) 
+
          WRITE(cl_name,*) 'latitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord1%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET COARSE INDEX: no variable "//&
+            &  TRIM(cl_name)//" in file "//TRIM(tl_coord1%c_name)//". &
+            &  try to use latitude.")
+            WRITE(cl_name,*) 'latitude'
+         ENDIF
          tl_lat1=iom_mpp_read_var(tl_coord1, TRIM(cl_name))
  
          CALL grid_del_ghost(tl_lon1, il_xghost1(:,:))
@@ -2126,11 +2169,14 @@ CONTAINS
    !> work (default 'T')
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014
    !> - use grid point to read coordinates variable.
    !> @date October, 2014
    !> - work on mpp file structure instead of file structure
+   !> @date February, 2015
+   !> - use longitude or latitude as standard name, if can not find 
+   !> longitude_T, latitude_T...
    !>
    !> @param[in] td_longitude0   coarse grid longitude
    !> @param[in] td_latitude0    coarse grid latitude
@@ -2153,17 +2199,19 @@ CONTAINS
       INTEGER(i4), DIMENSION(2,2) :: grid__get_coarse_index_cf
 
       ! local variable
-      TYPE(TMPP)  :: tl_coord1
+      CHARACTER(LEN= 1)                        :: cl_point
+      CHARACTER(LEN=lc)                        :: cl_name
 
-      TYPE(TVAR)  :: tl_lon1
-      TYPE(TVAR)  :: tl_lat1
+      INTEGER(i4)                              :: il_ind
 
-      INTEGER(i4), DIMENSION(:), ALLOCATABLE :: il_rho
+      INTEGER(i4), DIMENSION(:)  , ALLOCATABLE :: il_rho
 
-      INTEGER(i4), DIMENSION(2,2)       :: il_xghost
+      INTEGER(i4), DIMENSION(2,2)              :: il_xghost
 
-      CHARACTER(LEN= 1) :: cl_point
-      CHARACTER(LEN=lc) :: cl_name
+      TYPE(TVAR)                               :: tl_lon1
+      TYPE(TVAR)                               :: tl_lat1
+
+      TYPE(TMPP)                               :: tl_coord1
 
       ! loop indices
       !----------------------------------------------------------------
@@ -2208,8 +2256,23 @@ CONTAINS
 
          ! read fine longitue and latitude
          WRITE(cl_name,*) 'longitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord1%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET COARSE INDEX: no variable "//&
+            &  TRIM(cl_name)//"in file "//TRIM(tl_coord1%c_name)//". &
+            &  try to use longitude.")
+            WRITE(cl_name,*) 'longitude'
+         ENDIF
          tl_lon1=iom_mpp_read_var(tl_coord1, TRIM(cl_name))
+
          WRITE(cl_name,*) 'latitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord1%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET COARSE INDEX: no variable "//&
+            &  TRIM(cl_name)//"in file "//TRIM(tl_coord1%c_name)//". &
+            &  try to use longitude.")
+            WRITE(cl_name,*) 'latitude'
+         ENDIF
          tl_lat1=iom_mpp_read_var(tl_coord1, TRIM(cl_name))
          
          CALL grid_del_ghost(tl_lon1, il_xghost(:,:))
@@ -2243,11 +2306,14 @@ CONTAINS
    !> work (default 'T')
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014
    !> - use grid point to read coordinates variable.
    !> @date October, 2014
    !> - work on mpp file structure instead of file structure
+   !> @date February, 2015
+   !> - use longitude or latitude as standard name, if can not find 
+   !> longitude_T, latitude_T...
    !> 
    !> @param[in] td_coord0 coarse grid coordinate mpp structure
    !> @param[in] td_lon1   fine grid longitude
@@ -2270,22 +2336,23 @@ CONTAINS
       INTEGER(i4), DIMENSION(2,2) :: grid__get_coarse_index_fc
 
       ! local variable
-      TYPE(TMPP)  :: tl_coord0
+      CHARACTER(LEN= 1)                        :: cl_point
+      CHARACTER(LEN=lc)                        :: cl_name      
 
-      TYPE(TVAR)  :: tl_lon0
-      TYPE(TVAR)  :: tl_lat0
+      INTEGER(i4)                              :: il_imin0
+      INTEGER(i4)                              :: il_imax0
+      INTEGER(i4)                              :: il_jmin0
+      INTEGER(i4)                              :: il_jmax0
+      INTEGER(i4)                              :: il_ind
 
-      INTEGER(i4), DIMENSION(:), ALLOCATABLE :: il_rho
+      INTEGER(i4), DIMENSION(:), ALLOCATABLE   :: il_rho
 
-      INTEGER(i4), DIMENSION(2,2)       :: il_xghost
+      INTEGER(i4), DIMENSION(2,2)              :: il_xghost
 
-      INTEGER(i4) :: il_imin0
-      INTEGER(i4) :: il_imax0
-      INTEGER(i4) :: il_jmin0
-      INTEGER(i4) :: il_jmax0
+      TYPE(TVAR)                               :: tl_lon0
+      TYPE(TVAR)                               :: tl_lat0
 
-      CHARACTER(LEN= 1) :: cl_point
-      CHARACTER(LEN=lc) :: cl_name      
+      TYPE(TMPP)                               :: tl_coord0
 
       ! loop indices
       !----------------------------------------------------------------
@@ -2329,8 +2396,23 @@ CONTAINS
 
          ! read coarse longitue and latitude
          WRITE(cl_name,*) 'longitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord0%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET COARSE INDEX: no variable "//&
+            &  TRIM(cl_name)//"in file "//TRIM(tl_coord0%c_name)//". &
+            &  try to use longitude.")
+            WRITE(cl_name,*) 'longitude'
+         ENDIF
          tl_lon0=iom_mpp_read_var(tl_coord0, TRIM(cl_name))
+         
          WRITE(cl_name,*) 'latitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord0%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET COARSE INDEX: no variable "//&
+            &  TRIM(cl_name)//"in file "//TRIM(tl_coord0%c_name)//". &
+            &  try to use latitude.")
+            WRITE(cl_name,*) 'latitude'
+         ENDIF
          tl_lat0=iom_mpp_read_var(tl_coord0, TRIM(cl_name))
 
          CALL grid_del_ghost(tl_lon0, il_xghost(:,:))
@@ -2376,7 +2458,7 @@ CONTAINS
    !> @note do not use ghost cell
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014
    !> - check grid point
    !> - take into account EW overlap
@@ -2519,7 +2601,7 @@ CONTAINS
             tl_lat0=var_copy(td_lat0)
             CALL grid_del_ghost(tl_lon0, il_xghost0(:,:))
             CALL grid_del_ghost(tl_lat0, il_xghost0(:,:))
-            
+ 
             ! "global" coarse grid indice
             il_imin0=1
             il_jmin0=1
@@ -2567,6 +2649,12 @@ CONTAINS
 
             IF( dl_lon1_ll == tl_lon1%d_fill .OR. &
             &   dl_lat1_ll == tl_lat1%d_fill )THEN
+               CALL logger_debug("GRID GET COARSE INDEX: lon "//&
+               &  TRIM(fct_str(dl_lon1_ll))//" "//&
+               &  TRIM(fct_str(tl_lon1%d_fill)) )
+               CALL logger_debug("GRID GET COARSE INDEX: lat "//&
+               &  TRIM(fct_str(dl_lat1_ll))//" "//&
+               &  TRIM(fct_str(tl_lat1%d_fill)) )
                CALL logger_error("GRID GET COARSE INDEX: lower left corner "//&
                &                 "point is FillValue. remove ghost cell "//&
                &                 "before running grid_get_coarse_index.")
@@ -2631,7 +2719,6 @@ CONTAINS
             ! coarse grid point should be north west of fine grid domain
             ji = il_iul(1)
             jj = il_iul(2)
-
             IF( ABS(tl_lon0%d_value(ji,jj,1,1)-dl_lon1_ul) > dp_delta )THEN
                IF(tl_lon0%d_value(ji,jj,1,1) > dl_lon1_ul )THEN
                   il_iul(1)=il_iul(1)-1
@@ -2646,7 +2733,6 @@ CONTAINS
                   ENDIF
                ENDIF
             ENDIF
-
             IF( ABS(tl_lat0%d_value(ji,jj,1,1)-dl_lat1_ul) > dp_delta )THEN
                IF(tl_lat0%d_value(ji,jj,1,1) < dl_lat1_ul )THEN
                   il_iul(2)=il_iul(2)+1
@@ -2865,22 +2951,24 @@ CONTAINS
    !> of longitude and latitude, before running this function
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
+   !> @date February, 2015 - change dichotomy method to manage ORCA grid
    !
    !> @param[in] dd_lon0   coarse grid array of longitude
    !> @param[in] dd_lat0   coarse grid array of latitude
    !> @param[in] dd_lon1   fine   grid longitude
    !> @param[in] dd_lat1   fine   grid latitude
+   !> @param[in] dd_fill   fill value
    !> @return coarse grid indices of closest point of fine grid point
-   !>
    !-------------------------------------------------------------------
-   FUNCTION grid_get_closest( dd_lon0, dd_lat0, dd_lon1, dd_lat1  )
+   FUNCTION grid_get_closest( dd_lon0, dd_lat0, dd_lon1, dd_lat1, dd_fill )
       IMPLICIT NONE
       ! Argument
       REAL(dp), DIMENSION(:,:), INTENT(IN) :: dd_lon0
       REAL(dp), DIMENSION(:,:), INTENT(IN) :: dd_lat0
       REAL(dp),                 INTENT(IN) :: dd_lon1
       REAL(dp),                 INTENT(IN) :: dd_lat1
+      REAL(dp),                 INTENT(IN), OPTIONAL :: dd_fill
 
       ! function
       INTEGER(i4), DIMENSION(2) :: grid_get_closest
@@ -2928,52 +3016,40 @@ CONTAINS
       il_shape(2)= il_jsup - il_jinf + 1
 
       ll_north=.FALSE.
-      ll_continue=.TRUE.
+      ll_continue=.FALSE.
 
-      ! look for meridian 0°/360°
-      il_jmid = il_jinf + INT(il_shape(2)/2)
-      il_ind(:) = MAXLOC( dl_lon0(:,il_jmid), dl_lon0(:,il_jmid) <= 360._dp )
-
-      il_imid=il_ind(1)
-
-      IF( dl_lon1 == dl_lon0(il_imid,il_jmid) .AND. &
-      &   dd_lat1 == dd_lat0(il_imid,il_jmid) )THEN
-
-         il_iinf = il_imid ;  il_isup = il_imid
-         il_jinf = il_jmid ;  il_jsup = il_jmid
-
-         ll_continue=.FALSE.
-
-      ELSE
-         IF( dl_lon1 < dl_lon0(il_isup,il_jmid) .AND. &
-         &   il_imid /= il_isup )THEN
-
-            ! point east
-            il_iinf = il_imid
-      
-         ELSE IF( dl_lon1 > dl_lon0(il_iinf,il_jmid) .AND. &
-         &        il_imid /= il_iinf )THEN
-
-            ! point west
-            il_isup = il_imid
-
-         ENDIF
+      ! avoid to use fillvalue for reduce domain on first time
+      IF( PRESENT(dd_fill) )THEN
+         DO WHILE( ALL(dl_lon0(il_isup,:) == dd_fill) )
+            il_isup=il_isup-1
+         ENDDO
+         DO WHILE( ALL(dl_lon0(il_iinf,:) == dd_fill) )
+            il_iinf=il_iinf+1
+         ENDDO
+         DO WHILE( ALL(dd_lat0(:,il_jsup) == dd_fill) )
+            il_jsup=il_jsup-1
+         ENDDO
+         DO WHILE( ALL(dd_lat0(:,il_jinf) == dd_fill) )
+            il_jinf=il_jinf+1
+         ENDDO
 
          il_shape(1)= il_isup - il_iinf + 1
          il_shape(2)= il_jsup - il_jinf + 1
 
-         il_imid = il_iinf + INT(il_shape(1)/2) 
-         il_jmid = il_jinf + INT(il_shape(2)/2)
-
-         ! exit if too close from north fold (safer)
-         IF( dd_lat0(il_imid,il_jmid) > 50.0 ) ll_north=.TRUE.
-
-         ! exit when close enough of point
-         IF( ANY(il_shape(:) < 10 ) ) ll_continue=.FALSE.
       ENDIF
 
-      !
-      DO WHILE( ll_continue .AND. .NOT. ll_north )
+      ! special case for north ORCA grid
+      IF( dd_lat1 > 19. .AND. dl_lon1 < 74.  )THEN
+         ll_north=.TRUE.
+      ENDIF
+
+      IF( .NOT. ll_north )THEN
+         ! look for meridian 0°/360°
+         il_jmid = il_jinf + INT(il_shape(2)/2)
+         il_ind(:) = MAXLOC( dl_lon0(il_iinf:il_isup,il_jmid), &
+         &                   dl_lon0(il_iinf:il_isup,il_jmid) <= 360._dp )
+
+         il_imid=il_ind(1)
 
          IF( dl_lon1 == dl_lon0(il_imid,il_jmid) .AND. &
          &   dd_lat1 == dd_lat0(il_imid,il_jmid) )THEN
@@ -2981,31 +3057,21 @@ CONTAINS
             il_iinf = il_imid ;  il_isup = il_imid
             il_jinf = il_jmid ;  il_jsup = il_jmid
 
-            ll_continue=.FALSE.
-
          ELSE
-            IF( dl_lon1 > dl_lon0(il_imid,il_jmid) )THEN
-
+            IF( ALL(dl_lon0(il_isup,il_jinf:il_jsup) >  dl_lon1 ) .AND. &
+            &   il_imid /= il_isup )THEN
+               ! 0 < lon1 < lon0(isup)
                ! point east
-               il_iinf = il_imid
-        
-            ELSE IF(dl_lon1 < dl_lon0(il_imid,il_jmid) )THEN
-
+               il_iinf = il_imid+1
+               ll_continue=.TRUE.
+         
+            ELSE IF( ALL(dl_lon0(il_iinf,il_jinf:il_jsup) <  dl_lon1 ) .AND. &
+            &        il_imid /= il_iinf )THEN
+               ! lon0(iinf) < lon1 < 360
                ! point west
                il_isup = il_imid
+               ll_continue=.TRUE.
 
-            ENDIF
-
-            IF( dd_lat1 > dd_lat0(il_imid,il_jmid) )THEN
-               
-               ! point north
-               il_jinf = il_jmid
-
-            ELSE IF(dd_lat1 < dd_lat0(il_imid,il_jmid) )THEN
-
-               ! point south
-               il_jsup = il_jmid
-            
             ENDIF
 
             il_shape(1)= il_isup - il_iinf + 1
@@ -3014,8 +3080,55 @@ CONTAINS
             il_imid = il_iinf + INT(il_shape(1)/2) 
             il_jmid = il_jinf + INT(il_shape(2)/2)
 
-            ! exit if too close from north fold (safer)
-            IF( dd_lat0(il_imid,il_jmid) > 50.0 ) ll_north=.TRUE.
+            ! exit when close enough of point
+            IF( ANY(il_shape(:) < 10 ) ) ll_continue=.FALSE.
+         ENDIF
+      ENDIF
+
+      !
+      DO WHILE( ll_continue .AND. .NOT. ll_north )
+
+         ll_continue=.FALSE.
+         IF( dl_lon1 == dl_lon0(il_imid,il_jmid) .AND. &
+         &   dd_lat1 == dd_lat0(il_imid,il_jmid) )THEN
+
+            il_iinf = il_imid ;  il_isup = il_imid
+            il_jinf = il_jmid ;  il_jsup = il_jmid
+
+         ELSE
+            IF( ALL(dl_lon0(il_imid,il_jinf:il_jsup) <  dl_lon1) )THEN    
+
+               ! point east
+               il_iinf = il_imid
+               ll_continue=.TRUE.
+        
+            ELSE IF( ALL(dl_lon0(il_imid,il_jinf:il_jsup) >  dl_lon1) )THEN    
+
+               ! point west
+               il_isup = il_imid
+               ll_continue=.TRUE.
+
+            ENDIF
+
+            IF( ALL(dd_lat0(il_iinf:il_isup,il_jmid) <  dd_lat1) )THEN    
+               
+               ! point north
+               il_jinf = il_jmid
+               ll_continue=.TRUE.
+
+            ELSE IF( ALL(dd_lat0(il_iinf:il_isup,il_jmid) > dd_lat1) )THEN    
+
+               ! point south
+               il_jsup = il_jmid
+               ll_continue=.TRUE.
+            
+            ENDIF
+
+            il_shape(1)= il_isup - il_iinf + 1
+            il_shape(2)= il_jsup - il_jinf + 1
+
+            il_imid = il_iinf + INT(il_shape(1)/2) 
+            il_jmid = il_jinf + INT(il_shape(2)/2)
 
             ! exit when close enough of point
             IF( ANY(il_shape(:) < 10 ) ) ll_continue=.FALSE.
@@ -3054,9 +3167,10 @@ CONTAINS
    !> @param[in] dd_lat    grid latitude  array
    !> @param[in] dd_lonA   longitude of point A
    !> @param[in] dd_latA   latitude  of point A
+   !> @param[in] dd_fill
    !> @return array of distance between point A and grid points.
    !-------------------------------------------------------------------
-   FUNCTION grid_distance(dd_lon, dd_lat, dd_lonA, dd_latA)
+   FUNCTION grid_distance(dd_lon, dd_lat, dd_lonA, dd_latA )
       IMPLICIT NONE
       ! Argument      
       REAL(dp), DIMENSION(:,:), INTENT(IN) :: dd_lon
@@ -3109,11 +3223,12 @@ CONTAINS
       DO jj=1,il_shape(2)
          DO ji=1,il_shape(1)
             IF( dl_lon(ji,jj) == dl_lonA .AND. &
-            &   dl_lat(ji,jj) == dl_laTA )THEN
+            &   dl_lat(ji,jj) == dl_latA )THEN
                grid_distance(ji,jj)=0.0
             ELSE
                dl_tmp= SIN(dl_latA)*SIN(dl_lat(ji,jj)) + &
-               &       COS(dl_latA)*COS(dl_lat(ji,jj))*COS(dl_lon(ji,jj)-dl_lonA)
+               &       COS(dl_latA)*COS(dl_lat(ji,jj)) * &
+               &       COS(dl_lon(ji,jj)-dl_lonA)
                ! check to avoid mistake with ACOS
                IF( dl_tmp < -1.0 ) dl_tmp = -1.0
                IF( dl_tmp >  1.0 ) dl_tmp =  1.0
@@ -3135,7 +3250,7 @@ CONTAINS
    !> offset value could be 0,1,..,rho-1
    !
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !> @date October, 2014
    !> - work on mpp file structure instead of file structure
    !
@@ -3169,31 +3284,32 @@ CONTAINS
       INTEGER(i4), DIMENSION(2,2) :: grid__get_fine_offset_ff
 
       ! local variable
-      INTEGER(i4) :: il_imin0
-      INTEGER(i4) :: il_jmin0
-      INTEGER(i4) :: il_imax0
-      INTEGER(i4) :: il_jmax0
+      INTEGER(i4)                              :: il_imin0
+      INTEGER(i4)                              :: il_jmin0
+      INTEGER(i4)                              :: il_imax0
+      INTEGER(i4)                              :: il_jmax0
+      INTEGER(i4)                              :: il_ind
       
-      INTEGER(i4), DIMENSION(:), ALLOCATABLE :: il_rho
+      INTEGER(i4), DIMENSION(:), ALLOCATABLE   :: il_rho
       
-      INTEGER(i4), DIMENSION(2,2)         :: il_xghost0
-      INTEGER(i4), DIMENSION(2,2)         :: il_xghost1
+      INTEGER(i4), DIMENSION(2,2)              :: il_xghost0
+      INTEGER(i4), DIMENSION(2,2)              :: il_xghost1
 
-      CHARACTER(LEN= 1) :: cl_point
-      CHARACTER(LEN=lc) :: cl_name
+      CHARACTER(LEN= 1)                        :: cl_point
+      CHARACTER(LEN=lc)                        :: cl_name
 
       REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_lon0
       REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_lat0
       REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_lon1
       REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_lat1
 
-      TYPE(TVAR) :: tl_lon0
-      TYPE(TVAR) :: tl_lat0
-      TYPE(TVAR) :: tl_lon1
-      TYPE(TVAR) :: tl_lat1
+      TYPE(TVAR)                               :: tl_lon0
+      TYPE(TVAR)                               :: tl_lat0
+      TYPE(TVAR)                               :: tl_lon1
+      TYPE(TVAR)                               :: tl_lat1
 
-      TYPE(TMPP) :: tl_coord0
-      TYPE(TMPP) :: tl_coord1
+      TYPE(TMPP)                               :: tl_coord0
+      TYPE(TMPP)                               :: tl_coord1
       
       ! loop indices
       !----------------------------------------------------------------
@@ -3226,8 +3342,23 @@ CONTAINS
 
          ! read coarse longitue and latitude
          WRITE(cl_name,*) 'longitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord0%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET FINE OFFSET: no variable "//&
+            &  TRIM(cl_name)//" in file "//TRIM(tl_coord0%c_name)//". &
+            &  try to use longitude.")
+            WRITE(cl_name,*) 'longitude'
+         ENDIF
          tl_lon0=iom_mpp_read_var(tl_coord0, TRIM(cl_name))
+
          WRITE(cl_name,*) 'latitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord0%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET FINE OFFSET: no variable "//&
+            &  TRIM(cl_name)//" in file "//TRIM(tl_coord0%c_name)//". &
+            &  try to use latitude.")
+            WRITE(cl_name,*) 'latitude'
+         ENDIF
          tl_lat0=iom_mpp_read_var(tl_coord0, TRIM(cl_name))
          
          ! close mpp files
@@ -3266,8 +3397,23 @@ CONTAINS
 
          ! read fine longitue and latitude
          WRITE(cl_name,*) 'longitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord1%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET FINE OFFSET: no variable "//&
+            &  TRIM(cl_name)//" in file "//TRIM(tl_coord1%c_name)//". &
+            &  try to use longitude.")
+            WRITE(cl_name,*) 'longitude'
+         ENDIF
          tl_lon1=iom_mpp_read_var(tl_coord1, TRIM(cl_name))
+
          WRITE(cl_name,*) 'latitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord1%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET FINE OFFSET: no variable "//&
+            &  TRIM(cl_name)//" in file "//TRIM(tl_coord1%c_name)//". &
+            &  try to use latitude.")
+            WRITE(cl_name,*) 'latitude'
+         ENDIF
          tl_lat1=iom_mpp_read_var(tl_coord1, TRIM(cl_name))
  
          ! close mpp files
@@ -3317,7 +3463,7 @@ CONTAINS
    !> offset value could be 0,1,..,rho-1
    !
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !> @date October, 2014
    !> - work on mpp file structure instead of file structure
    !
@@ -3353,20 +3499,20 @@ CONTAINS
       INTEGER(i4), DIMENSION(2,2) :: grid__get_fine_offset_cf
 
       ! local variable
-      INTEGER(i4), DIMENSION(:), ALLOCATABLE :: il_rho
+      INTEGER(i4)                              :: il_ind
+      INTEGER(i4), DIMENSION(2,2)              :: il_xghost1
+      INTEGER(i4), DIMENSION(:), ALLOCATABLE   :: il_rho
       
-      INTEGER(i4), DIMENSION(2,2)         :: il_xghost1
-
-      CHARACTER(LEN= 1) :: cl_point
-      CHARACTER(LEN=lc) :: cl_name
+      CHARACTER(LEN= 1)                        :: cl_point
+      CHARACTER(LEN=lc)                        :: cl_name
 
       REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_lon1
       REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_lat1
 
-      TYPE(TVAR) :: tl_lon1
-      TYPE(TVAR) :: tl_lat1
+      TYPE(TVAR)                               :: tl_lon1
+      TYPE(TVAR)                               :: tl_lat1
 
-      TYPE(TMPP) :: tl_coord1
+      TYPE(TMPP)                               :: tl_coord1
       ! loop indices
       !----------------------------------------------------------------
       ! init
@@ -3396,8 +3542,23 @@ CONTAINS
 
          ! read fine longitue and latitude
          WRITE(cl_name,*) 'longitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord1%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET FINE OFFSET: no variable "//&
+            &  TRIM(cl_name)//" in file "//TRIM(tl_coord1%c_name)//". &
+            &  try to use longitude.")
+            WRITE(cl_name,*) 'longitude'
+         ENDIF
          tl_lon1=iom_mpp_read_var(tl_coord1, TRIM(cl_name))
+
          WRITE(cl_name,*) 'latitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord1%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET FINE OFFSET: no variable "//&
+            &  TRIM(cl_name)//" in file "//TRIM(tl_coord1%c_name)//". &
+            &  try to use latitude.")
+            WRITE(cl_name,*) 'latitude'
+         ENDIF
          tl_lat1=iom_mpp_read_var(tl_coord1, TRIM(cl_name))
  
          ! close mpp files
@@ -3445,7 +3606,7 @@ CONTAINS
    !> offset value could be 0,1,..,rho-1
    !
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !> @date October, 2014
    !> - work on mpp file structure instead of file structure
    !
@@ -3482,25 +3643,26 @@ CONTAINS
       INTEGER(i4), DIMENSION(2,2) :: grid__get_fine_offset_fc
 
       ! local variable
-      INTEGER(i4) :: il_imin0
-      INTEGER(i4) :: il_jmin0
-      INTEGER(i4) :: il_imax0
-      INTEGER(i4) :: il_jmax0
+      INTEGER(i4)                              :: il_imin0
+      INTEGER(i4)                              :: il_jmin0
+      INTEGER(i4)                              :: il_imax0
+      INTEGER(i4)                              :: il_jmax0
+      INTEGER(i4)                              :: il_ind
       
-      INTEGER(i4), DIMENSION(:), ALLOCATABLE :: il_rho
+      INTEGER(i4), DIMENSION(:), ALLOCATABLE   :: il_rho
       
-      INTEGER(i4), DIMENSION(2,2)         :: il_xghost0
+      INTEGER(i4), DIMENSION(2,2)              :: il_xghost0
 
-      CHARACTER(LEN= 1) :: cl_point
-      CHARACTER(LEN=lc) :: cl_name
+      CHARACTER(LEN= 1)                        :: cl_point
+      CHARACTER(LEN=lc)                        :: cl_name
 
       REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_lon0
       REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_lat0
 
-      TYPE(TVAR) :: tl_lon0
-      TYPE(TVAR) :: tl_lat0
+      TYPE(TVAR)                               :: tl_lon0
+      TYPE(TVAR)                               :: tl_lat0
 
-      TYPE(TMPP) :: tl_coord0
+      TYPE(TMPP)                               :: tl_coord0
       ! loop indices
       !----------------------------------------------------------------
       ! init
@@ -3529,8 +3691,23 @@ CONTAINS
 
          ! read coarse longitue and latitude
          WRITE(cl_name,*) 'longitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord0%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET FINE OFFSET: no variable "//&
+            &  TRIM(cl_name)//" in file "//TRIM(tl_coord0%c_name)//". &
+            &  try to use longitude.")
+            WRITE(cl_name,*) 'longitude'
+         ENDIF
          tl_lon0=iom_mpp_read_var(tl_coord0, TRIM(cl_name))
+
          WRITE(cl_name,*) 'latitude_'//TRIM(cl_point)
+         il_ind=var_get_id(tl_coord0%t_proc(1)%t_var(:), cl_name)
+         IF( il_ind == 0 )THEN
+            CALL logger_warn("GRID GET FINE OFFSET: no variable "//&
+            &  TRIM(cl_name)//" in file "//TRIM(tl_coord0%c_name)//". &
+            &  try to use latitude.")
+            WRITE(cl_name,*) 'latitude'
+         ENDIF
          tl_lat0=iom_mpp_read_var(tl_coord0, TRIM(cl_name))
          
          ! close mpp files
@@ -3584,9 +3761,12 @@ CONTAINS
    !> offset value could be 0,1,..,rho-1
    !
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
-   !> @date September, 2014 - rename from grid_get_fine_offset
-   !
+   !> @date November, 2013 - Initial Version
+   !> @date September, 2014 
+   !> - rename from grid_get_fine_offset
+   !> @date May, 2015 
+   !> - improve way to find offset
+   !>
    !> @param[in] dd_lon0   coarse grid longitude array 
    !> @param[in] dd_lat0   coarse grid latitude  array
    !> @param[in] id_imin0  coarse grid lower left corner i-indice of fine grid domain
@@ -3619,10 +3799,14 @@ CONTAINS
       INTEGER(i4), DIMENSION(2,2) :: grid__get_fine_offset_cc
 
       ! local variable
-      INTEGER(i4), DIMENSION(2) :: il_shape0
-      INTEGER(i4), DIMENSION(2) :: il_shape1
+      INTEGER(i4), DIMENSION(2)                :: il_shape0
+      INTEGER(i4), DIMENSION(2)                :: il_shape1
+
       REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_lon0
       REAL(dp)   , DIMENSION(:,:), ALLOCATABLE :: dl_lon1
+
+      LOGICAL                                  :: ll_ii
+      LOGICAL                                  :: ll_ij
       
       ! loop indices
       INTEGER(i4) :: ji
@@ -3656,13 +3840,16 @@ CONTAINS
       ! init
       grid__get_fine_offset_cc(:,:)=-1
 
-      IF( il_shape1(1) > 1 )THEN
+      IF( il_shape1(jp_J) == 1 )THEN
+          
+         grid__get_fine_offset_cc(jp_J,:)=((id_rho(jp_J)-1)/2)
 
-         ! look for i-direction left offset 
+         ! work on i-direction
+         ! look for i-direction left offset
          IF( dl_lon1(1,1) < dl_lon0(id_imin0+1,id_jmin0) )THEN
             DO ji=1,id_rho(jp_I)+2
                IF( dl_lon1(ji,1) > dl_lon0(id_imin0+1,id_jmin0) - dp_delta )THEN
-                  grid__get_fine_offset_cc(1,1)=(id_rho(jp_I)+1)-ji
+                  grid__get_fine_offset_cc(jp_I,1)=(id_rho(jp_I)+1)-ji
                   EXIT
                ENDIF
             ENDDO
@@ -3670,13 +3857,12 @@ CONTAINS
             CALL logger_error("GRID GET FINE OFFSET: coarse grid indices do "//&
             &                 " not match fine grid lower left corner.")
          ENDIF
-
          ! look for i-direction right offset
-         IF( dl_lon1(il_shape1(1),1) > dl_lon0(id_imax0-1,id_jmin0) )THEN
+         IF( dl_lon1(il_shape1(jp_I),1) > dl_lon0(id_imax0-1,id_jmin0) )THEN
             DO ji=1,id_rho(jp_I)+2
-               ii=il_shape1(1)-ji+1
+               ii=il_shape1(jp_I)-ji+1
                IF( dl_lon1(ii,1) < dl_lon0(id_imax0-1,id_jmin0) + dp_delta )THEN
-                  grid__get_fine_offset_cc(1,2)=(id_rho(jp_I)+1)-ji
+                  grid__get_fine_offset_cc(jp_I,2)=(id_rho(jp_I)+1)-ji
                   EXIT
                ENDIF
             ENDDO
@@ -3685,17 +3871,17 @@ CONTAINS
             &                 " not match fine grid lower right corner.")
          ENDIF
 
-      ELSE
-         grid__get_fine_offset_cc(1,:)=((id_rho(jp_I)-1)/2)
-      ENDIF
-
-      IF( il_shape1(2) > 1 )THEN
+      ELSEIF( il_shape1(jp_I) == 1 )THEN
+         
+         grid__get_fine_offset_cc(jp_I,:)=((id_rho(jp_I)-1)/2)
+         
+         ! work on j-direction
 
          ! look for j-direction lower offset 
          IF( dd_lat1(1,1) < dd_lat0(id_imin0,id_jmin0+1) )THEN
             DO jj=1,id_rho(jp_J)+2
                IF( dd_lat1(1,jj) > dd_lat0(id_imin0,id_jmin0+1) - dp_delta )THEN
-                  grid__get_fine_offset_cc(2,1)=(id_rho(jp_J)+1)-jj
+                  grid__get_fine_offset_cc(jp_J,1)=(id_rho(jp_J)+1)-jj
                   EXIT
                ENDIF
             ENDDO
@@ -3705,20 +3891,94 @@ CONTAINS
          ENDIF
 
          ! look for j-direction upper offset 
-         IF( dd_lat1(1,il_shape1(2)) > dd_lat0(id_imin0,id_jmax0-1) )THEN
+         IF( dd_lat1(1,il_shape1(jp_J)) > dd_lat0(id_imin0,id_jmax0-1) )THEN
             DO jj=1,id_rho(jp_J)+2
-               ij=il_shape1(2)-jj+1
+               ij=il_shape1(jp_J)-jj+1
                IF( dd_lat1(1,ij) < dd_lat0(id_imin0,id_jmax0-1) + dp_delta )THEN
-                  grid__get_fine_offset_cc(2,2)=(id_rho(jp_J)+1)-jj
+                  grid__get_fine_offset_cc(jp_J,2)=(id_rho(jp_J)+1)-jj
                   EXIT
                ENDIF
             ENDDO
          ELSE
             CALL logger_error("GRID GET FINE OFFSET: coarse grid indices do "//&
             &                 " not match fine grid upper right corner.")
+         ENDIF         
+
+      ELSE ! il_shape1(1) > 1 .AND. il_shape1(2) > 1 
+
+         ! look for lower left offset
+         IF( dl_lon1(1,1) < dl_lon0(id_imin0+1,id_jmin0+1) )THEN
+
+            ii=1
+            ij=1
+            DO ji=1,(id_rho(jp_I)+2)*(id_rho(jp_J)+2)
+
+               ll_ii=.FALSE.
+               ll_ij=.FALSE.
+
+               IF( dl_lon1(ii,ij) >= dl_lon0(id_imin0+1,id_jmin0+1)-dp_delta .AND. &
+               &   dd_lat1(ii,ij) >= dd_lat0(id_imin0+1,id_jmin0+1)-dp_delta )THEN
+                  grid__get_fine_offset_cc(jp_I,1)=(id_rho(jp_I)+1)-ii
+                  grid__get_fine_offset_cc(jp_J,1)=(id_rho(jp_J)+1)-ij
+                  EXIT
+               ENDIF
+
+               IF( dl_lon1(ii+1,ij) <= dl_lon0(id_imin0+1,id_jmin0+1)+dp_delta .AND. &
+               &   dd_lat1(ii+1,ij) <= dd_lat0(id_imin0+1,id_jmin0+1)+dp_delta )THEN
+                  ll_ii=.TRUE.
+               ENDIF
+               IF( dl_lon1(ii,ij+1) <= dl_lon0(id_imin0+1,id_jmin0+1)+dp_delta .AND. &
+               &   dd_lat1(ii,ij+1) <= dd_lat0(id_imin0+1,id_jmin0+1)+dp_delta )THEN
+                  ll_ij=.TRUE.
+               ENDIF
+
+               IF( ll_ii ) ii=ii+1
+               IF( ll_ij ) ij=ij+1
+
+            ENDDO
+
+         ELSE
+            CALL logger_error("GRID GET FINE OFFSET: coarse grid indices do "//&
+            &                 " not match fine grid lower left corner.")
          ENDIF
-      ELSE
-         grid__get_fine_offset_cc(2,:)=((id_rho(jp_J)-1)/2)
+
+         ! look for upper right offset
+         IF( dl_lon1(il_shape1(jp_I),il_shape1(jp_J)) > &
+            & dl_lon0(id_imax0-1,id_jmax0-1) )THEN
+
+            ii=il_shape1(jp_I)
+            ij=il_shape1(jp_J)
+            DO ji=1,(id_rho(jp_I)+2)*(id_rho(jp_J)+2)
+
+               ll_ii=.FALSE.
+               ll_ij=.FALSE.
+
+               IF( dl_lon1(ii,ij) <= dl_lon0(id_imax0-1,id_jmax0-1)+dp_delta .AND. &
+               &   dd_lat1(ii,ij) <= dd_lat0(id_imax0-1,id_jmax0-1)+dp_delta )THEN
+                  grid__get_fine_offset_cc(jp_I,2)=(id_rho(jp_I)+1)-(il_shape1(jp_I)+1-ii)
+                  grid__get_fine_offset_cc(jp_J,2)=(id_rho(jp_J)+1)-(il_shape1(jp_J)+1-ij)
+                  EXIT
+               ENDIF
+
+               IF( dl_lon1(ii-1,ij) >= dl_lon0(id_imax0-1,id_jmax0-1)-dp_delta .AND. &
+               &   dd_lat1(ii-1,ij) >= dd_lat0(id_imax0-1,id_jmax0-1)-dp_delta )THEN
+                  ll_ii=.TRUE.
+               ENDIF
+               IF( dl_lon1(ii,ij-1) >= dl_lon0(id_imax0-1,id_jmax0-1)-dp_delta .AND. &
+               &   dd_lat1(ii,ij-1) >= dd_lat0(id_imax0-1,id_jmax0-1)-dp_delta )THEN
+                  ll_ij=.TRUE.
+               ENDIF
+
+               IF( ll_ii ) ii=ii-1
+               IF( ll_ij ) ij=ij-1
+
+            ENDDO
+
+         ELSE
+            CALL logger_error("GRID GET FINE OFFSET: coarse grid indices do "//&
+            &                 " not match fine grid upper right corner.")
+         ENDIF
+
       ENDIF
 
       DEALLOCATE( dl_lon0 )
@@ -3731,7 +3991,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013- Initial Version
    !> @date October, 2014
    !> - work on mpp file structure instead of file structure
    !
@@ -3741,7 +4001,7 @@ CONTAINS
    !> @param[in] id_imax0  coarse grid upper right corner i-indice of fine grid domain
    !> @param[in] id_jmin0  coarse grid lower left  corner j-indice of fine grid domain 
    !> @param[in] id_jmax0  coarse grid upper right corner j-indice of fine grid domain  
-   !> @param[in] id_rho    array of refinement factor (default 1) 
+   !> @param[in] id_rho    array of refinement factor 
    !-------------------------------------------------------------------
    SUBROUTINE grid_check_coincidence( td_coord0, td_coord1, &
    &                                  id_imin0, id_imax0, &
@@ -4103,7 +4363,6 @@ CONTAINS
       dl_lon1 = dd_lon1(il_imin1, il_jmin1)
       dl_lat1 = dd_lat1(il_imin1, il_jmin1)
 
-
       IF( (ABS(dl_lon1-dl_lon0)>dp_delta) .AND. (dl_lon1 < dl_lon0 ) .OR. & 
       &   (ABS(dl_lat1-dl_lat0)>dp_delta) .AND. (dl_lat1 < dl_lat0 ) )THEN
 
@@ -4373,8 +4632,10 @@ CONTAINS
 
       IF( ALL(td_var%t_dim(1:2)%l_use) )THEN
 
-         CALL logger_warn( "GRID DEL GHOST: dimension change in variable "//&
-         &              TRIM(td_var%c_name) )
+         IF( ANY(id_ghost(:,:)/=0) )THEN
+            CALL logger_warn( "GRID DEL GHOST: dimension change in variable "//&
+            &              TRIM(td_var%c_name) )
+         ENDIF
 
          ! copy variable
          tl_var=var_copy(td_var)
@@ -4554,7 +4815,7 @@ CONTAINS
    !> check if domain is global, and if there is an East-West overlap
    !> 
    !> @author J.Paul
-   !> - September, 2014 - Initial Version
+   !> @date September, 2014 - Initial Version
    !> @date October, 2014
    !> - work on mpp file structure instead of file structure
    !
@@ -4591,6 +4852,7 @@ CONTAINS
          ! copy structure
           tl_mpp=mpp_copy(td_mpp)
 
+          CALL logger_info("GRID GET FINE GHOST perio"//TRIM(fct_str(tl_mpp%i_perio)))
           IF( tl_mpp%i_perio < 0 )THEN
              ! compute NEMO periodicity index
              CALL grid_get_info(tl_mpp)
@@ -4693,6 +4955,7 @@ CONTAINS
                         il_mask(jim:jip,jjm:jjp)=il_domid
                         il_tmp(jim:jip,jjm:jjp)=1
                      END WHERE
+
                   ENDIF
                ENDDO
             ENDDO
@@ -4719,7 +4982,7 @@ CONTAINS
    !> @brief This subroutine fill small closed sea with fill value. 
    !>
    !> @details
-   !> the minimum size (nbumber of point) of closed sea to be kept could be
+   !> the minimum size (number of point) of closed sea to be kept could be
    !> sepcify with id_minsize.
    !> By default only the biggest sea is preserve.
    !>
@@ -4781,5 +5044,102 @@ CONTAINS
       ENDIF
 
    END SUBROUTINE grid_fill_small_dom
+   !-------------------------------------------------------------------
+   !> @brief This subroutine fill small domain inside bigger one. 
+   !>
+   !> @details
+   !> the minimum size (number of point) of domain sea to be kept could be
+   !> is sepcified with id_minsize.
+   !> smaller domain are included in the one they are embedded.
+   !>
+   !> @author J.Paul
+   !> - Ferbruay, 2015- Initial Version
+   !>
+   !> @param[inout] id_mask      domain mask (from grid_split_domain)
+   !> @param[in] id_minsize   minimum size of sea to be kept
+   !-------------------------------------------------------------------
+   SUBROUTINE grid_fill_small_msk(id_mask, id_minsize)
+      IMPLICIT NONE
+      ! Argument      
+      INTEGER(i4), DIMENSION(:,:), INTENT(INOUT) :: id_mask
+      INTEGER(i4),                 INTENT(IN   ) :: id_minsize
+
+      ! local variable
+      INTEGER(i4)                              :: il_ndom
+      INTEGER(i4)                              :: il_minsize
+      INTEGER(i4)                              :: il_msk
+      
+      INTEGER(i4)                              :: jim
+      INTEGER(i4)                              :: jjm
+      INTEGER(i4)                              :: jip
+      INTEGER(i4)                              :: jjp
+
+      INTEGER(i4), DIMENSION(2)                :: il_shape
+      INTEGER(i4), DIMENSION(:,:), ALLOCATABLE :: il_tmp
+
+      ! loop indices
+      INTEGER(i4) :: ii
+      INTEGER(i4) :: ij
+
+      INTEGER(i4) :: ji
+      INTEGER(i4) :: jj
+      !----------------------------------------------------------------
+
+      il_shape(:)=SHAPE(id_mask(:,:))
+      il_ndom=MINVAL(id_mask(:,:))
+
+      ALLOCATE( il_tmp(il_shape(1),il_shape(2)) )
+      il_tmp(:,:)=0
+      DO ji=-1,il_ndom,-1
+         WHERE( id_mask(:,:)==ji ) 
+            il_tmp(:,:)=SUM(id_mask(:,:),id_mask(:,:)==ji)/ji
+         END WHERE
+      ENDDO
+
+      DO WHILE( id_minsize > MINVAL(il_tmp(:,:)) )
+
+         DO jj=1,il_shape(2)
+            DO ji=1,il_shape(1)
+
+               IF( il_tmp(ji,jj) < il_minsize )THEN
+                  jim=MAX(1,ji-1)   ;  jip=MIN(il_shape(1),ji+1)
+                  jjm=MAX(1,jj-1)   ;  jjp=MIN(il_shape(2),jj+1)
+                  
+                  il_msk=0
+                  DO ij=jjm,jjp
+                     DO ii=jim,jip
+                        IF( id_mask(ii,ij) /= id_mask(ji,jj) )THEN
+                           IF( il_msk == 0 )THEN
+                              il_msk=id_mask(ii,ij)
+                           ELSEIF( il_msk /= id_mask(ii,ij) )THEN
+                              CALL logger_error("GRID FILL SMALL MSK: "//&
+                              &  "small domain not embedded in bigger one"//&
+                              &  ". point should be between two different"//&
+                              &  " domain.")
+                           ENDIF
+                        ENDIF
+                     ENDDO
+                  ENDDO
+                  IF( il_msk /= 0 ) id_mask(ji,jj)=il_msk
+
+               ENDIF
+
+            ENDDO
+         ENDDO
+
+
+         il_tmp(:,:)=0
+         DO ji=-1,il_ndom,-1
+            WHERE( id_mask(:,:)==ji ) 
+               il_tmp(:,:)=SUM(id_mask(:,:),id_mask(:,:)==ji)/ji
+            END WHERE
+         ENDDO            
+
+      ENDDO
+
+      DEALLOCATE( il_tmp )
+
+
+   END SUBROUTINE grid_fill_small_msk
 END MODULE grid
 

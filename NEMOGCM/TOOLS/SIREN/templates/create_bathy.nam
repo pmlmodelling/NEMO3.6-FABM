@@ -18,8 +18,8 @@
 /
 
 &namvar
-   cn_varinfo=
    cn_varfile=
+   cn_varinfo=
 /
 
 &namnst

@@ -80,7 +80,8 @@
 !> @author J.Paul
 ! REVISION HISTORY:
 !> @date November, 2013 - Initial Version
-!> @date November, 2014 - Fix memory leaks bug
+!> @date November, 2014 
+!> - Fix memory leaks bug
 !
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -129,12 +130,12 @@ MODULE att
       INTEGER(i4)       :: i_id   = 0        !< attribute id
       INTEGER(i4)       :: i_type = 0        !< attribute type
       INTEGER(i4)       :: i_len  = 0        !< number of value store in attribute
-      CHARACTER(LEN=lc) :: c_value = "none"  !< attribute value if type CHAR
+      CHARACTER(LEN=lc) :: c_value = 'none'  !< attribute value if type CHAR
       REAL(dp), DIMENSION(:), POINTER :: d_value => NULL() !< attribute value if type SHORT,INT,FLOAT or DOUBLE
    END TYPE TATT
 
    INTERFACE att_init
-      MODULE PROCEDURE att__init_c
+      MODULE PROCEDURE att__init_c    
       MODULE PROCEDURE att__init_dp
       MODULE PROCEDURE att__init_dp_0d
       MODULE PROCEDURE att__init_sp
@@ -180,7 +181,7 @@ CONTAINS
    !> @author J.Paul
    !> @date November, 2013 - Initial Version
    !> @date November, 2014
-   !>    - use function instead of overload assignment operator 
+   !> - use function instead of overload assignment operator 
    !> (to avoid memory leak) 
    !
    !> @param[in] td_att   array of attribute structure
@@ -233,7 +234,7 @@ CONTAINS
       TYPE(TATT) :: att__copy_unit
 
       ! local variable
-      REAL(dp), DIMENSION(:), ALLOCATABLE :: dl_value
+      REAL(dp)         , DIMENSION(:), ALLOCATABLE :: dl_value
       !----------------------------------------------------------------
 
       ! copy attribute variable
@@ -299,8 +300,9 @@ CONTAINS
    !>
    !> @author J.Paul
    !> @date November, 2013 - Initial Version
-   !> @date September, 2014 - bug fix with use of id read from attribute structure
-   !
+   !> @date September, 2014 
+   !> - bug fix with use of id read from attribute structure
+   !>
    !> @param[in] td_att    array of attribute structure
    !> @param[in] cd_name   attribute name
    !> @return attribute id
@@ -354,8 +356,8 @@ CONTAINS
       &  " attribute value "//TRIM(ADJUSTL(cd_value)) )
 
       att__init_c%c_name=TRIM(ADJUSTL(cd_name))
-
       att__init_c%i_type=NF90_CHAR
+
       att__init_c%c_value=TRIM(ADJUSTL(cd_value))
       att__init_c%i_len=LEN( TRIM(ADJUSTL(cd_value)) )
 
@@ -1067,7 +1069,8 @@ CONTAINS
    !>
    !> @author J.Paul
    !> @date November, 2013 - Initial Version
-   !> @date September, 2014 - take into account type of attribute.
+   !> @date September, 2014 
+   !> - take into account type of attribute.
    !
    !> @param[in] td_att attribute structure
    !-------------------------------------------------------------------
@@ -1113,6 +1116,7 @@ CONTAINS
          SELECT CASE( td_att%i_type )
 
             CASE(NF90_CHAR)
+
                cl_value=td_att%c_value
 
             CASE(NF90_BYTE)   

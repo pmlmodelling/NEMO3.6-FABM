@@ -1057,6 +1057,7 @@ CONTAINS
       INTEGER(i4)                                  :: il_tmp1, il_tmp2
       INTEGER(i4), DIMENSION(ip_maxdim)            :: il_start
       INTEGER(i4), DIMENSION(ip_maxdim)            :: il_count
+
       REAL(dp),    DIMENSION(:,:,:,:), ALLOCATABLE :: dl_value
 
       ! loop indices
@@ -1202,6 +1203,18 @@ CONTAINS
          DEALLOCATE(dl_value)
 
       ENDIF
+
+      ! force to change _FillValue to avoid mistake 
+      ! with dummy zero _FillValue
+      IF( td_var%d_fill == 0._dp )THEN
+         CALL var_chg_FillValue(td_var)
+      ENDIF
+
+      ! use scale factor and offset
+      WHERE( td_var%d_value(:,:,:,:) /= td_var%d_fill )
+         td_var%d_value(:,:,:,:) = &
+         &  td_var%d_value(:,:,:,:)*td_var%d_scf + td_var%d_ofs
+      END WHERE
 
    END SUBROUTINE iom_rstdimg__read_var_value
    !-------------------------------------------------------------------
@@ -1659,6 +1672,14 @@ CONTAINS
 
          ! change FillValue to 0.
          CALL var_chg_FillValue(td_file%t_var(ji),0._dp)
+
+         ! use scale factor and offset
+         WHERE( td_file%t_var(ji)%d_value(:,:,:,:) /= &
+         &      td_file%t_var(ji)%d_fill )
+            td_file%t_var(ji)%d_value(:,:,:,:) = &
+            &  (td_file%t_var(ji)%d_value(:,:,:,:)-td_file%t_var(ji)%d_ofs) /&
+            &    td_file%t_var(ji)%d_scf
+         END WHERE
 
          cl_name(ji)  = TRIM(td_file%t_var(ji)%c_name)
          dl_value(ji) = REAL(td_file%t_var(ji)%i_rec,dp)

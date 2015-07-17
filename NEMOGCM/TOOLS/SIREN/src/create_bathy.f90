@@ -19,7 +19,13 @@
 !> @code{.sh}
 !>    ./SIREN/bin/create_bathy create_bathy.nam
 !> @endcode
-!>    
+!> <br/>    
+!> \image html  bathy_40.png 
+!> \image latex bathy_30.png
+!>
+!> @note 
+!>    you could find a template of the namelist in templates directory.
+!>
 !>    create_bathy.nam comprise 7 namelists:<br/>
 !>       - logger namelist (namlog)
 !>       - config namelist (namcfg)
@@ -36,7 +42,7 @@
 !>    * _logger namelist (namlog)_:<br/>
 !>       - cn_logfile   : log filename
 !>       - cn_verbosity : verbosity ('trace','debug','info',
-!> 'warning','error','fatal')
+!> 'warning','error','fatal','none')
 !>       - in_maxerror  : maximum number of error allowed
 !>
 !>    * _config namelist (namcfg)_:<br/>
@@ -51,27 +57,30 @@
 !>    * _fine grid namelist (namfin)_:<br/>
 !>       - cn_coord1 : coordinate file
 !>       - in_perio1 : periodicity index
-!>       - ln_fillclosed : fill closed sea or not
+!>       - ln_fillclosed : fill closed sea or not (default is .TRUE.)
 !>
 !>    * _variable namelist (namvar)_:<br/>
 !>       - cn_varinfo : list of variable and extra information about request(s) 
 !>       to be used.<br/>
-!>          each elements of *cn_varinfo* is a string character.<br/>
+!>          each elements of *cn_varinfo* is a string character
+!>          (separated by ',').<br/>
 !>          it is composed of the variable name follow by ':', 
 !>          then request(s) to be used on this variable.<br/> 
 !>          request could be:
-!>             - interpolation method
-!>             - extrapolation method
-!>             - filter method
-!>             - > minimum value
-!>             - < maximum value
+!>             - int = interpolation method
+!>             - ext = extrapolation method
+!>             - flt = filter method
+!>             - min = minimum value
+!>             - max = maximum value
+!>             - unt = new units
+!>             - unf = unit scale factor (linked to new units)
 !>
 !>                requests must be separated by ';'.<br/>
 !>                order of requests does not matter.<br/>
 !>
 !>          informations about available method could be find in @ref interp,
 !>          @ref extrap and @ref filter modules.<br/>
-!>          Example: 'Bathymetry: 2*hamming(2,3); > 0'
+!>          Example: 'Bathymetry: flt=2*hamming(2,3); min=0'
 !>          @note 
 !>             If you do not specify a method which is required, 
 !>             default one is apply.
@@ -89,7 +98,6 @@
 !>             separators used to defined matrix are:
 !>                - ',' for line
 !>                - '/' for row
-!>                - '\' for level<br/>
 !>                Example:<br/>
 !>                   3,2,3/1,4,5  =>  @f$ \left( \begin{array}{ccc}
 !>                                         3 & 2 & 3 \\
@@ -98,9 +106,6 @@
 !>          Examples: 
 !>             - 'Bathymetry:gridT.nc'
 !>             - 'Bathymetry:5000,5000,5000/5000,3000,5000/5000,5000,5000'
-!>
-!>          \image html  bathy_40.png 
-!>          \image latex bathy_30.png
 !>
 !>    * _nesting namelist (namnst)_:<br/>
 !>       - in_rhoi  : refinement factor in i-direction
@@ -118,7 +123,15 @@
 !> @date Sepember, 2014 
 !> - add header for user
 !> - Bug fix, compute offset depending of grid point
+!> @date June, 2015
+!> - extrapolate all land points.
+!> - allow to change unit.
 !
+!> @todo
+!> - use create_bathy_check_depth as in create_boundary
+!> - use create_bathy_check_time  as in create_boundary
+!> - check tl_multi is not empty
+!>
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
 PROGRAM create_bathy
@@ -481,7 +494,12 @@ PROGRAM create_bathy
       ENDDO
    ENDIF
 
+   ! use additional request
    DO jk=1,tl_multi%i_nvar
+
+         ! change unit and apply factor
+         CALL var_chg_unit(tl_var(jk))
+
          ! forced min and max value
          CALL var_limit_value(tl_var(jk))
 
@@ -556,7 +574,7 @@ PROGRAM create_bathy
    ENDIF
 
    ! add other variables
-   DO jk=1,tl_multi%i_nvar
+   DO jk=tl_multi%i_nvar,1,-1
       CALL file_add_var(tl_fileout, tl_var(jk))
       CALL var_clean(tl_var(jk))
    ENDDO
@@ -896,12 +914,12 @@ CONTAINS
             &                    id_rho )
       IMPLICIT NONE
       ! Argument
-      TYPE(TVAR) , INTENT(IN) :: td_var  
-      TYPE(TMPP) , INTENT(IN) :: td_mpp 
-      INTEGER(i4), INTENT(IN) :: id_imin
-      INTEGER(i4), INTENT(IN) :: id_imax
-      INTEGER(i4), INTENT(IN) :: id_jmin
-      INTEGER(i4), INTENT(IN) :: id_jmax
+      TYPE(TVAR)                 , INTENT(IN) :: td_var  
+      TYPE(TMPP)                 , INTENT(IN) :: td_mpp 
+      INTEGER(i4)                , INTENT(IN) :: id_imin
+      INTEGER(i4)                , INTENT(IN) :: id_imax
+      INTEGER(i4)                , INTENT(IN) :: id_jmin
+      INTEGER(i4)                , INTENT(IN) :: id_jmax
       INTEGER(i4), DIMENSION(:,:), INTENT(IN) :: id_offset
       INTEGER(i4), DIMENSION(:)  , INTENT(IN) :: id_rho
 
@@ -1072,9 +1090,7 @@ CONTAINS
       CALL extrap_add_extrabands(td_var, il_iext, il_jext)
 
       ! extrapolate variable
-      CALL extrap_fill_value( td_var, id_offset=id_offset(:,:), &
-      &                               id_rho=id_rho(:),         &
-      &                               id_iext=il_iext, id_jext=il_jext )
+      CALL extrap_fill_value( td_var )
 
       ! interpolate Bathymetry
       CALL interp_fill_value( td_var, id_rho(:), &

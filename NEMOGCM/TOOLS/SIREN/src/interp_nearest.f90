@@ -68,7 +68,9 @@ CONTAINS
       INTEGER(I4)     , DIMENSION(:)      , INTENT(IN   ) :: id_rho
 
       ! local variable
-      INTEGER(i4), DIMENSION(4)                :: il_shape
+      INTEGER(i4), DIMENSION(4)                  :: il_shape
+
+      INTEGER(I4), DIMENSION(:,:,:), ALLOCATABLE :: il_detect
 
       ! loop indices
       INTEGER(i4) :: ji
@@ -79,28 +81,30 @@ CONTAINS
 
       il_shape(:)=SHAPE(dd_value)
 
+      ALLOCATE(il_detect(il_shape(1),il_shape(2),il_shape(3)))
       DO jl=1,il_shape(4)
+         il_detect(:,:,:)=id_detect(:,:,:)
          ! loop on vertical level
          DO jk=1,il_shape(3)
 
             ! I-J plan
             CALL interp_nearest__2D(dd_value(:,:,jk,jl),&
-            &                       id_detect(:,:,jk),  &
+            &                       il_detect(:,:,jk),  &
             &                       id_rho(jp_I), id_rho(jp_J) )            
-            IF( ANY(id_detect(:,:,jk)==1) )THEN
+            IF( ANY(il_detect(:,:,jk)==1) )THEN
                ! I direction
                DO jj=1,il_shape(2)
                   CALL interp_nearest__1D( dd_value(:,jj,jk,jl),&
-                  &                        id_detect(:,jj,jk),  &
+                  &                        il_detect(:,jj,jk),  &
                   &                        id_rho(jp_I) )
                ENDDO
-               IF( ALL(id_detect(:,:,jk)==0) )THEN
+               IF( ALL(il_detect(:,:,jk)==0) )THEN
                   CYCLE
                ELSE
                   ! J direction
                   DO ji=1,il_shape(1)
                      CALL interp_nearest__1D( dd_value(ji,:,jk,jl),&
-                     &                        id_detect(ji,:,jk),  &
+                     &                        il_detect(ji,:,jk),  &
                      &                        id_rho(jp_J) )
                   ENDDO
                ENDIF
@@ -108,6 +112,9 @@ CONTAINS
 
          ENDDO
       ENDDO
+
+      id_detect(:,:,:)=il_detect(:,:,:)
+      DEALLOCATE(il_detect)
 
    END SUBROUTINE interp_nearest_fill
    !-------------------------------------------------------------------

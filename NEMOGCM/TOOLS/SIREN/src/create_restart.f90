@@ -24,6 +24,9 @@
 !>    ./SIREN/bin/create_restart create_restart.nam
 !> @endcode
 !>    
+!> @note 
+!>    you could find a template of the namelist in templates directory.
+!>
 !>    create_restart.nam comprise 9 namelists:<br/>
 !>       - logger namelist (namlog)
 !>       - config namelist (namcfg)
@@ -42,7 +45,7 @@
 !>    * _logger namelist (namlog)_:<br/>
 !>       - cn_logfile   : log filename
 !>       - cn_verbosity : verbosity ('trace','debug','info',
-!> 'warning','error','fatal')
+!> 'warning','error','fatal','none')
 !>       - in_maxerror  : maximum number of error allowed
 !>
 !>    * _config namelist (namcfg)_:<br/>
@@ -58,8 +61,6 @@
 !>       - cn_coord1 : coordinate file
 !>       - cn_bathy1 : bathymetry file
 !>       - in_perio1 : NEMO periodicity index
-!>       - in_extrap : number of land point to be extrapolated 
-!>       before writing file
 !>
 !>    * _vertical grid namelist (namzgr)_:<br/>
 !>       - dn_pp_to_be_computed  :
@@ -82,22 +83,25 @@
 !>    * _variable namelist (namvar)_:<br/>
 !>       - cn_varinfo : list of variable and extra information about request(s) 
 !>       to be used.<br/>
-!>          each elements of *cn_varinfo* is a string character.<br/>
+!>          each elements of *cn_varinfo* is a string character
+!>          (separated by ',').<br/>
 !>          it is composed of the variable name follow by ':', 
 !>          then request(s) to be used on this variable.<br/> 
 !>          request could be:
-!>             - interpolation method
-!>             - extrapolation method
-!>             - filter method
-!>             - > minimum value
-!>             - < maximum value
+!>             - int = interpolation method
+!>             - ext = extrapolation method
+!>             - flt = filter method
+!>             - min = minimum value
+!>             - max = maximum value
+!>             - unt = new units
+!>             - unf = unit scale factor (linked to new units)
 !>
 !>             requests must be separated by ';'.<br/>
 !>             order of requests does not matter.<br/>
 !>
 !>          informations about available method could be find in @ref interp,
 !>          @ref extrap and @ref filter.<br/>
-!>          Example: 'votemper: linear; hann; dist_weight','vosaline: cubic'
+!>          Example: 'votemper: int=linear; flt=hann; ext=dist_weight','vosaline: int=cubic'
 !>          @note 
 !>             If you do not specify a method which is required, 
 !>             default one is apply.
@@ -135,9 +139,10 @@
 !>
 !>    * _output namelist (namout)_:<br/>
 !>       - cn_fileout : output file
-!>       - in_nproc  : total number of processor to be used
+!>       - ln_extrap : extrapolate land point or not
 !>       - in_niproc : i-direction number of processor
 !>       - in_njproc : j-direction numebr of processor
+!>       - in_nproc  : total number of processor to be used
 !>       - cn_type   : output format ('dimg', 'cdf')
 !>
 !> @author J.Paul
@@ -147,6 +152,9 @@
 !> - add header for user
 !> - offset computed considering grid point
 !> - add attributes in output variable
+!> @date June, 2015
+!> - extrapolate all land points, and add ln_extrap in namelist.
+!> - allow to change unit.
 !>
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -164,7 +172,7 @@ PROGRAM create_restart
    USE multi                           ! multi file manager
    USE iom                             ! I/O manager
    USE grid                            ! grid manager
-   USE vgrid                           ! vertical grid manager
+   USE vgrid                            ! vertical grid manager
    USE extrap                          ! extrapolation manager
    USE interp                          ! interpolation manager
    USE filter                          ! filter manager
@@ -248,7 +256,6 @@ PROGRAM create_restart
    CHARACTER(LEN=lc) :: cn_coord1 = ''
    CHARACTER(LEN=lc) :: cn_bathy1 = ''
    INTEGER(i4)       :: in_perio1 = -1
-   INTEGER(i4)       :: in_extrap = 0
 
    !namzgr
    REAL(dp)          :: dn_pp_to_be_computed = 0._dp
@@ -278,6 +285,7 @@ PROGRAM create_restart
 
    ! namout
    CHARACTER(LEN=lc) :: cn_fileout = 'restart.nc' 
+   LOGICAL           :: ln_extrap  = .FALSE.
    INTEGER(i4)       :: in_nproc   = 0
    INTEGER(i4)       :: in_niproc  = 0
    INTEGER(i4)       :: in_njproc  = 0
@@ -300,8 +308,7 @@ PROGRAM create_restart
    NAMELIST /namfin/ &  !< fine grid namelist
    &  cn_coord1,   &    !< coordinate file
    &  cn_bathy1,   &    !< bathymetry file
-   &  in_perio1,   &    !< periodicity index
-   &  in_extrap
+   &  in_perio1         !< periodicity index
  
    NAMELIST /namzgr/ &
    &  dn_pp_to_be_computed, &
@@ -331,9 +338,10 @@ PROGRAM create_restart
 
    NAMELIST /namout/ &  !< output namlist
    &  cn_fileout, &     !< fine grid bathymetry file
-   &  in_nproc,   &     !< number of processor to be used
+   &  ln_extrap,  &     !< extrapolate or not
    &  in_niproc,  &     !< i-direction number of processor
    &  in_njproc,  &     !< j-direction numebr of processor
+   &  in_nproc,   &     !< number of processor to be used
    &  cn_type           !< output type format (dimg, cdf)
    !-------------------------------------------------------------------
 
@@ -346,7 +354,7 @@ PROGRAM create_restart
    ELSE
       CALL GET_COMMAND_ARGUMENT(1,cl_namelist) !f03 intrinsec
    ENDIF
-   
+
    ! read namelist
    INQUIRE(FILE=TRIM(cl_namelist), EXIST=ll_exist)
    IF( ll_exist )THEN
@@ -433,7 +441,11 @@ PROGRAM create_restart
 
    ! check
    ! check output file do not already exist
-   cl_fileout=file_rename(cn_fileout,1)
+   IF( in_nproc > 0 )THEN
+      cl_fileout=file_rename(cn_fileout,1)
+   ELSE
+      cl_fileout=file_rename(cn_fileout)
+   ENDIF
    INQUIRE(FILE=TRIM(cl_fileout), EXIST=ll_exist)
    IF( ll_exist )THEN
       CALL logger_fatal("CREATE RESTART: output file "//TRIM(cl_fileout)//&
@@ -467,18 +479,8 @@ PROGRAM create_restart
    &                            il_jmin0, il_jmax0, &
    &                            il_rho(:) )
 
-   ! compute level
-   ALLOCATE(tl_level(ip_npoint))
-   tl_level(:)=vgrid_get_level(tl_bathy1, cl_namelist )
-
-   ! remove ghost cell
+   ! fine grid ghost cell
    il_xghost(:,:)=grid_get_ghost(tl_bathy1)
-   DO ji=1,ip_npoint
-      CALL grid_del_ghost(tl_level(ji), il_xghost(:,:))
-   ENDDO
-
-   ! clean
-   CALL mpp_clean(tl_bathy1)
 
    ! work on variables
    IF( .NOT. ASSOCIATED(tl_multi%t_mpp) )THEN
@@ -513,7 +515,10 @@ PROGRAM create_restart
                ! fill value with matrix data
                tl_var(jvar) = create_restart_matrix( &
                &  tl_multi%t_mpp(ji)%t_proc(1)%t_var(jj), tl_coord1, &
-               &  in_nlevel, tl_level(:) )
+               &  in_nlevel, il_xghost(:,:) )
+
+               ! add ghost cell
+               CALL grid_add_ghost(tl_var(jvar), il_xghost(:,:))
 
             ENDDO
          !- end of use input matrix to fill variable
@@ -534,6 +539,7 @@ PROGRAM create_restart
 
             ! open mpp file
             CALL iom_mpp_open(tl_mpp)
+
 
             ! get or check depth value
             CALL create_restart_check_depth( tl_mpp, tl_depth )
@@ -578,7 +584,7 @@ PROGRAM create_restart
                ! for each variable of this file
                DO jj=1,tl_multi%t_mpp(ji)%t_proc(1)%i_nvar
 
-                  WRITE(*,'(2x,a,a)') "work on variable "//&
+                  WRITE(*,'(2x,a,a)') "work on (extract) variable "//&
                   &  TRIM(tl_multi%t_mpp(ji)%t_proc(1)%t_var(jj)%c_name)
 
                   jvar=jvar+1
@@ -599,11 +605,8 @@ PROGRAM create_restart
                   ! clean structure
                   CALL att_clean(tl_att)
 
-                  ! use mask
-                  CALL create_restart_mask(tl_var(jvar), tl_level(:))
-
                   ! add ghost cell
-                  CALL grid_add_ghost( tl_var(jvar), tl_dom1%i_ghost(:,:) )
+                  CALL grid_add_ghost(tl_var(jvar), tl_dom1%i_ghost(:,:))
 
                ENDDO
 
@@ -630,7 +633,7 @@ PROGRAM create_restart
                ! for each variable of this file
                DO jj=1,tl_multi%t_mpp(ji)%t_proc(1)%i_nvar
 
-                  WRITE(*,'(2x,a,a)') "work on variable "//&
+                  WRITE(*,'(2x,a,a)') "work on (interp) variable "//&
                   &  TRIM(tl_multi%t_mpp(ji)%t_proc(1)%t_var(jj)%c_name)
 
                   jvar=jvar+1
@@ -645,10 +648,9 @@ PROGRAM create_restart
                   &                                   tl_coord1, &
                   &                                   id_rho=il_rho(:), &
                   &                                   cd_point=TRIM(tl_var(jvar)%c_point))
-                  
 
                   ! interpolate variable
-                  CALL create_restart_interp(tl_var(jvar), tl_level(:), &
+                  CALL create_restart_interp(tl_var(jvar), & 
                   &                          il_rho(:), &
                   &                          id_offset=il_offset(:,:))
 
@@ -674,13 +676,8 @@ PROGRAM create_restart
                   ! clean structure
                   CALL att_clean(tl_att)
 
-                  ! use mask
-                  CALL create_restart_mask(tl_var(jvar), tl_level(:))
-
                   ! add ghost cell
-                  CALL grid_add_ghost( tl_var(jvar), il_xghost(:,:) )
-
-
+                  CALL grid_add_ghost(tl_var(jvar), il_xghost(:,:))
                ENDDO
 
                ! close mpp file
@@ -704,8 +701,20 @@ PROGRAM create_restart
    CALL multi_clean(tl_multi)
    CALL mpp_clean(tl_coord0)
 
+   IF( .NOT. ln_extrap )THEN
+      ! compute level
+      ALLOCATE(tl_level(ip_npoint))
+      tl_level(:)=vgrid_get_level(tl_bathy1, cl_namelist )
+   ENDIF
+
+   ! clean
+   CALL mpp_clean(tl_bathy1)
+
    ! use additional request
    DO jvar=1,il_nvar
+
+      ! change unit and apply factor
+      CALL var_chg_unit(tl_var(jvar))
 
       ! forced min and max value
       CALL var_limit_value(tl_var(jvar))
@@ -713,17 +722,17 @@ PROGRAM create_restart
       ! filter
       CALL filter_fill_value(tl_var(jvar))
 
-      ! extrapolate
-      CALL extrap_fill_value(tl_var(jvar), id_iext=in_extrap, &
-      &                                    id_jext=in_extrap, &
-      &                                    id_kext=in_extrap)
+      IF( .NOT. ln_extrap )THEN
+         ! use mask
+         CALL create_restart_mask(tl_var(jvar), tl_level(:))
+      ENDIF
 
    ENDDO
 
    ! create file
    IF( in_niproc == 0 .AND. &
    &   in_njproc == 0 .AND. &
-   &   in_nproc  == 0 )THEN
+   &   in_nproc == 0 )THEN
       in_niproc = 1
       in_njproc = 1
       in_nproc = 1
@@ -781,7 +790,7 @@ PROGRAM create_restart
          ! add depth
          CALL mpp_add_var(tl_mppout, tl_depth)
       ELSE
-         CALL logger_error("CREATE RESTART: no value for depth variable.")
+         CALL logger_warn("CREATE RESTART: no value for depth variable.")
       ENDIF
    ENDIF
    IF( ASSOCIATED(tl_depth%d_value) ) CALL var_clean(tl_depth)
@@ -791,13 +800,13 @@ PROGRAM create_restart
          ! add time
          CALL mpp_add_var(tl_mppout, tl_time)
       ELSE
-         CALL logger_error("CREATE RESTART: no value for time variable.")
+         CALL logger_warn("CREATE RESTART: no value for time variable.")
       ENDIF
    ENDIF
    IF( ASSOCIATED(tl_time%d_value) ) CALL var_clean(tl_time)
 
    ! add other variable
-   DO jvar=1,il_nvar
+   DO jvar=il_nvar,1,-1
       ! check if variable already add
       il_index=var_get_index(tl_mppout%t_proc(1)%t_var(:), tl_var(jvar)%c_name)
       IF( il_index == 0 )THEN
@@ -805,11 +814,6 @@ PROGRAM create_restart
          CALL var_clean(tl_var(jvar))
       ENDIF
    ENDDO
-
-!   DO ji=1,4
-!      CALL grid_add_ghost( tl_level(ji), il_xghost(:,:) )
-!      CALL var_clean(tl_level(ji))
-!   ENDDO
 
    ! add some attribute
    tl_att=att_init("Created_by","SIREN create_restart")
@@ -838,6 +842,9 @@ PROGRAM create_restart
       CALL mpp_add_att(tl_mppout,tl_att)
    ENDIF
 
+   ! print
+   CALL mpp_print(tl_mppout)
+
    ! create file
    CALL iom_mpp_create(tl_mppout)
 
@@ -846,15 +853,14 @@ PROGRAM create_restart
    ! close file
    CALL iom_mpp_close(tl_mppout)
 
-   ! print
-   CALL mpp_print(tl_mppout)
-
    ! clean
    CALL att_clean(tl_att)
    CALL var_clean(tl_var(:))
    DEALLOCATE(tl_var)
-   CALL var_clean(tl_level(:))
-   DEALLOCATE(tl_level)
+   IF( .NOT. ln_extrap )THEN
+      CALL var_clean(tl_level(:))
+      DEALLOCATE(tl_level)
+   ENDIF
 
    CALL mpp_clean(tl_mppout)
    CALL mpp_clean(tl_coord1)
@@ -875,21 +881,23 @@ CONTAINS
    !> Each subdomain is filled with the corresponding value of the matrix.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013- Initial Version
+   !> @date June, 2015
+   !> - do not use level anymore 
    !>
    !> @param[in] td_var    variable structure 
    !> @param[in] td_coord  coordinate file structure 
    !> @param[in] id_nlevel number of vertical level  
-   !> @param[in] td_level  array of level on T,U,V,F point (variable structure) 
+   !> @param[in] id_xghost ghost cell array
    !> @return variable structure 
    !-------------------------------------------------------------------
-   FUNCTION create_restart_matrix(td_var, td_coord, id_nlevel, td_level)
+   FUNCTION create_restart_matrix(td_var, td_coord, id_nlevel, id_xghost)
       IMPLICIT NONE
       ! Argument
-      TYPE(TVAR)              , INTENT(IN) :: td_var
-      TYPE(TMPP)              , INTENT(IN) :: td_coord
-      INTEGER(i4)             , INTENT(IN) :: id_nlevel
-      TYPE(TVAR), DIMENSION(:), INTENT(IN) :: td_level
+      TYPE(TVAR)                 , INTENT(IN) :: td_var
+      TYPE(TMPP)                 , INTENT(IN) :: td_coord
+      INTEGER(i4)                , INTENT(IN) :: id_nlevel
+      INTEGER(i4), DIMENSION(:,:), INTENT(IN) :: id_xghost
 
       ! function
       TYPE(TVAR) :: create_restart_matrix
@@ -898,7 +906,6 @@ CONTAINS
       INTEGER(i4)      , DIMENSION(3)                    :: il_dim
       INTEGER(i4)      , DIMENSION(3)                    :: il_size
       INTEGER(i4)      , DIMENSION(3)                    :: il_rest
-      INTEGER(i4)      , DIMENSION(2,2)                  :: il_xghost
 
       INTEGER(i4)      , DIMENSION(:)      , ALLOCATABLE :: il_ishape
       INTEGER(i4)      , DIMENSION(:)      , ALLOCATABLE :: il_jshape
@@ -914,9 +921,6 @@ CONTAINS
       INTEGER(i4) :: jk
       !----------------------------------------------------------------
 
-      ! look for ghost cell
-      il_xghost(:,:)=grid_get_ghost( td_coord )
-
       ! write value on grid
       ! get matrix dimension
       il_dim(:)=td_var%t_dim(1:3)%i_len
@@ -928,8 +932,8 @@ CONTAINS
       ENDIF
 
       ! remove ghost cell
-      tl_dim(jp_I)%i_len=tl_dim(jp_I)%i_len - SUM(il_xghost(jp_I,:))*ip_ghost
-      tl_dim(jp_J)%i_len=tl_dim(jp_J)%i_len - SUM(il_xghost(jp_J,:))*ip_ghost
+      tl_dim(jp_I)%i_len=tl_dim(jp_I)%i_len - SUM(id_xghost(jp_I,:))*ip_ghost
+      tl_dim(jp_J)%i_len=tl_dim(jp_J)%i_len - SUM(id_xghost(jp_J,:))*ip_ghost
 
       ! split output domain in N subdomain depending of matrix dimension 
       il_size(:) = tl_dim(1:3)%i_len / il_dim(:)
@@ -990,12 +994,6 @@ CONTAINS
       &                   id_type=td_var%i_type)
 
       DEALLOCATE(dl_value)
-
-      ! use mask
-      CALL create_restart_mask(create_restart_matrix, td_level(:))
-
-      ! add ghost cell
-      CALL grid_add_ghost( create_restart_matrix, il_xghost(:,:) )
 
       ! clean 
       DEALLOCATE(il_ishape)
@@ -1070,16 +1068,17 @@ CONTAINS
    !> This subroutine interpolate variable
    !> 
    !> @author J.Paul
-   !> - Nov, 2013- Initial Version
+   !> @date November, 2013- Initial Version
+   !> @date June, 2015
+   !> - do not use level anymore (for extrapolation)
    !>
    !> @param[inout] td_var    variable structure 
-   !> @param[inout] td_level  fine grid level, array of variable structure
    !> @param[in] id_rho       array of refinment factor
    !> @param[in] id_offset    array of offset between fine and coarse grid
    !> @param[in] id_iext      i-direction size of extra bands (default=im_minext)
    !> @param[in] id_jext      j-direction size of extra bands (default=im_minext)
    !-------------------------------------------------------------------
-   SUBROUTINE create_restart_interp( td_var, td_level,&
+   SUBROUTINE create_restart_interp( td_var, & 
    &                                 id_rho,          &
    &                                 id_offset,       &
    &                                 id_iext, id_jext)
@@ -1088,7 +1087,6 @@ CONTAINS
 
       ! Argument
       TYPE(TVAR) ,                 INTENT(INOUT) :: td_var
-      TYPE(TVAR) , DIMENSION(:)  , INTENT(INOUT) :: td_level
       INTEGER(i4), DIMENSION(:)  , INTENT(IN   ) :: id_rho
       INTEGER(i4), DIMENSION(:,:), INTENT(IN   ) :: id_offset
       INTEGER(i4),                 INTENT(IN   ), OPTIONAL :: id_iext
@@ -1118,16 +1116,12 @@ CONTAINS
          &  "on two points are required with cubic interpolation ")
          il_jext=2
       ENDIF
-
       ! work on variable
       ! add extraband
       CALL extrap_add_extrabands(td_var, il_iext, il_jext)
 
       ! extrapolate variable
-      CALL extrap_fill_value( td_var, td_level(:),    &
-      &                               id_offset(:,:), &
-      &                               id_rho(:),      &
-      &                               id_iext=il_iext, id_jext=il_jext )
+      CALL extrap_fill_value( td_var )
 
       ! interpolate variable
       CALL interp_fill_value( td_var, id_rho(:), &
@@ -1219,6 +1213,7 @@ CONTAINS
       !----------------------------------------------------------------
 
       ! get or check depth value
+
       IF( td_mpp%t_proc(1)%i_timeid /= 0 )THEN
 
          il_varid=td_mpp%t_proc(1)%i_timeid

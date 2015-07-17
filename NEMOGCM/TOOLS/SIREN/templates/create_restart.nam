@@ -13,6 +13,12 @@
    in_perio0=
 /
 
+&namfin
+   cn_coord1=
+   cn_bathy1=
+   in_perio1=
+/
+
 &namzgr
    dn_pp_to_be_computed=
    dn_ppsur    =
@@ -33,13 +39,6 @@
    dn_e3zps_rat =
 /
 
-&namfin
-   cn_coord1=
-   cn_bathy1=
-   in_perio1=
-   in_extrap=
-/
-
 &namvar
    cn_varinfo=
    cn_varfile=
@@ -52,4 +51,9 @@
 
 &namout
    cn_fileout="restart_out.nc"      
+   ln_extrap=
+   in_nipro=
+   in_njproc=
+   in_nproc=
+   cn_type=
 /

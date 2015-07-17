@@ -15,15 +15,16 @@
 !> other runtime situations that are undesirable or unexpected, 
 !> but not necessarily "wrong". 
 !>    - error : Other runtime errors or unexpected conditions.
-!>    - fatal : Severe errors that cause premature termination.<br />
+!>    - fatal : Severe errors that cause premature termination.
 !>  default verbosity is warning
+!>    - none  : to not create and write any information in logger file.<br />
 !
 !> If total number of error exceeded maximum number 
 !> authorized, program stop.
 !>
 !> to open/create logger file:<br/>
 !> @code
-!>    CALL logger_open(cd_file, [cd_verbosity,] [id_loggerid,] [id_maxerror])
+!>    CALL logger_open(cd_file, [cd_verbosity,] [id_maxerror,] [id_loggerid])
 !> @endcode
 !> - cd_file is logger file name
 !> - cd_verbosity is verbosity to be used [optional, default 'warning']
@@ -120,6 +121,9 @@
 !> J.Paul
 ! REVISION HISTORY:
 !> @date November, 2013- Initial Version
+!> @date February, 2015
+!> - check verbosity validity
+!> - add 'none' verbosity level to not used logger file
 !>
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -150,9 +154,11 @@ MODULE logger
    PUBLIC :: logger_fatal       !< write fatal    message in log file, and stop
 
    PRIVATE :: logger__write     ! cut message to get maximum of 80 character by line in log file
+   PRIVATE :: logger__check_verb! check verbosity validity
 
    TYPE TLOGGER   !< logger structure
       INTEGER(i4)       :: i_id = 0                 !< log file id
+      LOGICAL           :: l_use=.TRUE.             !< use logger or not
       CHARACTER(LEN=lc) :: c_name                   !< log file name
       CHARACTER(LEN=lc) :: c_verbosity = "warning"  !< verbosity choose
       CHARACTER(LEN=lc) :: c_verb = ""              !< array of "verbosities" to used 
@@ -162,14 +168,15 @@ MODULE logger
    END TYPE TLOGGER   
 
    !  module variable
-   INTEGER(i4), PARAMETER :: im_nverbosity=6     !< number of log level
+   INTEGER(i4), PARAMETER :: im_nverbosity=7     !< number of log level
    CHARACTER(len=*), DIMENSION(im_nverbosity), PARAMETER :: cm_verbosity= & !< verbosity array 
    &               (/ 'trace   ',&
    &                  'debug   ',&
    &                  'info    ',& 
    &                  'warning ',&
    &                  'error   ',&
-   &                  'fatal   '/)
+   &                  'fatal   ',&
+   &                  'none    '/)
 
    TYPE(TLOGGER), SAVE :: tm_logger      !< logger structure
                                                  
@@ -187,60 +194,72 @@ CONTAINS
    !
    !> @param[in] cd_file      log file name
    !> @param[in] cd_verbosity log file verbosity
-   !> @param[in] id_logid     log file id (use to flush)
    !> @param[in] id_maxerror  maximum number of error
+   !> @param[in] id_logid     log file id (use to flush)
    !-------------------------------------------------------------------
-   SUBROUTINE logger_open(cd_file, cd_verbosity, id_logid, id_maxerror)
+   SUBROUTINE logger_open(cd_file, cd_verbosity, id_maxerror, id_logid)
       IMPLICIT NONE
       ! Argument
       CHARACTER(len=*), INTENT(IN) :: cd_file                ! log file name
       CHARACTER(len=*), INTENT(IN), OPTIONAL :: cd_verbosity ! log file verbosity
-      INTEGER(i4),      INTENT(IN), OPTIONAL :: id_logid     ! log file id
       INTEGER(i4),      INTENT(IN), OPTIONAL :: id_maxerror  ! log max error
+      INTEGER(i4),      INTENT(IN), OPTIONAL :: id_logid     ! log file id
 
       ! local variable
       INTEGER(i4) :: il_status
 
+      LOGICAL     :: ll_valid
+
       ! loop
       INTEGER(i4) :: ji
       !----------------------------------------------------------------
-      ! get id if not already define
-      IF( PRESENT(id_logid) )THEN
-         tm_logger%i_id=id_logid
-      ELSE
-         tm_logger%i_id=fct_getunit()
-      ENDIF
-
-      ! open log file
-      OPEN( tm_logger%i_id, &
-      &     STATUS="unknown",    &
-      &     FILE=TRIM(ADJUSTL(cd_file)),  &
-      &     ACTION="write",      &
-      &     POSITION="append",   &
-      &     IOSTAT=il_status)
-      CALL fct_err(il_status)
-
-      ! keep filename
-      tm_logger%c_name=TRIM(ADJUSTL(cd_file))
 
       ! if present, change verbosity value
       IF( PRESENT(cd_verbosity) )THEN
-         tm_logger%c_verbosity=TRIM(ADJUSTL(cd_verbosity))
+         ll_valid=logger__check_verb(TRIM(ADJUSTL(cd_verbosity)))
+         IF( ll_valid )THEN
+            tm_logger%c_verbosity=TRIM(ADJUSTL(cd_verbosity))
+         ENDIF
       ENDIF
 
-      ! compute "tab" of verbosity to be used
-      IF( TRIM(ADJUSTL(tm_logger%c_verb)) == "" )THEN
-         DO ji=im_nverbosity,1,-1
-            tm_logger%c_verb = &
-            &  TRIM(tm_logger%c_verb)//" "//TRIM(ADJUSTL(cm_verbosity(ji)))
-            IF( TRIM(tm_logger%c_verbosity) == TRIM(cm_verbosity(ji)) )THEN
-               EXIT
-            ENDIF
-         ENDDO
-      ENDIF
+      IF( TRIM(tm_logger%c_verbosity) == 'none' ) tm_logger%l_use=.FALSE.
+      
+      IF( tm_logger%l_use )THEN
 
-      IF( PRESENT(id_maxerror) )THEN
-         tm_logger%i_maxerror=id_maxerror
+         ! get id if not already define
+         IF( PRESENT(id_logid) )THEN
+            tm_logger%i_id=id_logid
+         ELSE
+            tm_logger%i_id=fct_getunit()
+         ENDIF
+
+         ! open log file
+         OPEN( tm_logger%i_id, &
+         &     STATUS="unknown",    &
+         &     FILE=TRIM(ADJUSTL(cd_file)),  &
+         &     ACTION="write",      &
+         &     POSITION="append",   &
+         &     IOSTAT=il_status)
+         CALL fct_err(il_status)
+
+         ! keep filename
+         tm_logger%c_name=TRIM(ADJUSTL(cd_file))
+
+         ! compute "tab" of verbosity to be used
+         IF( TRIM(ADJUSTL(tm_logger%c_verb)) == "" )THEN
+            DO ji=im_nverbosity,1,-1
+               tm_logger%c_verb = &
+               &  TRIM(tm_logger%c_verb)//" "//TRIM(ADJUSTL(cm_verbosity(ji)))
+               IF( TRIM(tm_logger%c_verbosity) == TRIM(cm_verbosity(ji)) )THEN
+                  EXIT
+               ENDIF
+            ENDDO
+         ENDIF
+
+         IF( PRESENT(id_maxerror) )THEN
+            tm_logger%i_maxerror=id_maxerror
+         ENDIF
+
       ENDIF
 
    END SUBROUTINE logger_open
@@ -255,15 +274,17 @@ CONTAINS
       ! local variable
       INTEGER(i4) :: il_status
       !----------------------------------------------------------------
-      IF( tm_logger%i_id /= 0 )THEN
-         tm_logger%i_id = 0
-         CLOSE( tm_logger%i_id, &
-         &      IOSTAT=il_status)      
-         CALL fct_err(il_status)
-      ELSE
-          CALL logger_open('logger.log')
-          CALL logger_header()
-          CALL logger_fatal('you must have create logger to use logger_close')
+      IF( tm_logger%l_use )THEN
+         IF( tm_logger%i_id /= 0 )THEN
+            tm_logger%i_id = 0
+            CLOSE( tm_logger%i_id, &
+            &      IOSTAT=il_status)      
+            CALL fct_err(il_status)
+         ELSE
+             CALL logger_open('logger.log')
+             CALL logger_header()
+             CALL logger_fatal('you must have create logger to use logger_close')
+         ENDIF
       ENDIF
 
    END SUBROUTINE logger_close
@@ -276,14 +297,16 @@ CONTAINS
    SUBROUTINE logger_flush()
       IMPLICIT NONE
       !----------------------------------------------------------------
-      IF( tm_logger%i_id /= 0 )THEN
-         CALL logger_close()
-         CALL logger_open( tm_logger%c_name, tm_logger%c_verbosity, tm_logger%i_id, &
-         &              tm_logger%i_maxerror )     
-      ELSE
-          CALL logger_open('logger.log')
-          CALL logger_header()
-          CALL logger_fatal('you must have create logger to use logger_flush')
+      IF( tm_logger%l_use )THEN
+         IF( tm_logger%i_id /= 0 )THEN
+            CALL logger_close()
+            CALL logger_open( tm_logger%c_name, tm_logger%c_verbosity, &
+            &                 tm_logger%i_maxerror, tm_logger%i_id )     
+         ELSE
+             CALL logger_open('logger.log')
+             CALL logger_header()
+             CALL logger_fatal('you must have create logger to use logger_flush')
+         ENDIF
       ENDIF
 
    END SUBROUTINE logger_flush
@@ -298,19 +321,21 @@ CONTAINS
       ! local variable
       INTEGER(i4)       :: il_status
       !----------------------------------------------------------------
-      IF( tm_logger%i_id /= 0 )THEN
-         WRITE( tm_logger%i_id,    &
-            &   FMT='(4(a/))',     &
-            &   IOSTAT=il_status ) &
-            &   "--------------------------------------------------",&
-            &   "INIT     : verbosity "//TRIM(tm_logger%c_verbosity),&
-            &   "INIT     : max error "//TRIM(fct_str(tm_logger%i_maxerror)), &
-            &   "--------------------------------------------------"
-         CALL fct_err(il_status)
-      ELSE
-          CALL logger_open('logger.log')
-          CALL logger_header()
-          CALL logger_fatal('you must have create logger to use logger_header')
+      IF( tm_logger%l_use )THEN
+         IF( tm_logger%i_id /= 0 )THEN
+            WRITE( tm_logger%i_id,    &
+               &   FMT='(4(a/))',     &
+               &   IOSTAT=il_status ) &
+               &   "--------------------------------------------------",&
+               &   "INIT     : verbosity "//TRIM(tm_logger%c_verbosity),&
+               &   "INIT     : max error "//TRIM(fct_str(tm_logger%i_maxerror)), &
+               &   "--------------------------------------------------"
+            CALL fct_err(il_status)
+         ELSE
+             CALL logger_open('logger.log')
+             CALL logger_header()
+             CALL logger_fatal('you must have create logger to use logger_header')
+         ENDIF
       ENDIF
 
    END SUBROUTINE logger_header
@@ -325,22 +350,24 @@ CONTAINS
       ! local variable
       INTEGER(i4)       :: il_status
       !----------------------------------------------------------------
-      IF( tm_logger%i_id /= 0 )THEN
-         WRITE( tm_logger%i_id,    &
-            &   FMT='(4(/a))',     &
-            &   IOSTAT=il_status ) &
-            &   "--------------------------------------------------",&
-            &   "END      : log ended ",              &
-            &   "END      : "//TRIM(fct_str(tm_logger%i_nerror))//   &
-            &   " ERROR detected ",                                  &
-            &   "END      : "//TRIM(fct_str(tm_logger%i_nfatal))//   &
-            &   " FATAL detected ",                                  &
-            &   "--------------------------------------------------"
-         CALL fct_err(il_status)
-      ELSE
-          CALL logger_open('logger.log')
-          CALL logger_header()
-          CALL logger_fatal('you must have create logger to use logger_footer')
+      IF( tm_logger%l_use )THEN
+         IF( tm_logger%i_id /= 0 )THEN
+            WRITE( tm_logger%i_id,    &
+               &   FMT='(4(/a))',     &
+               &   IOSTAT=il_status ) &
+               &   "--------------------------------------------------",&
+               &   "END      : log ended ",              &
+               &   "END      : "//TRIM(fct_str(tm_logger%i_nerror))//   &
+               &   " ERROR detected ",                                  &
+               &   "END      : "//TRIM(fct_str(tm_logger%i_nfatal))//   &
+               &   " FATAL detected ",                                  &
+               &   "--------------------------------------------------"
+            CALL fct_err(il_status)
+         ELSE
+             CALL logger_open('logger.log')
+             CALL logger_header()
+             CALL logger_fatal('you must have create logger to use logger_footer')
+         ENDIF
       ENDIF
    END SUBROUTINE logger_footer
    !-------------------------------------------------------------------
@@ -360,21 +387,23 @@ CONTAINS
       CHARACTER(LEN=*), INTENT(IN)  :: cd_msg
       LOGICAL,          INTENT(IN), OPTIONAL :: ld_flush
       !----------------------------------------------------------------
-      IF( tm_logger%i_id /= 0 )THEN
-         IF( INDEX(TRIM(tm_logger%c_verb),'trace')/=0 )THEN
+      IF( tm_logger%l_use )THEN
+         IF( tm_logger%i_id /= 0 )THEN
+            IF( INDEX(TRIM(tm_logger%c_verb),'trace')/=0 )THEN
 
-            CALL logger__write("TRACE   :",cd_msg)
+               CALL logger__write("TRACE   :",cd_msg)
 
-            IF( PRESENT(ld_flush) )THEN
-               IF( ld_flush )THEN
-                  CALL logger_flush()
-               ENDIF
-            ENDIF      
+               IF( PRESENT(ld_flush) )THEN
+                  IF( ld_flush )THEN
+                     CALL logger_flush()
+                  ENDIF
+               ENDIF      
+            ENDIF
+         ELSE
+             CALL logger_open('logger.log')
+             CALL logger_header()
+             CALL logger_fatal('you must have create logger to use logger_trace')
          ENDIF
-      ELSE
-          CALL logger_open('logger.log')
-          CALL logger_header()
-          CALL logger_fatal('you must have create logger to use logger_trace')
       ENDIF
    END SUBROUTINE logger_trace
    !-------------------------------------------------------------------
@@ -394,21 +423,23 @@ CONTAINS
       CHARACTER(LEN=*), INTENT(IN)  :: cd_msg
       LOGICAL,          INTENT(IN), OPTIONAL :: ld_flush
       !----------------------------------------------------------------
-      IF( tm_logger%i_id /= 0 )THEN
-         IF( INDEX(TRIM(tm_logger%c_verb),'debug')/=0 )THEN
+      IF( tm_logger%l_use )THEN
+         IF( tm_logger%i_id /= 0 )THEN
+            IF( INDEX(TRIM(tm_logger%c_verb),'debug')/=0 )THEN
 
-            CALL logger__write("DEBUG   :",cd_msg)
+               CALL logger__write("DEBUG   :",cd_msg)
 
-            IF( PRESENT(ld_flush) )THEN
-               IF( ld_flush )THEN
-                  CALL logger_flush()
-               ENDIF
-            ENDIF      
+               IF( PRESENT(ld_flush) )THEN
+                  IF( ld_flush )THEN
+                     CALL logger_flush()
+                  ENDIF
+               ENDIF      
+            ENDIF
+         ELSE
+             CALL logger_open('logger.log')
+             CALL logger_header()
+             CALL logger_fatal('you must have create logger to use logger_debug')
          ENDIF
-      ELSE
-          CALL logger_open('logger.log')
-          CALL logger_header()
-          CALL logger_fatal('you must have create logger to use logger_debug')
       ENDIF
    END SUBROUTINE logger_debug
    !-------------------------------------------------------------------
@@ -428,21 +459,23 @@ CONTAINS
       CHARACTER(LEN=*), INTENT(IN)  :: cd_msg
       LOGICAL,          INTENT(IN), OPTIONAL :: ld_flush
       !----------------------------------------------------------------
-      IF( tm_logger%i_id /= 0 )THEN
-         IF( INDEX(TRIM(tm_logger%c_verb),'info')/=0 )THEN
+      IF( tm_logger%l_use )THEN
+         IF( tm_logger%i_id /= 0 )THEN
+            IF( INDEX(TRIM(tm_logger%c_verb),'info')/=0 )THEN
 
-            CALL logger__write("INFO    :",cd_msg)
+               CALL logger__write("INFO    :",cd_msg)
 
-            IF( PRESENT(ld_flush) )THEN
-               IF( ld_flush )THEN
-                  CALL logger_flush()
-               ENDIF
-            ENDIF      
+               IF( PRESENT(ld_flush) )THEN
+                  IF( ld_flush )THEN
+                     CALL logger_flush()
+                  ENDIF
+               ENDIF      
+            ENDIF
+         ELSE
+             CALL logger_open('logger.log')
+             CALL logger_header()
+             CALL logger_fatal('you must have create logger to use logger_info')
          ENDIF
-      ELSE
-          CALL logger_open('logger.log')
-          CALL logger_header()
-          CALL logger_fatal('you must have create logger to use logger_info')
       ENDIF
    END SUBROUTINE logger_info
    !-------------------------------------------------------------------
@@ -462,21 +495,23 @@ CONTAINS
       CHARACTER(LEN=*), INTENT(IN)  :: cd_msg
       LOGICAL,          INTENT(IN), OPTIONAL :: ld_flush
       !----------------------------------------------------------------
-      IF( tm_logger%i_id /= 0 )THEN
-         IF( INDEX(TRIM(tm_logger%c_verb),'warn')/=0 )THEN
+      IF( tm_logger%l_use )THEN
+         IF( tm_logger%i_id /= 0 )THEN
+            IF( INDEX(TRIM(tm_logger%c_verb),'warn')/=0 )THEN
 
-            CALL logger__write("WARNING :",cd_msg)
+               CALL logger__write("WARNING :",cd_msg)
 
-            IF( PRESENT(ld_flush) )THEN
-               IF( ld_flush )THEN
-                  CALL logger_flush()
-               ENDIF
-            ENDIF      
+               IF( PRESENT(ld_flush) )THEN
+                  IF( ld_flush )THEN
+                     CALL logger_flush()
+                  ENDIF
+               ENDIF      
+            ENDIF
+         ELSE
+             CALL logger_open('logger.log')
+             CALL logger_header()
+             CALL logger_fatal('you must have create logger to use logger_warn')
          ENDIF
-      ELSE
-          CALL logger_open('logger.log')
-          CALL logger_header()
-          CALL logger_fatal('you must have create logger to use logger_warn')
       ENDIF
    END SUBROUTINE logger_warn
    !-------------------------------------------------------------------
@@ -499,32 +534,35 @@ CONTAINS
       ! local variable
       CHARACTER(LEN=lc) :: cl_nerror
       !----------------------------------------------------------------
-      IF( tm_logger%i_id /= 0 )THEN
-         ! increment the error number
-         tm_logger%i_nerror=tm_logger%i_nerror+1
+      IF( tm_logger%l_use )THEN
+         IF( tm_logger%i_id /= 0 )THEN
+            IF( TRIM(tm_logger%c_verb) /= 'none' )THEN
+               ! increment the error number
+               tm_logger%i_nerror=tm_logger%i_nerror+1
+            ENDIF
 
-         IF( INDEX(TRIM(tm_logger%c_verb),'error')/=0 )THEN
+            IF( INDEX(TRIM(tm_logger%c_verb),'error')/=0 )THEN
 
-            CALL logger__write("ERROR   :",cd_msg)
+               CALL logger__write("ERROR   :",cd_msg)
 
-            IF( PRESENT(ld_flush) )THEN
-               IF( ld_flush )THEN
-                  CALL logger_flush()
-               ENDIF
-            ENDIF      
+               IF( PRESENT(ld_flush) )THEN
+                  IF( ld_flush )THEN
+                     CALL logger_flush()
+                  ENDIF
+               ENDIF      
+            ENDIF
+
+            IF( tm_logger%i_nerror >= tm_logger%i_maxerror )THEN
+               WRITE(cl_nerror,*) tm_logger%i_maxerror
+               CALL logger_fatal(&
+               &  'Error count reached limit of '//TRIM(ADJUSTL(cl_nerror)) )
+            ENDIF
+         ELSE
+             CALL logger_open('logger.log')
+             CALL logger_header()
+             CALL logger_fatal('you must have create logger to use logger_error')
          ENDIF
-
-         IF( tm_logger%i_nerror >= tm_logger%i_maxerror )THEN
-            WRITE(cl_nerror,*) tm_logger%i_maxerror
-            CALL logger_fatal(&
-            &  'Error count reached limit of '//TRIM(ADJUSTL(cl_nerror)) )
-         ENDIF
-      ELSE
-          CALL logger_open('logger.log')
-          CALL logger_header()
-          CALL logger_fatal('you must have create logger to use logger_error')
       ENDIF
-
    END SUBROUTINE logger_error
    !-------------------------------------------------------------------
    !> @brief This subroutine write fatal error message on log file, 
@@ -540,23 +578,25 @@ CONTAINS
       ! Argument
       CHARACTER(LEN=*),           INTENT(IN) :: cd_msg
       !----------------------------------------------------------------
-      IF( tm_logger%i_id /= 0 )THEN
-         IF( INDEX(TRIM(tm_logger%c_verb),'fatal')/=0 )THEN
-            ! increment the error number
-            tm_logger%i_nfatal=tm_logger%i_nfatal+1
+      IF( tm_logger%l_use )THEN
+         IF( tm_logger%i_id /= 0 )THEN
+            IF( INDEX(TRIM(tm_logger%c_verb),'fatal')/=0 )THEN
+               ! increment the error number
+               tm_logger%i_nfatal=tm_logger%i_nfatal+1
 
-            CALL logger__write("FATAL   :",cd_msg)
+               CALL logger__write("FATAL   :",cd_msg)
 
-            CALL logger_footer()
-            CALL logger_close()
+               CALL logger_footer()
+               CALL logger_close()
 
-            WRITE(*,*) 'FATAL ERROR'
-            STOP
+               WRITE(*,*) 'FATAL ERROR'
+               STOP
+            ENDIF
+         ELSE
+             CALL logger_open('logger.log')
+             CALL logger_header()
+             CALL logger_fatal('you must have create logger to use logger_fatal')
          ENDIF
-      ELSE
-          CALL logger_open('logger.log')
-          CALL logger_header()
-          CALL logger_fatal('you must have create logger to use logger_fatal')
       ENDIF
    END SUBROUTINE logger_fatal
    !-------------------------------------------------------------------
@@ -614,5 +654,44 @@ CONTAINS
       CALL fct_err(il_status)
 
    END SUBROUTINE logger__write
+   !-------------------------------------------------------------------
+   !> @brief This function check validity of verbosity.
+   !>
+   !> @author J.Paul
+   !> - February, 2015 - Initial Version
+   !
+   !> @param[in] cd_verb   verbosity of the message to write
+   !> @return verbosity is valid or not
+   !-------------------------------------------------------------------
+   FUNCTION logger__check_verb(cd_verb)
+      IMPLICIT NONE
+      ! Argument
+      CHARACTER(LEN=*),           INTENT(IN) :: cd_verb
+
+      !function
+      LOGICAL           :: logger__check_verb
+
+      ! local variable
+      ! loop indices
+      INTEGER(i4) :: ji
+
+      !----------------------------------------------------------------
+      logger__check_verb=.FALSE.
+
+      DO ji=1,im_nverbosity
+         IF( TRIM(cd_verb) == TRIM(cm_verbosity(ji)) )THEN
+            logger__check_verb=.TRUE.
+            EXIT
+         ENDIF
+      ENDDO
+
+      IF( .NOT. logger__check_verb )THEN
+         CALL logger_open('logger.log')
+         CALL logger_header()
+         CALL logger_fatal('LOGGER : invalid verbosity, check namelist.'//&
+         &                 ' default one will be used.')
+         CALL logger_footer()
+      ENDIF
+   END FUNCTION logger__check_verb
 END MODULE logger
 

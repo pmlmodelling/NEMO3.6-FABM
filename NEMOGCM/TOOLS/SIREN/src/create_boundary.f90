@@ -22,7 +22,13 @@
 !> @code{.sh}
 !>    ./SIREN/bin/create_boundary create_boundary.nam
 !> @endcode
-!>    
+!>  <br/> 
+!> \image html  boundary_NEATL36_70.png 
+!> \image latex boundary_NEATL36_70.png
+!>
+!> @note 
+!>    you could find a template of the namelist in templates directory.
+!>
 !>    create_boundary.nam comprise 9 namelists:<br/>
 !>       - logger namelist (namlog)
 !>       - config namelist (namcfg)
@@ -41,7 +47,7 @@
 !>    * _logger namelist (namlog)_:<br/>
 !>       - cn_logfile   : log filename
 !>       - cn_verbosity : verbosity ('trace','debug','info',
-!> 'warning','error','fatal')
+!> 'warning','error','fatal','none')
 !>       - in_maxerror  : maximum number of error allowed
 !>
 !>    * _config namelist (namcfg)_:<br/>
@@ -78,14 +84,16 @@
 !>
 !>    * _variable namelist (namvar)_:<br/>
 !>       - cn_varinfo : list of variable and extra information about request(s)
-!> to be used.<br/>
+!>          to be used (separated by ',').<br/>
 !>          each elements of *cn_varinfo* is a string character.<br/>
 !>          it is composed of the variable name follow by ':', 
 !>          then request(s) to be used on this variable.<br/> 
 !>          request could be:
-!>             - interpolation method
-!>             - extrapolation method
-!>             - filter method
+!>             - int = interpolation method
+!>             - ext = extrapolation method
+!>             - flt = filter method
+!>             - unt = new units
+!>             - unf = unit scale factor (linked to new units)
 !>
 !>                requests must be separated by ';'.<br/>
 !>                order of requests does not matter.
@@ -93,7 +101,7 @@
 !>          informations about available method could be find in @ref interp,
 !>          @ref extrap and @ref filter.<br/>
 !>
-!>          Example: 'votemper:linear;hann;dist_weight', 'vosaline:cubic'
+!>          Example: 'votemper:int=linear;flt=hann;ext=dist_weight', 'vosaline:int=cubic'
 !>          @note 
 !>             If you do not specify a method which is required, 
 !>             default one is apply.
@@ -135,32 +143,39 @@
 !>          segmentation.<br/>
 !>          segments are separated by '|'.<br/>
 !>          each segments of the boundary is composed of:
-!>             - orthogonal indice (.ie. for north boundary,
-!>             J-indice where boundary are). 
-!>             - first indice of boundary (I-indice for north boundary) 
-!>             - last  indice of boundary (I-indice for north boundary)<br/>
-!>                indices must be separated by ',' .<br/>
+!>             - indice of velocity (orthogonal to boundary .ie. 
+!>                for north boundary, J-indice). 
+!>             - indice of segemnt start (I-indice for north boundary) 
+!>             - indice of segment end   (I-indice for north boundary)<br/>
+!>                indices must be separated by ':' .<br/>
 !>             - optionally, boundary size could be added between '(' and ')' 
 !>             in the first segment defined.
 !>                @note 
 !>                   boundary width is the same for all segments of one boundary.
 !>
 !>          Examples:
-!>             - cn_north='index1,first1,last1(width)'
-!>             - cn_north='index1(width),first1,last1|index2,first2,last2'
-!>
-!>          \image html  boundary_50.png 
-!>          \image latex boundary_50.png
-!>
+!>             - cn_north='index1,first1:last1(width)'
+!>             - cn_north='index1(width),first1:last1|index2,first2:last2'
+!>             \image html  boundary_50.png 
+!>             \image latex boundary_50.png
 !>       - cn_south  : south boundary indices on fine grid
 !>       - cn_east   : east  boundary indices on fine grid
 !>       - cn_west   : west  boundary indices on fine grid
 !>       - ln_oneseg : use only one segment for each boundary or not
-!>       - in_extrap : number of mask point to be extrapolated
 !>
-!>   * _output namelist (namout)_:<br/>
+!>    * _output namelist (namout)_:<br/>
 !>       - cn_fileout : fine grid boundary basename
 !>         (cardinal and segment number will be automatically added)
+!>       - dn_dayofs  : date offset in day (change only ouput file name)
+!>       - ln_extrap  : extrapolate land point or not
+!>
+!>          Examples: 
+!>             - cn_fileout=boundary.nc<br/>
+!>                if time_counter (16/07/2015 00h) is read on input file (see varfile), 
+!>                west boundary will be named boundary_west_y2015m07d16
+!>             - dn_dayofs=-2.<br/>
+!>                if you use day offset you get boundary_west_y2015m07d14
+!>       
 !>
 !> @author J.Paul
 ! REVISION HISTORY:
@@ -168,7 +183,12 @@
 !> @date September, 2014
 !> - add header for user
 !> - take into account grid point to compue boundaries
-!> - reorder output dimension for north and south boundaries 
+!> - reorder output dimension for north and south boundaries
+!> @date June, 2015
+!> - extrapolate all land points, and add ln_extrap in namelist.
+!> - allow to change unit.
+!> @date July, 2015
+!> - add namelist parameter to shift date of output file name.  
 !>
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -190,7 +210,7 @@ PROGRAM create_boundary
    USE iom                             ! I/O manager
    USE dom                             ! domain manager
    USE grid                            ! grid manager
-   USE vgrid                           ! vartical grid manager
+   USE vgrid                           ! vertical grid manager
    USE extrap                          ! extrapolation manager
    USE interp                          ! interpolation manager
    USE filter                          ! filter manager
@@ -212,7 +232,6 @@ PROGRAM create_boundary
    INTEGER(i4)                                        :: il_narg
    INTEGER(i4)                                        :: il_status
    INTEGER(i4)                                        :: il_fileid
-   INTEGER(i4)                                        :: il_dim
    INTEGER(i4)                                        :: il_imin0
    INTEGER(i4)                                        :: il_imax0
    INTEGER(i4)                                        :: il_jmin0
@@ -238,6 +257,8 @@ PROGRAM create_boundary
    TYPE(TVAR)       , DIMENSION(:,:,:)  , ALLOCATABLE :: tl_segvar1
 
    TYPE(TDIM)       , DIMENSION(ip_maxdim)            :: tl_dim
+
+   TYPE(TDATE)                                        :: tl_date
    
    TYPE(TBDY)       , DIMENSION(ip_ncard)             :: tl_bdy
    
@@ -264,47 +285,63 @@ PROGRAM create_boundary
 
    ! namelist variable
    ! namlog
-   CHARACTER(LEN=lc)                       :: cn_logfile = 'create_boundary.log' 
-   CHARACTER(LEN=lc)                       :: cn_verbosity = 'warning' 
-   INTEGER(i4)                             :: in_maxerror = 5
+   CHARACTER(LEN=lc)  :: cn_logfile = 'create_boundary.log' 
+   CHARACTER(LEN=lc)  :: cn_verbosity = 'warning' 
+   INTEGER(i4)        :: in_maxerror = 5
 
    ! namcfg
-   CHARACTER(LEN=lc)                       :: cn_varcfg = 'variable.cfg' 
+   CHARACTER(LEN=lc)  :: cn_varcfg = 'variable.cfg' 
 
    ! namcrs
-   CHARACTER(LEN=lc)                       :: cn_coord0 = '' 
-   INTEGER(i4)                             :: in_perio0 = -1
+   CHARACTER(LEN=lc)  :: cn_coord0 = '' 
+   INTEGER(i4)        :: in_perio0 = -1
 
    ! namfin
-   CHARACTER(LEN=lc)                       :: cn_coord1 = '' 
-   CHARACTER(LEN=lc)                       :: cn_bathy1 = '' 
-   INTEGER(i4)                             :: in_perio1 = -1
+   CHARACTER(LEN=lc)  :: cn_coord1 = '' 
+   CHARACTER(LEN=lc)  :: cn_bathy1 = '' 
+   INTEGER(i4)        :: in_perio1 = -1
 
    !namzgr
-   INTEGER(i4)                             :: in_nlevel = 75
+   REAL(dp)          :: dn_pp_to_be_computed = 0._dp
+   REAL(dp)          :: dn_ppsur     = -3958.951371276829_dp
+   REAL(dp)          :: dn_ppa0      =   103.9530096000000_dp
+   REAL(dp)          :: dn_ppa1      =     2.4159512690000_dp
+   REAL(dp)          :: dn_ppa2      =   100.7609285000000_dp
+   REAL(dp)          :: dn_ppkth     =    15.3510137000000_dp
+   REAL(dp)          :: dn_ppkth2    =    48.0298937200000_dp
+   REAL(dp)          :: dn_ppacr     =     7.0000000000000_dp
+   REAL(dp)          :: dn_ppacr2    =    13.000000000000_dp
+   REAL(dp)          :: dn_ppdzmin   = 6._dp
+   REAL(dp)          :: dn_pphmax    = 5750._dp
+   INTEGER(i4)       :: in_nlevel    = 75
+
+   !namzps
+   REAL(dp)          :: dn_e3zps_min = 25._dp
+   REAL(dp)          :: dn_e3zps_rat = 0.2_dp
 
    ! namvar
    CHARACTER(LEN=lc), DIMENSION(ip_maxvar) :: cn_varinfo = ''
    CHARACTER(LEN=lc), DIMENSION(ip_maxvar) :: cn_varfile = ''
 
    ! namnst
-   INTEGER(i4)                             :: in_rhoi  = 0
-   INTEGER(i4)                             :: in_rhoj  = 0
+   INTEGER(i4)       :: in_rhoi  = 0
+   INTEGER(i4)       :: in_rhoj  = 0
 
    ! nambdy
-   LOGICAL                                 :: ln_north   = .TRUE.
-   LOGICAL                                 :: ln_south   = .TRUE.
-   LOGICAL                                 :: ln_east    = .TRUE.
-   LOGICAL                                 :: ln_west    = .TRUE.
-   CHARACTER(LEN=lc)                       :: cn_north   = ''
-   CHARACTER(LEN=lc)                       :: cn_south   = ''
-   CHARACTER(LEN=lc)                       :: cn_east    = ''
-   CHARACTER(LEN=lc)                       :: cn_west    = ''
-   LOGICAL                                 :: ln_oneseg  = .TRUE.
-   INTEGER(i4)                             :: in_extrap  = 0
+   LOGICAL           :: ln_north   = .TRUE.
+   LOGICAL           :: ln_south   = .TRUE.
+   LOGICAL           :: ln_east    = .TRUE.
+   LOGICAL           :: ln_west    = .TRUE.
+   CHARACTER(LEN=lc) :: cn_north   = ''
+   CHARACTER(LEN=lc) :: cn_south   = ''
+   CHARACTER(LEN=lc) :: cn_east    = ''
+   CHARACTER(LEN=lc) :: cn_west    = ''
+   LOGICAL           :: ln_oneseg  = .TRUE.
 
    ! namout
-   CHARACTER(LEN=lc)                       :: cn_fileout = 'boundary.nc' 
+   CHARACTER(LEN=lc) :: cn_fileout = 'boundary.nc' 
+   REAL(dp)          :: dn_dayofs  = 0._dp
+   LOGICAL           :: ln_extrap  = .FALSE.
    !-------------------------------------------------------------------
 
    NAMELIST /namlog/ &  !< logger namelist
@@ -318,19 +355,34 @@ PROGRAM create_boundary
    NAMELIST /namcrs/ &  !< coarse grid namelist
    &  cn_coord0,     &  !< coordinate file
    &  in_perio0         !< periodicity index
-   
+ 
    NAMELIST /namfin/ &  !< fine grid namelist
    &  cn_coord1,     &  !< coordinate file
    &  cn_bathy1,     &  !< bathymetry file
    &  in_perio1         !< periodicity index
  
    NAMELIST /namzgr/ &
-   &  in_nlevel
+   &  dn_pp_to_be_computed, &
+   &  dn_ppsur,     &
+   &  dn_ppa0,      &
+   &  dn_ppa1,      &
+   &  dn_ppa2,      &
+   &  dn_ppkth,     &
+   &  dn_ppkth2,    &
+   &  dn_ppacr,     &
+   &  dn_ppacr2,    &
+   &  dn_ppdzmin,   &
+   &  dn_pphmax,    &
+   &  in_nlevel         !< number of vertical level
+
+   NAMELIST /namzps/ &
+   &  dn_e3zps_min, &
+   &  dn_e3zps_rat
 
    NAMELIST /namvar/ &  !< variable namelist
    &  cn_varinfo,    &  !< list of variable and method to apply on. (ex: 'votemper:linear','vosaline:cubic' )
    &  cn_varfile        !< list of variable and file where find it. (ex: 'votemper:GLORYS_gridT.nc' ) 
-   
+ 
    NAMELIST /namnst/ &  !< nesting namelist
    &  in_rhoi,       &  !< refinement factor in i-direction
    &  in_rhoj           !< refinement factor in j-direction
@@ -344,11 +396,12 @@ PROGRAM create_boundary
    &  cn_south,      &  !< south boundary indices on fine grid
    &  cn_east ,      &  !< east  boundary indices on fine grid
    &  cn_west ,      &  !< west  boundary indices on fine grid
-   &  ln_oneseg,     &  !< use only one segment for each boundary or not
-   &  in_extrap         !< number of mask point to be extrapolated
+   &  ln_oneseg         !< use only one segment for each boundary or not
 
    NAMELIST /namout/ &  !< output namelist
-   &  cn_fileout    !< fine grid boundary file basename   
+   &  cn_fileout,    &  !< fine grid boundary file basename   
+   &  dn_dayofs,     &  !< date offset in day (change only ouput file name)
+   &  ln_extrap         !< extrapolate or not
    !-------------------------------------------------------------------
 
    ! namelist
@@ -447,9 +500,18 @@ PROGRAM create_boundary
 
    ! check
    ! check output file do not already exist
+   ! WARNING: do not work when use time to create output file name
    DO jk=1,ip_ncard
       cl_bdyout=boundary_set_filename( TRIM(cn_fileout), &
       &                                TRIM(cp_card(jk)), 1 )
+      INQUIRE(FILE=TRIM(cl_bdyout), EXIST=ll_exist)
+      IF( ll_exist )THEN
+         CALL logger_fatal("CREATE BOUNDARY: output file "//TRIM(cl_bdyout)//&
+         &  " already exist.")
+      ENDIF
+
+      cl_bdyout=boundary_set_filename( TRIM(cn_fileout), &
+      &                                TRIM(cp_card(jk)) )
       INQUIRE(FILE=TRIM(cl_bdyout), EXIST=ll_exist)
       IF( ll_exist )THEN
          CALL logger_fatal("CREATE BOUNDARY: output file "//TRIM(cl_bdyout)//&
@@ -489,11 +551,12 @@ PROGRAM create_boundary
    CALL mpp_get_contour(tl_bathy1)
 
    CALL iom_mpp_open(tl_bathy1)
-   
+ 
    tl_var1=iom_mpp_read_var(tl_bathy1,'Bathymetry')
-   
+ 
    CALL iom_mpp_close(tl_bathy1)
 
+   ! get boundaries indices
    tl_bdy(:)=boundary_init(tl_var1, ln_north, ln_south, ln_east, ln_west, &
    &                                cn_north, cn_south, cn_east, cn_west, &
    &                                ln_oneseg ) 
@@ -504,10 +567,10 @@ PROGRAM create_boundary
    ALLOCATE(tl_level(ip_npoint))
    tl_level(:)=vgrid_get_level(tl_bathy1, cl_namelist )
 
-   ! get coordinate on each segment of each boundary
+   ! get coordinate for each segment of each boundary
    ALLOCATE( tl_segdom1(ip_npoint,ip_maxseg,ip_ncard) )
    ALLOCATE( tl_seglvl1(ip_npoint,ip_maxseg,ip_ncard) )
-   
+ 
    DO jl=1,ip_ncard
       IF( tl_bdy(jl)%l_use )THEN
          DO jk=1,tl_bdy(jl)%i_nseg
@@ -516,16 +579,19 @@ PROGRAM create_boundary
             tl_segdom1(:,jk,jl)=create_boundary_get_dom( tl_bathy1, &
             &                                            tl_bdy(jl), jk )
 
+            IF( .NOT. ln_extrap )THEN
+               ! get fine grid level
+               tl_seglvl1(:,jk,jl)= &
+                  & create_boundary_get_level( tl_level(:), &
+                  &                            tl_segdom1(:,jk,jl))
+            ENDIF
+
             ! add extra band to fine grid domain (if possible)
             ! to avoid dimension of one and so be able to compute offset
             DO jj=1,ip_npoint
                CALL dom_add_extra(tl_segdom1(jj,jk,jl), &
                &                  il_rho(jp_I), il_rho(jp_J))
             ENDDO
-
-            ! get fine grid level
-            tl_seglvl1(:,jk,jl)=create_boundary_get_level( tl_level(:), &
-                                                           tl_segdom1(:,jk,jl))
 
          ENDDO
       ENDIF
@@ -593,10 +659,6 @@ PROGRAM create_boundary
                         &                          tl_segdom1(jpoint,jk,jl), &
                         &                          in_nlevel )
 
-                        ! use mask
-                        CALL create_boundary_use_mask( tl_segvar1(jvar,jk,jl), &
-                        &                         tl_seglvl1(jpoint,jk,jl))
-
                         !del extra
                         CALL dom_del_extra( tl_segvar1(jvar,jk,jl), &
                         &                   tl_segdom1(jpoint,jk,jl) )
@@ -653,7 +715,8 @@ PROGRAM create_boundary
                DO jl=1,ip_ncard
                   IF( tl_bdy(jl)%l_use )THEN
                      
-                     WRITE(*,'(2x,a,a)') 'work on '//TRIM(tl_bdy(jl)%c_card)//' boundary'
+                     WRITE(*,'(2x,a,a)') 'work on '//TRIM(tl_bdy(jl)%c_card)//&
+                        &  ' boundary'
                      DO jk=1,tl_bdy(jl)%i_nseg
                         ! compute domain on fine grid
                         
@@ -661,7 +724,8 @@ PROGRAM create_boundary
                         DO jj=1,tl_multi%t_mpp(ji)%t_proc(1)%i_nvar
                            
                            cl_name=tl_multi%t_mpp(ji)%t_proc(1)%t_var(jj)%c_name
-                           WRITE(*,'(4x,a,a)') "work on variable "//TRIM(cl_name)
+                           WRITE(*,'(4x,a,a)') "work on (extract) variable "//&
+                              &  TRIM(cl_name)
 
                            cl_point=tl_multi%t_mpp(ji)%t_proc(1)%t_var(jj)%c_point
                            ! open mpp file on domain
@@ -677,7 +741,6 @@ PROGRAM create_boundary
                            END SELECT
 
                            tl_dom1=dom_copy(tl_segdom1(jpoint,jk,jl))
-                           tl_lvl1=var_copy(tl_seglvl1(jpoint,jk,jl))
 
                            ! open mpp files
                            CALL iom_dom_open(tl_mpp, tl_dom1)
@@ -685,10 +748,6 @@ PROGRAM create_boundary
                            !7-5 read variable over domain
                            tl_segvar1(jvar+jj,jk,jl)=iom_dom_read_var( &
                            &                     tl_mpp, TRIM(cl_name), tl_dom1)
-
-                           ! use mask
-                           CALL create_boundary_use_mask( &
-                           &                 tl_segvar1(jvar+jj,jk,jl), tl_lvl1)
 
                            ! del extra point
                            CALL dom_del_extra( tl_segvar1(jvar+jj,jk,jl), &
@@ -698,13 +757,16 @@ PROGRAM create_boundary
                            CALL dom_clean_extra( tl_dom1 )
 
                            ! add attribute to variable
-                           tl_att=att_init('src_file',TRIM(fct_basename(tl_mpp%c_name)))
+                           tl_att=att_init('src_file', &
+                              &  TRIM(fct_basename(tl_mpp%c_name)))
                            CALL var_move_att(tl_segvar1(jvar+jj,jk,jl), tl_att)
 
-                           tl_att=att_init('src_i_indices',(/tl_dom1%i_imin, tl_dom1%i_imax/))
+                           tl_att=att_init('src_i_indices', &
+                              &  (/tl_dom1%i_imin, tl_dom1%i_imax/))
                            CALL var_move_att(tl_segvar1(jvar+jj,jk,jl), tl_att)
 
-                           tl_att=att_init('src_j_indices',(/tl_dom1%i_jmin, tl_dom1%i_jmax/))
+                           tl_att=att_init('src_j_indices', &
+                              &  (/tl_dom1%i_jmin, tl_dom1%i_jmax/))
                            CALL var_move_att(tl_segvar1(jvar+jj,jk,jl), tl_att)
 
                            ! clean structure
@@ -735,13 +797,14 @@ PROGRAM create_boundary
                DO jl=1,ip_ncard
                   IF( tl_bdy(jl)%l_use )THEN
 
-                     WRITE(*,'(2x,a,a)') 'work on '//TRIM(tl_bdy(jl)%c_card)//' boundary'
+                     WRITE(*,'(2x,a,a)') 'work on '//TRIM(tl_bdy(jl)%c_card)//&
+                        &  ' boundary'
                      DO jk=1,tl_bdy(jl)%i_nseg
                         
                         ! for each variable of this file
                         DO jj=1,tl_multi%t_mpp(ji)%t_proc(1)%i_nvar
-                           
-                           WRITE(*,'(4x,a,a)') "work on variable "//&
+ 
+                           WRITE(*,'(4x,a,a)') "work on (interp) variable "//&
                            &  TRIM(tl_multi%t_mpp(ji)%t_proc(1)%t_var(jj)%c_name)
 
                            tl_var0=var_copy(tl_multi%t_mpp(ji)%t_proc(1)%t_var(jj))
@@ -758,7 +821,6 @@ PROGRAM create_boundary
                            END SELECT
 
                            tl_dom1=dom_copy(tl_segdom1(jpoint,jk,jl))
-                           tl_lvl1=var_copy(tl_seglvl1(jpoint,jk,jl))
 
                            CALL create_boundary_get_coord( tl_coord1, tl_dom1, &
                            &                               tl_var0%c_point,    &
@@ -794,7 +856,8 @@ PROGRAM create_boundary
                            &                 il_imin0, il_imax0,&
                            &                 il_jmin0, il_jmax0 )
 
-                           ! add extra band (if possible) to compute interpolation
+                           ! add extra band (if possible) to compute 
+                           ! interpolation
                            CALL dom_add_extra(tl_dom0)
 
                            ! read variables on domain 
@@ -814,10 +877,6 @@ PROGRAM create_boundary
                            ! remove extraband added to domain
                            CALL dom_del_extra( tl_segvar1(jvar+jj,jk,jl), &
                            &                   tl_dom0, il_rho(:) )
-
-                           ! use mask
-                           CALL create_boundary_use_mask( &
-                           &     tl_segvar1(jvar+jj,jk,jl), tl_lvl1)
 
                            ! del extra point on fine grid
                            CALL dom_del_extra( tl_segvar1(jvar+jj,jk,jl), &
@@ -888,27 +947,22 @@ PROGRAM create_boundary
    ENDIF
 
    IF( jvar /= tl_multi%i_nvar )THEN
-      CALL logger_error("CREATE BOUNDARY: it seems some variable can not be read")
+      CALL logger_error("CREATE BOUNDARY: it seems some variable "//&
+         &  "can not be read")
    ENDIF
-
-   CALL var_clean(tl_seglvl1(:,:,:))
-   DEALLOCATE( tl_seglvl1 )
 
    ! write file for each segment of each boundary
    DO jl=1,ip_ncard
       IF( tl_bdy(jl)%l_use )THEN
 
-         SELECT CASE(TRIM(tl_bdy(jk)%c_card))
-         CASE('north','south')
-            il_dim=1
-         CASE('east','west')
-            il_dim=2
-         END SELECT   
-
          DO jk=1,tl_bdy(jl)%i_nseg
             !- 
             CALL create_boundary_get_coord( tl_coord1, tl_segdom1(jp_T,jk,jl),&
             &                               'T', tl_lon1, tl_lat1 )
+
+            ! force to use nav_lon, nav_lat as variable name
+            tl_lon1%c_name='nav_lon'
+            tl_lat1%c_name='nav_lat'
 
             ! del extra point on fine grid
             CALL dom_del_extra( tl_lon1, tl_segdom1(jp_T,jk,jl) )
@@ -923,35 +977,70 @@ PROGRAM create_boundary
             CALL boundary_swap(tl_lon1, tl_bdy(jl))
             CALL boundary_swap(tl_lat1, tl_bdy(jl))
             DO jvar=1,tl_multi%i_nvar
-               CALL boundary_swap(tl_segvar1(jvar,jk,jl), tl_bdy(jl))
 
                ! use additional request
+               ! change unit and apply factor
+               CALL var_chg_unit(tl_segvar1(jvar,jk,jl))
+
                ! forced min and max value
                CALL var_limit_value(tl_segvar1(jvar,jk,jl))
 
                ! filter
                CALL filter_fill_value(tl_segvar1(jvar,jk,jl))
 
-               ! extrapolate
-               CALL extrap_fill_value( tl_segvar1(jvar,jk,jl), &
-               &                       id_iext=in_extrap,      &
-               &                       id_jext=in_extrap,      &
-               &                       id_kext=in_extrap )
+               IF( .NOT. ln_extrap )THEN
+                  ! use mask
+                  SELECT CASE(TRIM(tl_segvar1(jvar,jk,jl)%c_point))
+                  CASE DEFAULT !'T'
+                     jpoint=jp_T
+                  CASE('U')
+                     jpoint=jp_U
+                  CASE('V')
+                     jpoint=jp_V
+                  CASE('F')
+                     jpoint=jp_F
+                  END SELECT
+
+                  CALL create_boundary_use_mask(tl_segvar1(jvar,jk,jl), &
+                  &                             tl_seglvl1(jpoint,jk,jl))
+               ENDIF
+
+               ! swap dimension order
+               CALL boundary_swap(tl_segvar1(jvar,jk,jl), tl_bdy(jl))
 
             ENDDO
 
             ! create file
             ! create file structure
             ! set file namearray of level variable structure
-            IF( ASSOCIATED(tl_time%d_value) )THEN
-               cl_fmt="('y',i0.4,'m',i0.2,'d',i0.2)"
-               cl_date=date_print( var_to_date(tl_time), cl_fmt ) 
+            IF( tl_bdy(jl)%i_nseg > 1 )THEN
+               IF( ASSOCIATED(tl_time%d_value) )THEN
+                  cl_fmt="('y',i0.4,'m',i0.2,'d',i0.2)"
+                  tl_date=var_to_date(tl_time)
+                  tl_date=tl_date+dn_dayofs
+                  cl_date=date_print( tl_date, cl_fmt ) 
 
-               cl_bdyout=boundary_set_filename( TRIM(cn_fileout), &
-               &                                TRIM(tl_bdy(jl)%c_card), jk, TRIM(cl_date) )
+                  cl_bdyout=boundary_set_filename( TRIM(cn_fileout), &
+                  &                                TRIM(tl_bdy(jl)%c_card), jk,&
+                  &                                cd_date=TRIM(cl_date) )
+               ELSE
+                  cl_bdyout=boundary_set_filename( TRIM(cn_fileout), &
+                  &                                TRIM(tl_bdy(jl)%c_card), jk )
+               ENDIF
             ELSE
-               cl_bdyout=boundary_set_filename( TRIM(cn_fileout), &
-               &                                TRIM(tl_bdy(jl)%c_card), jk )
+               IF( ASSOCIATED(tl_time%d_value) )THEN
+                  cl_fmt="('y',i0.4,'m',i0.2,'d',i0.2)"
+                  tl_date=var_to_date(tl_time)
+                  tl_date=tl_date+dn_dayofs
+                  cl_date=date_print( tl_date, cl_fmt )
+
+                  cl_bdyout=boundary_set_filename( TRIM(cn_fileout), &
+                  &                                TRIM(tl_bdy(jl)%c_card), &
+                  &                                cd_date=TRIM(cl_date) )
+               ELSE
+                  cl_bdyout=boundary_set_filename( TRIM(cn_fileout), &
+                  &                                TRIM(tl_bdy(jl)%c_card) )
+               ENDIF
             ENDIF
             ! 
             tl_fileout=file_init(TRIM(cl_bdyout),id_perio=in_perio1)
@@ -959,21 +1048,11 @@ PROGRAM create_boundary
             ! add dimension
             tl_dim(:)=var_max_dim(tl_segvar1(:,jk,jl))
 
-            CALL dim_unorder(tl_dim(:))
             SELECT CASE(TRIM(tl_bdy(jl)%c_card))
                CASE DEFAULT ! 'north','south'
                   cl_dimorder='xyzt'
-                  CALL dim_reorder(tl_dim(:),TRIM(cl_dimorder))
                CASE('east','west')
                   cl_dimorder='yxzt'
-                  CALL dim_reorder(tl_dim(:),TRIM(cl_dimorder))
-                  ! reorder coordinates dimension
-                  CALL var_reorder(tl_lon1,TRIM(cl_dimorder))
-                  CALL var_reorder(tl_lat1,TRIM(cl_dimorder))
-                  ! reorder other variable dimension
-                  DO jvar=1,tl_multi%i_nvar
-                     CALL var_reorder(tl_segvar1(jvar,jk,jl),TRIM(cl_dimorder))
-                  ENDDO
             END SELECT
 
             DO ji=1,ip_maxdim
@@ -991,18 +1070,24 @@ PROGRAM create_boundary
                CALL var_clean(tl_lat1)
             ENDIF
             
+
+
             IF( tl_dim(3)%l_use )THEN
-               ! add depth
-               CALL file_add_var(tl_fileout, tl_depth)
+               IF( ASSOCIATED(tl_depth%d_value) )THEN
+                  ! add depth
+                  CALL file_add_var(tl_fileout, tl_depth)
+               ENDIF
             ENDIF
 
             IF( tl_dim(4)%l_use )THEN
-               ! add time
-               CALL file_add_var(tl_fileout, tl_time)
+               IF( ASSOCIATED(tl_time%d_value) )THEN
+                  ! add time
+                  CALL file_add_var(tl_fileout, tl_time)
+               ENDIF
             ENDIF
 
             ! add other variable
-            DO jvar=1,tl_multi%i_nvar
+            DO jvar=tl_multi%i_nvar,1,-1
                CALL file_add_var(tl_fileout, tl_segvar1(jvar,jk,jl))
                CALL var_clean(tl_segvar1(jvar,jk,jl))
             ENDDO
@@ -1047,7 +1132,7 @@ PROGRAM create_boundary
             CALL iom_create(tl_fileout)
 
             ! write file
-            CALL iom_write_file(tl_fileout)
+            CALL iom_write_file(tl_fileout, cl_dimorder)
 
             ! close file
             CALL iom_close(tl_fileout)
@@ -1065,6 +1150,9 @@ PROGRAM create_boundary
    IF( ASSOCIATED(tl_time%d_value) )   CALL var_clean(tl_time)
    DEALLOCATE( tl_segdom1 )
    DEALLOCATE( tl_segvar1 )
+   CALL var_clean(tl_seglvl1(:,:,:))
+   DEALLOCATE( tl_seglvl1 )
+
 
    CALL mpp_clean(tl_coord1)
    CALL mpp_clean(tl_coord0)
@@ -1081,7 +1169,7 @@ CONTAINS
    !> This subroutine compute boundary domain for each grid point (T,U,V,F) 
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013- Initial Version
    !> @date September, 2014
    !> - take into account grid point to compute boundary indices
    !>
@@ -1185,11 +1273,12 @@ CONTAINS
    END FUNCTION create_boundary_get_dom
    !-------------------------------------------------------------------
    !> @brief
-   !> This subroutine get coordinates over boudnary domain
+   !> This subroutine get coordinates over boundary domain
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
-   !> @date September, 2014 - take into account grid point
+   !> @date November, 2013- Initial Version
+   !> @date September, 2014 
+   !> - take into account grid point
    !>
    !> @param[in] td_coord1 coordinates file structure
    !> @param[in] td_dom1   boundary domain structure
@@ -1236,7 +1325,7 @@ CONTAINS
    END SUBROUTINE create_boundary_get_coord
    !-------------------------------------------------------------------
    !> @brief
-   !> This subroutine interpolate variable over boundary
+   !> This subroutine interpolate variable on boundary
    !> 
    !> @details 
    !>
@@ -1295,14 +1384,15 @@ CONTAINS
       CALL extrap_add_extrabands(td_var, il_iext, il_jext)
 
       ! extrapolate variable
-      CALL extrap_fill_value( td_var, id_iext=il_iext, id_jext=il_jext )
+      CALL extrap_fill_value( td_var )
 
       ! interpolate Bathymetry
       CALL interp_fill_value( td_var, id_rho(:), &
       &                       id_offset=id_offset(:,:) )
 
       ! remove extraband
-      CALL extrap_del_extrabands(td_var, il_iext*id_rho(jp_I), il_jext*id_rho(jp_J))
+      CALL extrap_del_extrabands(td_var, il_iext*id_rho(jp_I), &
+         &                               il_jext*id_rho(jp_J))
 
    END SUBROUTINE create_boundary_interp
    !-------------------------------------------------------------------

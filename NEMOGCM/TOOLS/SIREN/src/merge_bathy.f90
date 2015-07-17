@@ -27,6 +27,9 @@
 !>    ./SIREN/bin/merge_bathy merge_bathy.nam
 !> @endcode
 !>    
+!> @note 
+!>    you could find a template of the namelist in templates directory.
+!>
 !>    merge_bathy.nam comprise 8 namelists:
 !>       - logger namelist (namlog)
 !>       - config namelist (namcfg)
@@ -44,7 +47,7 @@
 !>    * _logger namelist (namlog)_:
 !>       - cn_logfile   : logger filename
 !>       - cn_verbosity : verbosity ('trace','debug','info',
-!>  'warning','error','fatal')
+!>  'warning','error','fatal','none')
 !>       - in_maxerror  : maximum number of error allowed
 !>
 !>    * _config namelist (namcfg)_:
@@ -61,19 +64,19 @@
 !>
 !>    * _variable namelist (namvar)_:
 !>       - cn_varinfo : list of variable and extra information about request(s) 
-!>       to be used.<br/>
+!>       to be used (separated by ',').<br/>
 !>          each elements of *cn_varinfo* is a string character.<br/>
 !>          it is composed of the variable name follow by ':', 
 !>          then request(s) to be used on this variable.<br/> 
 !>          request could be:
-!>             - interpolation method
+!>             - int = interpolation method
 !> 
 !>                requests must be separated by ';'.<br/>
 !>                order of requests does not matter.<br/>
 !>
 !>          informations about available method could be find in 
 !>          @ref interp modules.<br/>
-!>          Example: 'bathymetry: cubic'
+!>          Example: 'bathymetry: int=cubic'
 !>          @note 
 !>             If you do not specify a method which is required, 
 !>             default one is apply.
@@ -94,19 +97,20 @@
 !>          segmentation.<br/>
 !>          segments are separated by '|'.<br/>
 !>          each segments of the boundary is composed of:
-!>             - orthogonal indice (.ie. for north boundary,
-!>             J-indice where boundary are). 
-!>             - first indice of boundary (I-indice for north boundary) 
-!>             - last  indice of boundary (I-indice for north boundary)<br/>
-!>                indices must be separated by ',' .<br/>
+!>             - indice of velocity (orthogonal to boundary .ie. 
+!>                for north boundary, J-indice). 
+!>             - indice of segment start (I-indice for north boundary) 
+!>             - indice of segment end   (I-indice for north boundary)<br/>
+!>                indices must be separated by ':' .<br/>
 !>             - optionally, boundary size could be added between '(' and ')' 
 !>             in the first segment defined.
 !>                @note 
 !>                   boundary size is the same for all segments of one boundary.
 !>
 !>          Examples:
-!>             - cn_north='index1,first1,last1(width)'
-!>             - cn_north='index1(width),first1,last1|index2,first2,last2'
+!>             - cn_north='index1,first1:last1(width)'
+!>             - cn_north='index1(width),first1:last1|index2,first2:last2'
+!>
 !>       - cn_south : south boundary indices on fine grid<br/>
 !>       - cn_east  : east  boundary indices on fine grid<br/>
 !>       - cn_west  : west  boundary indices on fine grid<br/>
@@ -120,6 +124,9 @@
 !> @date November, 2013 - Initial Version
 !> @date Sepember, 2014 
 !> - add header for user
+!> @date July, 2015 
+!> - extrapolate all land points
+!> - add attributes with boundary string character (as in namelist)
 !>
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -152,6 +159,7 @@ PROGRAM merge_bathy
    ! local variable
    CHARACTER(LEN=lc)                                  :: cl_namelist
    CHARACTER(LEN=lc)                                  :: cl_date
+   CHARACTER(LEN=lc)                                  :: cl_tmp
 
    INTEGER(i4)                                        :: il_narg
    INTEGER(i4)                                        :: il_status
@@ -161,6 +169,7 @@ PROGRAM merge_bathy
    INTEGER(i4)                                        :: il_imax0
    INTEGER(i4)                                        :: il_jmin0
    INTEGER(i4)                                        :: il_jmax0
+   INTEGER(i4)                                        :: il_shift
    INTEGER(i4)      , DIMENSION(ip_maxdim)            :: il_rho
    INTEGER(i4)      , DIMENSION(2,2)                  :: il_ind
 
@@ -230,7 +239,8 @@ PROGRAM merge_bathy
 
    NAMELIST /namlog/ &  !< logger namelist
    &  cn_logfile,    &  !< log file
-   &  cn_verbosity      !< log verbosity
+   &  cn_verbosity,  &  !< log verbosity
+   &  in_maxerror       !< logger maximum error
 
    NAMELIST /namcfg/ &  !< config namelist
    &  cn_varcfg         !< variable configuration file
@@ -297,7 +307,7 @@ PROGRAM merge_bathy
 
       READ( il_fileid, NML = namlog )
       ! define log file
-      CALL logger_open(TRIM(cn_logfile),TRIM(cn_verbosity), in_maxerror)
+      CALL logger_open(TRIM(cn_logfile),TRIM(cn_verbosity),in_maxerror)
       CALL logger_header()
 
       READ( il_fileid, NML = namcfg )
@@ -509,6 +519,80 @@ PROGRAM merge_bathy
       CALL file_add_att(tl_fileout,tl_att)
    ENDIF
 
+
+   IF( tl_bdy(jp_north)%l_use )THEN
+      ! add shift on north boundary
+      ! boundary compute on T point but express on U or V point
+      il_shift=1
+
+      cl_tmp=TRIM(fct_str(tl_bdy(jp_north)%t_seg(1)%i_index-il_shift))//','//&
+         &   TRIM(fct_str(tl_bdy(jp_north)%t_seg(1)%i_first))//':'//&
+         &   TRIM(fct_str(tl_bdy(jp_north)%t_seg(1)%i_last))//&
+         &   '('//TRIM(fct_str(tl_bdy(jp_north)%t_seg(1)%i_width))//')'
+      DO ji=2,tl_bdy(jp_north)%i_nseg
+         cl_tmp=TRIM(cl_tmp)//'|'//&
+            &   TRIM(fct_str(tl_bdy(jp_north)%t_seg(ji)%i_index-il_shift))//','//&
+            &   TRIM(fct_str(tl_bdy(jp_north)%t_seg(ji)%i_first))//':'//&
+            &   TRIM(fct_str(tl_bdy(jp_north)%t_seg(ji)%i_last))
+      ENDDO
+      tl_att=att_init("bdy_north",TRIM(cl_tmp))
+      CALL file_add_att(tl_fileout, tl_att)
+   ENDIF
+
+   IF( tl_bdy(jp_south)%l_use )THEN
+      
+      cl_tmp=TRIM(fct_str(tl_bdy(jp_south)%t_seg(1)%i_index))//','//&
+         &   TRIM(fct_str(tl_bdy(jp_south)%t_seg(1)%i_first))//':'//&
+         &   TRIM(fct_str(tl_bdy(jp_south)%t_seg(1)%i_last))//&
+         &   '('//TRIM(fct_str(tl_bdy(jp_south)%t_seg(1)%i_width))//')'
+      DO ji=2,tl_bdy(jp_south)%i_nseg
+         cl_tmp=TRIM(cl_tmp)//'|'//&
+            &   TRIM(fct_str(tl_bdy(jp_south)%t_seg(ji)%i_index))//','//&
+            &   TRIM(fct_str(tl_bdy(jp_south)%t_seg(ji)%i_first))//':'//&
+            &   TRIM(fct_str(tl_bdy(jp_south)%t_seg(ji)%i_last))
+      ENDDO
+
+      tl_att=att_init("bdy_south",TRIM(cl_tmp))
+      CALL file_add_att(tl_fileout, tl_att)
+   ENDIF
+
+   IF( tl_bdy(jp_east)%l_use )THEN
+      ! add shift on east boundary
+      ! boundary compute on T point but express on U or V point
+      il_shift=1
+
+      cl_tmp=TRIM(fct_str(tl_bdy(jp_east)%t_seg(1)%i_index-il_shift))//','//&
+         &   TRIM(fct_str(tl_bdy(jp_east)%t_seg(1)%i_first))//':'//&
+         &   TRIM(fct_str(tl_bdy(jp_east)%t_seg(1)%i_last))//&
+         &   '('//TRIM(fct_str(tl_bdy(jp_east)%t_seg(1)%i_width))//')'
+      DO ji=2,tl_bdy(jp_east)%i_nseg
+         cl_tmp=TRIM(cl_tmp)//'|'//&
+            &   TRIM(fct_str(tl_bdy(jp_east)%t_seg(ji)%i_index-il_shift))//','//&
+            &   TRIM(fct_str(tl_bdy(jp_east)%t_seg(ji)%i_first))//':'//&
+            &   TRIM(fct_str(tl_bdy(jp_east)%t_seg(ji)%i_last))
+      ENDDO
+
+      tl_att=att_init("bdy_east",TRIM(cl_tmp))
+      CALL file_add_att(tl_fileout, tl_att)
+   ENDIF
+
+   IF( tl_bdy(jp_west)%l_use )THEN
+
+      cl_tmp=TRIM(fct_str(tl_bdy(jp_west)%t_seg(1)%i_index))//','//&
+         &   TRIM(fct_str(tl_bdy(jp_west)%t_seg(1)%i_first))//':'//&
+         &   TRIM(fct_str(tl_bdy(jp_west)%t_seg(1)%i_last))//&
+         &   '('//TRIM(fct_str(tl_bdy(jp_west)%t_seg(1)%i_width))//')'
+      DO ji=2,tl_bdy(jp_west)%i_nseg
+         cl_tmp=TRIM(cl_tmp)//'|'//&
+            &   TRIM(fct_str(tl_bdy(jp_west)%t_seg(ji)%i_index))//','//&
+            &   TRIM(fct_str(tl_bdy(jp_west)%t_seg(ji)%i_first))//':'//&
+            &   TRIM(fct_str(tl_bdy(jp_west)%t_seg(ji)%i_last))
+      ENDDO
+
+      tl_att=att_init("bdy_west",TRIM(cl_tmp))
+      CALL file_add_att(tl_fileout, tl_att)
+   ENDIF
+
    ! create file
    CALL iom_create(tl_fileout)
 
@@ -524,6 +608,7 @@ PROGRAM merge_bathy
    CALL mpp_clean(tl_bathy1)
    CALL mpp_clean(tl_bathy0)
    DEALLOCATE(dl_weight)
+   CALL boundary_clean(tl_bdy(:))
 
    ! close log file
    CALL logger_footer()
@@ -907,9 +992,7 @@ CONTAINS
       CALL extrap_add_extrabands(td_var, il_iext, il_iext)
 
       ! extrapolate variable
-      CALL extrap_fill_value( td_var, id_offset=id_offset(:,:), &
-      &                               id_rho=id_rho(:),         &
-      &                               id_iext=il_iext, id_jext=il_jext )
+      CALL extrap_fill_value( td_var )
 
       ! interpolate Bathymetry
       CALL interp_fill_value( td_var, id_rho(:), &

@@ -160,6 +160,9 @@ CONTAINS
          &               " in mpp strcuture "//TRIM(td_mpp%c_name))
 
       ELSE
+         ! 
+         td_mpp%i_id=1
+
          ! if no processor file selected
          ! force to open all files 
          IF( .NOT. ANY( td_mpp%t_proc(:)%l_use ) )THEN
@@ -266,6 +269,9 @@ CONTAINS
          &               " in mpp strcuture "//TRIM(td_mpp%c_name))
 
       ELSE
+         ! 
+         td_mpp%i_id=0         
+
          DO ji=1,td_mpp%i_nproc
             IF( td_mpp%t_proc(ji)%i_id /= 0 )THEN
                CALL iom_close(td_mpp%t_proc(ji))
@@ -313,7 +319,13 @@ CONTAINS
          CALL logger_error( " IOM MPP READ VAR: domain decomposition not define "//&
          &               " in mpp strcuture "//TRIM(td_mpp%c_name))
 
+      ELSEIF( td_mpp%i_id == 0 )THEN
+
+         CALL logger_error( " IOM MPP READ VAR: mpp structure not opened. "//&
+         &               " can not read variable in "//TRIM(td_mpp%c_name))   
+      
       ELSE
+
 
          IF( ANY(td_mpp%t_proc(:)%i_id /= 0) )THEN
             ! look for variable id
@@ -383,6 +395,11 @@ CONTAINS
          CALL logger_error( " IOM MPP READ VAR: domain decomposition not define "//&
          &               " in mpp strcuture "//TRIM(td_mpp%c_name))
 
+      ELSEIF( td_mpp%i_id == 0 )THEN
+
+         CALL logger_error( " IOM MPP READ VAR: mpp structure not opened. "//&
+         &               " can not read variable in "//TRIM(td_mpp%c_name))   
+      
       ELSE
 
             il_ind=var_get_index( td_mpp%t_proc(1)%t_var(:), cd_name)
@@ -399,7 +416,7 @@ CONTAINS
 
                CALL logger_error( &
                &  " IOM MPP READ VAR: there is no variable with "//&
-               &  "name or standard name"//TRIM(cd_name)//&
+               &  "name or standard name "//TRIM(cd_name)//&
                &  " in processor/file "//TRIM(td_mpp%t_proc(1)%c_name))
             ENDIF
 
@@ -466,6 +483,17 @@ CONTAINS
       il_count(:)=td_mpp%t_dim(:)%i_len
       IF( PRESENT(id_count) ) il_count(:)=id_count(:)
 
+      CALL logger_debug("IOM MPP READ VAR VALUE: start "//&
+               &  TRIM(fct_str(il_start(jp_I)))//","//&
+               &  TRIM(fct_str(il_start(jp_J)))//","//&
+               &  TRIM(fct_str(il_start(jp_K)))//","//&
+               &  TRIM(fct_str(il_start(jp_L))) )
+      CALL logger_debug("IOM MPP READ VAR VALUE: count "//&
+               &  TRIM(fct_str(il_count(jp_I)))//","//&
+               &  TRIM(fct_str(il_count(jp_J)))//","//&
+               &  TRIM(fct_str(il_count(jp_K)))//","//&
+               &  TRIM(fct_str(il_count(jp_L))) )
+
       DO jk=1,ip_maxdim
          IF( .NOT. td_var%t_dim(jk)%l_use )THEN
             il_start(jk) = 1
@@ -475,8 +503,17 @@ CONTAINS
          il_end(jk)=il_start(jk)+il_count(jk)-1
       ENDDO
 
-
       IF( ANY(il_end(:) > td_mpp%t_dim(:)%i_len) )THEN
+            CALL logger_debug("IOM MPP READ VAR VALUE: start + count "//&
+               &  TRIM(fct_str(il_end(jp_I)))//","//&
+               &  TRIM(fct_str(il_end(jp_J)))//","//&
+               &  TRIM(fct_str(il_end(jp_K)))//","//&
+               &  TRIM(fct_str(il_end(jp_L))) )
+            CALL logger_debug("IOM MPP READ VAR VALUE: dimension "//&
+               &  TRIM(fct_str(td_mpp%t_dim(jp_I)%i_len))//","//&
+               &  TRIM(fct_str(td_mpp%t_dim(jp_J)%i_len))//","//&
+               &  TRIM(fct_str(td_mpp%t_dim(jp_K)%i_len))//","//&
+               &  TRIM(fct_str(td_mpp%t_dim(jp_L)%i_len)) )
             CALL logger_fatal("IOM MPP READ VAR VALUE: start + count "//&
             &                 "exceed dimension bound.")
       ENDIF
@@ -582,16 +619,20 @@ CONTAINS
    !> @brief This subroutine write files composing mpp structure.
    !
    !> @details
+   !> optionally, you could specify the dimension order (default 'xyzt')
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> - November, 2013 - Initial Version
+   !> @date July, 2015 - add dimension order option 
    !
    !> @param[inout] td_mpp mpp structure
+   !> @param[In] cd_dimorder dimension order
    !-------------------------------------------------------------------
-   SUBROUTINE iom_mpp_write_file(td_mpp)
+   SUBROUTINE iom_mpp_write_file(td_mpp, cd_dimorder)
       IMPLICIT NONE
       ! Argument      
-      TYPE(TMPP), INTENT(INOUT) :: td_mpp
+      TYPE(TMPP)      , INTENT(INOUT) :: td_mpp
+      CHARACTER(LEN=*), INTENT(IN   ), OPTIONAL :: cd_dimorder
 
       ! local variable
       ! loop indices
@@ -609,7 +650,7 @@ CONTAINS
                !CALL file_del_att(td_mpp%t_proc(ji), 'periodicity')
                !CALL file_del_att(td_mpp%t_proc(ji), 'ew_overlap')
 
-               CALL iom_write_file(td_mpp%t_proc(ji))
+               CALL iom_write_file(td_mpp%t_proc(ji), cd_dimorder)
             ELSE
                CALL logger_debug( " MPP WRITE: no id associated to file "//&
                &              TRIM(td_mpp%t_proc(ji)%c_name) )

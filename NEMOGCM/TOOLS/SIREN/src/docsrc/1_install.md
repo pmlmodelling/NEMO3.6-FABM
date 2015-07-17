@@ -13,7 +13,7 @@ when NEMO is installed, you just have to compile SIREN codes:
 # Fortran Compiler
    SIREN codes were succesfully tested with :
    - ifort (version 12.0.4)
-   - gfortran (version 4.7.2 20121109)
+<!--   - gfortran (version 4.7.2 20121109) -->
 <!--   - pgf95 (version 13.9-0) -->
 
  <HR>

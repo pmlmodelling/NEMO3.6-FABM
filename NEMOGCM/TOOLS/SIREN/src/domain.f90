@@ -293,7 +293,7 @@ CONTAINS
    !> periodicity, pivot point, and East-West overlap.
    !
    !> @author J.Paul
-   !> - June, 2013- Initial Version
+   !> @date June, 2013- Initial Version
    !> @date September, 2014
    !> - add boundary index
    !> - add ghost cell factor
@@ -361,8 +361,9 @@ CONTAINS
          dom__init_mpp%t_dim0(:) = dim_copy(td_mpp%t_dim(:))
 
          IF( td_mpp%i_perio < 0 .OR. td_mpp%i_perio > 6 )THEN
-            CALL logger_error("DOM INIT: invalid grid periodicity. "//&
-            &  "you should use grid_get_perio to compute it")
+            CALL logger_error("DOM INIT: invalid grid periodicity ("//&
+            &  TRIM(fct_str(td_mpp%i_perio))//&
+            &  ") you should use grid_get_perio to compute it")
          ELSE
             dom__init_mpp%i_perio0=td_mpp%i_perio
          ENDIF
@@ -423,7 +424,7 @@ CONTAINS
    !> periodicity, pivot point, and East-West overlap.
    !
    !> @author J.Paul
-   !> - June, 2013- Initial Version
+   !> @date June, 2013- Initial Version
    !> @date September, 2014
    !> - add boundary index
    !> - add ghost cell factor
@@ -488,8 +489,9 @@ CONTAINS
          dom__init_file%t_dim0(:) = dim_copy(td_file%t_dim(:))
 
          IF( td_file%i_perio < 0 .OR. td_file%i_perio > 6 )THEN
-            CALL logger_error("DOM INIT: invalid grid periodicity. "//&
-            &  "you should use grid_get_perio to compute it")
+            CALL logger_error("DOM INIT: invalid grid periodicity ("//&
+            &  TRIM(fct_str(td_file%i_perio))//&
+            &  ") you should use grid_get_perio to compute it")
          ELSE
             dom__init_file%i_perio0=td_file%i_perio
          ENDIF
@@ -652,7 +654,7 @@ CONTAINS
    !> cyclic east-west boundary and north fold boundary condition.
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !> @date September, 2014
    !> - use zero indice to defined cyclic or global domain
    !
