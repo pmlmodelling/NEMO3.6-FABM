@@ -328,7 +328,8 @@ CONTAINS
       z_elem_b(:,:,1) = 1._wp
       ! 
       ! One level below
-      en(:,:,2) = rc02r * ustars2(:,:) * (1._wp + rsbc_tke1 * ((zhsro(:,:)+fsdepw(:,:,2))/zhsro(:,:) )**(1.5_wp*ra_sf))**(2._wp/3._wp)
+      en(:,:,2) = rc02r * ustars2(:,:) * (1._wp + rsbc_tke1 * ((zhsro(:,:)+fsdepw(:,:,2)) &
+          &            / zhsro(:,:) )**(1.5_wp*ra_sf))**(2._wp/3._wp)
       en(:,:,2) = MAX(en(:,:,2), rn_emin )
       z_elem_a(:,:,2) = 0._wp 
       z_elem_c(:,:,2) = 0._wp
@@ -349,7 +350,8 @@ CONTAINS
       z_elem_b(:,:,2) = z_elem_b(:,:,2) +  z_elem_a(:,:,2) ! Remove z_elem_a from z_elem_b
       z_elem_a(:,:,2) = 0._wp
       zkar(:,:)       = (rl_sf + (vkarmn-rl_sf)*(1.-exp(-rtrans*fsdept(:,:,1)/zhsro(:,:)) ))
-      zflxs(:,:)      = rsbc_tke2 * ustars2(:,:)**1.5_wp * zkar(:,:) * ((zhsro(:,:)+fsdept(:,:,1))/zhsro(:,:) )**(1.5_wp*ra_sf)
+      zflxs(:,:)      = rsbc_tke2 * ustars2(:,:)**1.5_wp * zkar(:,:) &
+           &                      * ((zhsro(:,:)+fsdept(:,:,1))/zhsro(:,:) )**(1.5_wp*ra_sf)
 
       en(:,:,2) = en(:,:,2) + zflxs(:,:)/fse3w(:,:,2)
       !

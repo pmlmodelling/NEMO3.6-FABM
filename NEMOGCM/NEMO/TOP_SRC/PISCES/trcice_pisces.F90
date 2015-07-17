@@ -57,8 +57,10 @@ CONTAINS
       !!----------------------------------------------------------------------
 
                                         !--- Dummy variables
-      REAL(wp), DIMENSION(jptra,2) &
-               ::  zratio            ! effective ice-ocean tracer cc ratio
+      REAL(wp), DIMENSION(jp_pisces,2)  :: zratio  ! effective ice-ocean tracer cc ratio
+      REAL(wp), DIMENSION(jp_pisces,4)  :: zpisc   ! prescribes concentration 
+      !                                            !  1:global, 2:Arctic, 3:Antarctic, 4:Baltic
+
       REAL(wp), DIMENSION(2) :: zrs  ! ice-ocean salinity ratio, 1 - global, 2- Baltic
       REAL(wp) :: zsice_bal          ! prescribed ice salinity in the Baltic
       REAL(wp) :: zsoce_bal          ! prescribed ocean salinity in the Baltic
@@ -79,130 +81,141 @@ CONTAINS
       ! used only in the levitating sea ice case with virtual salt / tracer
       ! fluxes
 
-      !--- Global case 
-      IF ( cn_trc_o(jpdic) == 'GL ' ) trc_o(:,:,jpdic) =  1.99e-3_wp 
-      IF ( cn_trc_o(jpdoc) == 'GL ' ) trc_o(:,:,jpdoc) =  2.04e-5_wp 
-      IF ( cn_trc_o(jptal) == 'GL ' ) trc_o(:,:,jptal) =  2.31e-3_wp 
-      IF ( cn_trc_o(jpoxy) == 'GL ' ) trc_o(:,:,jpoxy) =  2.47e-4_wp
-      IF ( cn_trc_o(jpcal) == 'GL ' ) trc_o(:,:,jpcal) =  1.04e-8_wp
-      IF ( cn_trc_o(jppo4) == 'GL ' ) trc_o(:,:,jppo4) =  5.77e-7_wp / po4r 
-      IF ( cn_trc_o(jppoc) == 'GL ' ) trc_o(:,:,jppoc) =  1.27e-6_wp  
+      !--- Global values
+      zpisc(jpdic,1) =  1.99e-3_wp 
+      zpisc(jpdoc,1) =  2.04e-5_wp 
+      zpisc(jptal,1) =  2.31e-3_wp 
+      zpisc(jpoxy,1) =  2.47e-4_wp
+      zpisc(jpcal,1) =  1.04e-8_wp
+      zpisc(jppo4,1) =  5.77e-7_wp / po4r 
+      zpisc(jppoc,1) =  1.27e-6_wp  
 #  if ! defined key_kriest
-      IF ( cn_trc_o(jpgoc) == 'GL ' ) trc_o(:,:,jpgoc) =  5.23e-8_wp  
-      IF ( cn_trc_o(jpbfe) == 'GL ' ) trc_o(:,:,jpbfe) =  9.84e-13_wp 
+      zpisc(jpgoc,1) =  5.23e-8_wp  
+      zpisc(jpbfe,1) =  9.84e-13_wp 
 #  else
-      IF ( cn_trc_o(jpnum) == 'GL ' ) trc_o(:,:,jpnum) = 0. ! could not get this value since did not use it
+      zpisc(jpnum,1) = 0. ! could not get this value since did not use it
 #  endif
-      IF ( cn_trc_o(jpsil) == 'GL ' ) trc_o(:,:,jpsil) =  7.36e-6_wp  
-      IF ( cn_trc_o(jpdsi) == 'GL ' ) trc_o(:,:,jpdsi) =  1.07e-7_wp 
-      IF ( cn_trc_o(jpgsi) == 'GL ' ) trc_o(:,:,jpgsi) =  1.53e-8_wp
-      IF ( cn_trc_o(jpphy) == 'GL ' ) trc_o(:,:,jpphy) =  9.57e-8_wp
-      IF ( cn_trc_o(jpdia) == 'GL ' ) trc_o(:,:,jpdia) =  4.24e-7_wp
-      IF ( cn_trc_o(jpzoo) == 'GL ' ) trc_o(:,:,jpzoo) =  6.07e-7_wp
-      IF ( cn_trc_o(jpmes) == 'GL ' ) trc_o(:,:,jpmes) =  3.44e-7_wp
-      IF ( cn_trc_o(jpfer) == 'GL ' ) trc_o(:,:,jpfer) =  4.06e-10_wp
-      IF ( cn_trc_o(jpsfe) == 'GL ' ) trc_o(:,:,jpsfe) =  2.51e-11_wp
-      IF ( cn_trc_o(jpdfe) == 'GL ' ) trc_o(:,:,jpdfe) =  6.57e-12_wp
-      IF ( cn_trc_o(jpnfe) == 'GL ' ) trc_o(:,:,jpnfe) =  1.76e-11_wp
-      IF ( cn_trc_o(jpnch) == 'GL ' ) trc_o(:,:,jpnch) =  1.67e-7_wp
-      IF ( cn_trc_o(jpdch) == 'GL ' ) trc_o(:,:,jpdch) =  1.02e-7_wp
-      IF ( cn_trc_o(jpno3) == 'GL ' ) trc_o(:,:,jpno3) =  5.79e-6_wp / rno3 
-      IF ( cn_trc_o(jpnh4) == 'GL ' ) trc_o(:,:,jpnh4) =  3.22e-7_wp / rno3
+      zpisc(jpsil,1) =  7.36e-6_wp  
+      zpisc(jpdsi,1) =  1.07e-7_wp 
+      zpisc(jpgsi,1) =  1.53e-8_wp
+      zpisc(jpphy,1) =  9.57e-8_wp
+      zpisc(jpdia,1) =  4.24e-7_wp
+      zpisc(jpzoo,1) =  6.07e-7_wp
+      zpisc(jpmes,1) =  3.44e-7_wp
+      zpisc(jpfer,1) =  4.06e-10_wp
+      zpisc(jpsfe,1) =  2.51e-11_wp
+      zpisc(jpdfe,1) =  6.57e-12_wp
+      zpisc(jpnfe,1) =  1.76e-11_wp
+      zpisc(jpnch,1) =  1.67e-7_wp
+      zpisc(jpdch,1) =  1.02e-7_wp
+      zpisc(jpno3,1) =  5.79e-6_wp / rno3 
+      zpisc(jpnh4,1) =  3.22e-7_wp / rno3
 
       !--- Arctic specificities (dissolved inorganic & DOM)
-      IF ( cn_trc_o(jpdic) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpdic) =  1.98e-3_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpdoc) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpdoc) =  6.00e-6_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jptal) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jptal) =  2.13e-3_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpoxy) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpoxy) =  3.65e-4_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpcal) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpcal) =  1.50e-9_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jppo4) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jppo4) =  4.09e-7_wp / po4r ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jppoc) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jppoc) =  4.05e-7_wp  ; END WHERE ; ENDIF
+      zpisc(jpdic,2) =  1.98e-3_wp 
+      zpisc(jpdoc,2) =  6.00e-6_wp 
+      zpisc(jptal,2) =  2.13e-3_wp 
+      zpisc(jpoxy,2) =  3.65e-4_wp  
+      zpisc(jpcal,2) =  1.50e-9_wp  
+      zpisc(jppo4,2) =  4.09e-7_wp / po4r 
+      zpisc(jppoc,2) =  4.05e-7_wp  
 #  if ! defined key_kriest
-      IF ( cn_trc_o(jpgoc) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpgoc) =  2.84e-8_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpbfe) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpbfe) =  7.03e-13_wp ; END WHERE ; ENDIF
+      zpisc(jpgoc,2) =  2.84e-8_wp  
+      zpisc(jpbfe,2) =  7.03e-13_wp 
 #  else
-      IF ( cn_trc_o(jpnum) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpnum) =  0.00e-00_wp ; END WHERE ; ENDIF
+      zpisc(jpnum,2) =  0.00e-00_wp 
 #  endif
-      IF ( cn_trc_o(jpsil) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpsil) =  6.87e-6_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpdsi) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpdsi) =  1.73e-7_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpgsi) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpgsi) =  7.93e-9_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpphy) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpphy) =  5.25e-7_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpdia) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpdia) =  7.75e-7_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpzoo) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpzoo) =  3.34e-7_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpmes) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpmes) =  2.49e-7_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpfer) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpfer) =  1.43e-9_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpsfe) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpsfe) =  2.21e-11_wp ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpdfe) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpdfe) =  2.04e-11_wp ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpnfe) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpnfe) =  1.75e-11_wp ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpnch) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpnch) =  1.46e-07_wp ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpdch) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpdch) =  2.36e-07_wp ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpno3) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpno3) =  3.51e-06_wp / rno3 ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpnh4) == 'AA ' ) THEN ; WHERE( gphit(:,:) >= 00._wp ) ; trc_o(:,:,jpnh4) =  6.15e-08_wp / rno3 ; END WHERE ; ENDIF
+      zpisc(jpsil,2) =  6.87e-6_wp  
+      zpisc(jpdsi,2) =  1.73e-7_wp 
+      zpisc(jpgsi,2) =  7.93e-9_wp
+      zpisc(jpphy,2) =  5.25e-7_wp  
+      zpisc(jpdia,2) =  7.75e-7_wp 
+      zpisc(jpzoo,2) =  3.34e-7_wp
+      zpisc(jpmes,2) =  2.49e-7_wp  
+      zpisc(jpfer,2) =  1.43e-9_wp 
+      zpisc(jpsfe,2) =  2.21e-11_wp 
+      zpisc(jpdfe,2) =  2.04e-11_wp 
+      zpisc(jpnfe,2) =  1.75e-11_wp 
+      zpisc(jpnch,2) =  1.46e-07_wp 
+      zpisc(jpdch,2) =  2.36e-07_wp 
+      zpisc(jpno3,2) =  3.51e-06_wp / rno3 
+      zpisc(jpnh4,2) =  6.15e-08_wp / rno3 
 
       !--- Antarctic specificities (dissolved inorganic & DOM)
-      IF ( cn_trc_o(jpdic) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpdic) =  2.20e-3_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpdoc) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpdoc) =  7.02e-6_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jptal) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jptal) =  2.37e-3_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpoxy) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpoxy) =  3.42e-4_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpcal) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpcal) =  3.17e-9_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jppo4) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jppo4) =  1.88e-6_wp / po4r  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jppoc) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jppoc) =  1.13e-6_wp  ; END WHERE ; ENDIF
+      zpisc(jpdic,3) =  2.20e-3_wp  
+      zpisc(jpdoc,3) =  7.02e-6_wp  
+      zpisc(jptal,3) =  2.37e-3_wp  
+      zpisc(jpoxy,3) =  3.42e-4_wp  
+      zpisc(jpcal,3) =  3.17e-9_wp  
+      zpisc(jppo4,3) =  1.88e-6_wp / po4r  
+      zpisc(jppoc,3) =  1.13e-6_wp  
 #  if ! defined key_kriest
-      IF ( cn_trc_o(jpgoc) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpgoc) =  2.89e-8_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpbfe) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpbfe) =  5.63e-13_wp ; END WHERE ; ENDIF
+      zpisc(jpgoc,3) =  2.89e-8_wp  
+      zpisc(jpbfe,3) =  5.63e-13_wp 
 #  else
-      IF ( cn_trc_o(jpnum) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpnum) =  0.00e-00_wp ; END WHERE ; ENDIF
+      zpisc(jpnum,3) =  0.00e-00_wp 
 #  endif
-      IF ( cn_trc_o(jpsil) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpsil) =  4.96e-5_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpdsi) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpdsi) =  5.63e-7_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpgsi) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpgsi) =  5.35e-8_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpphy) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpphy) =  8.10e-7_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpdia) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpdia) =  5.77e-7_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpzoo) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpzoo) =  6.68e-7_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpmes) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpmes) =  3.55e-7_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpfer) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpfer) =  1.62e-10_wp ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpsfe) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpsfe) =  2.29e-11_wp ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpdfe) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpdfe) =  8.75e-12_wp ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpnfe) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpnfe) =  1.48e-11_wp ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpnch) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpnch) =  2.02e-7_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpdch) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpdch) =  1.60e-7_wp  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpno3) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpno3) =  2.64e-5_wp / rno3  ; END WHERE ; ENDIF
-      IF ( cn_trc_o(jpnh4) == 'AA ' ) THEN ; WHERE( gphit(:,:) <  00._wp ) ; trc_o(:,:,jpnh4) =  3.39e-7_wp / rno3  ; END WHERE ; ENDIF
+      zpisc(jpsil,3) =  4.96e-5_wp  
+      zpisc(jpdsi,3) =  5.63e-7_wp 
+      zpisc(jpgsi,3) =  5.35e-8_wp
+      zpisc(jpphy,3) =  8.10e-7_wp  
+      zpisc(jpdia,3) =  5.77e-7_wp 
+      zpisc(jpzoo,3) =  6.68e-7_wp
+      zpisc(jpmes,3) =  3.55e-7_wp  
+      zpisc(jpfer,3) =  1.62e-10_wp
+      zpisc(jpsfe,3) =  2.29e-11_wp 
+      zpisc(jpdfe,3) =  8.75e-12_wp
+      zpisc(jpnfe,3) =  1.48e-11_wp 
+      zpisc(jpnch,3) =  2.02e-7_wp  
+      zpisc(jpdch,3) =  1.60e-7_wp  
+      zpisc(jpno3,3) =  2.64e-5_wp / rno3  
+      zpisc(jpnh4,3) =  3.39e-7_wp / rno3  
 
       !--- Baltic Sea particular case for ORCA configurations
-      IF( cp_cfg == "orca" ) THEN            ! Baltic mask
-         WHERE( 14._wp <= glamt(:,:) .AND. glamt(:,:) <= 32._wp .AND.    &
-                54._wp <= gphit(:,:) .AND. gphit(:,:) <= 66._wp )
-         trc_o(:,:,jpdic) = 1.14e-3_wp
-         trc_o(:,:,jpdoc) = 1.06e-5_wp
-         trc_o(:,:,jptal) = 1.16e-3_wp
-         trc_o(:,:,jpoxy) = 3.71e-4_wp
-         trc_o(:,:,jpcal) = 1.51e-9_wp
-         trc_o(:,:,jppo4) = 2.85e-9_wp / po4r
-         trc_o(:,:,jppoc) = 4.84e-7_wp
+      zpisc(jpdic,4) = 1.14e-3_wp
+      zpisc(jpdoc,4) = 1.06e-5_wp
+      zpisc(jptal,4) = 1.16e-3_wp
+      zpisc(jpoxy,4) = 3.71e-4_wp
+      zpisc(jpcal,4) = 1.51e-9_wp
+      zpisc(jppo4,4) = 2.85e-9_wp / po4r
+      zpisc(jppoc,4) = 4.84e-7_wp
 #  if ! defined key_kriest
-         trc_o(:,:,jpgoc) = 1.05e-8_wp
-         trc_o(:,:,jpbfe) = 4.97e-13_wp
+      zpisc(jpgoc,4) = 1.05e-8_wp
+      zpisc(jpbfe,4) = 4.97e-13_wp
 #  else
-         trc_o(:,:,jpnum) = 0. ! could not get this value
+      zpisc(jpnum,4) = 0. ! could not get this value
 #  endif
-         trc_o(:,:,jpsil) = 4.91e-5_wp
-         trc_o(:,:,jpdsi) = 3.25e-7_wp
-         trc_o(:,:,jpgsi) = 1.93e-8_wp
-         trc_o(:,:,jpphy) = 6.64e-7_wp
-         trc_o(:,:,jpdia) = 3.41e-7_wp
-         trc_o(:,:,jpzoo) = 3.83e-7_wp
-         trc_o(:,:,jpmes) = 0.225e-6_wp
-         trc_o(:,:,jpfer) = 2.45e-9_wp
-         trc_o(:,:,jpsfe) = 3.89e-11_wp
-         trc_o(:,:,jpdfe) = 1.33e-11_wp
-         trc_o(:,:,jpnfe) = 2.62e-11_wp
-         trc_o(:,:,jpnch) = 1.17e-7_wp
-         trc_o(:,:,jpdch) = 9.69e-8_wp
-         trc_o(:,:,jpno3) = 5.36e-5_wp / rno3
-         trc_o(:,:,jpnh4) = 7.18e-7_wp / rno3
-         END WHERE
-      ENDIF ! cfg
+      zpisc(jpsil,4) = 4.91e-5_wp
+      zpisc(jpdsi,4) = 3.25e-7_wp
+      zpisc(jpgsi,4) = 1.93e-8_wp
+      zpisc(jpphy,4) = 6.64e-7_wp
+      zpisc(jpdia,4) = 3.41e-7_wp
+      zpisc(jpzoo,4) = 3.83e-7_wp
+      zpisc(jpmes,4) = 0.225e-6_wp
+      zpisc(jpfer,4) = 2.45e-9_wp
+      zpisc(jpsfe,4) = 3.89e-11_wp
+      zpisc(jpdfe,4) = 1.33e-11_wp
+      zpisc(jpnfe,4) = 2.62e-11_wp
+      zpisc(jpnch,4) = 1.17e-7_wp
+      zpisc(jpdch,4) = 9.69e-8_wp
+      zpisc(jpno3,4) = 5.36e-5_wp / rno3
+      zpisc(jpnh4,4) = 7.18e-7_wp / rno3
+ 
+      DO jn = jp_pcs0, jp_pcs1
+         IF( cn_trc_o(jn) == 'GL ' ) trc_o(:,:,jn) = zpisc(jn,1)  ! Global case
+         IF( cn_trc_o(jn) == 'AA ' ) THEN 
+            WHERE( gphit(:,:) >= 0._wp ) ; trc_o(:,:,jn) = zpisc(jn,2) ; END WHERE ! Arctic 
+            WHERE( gphit(:,:) <  0._wp ) ; trc_o(:,:,jn) = zpisc(jn,3) ; END WHERE ! Antarctic 
+         ENDIF
+         IF( cp_cfg == "orca" ) THEN     !  Baltic Sea particular case for ORCA configurations
+             WHERE( 14._wp <= glamt(:,:) .AND. glamt(:,:) <= 32._wp .AND.    &
+                    54._wp <= gphit(:,:) .AND. gphit(:,:) <= 66._wp )
+                    trc_o(:,:,jn) = zpisc(jn,4)
+            END WHERE
+         ENDIF 
+      ENDDO
+
+
 
       !-----------------------------
       ! Assign ice-ocean cc ratios 
@@ -216,9 +229,9 @@ CONTAINS
       zrs(2) = zsice_bal / zsoce_bal      !! ice-ocean salinity ratio, Baltic case
 
       DO jn = jp_pcs0, jp_pcs1
-         IF ( trc_ice_ratio(jn) >= 0._wp )  zratio(jn,:) = trc_ice_ratio(jn)
-         IF ( trc_ice_ratio(jn) == -1._wp ) zratio(jn,:) = zrs(:)
-         IF ( trc_ice_ratio(jn) == -2._wp ) zratio(jn,:) = -9999.99_wp
+         IF( trc_ice_ratio(jn) >= 0._wp )  zratio(jn,:) = trc_ice_ratio(jn)
+         IF( trc_ice_ratio(jn) == -1._wp ) zratio(jn,:) = zrs(:)
+         IF( trc_ice_ratio(jn) == -2._wp ) zratio(jn,:) = -9999.99_wp
       END DO
 
       !-------------------------------
@@ -226,22 +239,20 @@ CONTAINS
       !-------------------------------
       DO jn = jp_pcs0, jp_pcs1
          !-- Everywhere but in the Baltic
-         IF ( trc_ice_ratio(jn) >= -1._wp ) THEN !! no prescribed concentration
-                                              !! (typically everything but iron) 
+         IF ( trc_ice_ratio(jn) >= -1._wp ) THEN ! no prescribed conc. ; typically everything but iron) 
             trc_i(:,:,jn) = zratio(jn,1) * trc_o(:,:,jn) 
-         ELSE                                 !! prescribed concentration
+         ELSE                                    ! prescribed concentration
             trc_i(:,:,jn) = trc_ice_prescr(jn)
          ENDIF
        
          !-- Baltic
-         IF( cp_cfg == "orca" ) THEN !! Baltic treated seperately for ORCA configs
-            IF ( trc_ice_ratio(jn) >= - 1._wp ) THEN !! no prescribed concentration
-                                                 !! (typically everything but iron) 
+         IF( cp_cfg == "orca" ) THEN  ! Baltic treated seperately for ORCA configs
+            IF ( trc_ice_ratio(jn) >= - 1._wp ) THEN ! no prescribed conc. ; typically everything but iron) 
                WHERE( 14._wp <= glamt(:,:) .AND. glamt(:,:) <= 32._wp .AND.    &
                       54._wp <= gphit(:,:) .AND. gphit(:,:) <= 66._wp )
                      trc_i(:,:,jn) = zratio(jn,2) * trc_o(:,:,jn) 
                END WHERE
-            ELSE                                 !! prescribed tracer concentration in ice
+            ELSE                                 ! prescribed tracer concentration in ice
                WHERE( 14._wp <= glamt(:,:) .AND. glamt(:,:) <= 32._wp .AND.    &
                    54._wp <= gphit(:,:) .AND. gphit(:,:) <= 66._wp )
                      trc_i(:,:,jn) = trc_ice_prescr(jn)
