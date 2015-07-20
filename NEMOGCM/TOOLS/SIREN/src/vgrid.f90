@@ -118,7 +118,7 @@ CONTAINS
    !>              -  e3t, e3w    : scale factors at T- and W-levels (m) <\br>
    !>
    !> @author G. Madec
-   !> - 03,08-  G. Madec: F90: Free form and module
+   !> @date Marsh,2008 - F90: Free form and module
    !
    !> @note Reference : Marti, Madec & Delecluse, 1992, JGR, 97, No8, 12,763-12,766.
    !>
@@ -372,8 +372,9 @@ CONTAINS
    !>         - gdept_ps, gdepw_ps and e3_ps are positives
    !
    !> @author A. Bozec, G. Madec
-   !> - 02-09 (A. Bozec, G. Madec) F90: Free form and module
-   !> - 02-09 (A. de Miranda)  rigid-lid + islands
+   !> @date February, 2009 - F90: Free form and module
+   !> @date February, 2009 
+   !> - A. de Miranda : rigid-lid + islands
    !>
    !> @note Reference : Pacanowsky & Gnanadesikan 1997, Mon. Wea. Rev., 126, 3248-3270.
    !>
@@ -495,7 +496,7 @@ CONTAINS
    !>              - update bathy : meter bathymetry (in meters)
 
    !> @author G.Madec
-   !> - 03-08 Original code
+   !> @date Marsh, 2008 - Original code
    !
    !> @param[in] id_mbathy 
    !> @param[in] id_jpkmax
@@ -604,7 +605,7 @@ CONTAINS
    !> - number of level to be used
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_bathy     Bathymetry file structure 
    !> @param[in] cd_namelist  namelist 

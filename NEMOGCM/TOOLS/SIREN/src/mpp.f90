@@ -349,7 +349,7 @@ CONTAINS
    !> this subroutine
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date November, 2014
    !>    - use function instead of overload assignment operator 
    !> (to avoid memory leak)
@@ -423,7 +423,7 @@ CONTAINS
    !> this subroutine
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date November, 2014
    !>    - use function instead of overload assignment operator 
    !> (to avoid memory leak)
@@ -452,7 +452,7 @@ CONTAINS
    !> @brief This subroutine print some information about mpp strucutre.
    !
    !> @author J.Paul
-   !> - Nov, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_mpp mpp structure
    !-------------------------------------------------------------------
@@ -910,7 +910,7 @@ CONTAINS
    !> 
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file strcuture
    !> @param[in] id_ew     east-west overlap
@@ -1128,7 +1128,7 @@ CONTAINS
    !> @details 
    !
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date July, 2015 - add only use dimension in MPP structure
    !>
    !> @param[in] td_file   file strcuture
@@ -1315,7 +1315,7 @@ CONTAINS
    !> @details 
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file strcuture
    !> @return mpp structure
@@ -1535,7 +1535,7 @@ CONTAINS
    !> dimension.
    !
    !> @author J.Paul
-   !> - Nov, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_mpp    mpp structure
    !> @param[in] td_proc   processor structure
@@ -1677,7 +1677,7 @@ CONTAINS
    !> be written in processor id_procid.<br/>
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_mpp    mpp structure
    !> @param[in] td_var    variable structure
@@ -1842,8 +1842,8 @@ CONTAINS
    !>
    !> @author J.Paul
    !> @date November, 2013 - Initial version
-   !> @date February, 2015 - define local variable structure to avoid mistake
-   !> with pointer
+   !> @date February, 2015 
+   !> - define local variable structure to avoid mistake with pointer
    !
    !> @param[inout] td_mpp    mpp strcuture
    !> @param[in]    cd_name   variable name
@@ -2199,8 +2199,9 @@ CONTAINS
    !> Do not overwrite, if dimension already in mpp structure.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
-   !> @date July, 2015 - rewrite the same as way var_add_dim
+   !> @date November, 2013 - Initial Version
+   !> @date July, 2015 
+   !> - rewrite the same as way var_add_dim
    !>
    !> @param[inout] td_mpp mpp structure
    !> @param[in] td_dim    dimension structure
@@ -2257,8 +2258,9 @@ CONTAINS
    !> structure.<br/>
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
-   !> @date July, 2015 - rewrite the same as way var_del_dim
+   !> @date November, 2013 - Initial Version
+   !> @date July, 2015 
+   !> - rewrite the same as way var_del_dim
    !>
    !> @param[inout] td_mpp mpp structure
    !> @param[in] td_dim    dimension structure
@@ -2309,7 +2311,7 @@ CONTAINS
    !> @warning dimension order may have changed
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_mpp mpp structure
    !> @param[in] td_dim    dimension structure
@@ -2485,8 +2487,8 @@ CONTAINS
    !
    !> @author J.Paul
    !> @date November, 2013 - Initial version
-   !> @date February, 2015 - define local attribute structure to avoid mistake
-   !> with pointer
+   !> @date February, 2015 
+   !> - define local attribute structure to avoid mistake with pointer
    !
    !> @param[inout] td_mpp    mpp strcuture
    !> @param[in]    cd_name   attribute name
@@ -3124,7 +3126,7 @@ CONTAINS
    !>  This subroutine get sub domains which form global domain border.
    !>
    !> @author J.Paul
-   !> @date November, 2013
+   !> @date November, 2013 - Initial version
    !>
    !> @param[inout] td_mpp mpp strcuture
    !-------------------------------------------------------------------
@@ -3162,7 +3164,7 @@ CONTAINS
    !> given processor id. 
    !>
    !> @author J.Paul
-   !> @date November, 2013
+   !> @date November, 2013 - Initial version
    !>
    !> @param[in] td_mpp    mpp strcuture
    !> @param[in] id_procid processor id
@@ -3227,7 +3229,7 @@ CONTAINS
    !> decompisition type, given sub domain id. 
    !
    !> @author J.Paul
-   !> @date November, 2013
+   !> @date November, 2013 - Initial version
    !
    !> @param[in] td_mpp    mpp strcuture
    !> @param[in] id_procid sub domain id
@@ -3289,7 +3291,7 @@ CONTAINS
    !>  (full, overlap, noverlap)
    !>
    !> @author J.Paul
-   !> @date November, 2013
+   !> @date November, 2013 - Initial version
    !>
    !> @param[inout] td_mpp mpp strcuture
    !-------------------------------------------------------------------
@@ -3382,7 +3384,7 @@ CONTAINS
    !> @details
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] td_mpp mpp structure
    !> @param[in] td_var variable structure
@@ -3433,7 +3435,7 @@ CONTAINS
    !> structure,  given mpp base name. 
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   array of file structure
    !> @param[in] cd_name   file name
@@ -3473,7 +3475,7 @@ CONTAINS
    !> @brief This function recombine variable splitted mpp structure. 
    !
    !> @author J.Paul
-   !> - Ocotber, 2014- Initial Version
+   !> @date Ocotber, 2014 - Initial Version
    !
    !> @param[in] td_mpp   mpp file structure
    !> @param[in] cd_name  variable name

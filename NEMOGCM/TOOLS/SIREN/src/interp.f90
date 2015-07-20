@@ -136,7 +136,7 @@ CONTAINS
    !> character cp_interp_list (see global.f90).
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_method interpolation method
    !> @return 
@@ -178,7 +178,7 @@ CONTAINS
    !> and launch interp__detect which detected point to be interpolated.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] td_mix mixed grid variable (to interpolate)
    !> @param[in] id_rho array of refinement factor
@@ -243,7 +243,7 @@ CONTAINS
    !> A special case is done for even refinement on ARAKAWA-C grid.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_mix mixed grid variable (to interpolate)
    !> @param[in] id_rho array of refinement factor
@@ -362,7 +362,7 @@ CONTAINS
    !> A special case is done for even refinement on ARAKAWA-C grid.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] td_var    coarse grid variable (should be extrapolated)
    !> @param[out] td_mix   mixed grid variable
@@ -448,7 +448,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_mix mixed grid variable
    !> @param[in] id_rho    array of refinment factor 
@@ -609,7 +609,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014
    !> - use offset to save useful domain
    !>
@@ -715,7 +715,7 @@ CONTAINS
    !> and launch interp__fill_value.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_var variable structure
    !> @param[in] id_rho    array of refinement factor
@@ -827,7 +827,7 @@ CONTAINS
    !> This subroutine interpolate value over mixed grid.
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014
    !> - use interpolation method modules
    !>

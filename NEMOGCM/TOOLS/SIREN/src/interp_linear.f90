@@ -23,7 +23,7 @@
 !> @author
 !> J.Paul
 ! REVISION HISTORY:
-!> @date September, 2014 -Initial version
+!> @date September, 2014 - Initial version
 !>
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -62,7 +62,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !> @date July, 2015 - reinitialise detect array for each level
    !>
    !> @param[inout] dd_value  2D array of variable value 
@@ -169,7 +169,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[inout] dd_value  2D array of variable value 
    !> @param[in] dd_fill      FillValue of variable
@@ -304,7 +304,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[inout] dd_value  1D array of variable value 
    !> @param[in] dd_fill      FillValue of variable
@@ -416,7 +416,7 @@ CONTAINS
    !> This subroutine compute 2D array of coefficient for linear interpolation. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[in] dd_value  2D array of value
    !> @param[in] dd_fill   FillValue of variable
@@ -453,7 +453,7 @@ CONTAINS
    !> This subroutine compute linear interpolation of a 2D array of value. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[inout] dd_value  2D array of mixed grid value
    !> @param[inout] id_detect 2D array of point to be interpolated
@@ -513,7 +513,7 @@ CONTAINS
    !> This subroutine compute 1D array of coefficient for linear interpolation. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[in] dd_value  1D array of value
    !> @param[in] dd_fill   FillValue of variable
@@ -548,7 +548,7 @@ CONTAINS
    !> This subroutine compute linear interpolation of a 1D array of value. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !> 
    !> @param[inout] dd_value  1D array of mixed grid value
    !> @param[inout] id_detect 1D array of point to be interpolated
@@ -599,7 +599,7 @@ CONTAINS
    !> This subroutine compute interpoaltion weight for 2D array. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[in] dd_weight interpolation weight of 2D array
    !> @param[in] ld_even   even refinment or not
@@ -668,7 +668,7 @@ CONTAINS
    !> This subroutine compute interpoaltion weight for 1D array. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[in] dd_weight interpolation weight of 1D array
    !> @param[in] ld_even   even refinment or not

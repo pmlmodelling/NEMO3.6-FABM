@@ -143,7 +143,7 @@ CONTAINS
    !> @brief This function compute the mean of a 1D array. 
    ! 
    !> @author J.Paul 
-   !> - January, 2015- Initial Version 
+   !> @date January, 2015 - Initial Version 
    ! 
    !> @param[in] dd_array  1D array 
    !> @param[in] dd_fill   fillValue
@@ -188,7 +188,7 @@ CONTAINS
    !> @brief This function compute the mean of a 2D array. 
    ! 
    !> @author J.Paul 
-   !> - January, 2015- Initial Version 
+   !> @date January, 2015 - Initial Version 
    ! 
    !> @param[in] dd_array  2D array 
    !> @param[in] dd_fill   fillValue
@@ -234,7 +234,7 @@ CONTAINS
    !> @brief This function compute the median of a 1D array. 
    ! 
    !> @author J.Paul 
-   !> - January, 2015- Initial Version 
+   !> @date January, 2015 - Initial Version 
    ! 
    !> @param[in] dd_array  1D array 
    !> @param[in] dd_fill   fillValue
@@ -287,7 +287,7 @@ CONTAINS
    !> @brief This function compute the median of a 2D array. 
    ! 
    !> @author J.Paul 
-   !> - January, 2015- Initial Version 
+   !> @date January, 2015 - Initial Version 
    ! 
    !> @param[in] dd_array  2D array 
    !> @param[in] dd_fill   fillValue
@@ -333,7 +333,7 @@ CONTAINS
    !> @brief This function compute the mean without extremum of a 1D array. 
    ! 
    !> @author J.Paul 
-   !> - January, 2015- Initial Version 
+   !> @date January, 2015 - Initial Version 
    ! 
    !> @param[in] dd_array  1D array 
    !> @param[in] id_next   number of extremum to be removed
@@ -400,7 +400,7 @@ CONTAINS
    !> @brief This function compute the mean without extremum of a 2D array. 
    ! 
    !> @author J.Paul 
-   !> - January, 2015- Initial Version 
+   !> @date January, 2015 - Initial Version 
    ! 
    !> @param[in] dd_array  2D array 
    !> @param[in] id_next   number of extremum to be removed
@@ -456,7 +456,7 @@ CONTAINS
    !> 1997 printing
    !> 
    !> @author J.Paul 
-   !> - January, 2015- Rewrite with SIREN coding rules 
+   !> @date January, 2015 - Rewrite with SIREN coding rules 
    ! 
    !> @param[inout] dd_array  1D array 
    !-------------------------------------------------------------------
@@ -485,7 +485,7 @@ CONTAINS
    !> 1997 printing
    !> 
    !> @author J.Paul 
-   !> - January, 2015- Rewrite with SIREN coding rules 
+   !> @date January, 2015 - Rewrite with SIREN coding rules 
    ! 
    !> @param[inout] dd_array  1D array 
    !> @param[in] id_marker 
@@ -552,7 +552,7 @@ CONTAINS
    !> the 2*pi complement would only make the discontinuity larger.
    !>
    !> @author J.Paul 
-   !> - Marsh, 2015- Rewrite in fortran, with SIREN coding rules 
+   !> @date Marsh, 2015 - Rewrite in fortran, with SIREN coding rules 
    ! 
    !> @param[inout] dd_array  1D array 
    !> @param[in] dd_discont maximum discontinuity between values, default pi
@@ -627,7 +627,7 @@ CONTAINS
    !> exemples: '1e6/(16/122)', '(3/2)*(2+1)' 
    !>
    !> @author J.Paul 
-   !> - June, 2015- initial release
+   !> @date June, 2015 - initial version
    ! 
    !> @param[in] cd_var operation to compute (string of character)  
    !> @return result of the operation, real(dp)
@@ -699,7 +699,7 @@ CONTAINS
    !> - '2.6+(3/2)' => '2.6+1.5000'
    !>
    !> @author J.Paul 
-   !> - June, 2015- initial release
+   !> @date June, 2015 - initial version
    ! 
    !> @param[in] cd_varin  string of character with operation inside
    !> parentheses 
@@ -749,7 +749,7 @@ CONTAINS
    !> (-180° 180° or 0° 360° for longitude variable)
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] dd_value     1D array of variable to be extrapolated
    !> @param[in] dd_fill      FillValue of variable
@@ -861,7 +861,7 @@ CONTAINS
    !> (-180° 180° or 0° 360° for longitude variable)
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] dd_value     2D array of variable to be extrapolated
    !> @param[in] dd_fill      FillValue of variable
@@ -1047,7 +1047,7 @@ CONTAINS
    !> (-180° 180° or 0° 360° for longitude variable)
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] dd_value  3D array of variable to be extrapolated
    !> @param[in] dd_fill      FillValue of variable

@@ -70,7 +70,7 @@ CONTAINS
    !> over domain to be used.
    !>
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !
    !> @param[inout] td_mpp mpp structure
    !-------------------------------------------------------------------
@@ -105,7 +105,7 @@ CONTAINS
    !> @brief This subroutine close files composing mpp structure.
    !>
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !
    !> @param[in] td_mpp mpp structure
    !-------------------------------------------------------------------
@@ -129,7 +129,7 @@ CONTAINS
    !> as well as East West ovelap of the global domain.
    !>
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !>
    !> @param[in] td_mpp    mpp structure
    !> @param[in] id_varid  variable id
@@ -193,7 +193,7 @@ CONTAINS
    !> If variable name is not present, check variable standard name.<br/>
    !
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !
    !> @param[in] td_mpp    mpp structure
    !> @param[in] cd_name   variable name
@@ -245,7 +245,7 @@ CONTAINS
    !> in an mpp structure, given domain structure.
    !>
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !>
    !> @todo
    !> - handle north fold
@@ -410,7 +410,7 @@ CONTAINS
    !> north fold boundary or east-west boundary.
    !>
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !
    !> @param[in] td_mpp    mpp structure
    !> @param[inout] td_var variable structure
@@ -464,7 +464,7 @@ CONTAINS
    !> However it uses cyclic east-west boundary.
    !>
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !>
    !> @param[in] td_mpp    mpp structure
    !> @param[inout] td_var variable structure
@@ -523,7 +523,7 @@ CONTAINS
    !> However it overlaps east-west boundary. 
    !>
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !>
    !> @param[in] td_mpp    mpp structure
    !> @param[inout] td_var variable structure
@@ -635,7 +635,7 @@ CONTAINS
    !> north fold boundary. However it do not overlap east-west boundary.
    !>
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !
    !> @param[in] td_mpp    mpp structure
    !> @param[inout] td_var variable structure
@@ -662,7 +662,7 @@ CONTAINS
    !> and uses cyclic east-west boundary.
    !>
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !
    !> @param[in] td_mpp    mpp structure
    !> @param[inout] td_var variable structure
@@ -690,7 +690,7 @@ CONTAINS
    !> and east-west boundary. 
    !>
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !
    !> @param[in] td_mpp    mpp structure
    !> @param[inout] td_var variable structure

@@ -1169,7 +1169,7 @@ CONTAINS
    !> This subroutine compute boundary domain for each grid point (T,U,V,F) 
    !> 
    !> @author J.Paul
-   !> @date November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014
    !> - take into account grid point to compute boundary indices
    !>
@@ -1276,7 +1276,7 @@ CONTAINS
    !> This subroutine get coordinates over boundary domain
    !> 
    !> @author J.Paul
-   !> @date November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014 
    !> - take into account grid point
    !>
@@ -1330,7 +1330,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - Nov, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_var variable structure 
    !> @param[in] id_rho    array of refinment factor
@@ -1406,7 +1406,7 @@ CONTAINS
    !> Each subdomain is fill with the linked value of the matrix.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] td_var    variable structure 
    !> @param[in] td_dom    domain structure 
@@ -1511,7 +1511,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_var variable structure 
    !> @param[in] td_mask   mask variable structure
@@ -1564,7 +1564,7 @@ CONTAINS
    !> array of variable structure
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] td_level  array of level variable structure
    !> @param[in] td_dom    array of domain structure
@@ -1626,7 +1626,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - November, 2014- Initial Version
+   !> @date November, 2014 - Initial Version
    !>
    !> @param[in] td_mpp       mpp structure
    !> @param[inout] td_depth  depth variable structure 
@@ -1677,7 +1677,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - November, 2014- Initial Version
+   !> @date November, 2014 - Initial Version
    !>
    !> @param[in] td_mpp      mpp structure
    !> @param[inout] td_time  time variable structure 

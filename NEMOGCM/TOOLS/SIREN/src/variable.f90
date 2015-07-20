@@ -528,7 +528,7 @@ CONTAINS
    !> this subroutine
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date November, 2014
    !> - use function instead of overload assignment operator (to avoid memory leak)
    !
@@ -641,7 +641,7 @@ CONTAINS
    !> this subroutine
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date November, 2014
    !> - use function instead of overload assignment operator 
    !> (to avoid memory leak)
@@ -670,7 +670,7 @@ CONTAINS
    !> @brief This subroutine clean variable structure
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_var variable strucutre
    !-------------------------------------------------------------------
@@ -709,7 +709,7 @@ CONTAINS
    !> @brief This subroutine clean 1D array of variable structure
    !
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !
    !> @param[inout] td_var array of variable strucutre
    !-------------------------------------------------------------------
@@ -732,7 +732,7 @@ CONTAINS
    !> @brief This subroutine clean 2D array of variable structure
    !
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !
    !> @param[inout] td_var array of variable strucutre
    !-------------------------------------------------------------------
@@ -758,7 +758,7 @@ CONTAINS
    !> @brief This subroutine clean 3D array of variable structure
    !
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !
    !> @param[inout] td_var array of variable strucutre
    !-------------------------------------------------------------------
@@ -823,9 +823,11 @@ CONTAINS
    !>  when reading variable from a file, or using confiuguration file variable.cfg.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
-   !> @date February, 2015 - Bug fix: conversion of the FillValue type (float case)
-   !> @date June, 2015 - add unit factor (to change unit)
+   !> @date November, 2013 - Initial Version
+   !> @date February, 2015 
+   !> - Bug fix: conversion of the FillValue type (float case)
+   !> @date June, 2015 
+   !> - add unit factor (to change unit)
    !>
    !> @param[in] cd_name         variable name
    !> @param[in] id_type         variable type 
@@ -1110,7 +1112,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -1297,8 +1299,9 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
-   !> @date February, 2015 - bug fix: array initialise with dimension
+   !> @date November, 2013 - Initial Version
+   !> @date February, 2015 
+   !> - bug fix: array initialise with dimension
    !> array not only one value
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
@@ -1512,7 +1515,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -1724,7 +1727,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -1879,7 +1882,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -2034,7 +2037,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -2190,7 +2193,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -2347,7 +2350,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -2505,7 +2508,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -2659,7 +2662,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -2813,7 +2816,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -2970,7 +2973,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -3129,7 +3132,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -3283,7 +3286,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -3439,7 +3442,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -3596,7 +3599,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -3755,7 +3758,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -3910,7 +3913,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -4067,7 +4070,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -4224,7 +4227,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -4382,7 +4385,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -4536,7 +4539,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -4692,7 +4695,7 @@ CONTAINS
    !> case.    
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -4849,7 +4852,7 @@ CONTAINS
    !> case. 
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - add interp, extrap, and filter argument
    !> @date July, 2015
@@ -4999,7 +5002,7 @@ CONTAINS
    !> dimension number (jp_I, jp_J,jp_K, jp_L). 
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_var1   variable structure
    !> @param[in] td_var2   variable structure
@@ -5049,7 +5052,7 @@ CONTAINS
    !> @brief  This function concatenate variable value following i-direction.
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_var1   variable structure
    !> @param[in] td_var2   variable structure
@@ -5121,7 +5124,7 @@ CONTAINS
    !> @brief  This function concatenate variable value following j-direction.
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_var1   variable structure
    !> @param[in] td_var2   variable structure
@@ -5196,7 +5199,7 @@ CONTAINS
    !> @brief  This function concatenate variable value following k-direction.
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_var1   variable structure
    !> @param[in] td_var2   variable structure
@@ -5271,7 +5274,7 @@ CONTAINS
    !> @brief  This function concatenate variable value following l-direction.
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_var1   variable structure
    !> @param[in] td_var2   variable structure
@@ -5346,8 +5349,9 @@ CONTAINS
    !> in a variable structure.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
-   !> @date June, 2015 - add all element of the array in the same time
+   !> @date November, 2013 - Initial Version
+   !> @date June, 2015 
+   !> - add all element of the array in the same time
    !>
    !> @param[inout] td_var variable structure
    !> @param[in] td_att    array of attribute structure
@@ -5476,8 +5480,9 @@ CONTAINS
    !> in a variable structure.
    !
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
-   !> @date June, 2015 - use var__add_att_arr subroutine
+   !> @date November, 2013 - Initial Version
+   !> @date June, 2015 
+   !> - use var__add_att_arr subroutine
    !
    !> @param[inout] td_var variable structure
    !> @param[in] td_att    attribute structure
@@ -5506,8 +5511,9 @@ CONTAINS
    !> from variable structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
-   !> @date February, 2015 - define local attribute structure to avoid mistake 
+   !> @date November, 2013 - Initial Version
+   !> @date February, 2015 
+   !> - define local attribute structure to avoid mistake 
    !> with pointer
    !
    !> @param[inout] td_var variable structure
@@ -5551,8 +5557,9 @@ CONTAINS
    !> from variable structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
-   !> @date February, 2015 - delete highlight attribute too, when attribute 
+   !> @date November, 2013- Initial Version
+   !> @date February, 2015 
+   !> - delete highlight attribute too, when attribute 
    !> is deleted
    !
    !> @param[inout] td_var variable structure
@@ -5668,7 +5675,7 @@ CONTAINS
    !> from variable structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variable structure
    !> @param[in] td_att    attribute structure
@@ -5703,7 +5710,7 @@ CONTAINS
    !> - dimension can't be already uses in variable structure
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variable structure
    !> @param[in] td_dim    dimension structure
@@ -5742,7 +5749,7 @@ CONTAINS
    !> - dimension can't be already uses in variable structure 
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variable structure
    !> @param[in] td_dim    dimension structure
@@ -5801,7 +5808,7 @@ CONTAINS
    !> @warning delete variable value too.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variable structure
    !> @param[in] td_dim    dimension structure
@@ -5865,7 +5872,7 @@ CONTAINS
    !> - delete variable value 
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variable structure
    !> @param[in] td_dim    dimension structure
@@ -5908,7 +5915,7 @@ CONTAINS
    !> @brief This subroutine print informations of an array of variables. 
    !>
    !> @author J.Paul
-   !> - June, 2014- Initial Version
+   !> @date June, 2014 - Initial Version
    !
    !> @param[in] td_var array of variables structure
    !-------------------------------------------------------------------
@@ -5934,7 +5941,7 @@ CONTAINS
    !> and variable attributes.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_var    variable structure
    !> @param[in] ld_more   print more infomration about variable
@@ -6041,7 +6048,7 @@ CONTAINS
    !> @warning Dimension of the array must be ordered as ('x','y','z','t')
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_var variable structure
    !> @param[in] dd_value  array of variable value
@@ -6179,7 +6186,7 @@ CONTAINS
    !> and indices of the variable where value will be written with start and count array.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_var variable structure
    !> @param[in] dd_value  array of variable value
@@ -6233,7 +6240,7 @@ CONTAINS
    !> and indices of the variable where value will be written with start and count array.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variable structure
    !> @param[in] rd_value  array of variable value
@@ -6309,7 +6316,7 @@ CONTAINS
    !> @note variable type is forced to BYTE
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variabele structure
    !> @param[in] bd_value  array of variable value
@@ -6385,7 +6392,7 @@ CONTAINS
    !> @note variable type is forced to SHORT
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variabele structure
    !> @param[in] sd_value  array of variable value
@@ -6461,7 +6468,7 @@ CONTAINS
    !> @note variable type is forced to INT
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variabele structure
    !> @param[in] id_value  array of variable value
@@ -6535,7 +6542,7 @@ CONTAINS
    !> and indices of the variable where value will be written with start and count array.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variable structure
    !> @param[in] kd_value  array of variable value
@@ -6605,7 +6612,7 @@ CONTAINS
    !> structure.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_var variable structure
    !-------------------------------------------------------------------
@@ -6628,7 +6635,7 @@ CONTAINS
    !> structure,  given variable name or standard name. 
    !>
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[in] td_var       array of variable structure
    !> @param[in] cd_name      variable name
@@ -6693,7 +6700,7 @@ CONTAINS
    !> @warning only variable read from file, have an id.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_var       array of variable structure
    !> @param[in] cd_name      variable name
@@ -6748,7 +6755,7 @@ CONTAINS
    !> This function return the mask 3D of variable, given variable structure.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_var array of variable structure
    !> @return variable mask(3D)
@@ -6787,7 +6794,7 @@ CONTAINS
    !> optionally, you could specify a dummy _FillValue to be used
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var array of variable structure
    !> @param[in] dd_fill _FillValue to be used
@@ -6870,7 +6877,7 @@ CONTAINS
    !> global array of variable structure with extra information: tg_varextra.
    !> 
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015 
    !> - new namelist format to get extra information (interpolation,...)
    !
@@ -7026,8 +7033,9 @@ CONTAINS
    !> apply.
    !>
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
-   !> @date July, 2015 - get unit and unit factor (to change unit) 
+   !> @date November, 2013 - Initial Version
+   !> @date July, 2015 
+   !> - get unit and unit factor (to change unit) 
    !
    !> @param[in] cd_varinfo   variable information from namelist
    !-------------------------------------------------------------------
@@ -7166,7 +7174,7 @@ CONTAINS
    !> 1 & 4 & 5 \end{array} \right) @f$
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variable structure
    !> @param[in] cd_matrix matrix value
@@ -7260,7 +7268,7 @@ CONTAINS
    !> fill empty parameter on variable structure.
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_var variable structure
    !-------------------------------------------------------------------
@@ -7412,8 +7420,9 @@ CONTAINS
    !> minimum value is assume to follow string "min ="
    !>
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
-   !> @date June, 2015 - change way to get information in namelist, 
+   !> @date November, 2013 - Initial Version
+   !> @date June, 2015 
+   !> - change way to get information in namelist, 
    !> value follows string "min ="
    !
    !> @param[in] cd_name      variable name
@@ -7475,8 +7484,9 @@ CONTAINS
    !> maximum value is assume to follow string "max ="
    !>
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
-   !> @date June, 2015 - change way to get information in namelist, 
+   !> @date November, 2013 - Initial Version
+   !> @date June, 2015 
+   !> - change way to get information in namelist, 
    !> value follows string "max ="
    !
    !> @param[in] cd_name      variable name
@@ -7538,7 +7548,7 @@ CONTAINS
    !> units factor value is assume to follow string "unf ="
    !>
    !> @author J.Paul
-   !> - June, 2015- Initial Version
+   !> @date June, 2015 - Initial Version
    !
    !> @param[in] cd_name      variable name
    !> @param[in] cd_varinfo   variable information read in namelist 
@@ -7611,8 +7621,9 @@ CONTAINS
    !> see @ref interp module for more information.
    !>
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
-   !> @date June, 2015 - change way to get information in namelist, 
+   !> @date November, 2013 - Initial Version
+   !> @date June, 2015 
+   !> - change way to get information in namelist, 
    !> value follows string "int ="
    !
    !> @param[in] cd_name      variable name
@@ -7730,8 +7741,9 @@ CONTAINS
    !> see @ref extrap module for more information.
    !>
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
-   !> @date June, 2015 - change way to get information in namelist, 
+   !> @date November, 2013 - Initial Version
+   !> @date June, 2015 
+   !> - change way to get information in namelist, 
    !> value follows string "ext ="
    !
    !> @param[in] cd_name      variable name
@@ -7805,8 +7817,9 @@ CONTAINS
    !> see @ref filter module for more information.
    !>
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
-   !> @date June, 2015 - change way to get information in namelist, 
+   !> @date November, 2013 - Initial Version
+   !> @date June, 2015 
+   !> - change way to get information in namelist, 
    !> value follows string "flt ="
    !>
    !> @param[in] cd_name      variable name
@@ -7910,7 +7923,7 @@ CONTAINS
    !> unit is assume to follow string "unt ="
    !>
    !> @author J.Paul
-   !> - June, 2015- Initial Version
+   !> @date June, 2015 - Initial Version
    !
    !> @param[in] cd_name      variable name
    !> @param[in] cd_varinfo   variable information read in namelist
@@ -7961,7 +7974,7 @@ CONTAINS
    !> in an array of variable structure.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_var array of variable structure
    !> @return array of dimension 
@@ -8019,7 +8032,7 @@ CONTAINS
    !> with value of variable structure attribute d_min and d_max.
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var variable structure
    !-------------------------------------------------------------------
@@ -8064,7 +8077,7 @@ CONTAINS
    !> @note the variable value should be already read.
    !>
    !> @author J.Paul
-   !> - June, 2015- Initial Version
+   !> @date June, 2015 - Initial Version
    !
    !> @param[inout] td_var variable structure
    !-------------------------------------------------------------------
@@ -8114,7 +8127,7 @@ CONTAINS
    !> axis from configuration file. 
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_var    variable structure
    !-------------------------------------------------------------------
@@ -8199,8 +8212,9 @@ CONTAINS
    !> string character of dimension
    !> 
    !> @author J.Paul
-   !> - August, 2014 - Initial Version
-   !> @date July 2015 - do not use dim_disorder anymore
+   !> @date August, 2014 - Initial Version
+   !> @date July 2015 
+   !> - do not use dim_disorder anymore
    !
    !> @param[inout] td_var       variable structure
    !> @param[in]    cd_dimorder  string character of dimension order to be used
@@ -8255,7 +8269,7 @@ CONTAINS
    !> This function get the next unused unit in array of variable structure. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !
    !> @param[in] td_var array of variable structure 
    !> @return free variable id
@@ -8280,7 +8294,7 @@ CONTAINS
    !> This function convert a time variable structure in date structure. 
    !> 
    !> @author J.Paul
-   !> - November, 2014- Initial Version
+   !> @date November, 2014 - Initial Version
    !
    !> @param[in] td_var time variable structure 
    !> @return date structure

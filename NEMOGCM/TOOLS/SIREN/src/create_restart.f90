@@ -881,7 +881,7 @@ CONTAINS
    !> Each subdomain is filled with the corresponding value of the matrix.
    !>
    !> @author J.Paul
-   !> @date November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - do not use level anymore 
    !>
@@ -1006,7 +1006,7 @@ CONTAINS
    !> This subroutine use mask to filled land point with _FillValue
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_var variable structure
    !> @param[in] td_mask   mask variable structure
@@ -1068,7 +1068,7 @@ CONTAINS
    !> This subroutine interpolate variable
    !> 
    !> @author J.Paul
-   !> @date November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - do not use level anymore (for extrapolation)
    !>
@@ -1139,7 +1139,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - November, 2014- Initial Version
+   !> @date November, 2014 - Initial Version
    !>
    !> @param[in] td_mpp       mpp structure
    !> @param[inout] td_depth  depth variable structure 
@@ -1190,7 +1190,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - November, 2014- Initial Version
+   !> @date November, 2014 - Initial Version
    !>
    !> @param[in] td_mpp      mpp structure
    !> @param[inout] td_time  time variable structure 

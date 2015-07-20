@@ -448,7 +448,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_file   file name
    !> @param[in] cd_type   file type ('cdf', 'dimg')
@@ -553,7 +553,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_file   file name
    !> @return type of file
@@ -589,7 +589,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] td_var    variable structure
@@ -968,7 +968,7 @@ CONTAINS
    !> in file structure, given variable structure.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_file   file structure
    !> @param[in] td_var       variable structure
@@ -1111,7 +1111,7 @@ CONTAINS
    !> @warning change variable id in file structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] td_var       variable structure
@@ -1146,7 +1146,7 @@ CONTAINS
    !> Do not overwrite, if attribute already in file structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] td_att       attribute structure
@@ -1325,7 +1325,7 @@ CONTAINS
    !> from file structure, given attribute structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] td_att       attribute structure
@@ -1423,7 +1423,7 @@ CONTAINS
    !> @warning change attribute id in file structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] td_att       attribute structure
@@ -1549,7 +1549,7 @@ CONTAINS
    !> structure.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] td_dim       dimension structure
@@ -1629,7 +1629,7 @@ CONTAINS
    !> @warning change dimension order in file structure. 
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] td_dim       dimension structure
@@ -1672,7 +1672,7 @@ CONTAINS
    !> @brief This subroutine print some information about file strucutre.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !-------------------------------------------------------------------
@@ -1750,7 +1750,7 @@ CONTAINS
    !> If no suffix is found, return empty character.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_file   file structure
    !> @return suffix
@@ -1847,7 +1847,7 @@ CONTAINS
    !> If processor number is given, return file name with new number
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] id_num    processor number (start to 1)
@@ -1910,7 +1910,7 @@ CONTAINS
    !> I processor number is given, return file name with new number
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] id_num    processor number (start to 1)
@@ -1937,7 +1937,7 @@ CONTAINS
    !> @brief This function add suffix to file name.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @return file name
@@ -2050,7 +2050,7 @@ CONTAINS
    !> structure,  given file name. 
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   array of file structure
    !> @param[in] cd_name   file name
@@ -2088,7 +2088,7 @@ CONTAINS
    !> This function get the next unused unit in array of file structure.
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !
    !> @param[in] td_file   array of file 
    !-------------------------------------------------------------------

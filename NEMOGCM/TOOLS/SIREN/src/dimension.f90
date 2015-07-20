@@ -1183,7 +1183,7 @@ CONTAINS
    !> @note you must have run dim_reorder before use this subroutine
    !
    !> @author J.Paul
-   !> @date Nov, 2013 - Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_dim array of dimension structure
    !> @param[in] ld_arr array of value to reordered
@@ -1316,7 +1316,7 @@ CONTAINS
    !> @note you must have run dim_reorder before use this subroutine
    !
    !> @author J.Paul
-   !> @date Nov, 2013 - Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_dim array of dimension structure
    !> @param[in] cd_arr array of value to reordered

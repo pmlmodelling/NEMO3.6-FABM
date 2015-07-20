@@ -354,7 +354,7 @@ CONTAINS
    !>
    !> @note need all processor files to be there
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !>
    !> @param[inout] td_file file structure 
    !-------------------------------------------------------------------
@@ -470,7 +470,7 @@ CONTAINS
    !>
    !> @note need all processor files
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !>
    !> @param[in] td_mpp mpp structure 
    !-------------------------------------------------------------------
@@ -716,7 +716,7 @@ CONTAINS
    !> @note array of value must be only the top border of the domain.
    !> 
    !> @author J.Paul
-   !> - October, 2014 - Initial version
+   !> @date October, 2014 - Initial version
    !
    !> @param[in] dd_value array of value
    !> @return pivot point index
@@ -809,7 +809,7 @@ CONTAINS
    !> @note array of value must be only the top border of the domain.
    !> 
    !> @author J.Paul
-   !> - October, 2014 - Initial version
+   !> @date October, 2014 - Initial version
    !
    !> @param[in] dd_value array of value
    !> @return pivot point index
@@ -902,7 +902,7 @@ CONTAINS
    !> @note array of value must be only the top border of the domain.
    !> 
    !> @author J.Paul
-   !> - October, 2014 - Initial version
+   !> @date October, 2014 - Initial version
    !
    !> @param[in] dd_value array of value
    !> @return pivot point index
@@ -995,7 +995,7 @@ CONTAINS
    !> @note array of value must be only the top border of the domain.
    !> 
    !> @author J.Paul
-   !> - October, 2014 - Initial version
+   !> @date October, 2014 - Initial version
    !
    !> @param[in] dd_value array of value
    !> @return pivot point index
@@ -1091,7 +1091,7 @@ CONTAINS
    !> - do not work with ORCA2 grid (T-point)
    !>
    !> @author J.Paul
-   !> - Ocotber, 2014- Initial version
+   !> @date Ocotber, 2014 - Initial version
    !
    !> @param[in] td_file file structure
    !> @return pivot point index
@@ -1180,7 +1180,7 @@ CONTAINS
    !> - do not work with ORCA2 grid (T-point)
    !>
    !> @author J.Paul
-   !> - October, 2014 - Initial version
+   !> @date October, 2014 - Initial version
    !
    !> @param[in] td_mpp   mpp file structure
    !> @return pivot point index
@@ -1460,7 +1460,7 @@ CONTAINS
    !> @warning pivot point should have been computed before run this script. see grid_get_pivot.
    !>
    !> @author J.Paul
-   !> - October, 2014 - Initial version
+   !> @date October, 2014 - Initial version
    !>
    !> @param[in] td_file   file structure
    !> @param[in] id_pivot  pivot point index
@@ -1553,7 +1553,7 @@ CONTAINS
    !> @warning pivot point should have been computed before run this script. see grid_get_pivot.
    !>
    !> @author J.Paul
-   !> - October, 2014 - Initial version
+   !> @date October, 2014 - Initial version
    !
    !> @param[in] td_mpp   mpp file structure
    !> @param[in] id_pivot pivot point index
@@ -1754,7 +1754,7 @@ CONTAINS
    !> South" part of the domain, to avoid  north fold boundary.
    !>
    !> @author J.Paul
-   !> - October, 2014- Initial Version
+   !> @date October, 2014 - Initial Version
    !>
    !> @param[in] td_file file structure 
    !> @return East West overlap
@@ -1861,7 +1861,7 @@ CONTAINS
    !> check if maximum latitude greater than 88°N 
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] td_lat latitude variable structure 
    !-------------------------------------------------------------------
@@ -2883,7 +2883,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_lon longitude structure 
    !> @param[in] td_lat latitude structure 
@@ -3161,7 +3161,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] dd_lon    grid longitude array
    !> @param[in] dd_lat    grid latitude  array
@@ -4301,7 +4301,7 @@ CONTAINS
    !> @details
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] dd_lon0   array of coarse grid longitude
    !> @param[in] dd_lat0   array of coarse grid latitude
@@ -4460,7 +4460,7 @@ CONTAINS
    !> @details
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] dd_lat0   array of coarse grid latitude 
    !> @param[in] dd_lat1   array of fine grid latitude 
@@ -4530,7 +4530,7 @@ CONTAINS
    !> This subroutine add ghost cell at boundaries.
    !> 
    !> @author J.Paul
-   !> - November, 2013-Initial version
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_var array of variable structure 
    !> @param[in] id_ghost  array of ghost cell factor 
@@ -4606,7 +4606,7 @@ CONTAINS
    !> This subroutine delete ghost cell at boundaries.
    !> 
    !> @author J.Paul
-   !> - November, 2013-Initial version
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_var array of variable structure 
    !> @param[in] id_ghost  array of ghost cell factor 
@@ -4685,7 +4685,7 @@ CONTAINS
    !> check if domain is global, and if there is an East-West overlap.
    !>
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !
    !> @param[in] td_var variable sturcture 
    !> @return array of ghost cell factor
@@ -4888,7 +4888,7 @@ CONTAINS
    !> optionaly you could specify which level use (default 1)
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_var    variable strucutre 
    !> @param[in] id_level  level
@@ -4987,7 +4987,7 @@ CONTAINS
    !> By default only the biggest sea is preserve.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_var    variable structure
    !> @param[in] id_mask      domain mask (from grid_split_domain)
@@ -5053,7 +5053,7 @@ CONTAINS
    !> smaller domain are included in the one they are embedded.
    !>
    !> @author J.Paul
-   !> - Ferbruay, 2015- Initial Version
+   !> @date Ferbruay, 2015 - Initial Version
    !>
    !> @param[inout] id_mask      domain mask (from grid_split_domain)
    !> @param[in] id_minsize   minimum size of sea to be kept

@@ -23,7 +23,7 @@
 !> @author
 !> J.Paul
 ! REVISION HISTORY:
-!> @date September, 2014 -Initial version
+!> @date September, 2014 - Initial version
 !>
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -54,7 +54,7 @@ CONTAINS
    !> This subroutine compute horizontal nearest interpolation on 4D array of value. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[inout] dd_value  2D array of variable value 
    !> @param[inout] id_detect 2D array of point to be interpolated 
@@ -122,7 +122,7 @@ CONTAINS
    !> This subroutine compute nearest interpolation on 2D array of value. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[inout] dd_value  2D array of variable value 
    !> @param[inout] id_detect 2D array of point to be interpolated 
@@ -177,7 +177,7 @@ CONTAINS
    !> This subroutine compute nearest interpolation on 1D array of value. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[inout] dd_value  1D array of variable value 
    !> @param[inout] id_detect 1D array of point to be interpolated 
@@ -222,7 +222,7 @@ CONTAINS
    !> This subroutine compute nearest interpolation of a 2D array of value. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[inout] dd_value  2D array of mixed grid value
    !> @param[inout] id_detect 2D array of point to be interpolated
@@ -306,7 +306,7 @@ CONTAINS
    !> This subroutine compute nearest interpolation of a 1D array of value. 
    !> 
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !>
    !> @param[inout] dd_value  1D array of mixed grid value
    !> @param[inout] id_detect 1D array of point to be interpolated

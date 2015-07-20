@@ -640,7 +640,7 @@ CONTAINS
    !> Each subdomain is filled with the corresponding value of the matrix.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] td_var    variable structure 
    !> @param[in] td_coord  coordinate file structure
@@ -776,7 +776,7 @@ CONTAINS
    !> return variable structure
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] td_var    variable structure 
    !> @param[in] td_mpp    mpp file structure
@@ -895,7 +895,7 @@ CONTAINS
    !> variable structure over fine grid
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] td_var    variable structure
    !> @param[in] td_mpp    mpp file structure
@@ -1006,7 +1006,7 @@ CONTAINS
    !> This subroutine interpolate variable
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[inout] td_var variable structure 
    !> @param[in] id_rho    array of refinment factor

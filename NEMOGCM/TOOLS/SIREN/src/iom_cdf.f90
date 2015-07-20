@@ -143,7 +143,7 @@ CONTAINS
    !> netcdf error message 
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date May, 2015 - add optional message to netcdf error message
    !>
    !> @param[in] id_status error status
@@ -180,7 +180,7 @@ CONTAINS
    !> overlap.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -276,7 +276,7 @@ CONTAINS
    !> @brief This subroutine close netcdf file.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -316,7 +316,7 @@ CONTAINS
    !> and finally the format version and filled file strucuture with it.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -354,7 +354,7 @@ CONTAINS
    !> The dimension structure inside file structure is then completed.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -405,7 +405,7 @@ CONTAINS
    !> The attribute structure inside file structure is then completed.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014
    !> - use attribute periodicity read from the file if present.
    !
@@ -448,7 +448,7 @@ CONTAINS
    !> @note variable value are not read !
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -534,7 +534,7 @@ CONTAINS
    !> opened netcdf file if present.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -575,7 +575,7 @@ CONTAINS
    !> given dimension id.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date February, 2015 - create unused dimension, when reading dimension
    !> of length less or equal to zero
    !
@@ -632,7 +632,7 @@ CONTAINS
    !> given dimension name.
    !
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] cd_name   dimension name
@@ -672,7 +672,7 @@ CONTAINS
    !> netcdf file, given attribute name.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] id_varid  variable id. use NF90_GLOBAL to read global
@@ -893,7 +893,7 @@ CONTAINS
    !> netcdf file, given attribute id.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] id_varid  variable id. use NF90_GLOBAL to read global 
@@ -938,7 +938,7 @@ CONTAINS
    !> could be specify in a 4 dimension array (/'x','y','z','t'/)
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] id_varid  variable id
@@ -996,7 +996,7 @@ CONTAINS
    !> exist in file, look for variable standard name.<br/>
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] cd_name   variable name or standard name.
@@ -1063,7 +1063,7 @@ CONTAINS
    !> could be specify in a 4 dimension array (/'x','y','z','t'/)
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] id_start     index in the variable from which the data values 
@@ -1105,7 +1105,7 @@ CONTAINS
    !> could be specify in a 4 dimension array (/'x','y','z','t'/)
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] id_varid     variable id
@@ -1168,7 +1168,7 @@ CONTAINS
    !> exist in file, look for variable standard name.<br/>
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] cd_name      variable name or standard name
@@ -1219,7 +1219,7 @@ CONTAINS
    !> @note variable value are not read
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014
    !> - force to use FillValue=1.e20 if no FillValue for coordinate variable.
    !
@@ -1374,7 +1374,7 @@ CONTAINS
    !> dimension (use or not). 
    !
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date July, 2015 
    !> - Bug fix: use order to disorder table (see dim_init)
    !>
@@ -1449,7 +1449,7 @@ CONTAINS
    !> in an opened netcdf file.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] id_varid  variable id
@@ -1498,7 +1498,7 @@ CONTAINS
    !> could be specify in a 4 dimension array (/'x','y','z','t'/)
    !
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015 
    !> - use scale factor and offset, as soon as read variable value
    !
@@ -1707,7 +1707,7 @@ CONTAINS
    !> optionally, you could specify dimension order (default 'xyzt')
    !>
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date July, 2015 
    !> - add dimension order option 
    !
@@ -1826,7 +1826,7 @@ CONTAINS
    !> file in write mode.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[inout] td_dim    dimension structure
@@ -1884,7 +1884,7 @@ CONTAINS
    !> an opened netcdf file.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] id_varid     variable id. use NF90_GLOBAL to write 
@@ -1941,7 +1941,7 @@ CONTAINS
    !> @brief This subroutine write a variable in an opened netcdf file.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[inout] td_var    variable structure
@@ -2030,7 +2030,7 @@ CONTAINS
    !> @brief This function define variable in an opened netcdf file.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] td_var    variable structure
@@ -2166,7 +2166,7 @@ CONTAINS
    !> replaced by default fill values defined in module netcdf for each type. 
    !
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date June, 2015
    !> - reuse scale factor and offset, before writing variable
    !

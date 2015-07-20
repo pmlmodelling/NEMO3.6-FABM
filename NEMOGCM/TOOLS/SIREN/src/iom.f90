@@ -155,7 +155,7 @@ CONTAINS
    !> and finally read dimensions.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file file structure
    !-------------------------------------------------------------------
@@ -185,7 +185,7 @@ CONTAINS
    !> @brief This function create a file.
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file file structure
    !-------------------------------------------------------------------
@@ -222,7 +222,7 @@ CONTAINS
    !> @brief This subroutine close file
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file file structure
    !-------------------------------------------------------------------
@@ -251,7 +251,7 @@ CONTAINS
    !>  - to get global attribute use 'GLOBAL' as variable name. 
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file      file structure
    !> @param[in] cd_varname   variable name. use 'GLOBAL' to read global 
@@ -299,7 +299,7 @@ CONTAINS
    !> file, given variable id and attribute id.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] id_varid  variable id. use NF90_GLOBAL to read global 
@@ -337,7 +337,7 @@ CONTAINS
    !> - to get global attribute use 'GLOBAL' as variable name.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file      file structure
    !> @param[in] cd_varname   variable name or standard name. use 'GLOBAL' to read global
@@ -385,7 +385,7 @@ CONTAINS
    !> file, given variable id and attribute name.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file      file structure
    !> @param[in] id_varid     variable id. use NF90_GLOBAL to read global
@@ -421,7 +421,7 @@ CONTAINS
    !> given dimension id.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] id_dimid  dimension id
@@ -451,7 +451,7 @@ CONTAINS
    !> given dimension name.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] cd_name   dimension name
@@ -484,7 +484,7 @@ CONTAINS
    !> could be specify in a 4 dimension array (/'x','y','z','t'/)
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] id_varid  variable id
@@ -528,7 +528,7 @@ CONTAINS
    !> exist in file, look for variable standard name.<br/>
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] cd_name   variable name or standard name
@@ -568,7 +568,7 @@ CONTAINS
    !> optionally, you could specify dimension order (default 'xyzt')
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date July, 2015 - add dimension order option
    !
    !> @param[in] td_file   file structure

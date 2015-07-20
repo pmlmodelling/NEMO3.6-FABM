@@ -120,7 +120,7 @@
 !> @author
 !> J.Paul
 ! REVISION HISTORY:
-!> @date November, 2013- Initial Version
+!> @date November, 2013 - Initial Version
 !> @date February, 2015
 !> - check verbosity validity
 !> - add 'none' verbosity level to not used logger file
@@ -190,7 +190,7 @@ CONTAINS
    !> Optionally maximum number of error allowed could be change.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_file      log file name
    !> @param[in] cd_verbosity log file verbosity
@@ -267,7 +267,7 @@ CONTAINS
    !> @brief This subroutine close a log file.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !-------------------------------------------------------------------
    SUBROUTINE logger_close()
       IMPLICIT NONE
@@ -292,7 +292,7 @@ CONTAINS
    !> @brief This subroutine flushing output into log file.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !-------------------------------------------------------------------
    SUBROUTINE logger_flush()
       IMPLICIT NONE
@@ -314,7 +314,7 @@ CONTAINS
    !> @brief This subroutine write header on log file.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !-------------------------------------------------------------------
    RECURSIVE SUBROUTINE logger_header()
       IMPLICIT NONE
@@ -343,7 +343,7 @@ CONTAINS
    !> @brief This subroutine write footer on log file.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !-------------------------------------------------------------------
    SUBROUTINE logger_footer()
       IMPLICIT NONE
@@ -376,7 +376,7 @@ CONTAINS
    !> Optionally you could flush output.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_msg    message to write
    !> @param[in] ld_flush  flushing ouput
@@ -412,7 +412,7 @@ CONTAINS
    !> Optionally you could flush output.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_msg    message to write
    !> @param[in] ld_flush  flushing ouput
@@ -448,7 +448,7 @@ CONTAINS
    !> Optionally you could flush output.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_msg    message to write
    !> @param[in] ld_flush  flushing ouput
@@ -484,7 +484,7 @@ CONTAINS
    !> Optionally you could flush output.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_msg    message to write
    !> @param[in] ld_flush  flushing ouput
@@ -520,7 +520,7 @@ CONTAINS
    !> Optionally you could flush output.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_msg    message to write
    !> @param[in] ld_flush  flushing ouput
@@ -569,7 +569,7 @@ CONTAINS
    !> close log file and stop process.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_msg message to write
    !-------------------------------------------------------------------
@@ -604,7 +604,7 @@ CONTAINS
    !> by line in log file.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_verb   verbosity of the message to write
    !> @param[in] cd_msg    message to write
@@ -658,7 +658,7 @@ CONTAINS
    !> @brief This function check validity of verbosity.
    !>
    !> @author J.Paul
-   !> - February, 2015 - Initial Version
+   !> @date February, 2015 - Initial Version
    !
    !> @param[in] cd_verb   verbosity of the message to write
    !> @return verbosity is valid or not

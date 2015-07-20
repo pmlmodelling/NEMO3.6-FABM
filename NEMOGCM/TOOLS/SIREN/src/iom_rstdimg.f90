@@ -130,7 +130,7 @@ CONTAINS
    !> overlap.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -283,7 +283,7 @@ CONTAINS
    !> @brief This subroutine close dimg file.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -327,7 +327,7 @@ CONTAINS
    !> file structure.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -393,7 +393,7 @@ CONTAINS
    !> domain decomposition informations are saved in attributes.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -543,7 +543,7 @@ CONTAINS
    !> @note variable value are read only for scalar variable (0d).
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -635,7 +635,7 @@ CONTAINS
    !> inside file structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] cd_name      array of variable name
@@ -687,7 +687,7 @@ CONTAINS
    !> inside file structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] cd_name      array of variable name
@@ -732,7 +732,7 @@ CONTAINS
    !> inside file structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] cd_name      array of variable name
@@ -777,7 +777,7 @@ CONTAINS
    !> inside file structure.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !> @param[in] cd_name      array of variable name
@@ -819,7 +819,7 @@ CONTAINS
    !> given dimension id.
    !
    !> @author J.Paul
-   !> - Nov, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] id_dimid  dimension id
@@ -862,7 +862,7 @@ CONTAINS
    !> given dimension name.
    !
    !> @author J.Paul
-   !> - Nov, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] cd_name   dimension name
@@ -906,7 +906,7 @@ CONTAINS
    !> could be specify in a 4 dimension array (/'x','y','z','t'/)
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] id_varid  variable id
@@ -971,7 +971,7 @@ CONTAINS
    !> exist in file, look for variable standard name.<br/>
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[in] cd_name   variable name or standard name 
@@ -1036,7 +1036,7 @@ CONTAINS
    !> could be specify in a 4 dimension array (/'x','y','z','t'/)
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_file   file structure
    !> @param[inout] td_var variable structure
@@ -1224,7 +1224,7 @@ CONTAINS
    !> dimg file have to be already opened in write mode.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date September, 2014
    !> - use iom_rstdimg__get_rec
    !
@@ -1320,7 +1320,7 @@ CONTAINS
    !> Moreover it adds variable no0d, no1d, no2d and no3d if need be.
    !>
    !> @author J.Paul
-   !> - September, 2014- Initial Version
+   !> @date September, 2014 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -1425,7 +1425,7 @@ CONTAINS
    !> file in write mode.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_file   file structure
    !-------------------------------------------------------------------
@@ -1642,9 +1642,11 @@ CONTAINS
    !> @brief This subroutine write variables in an opened dimg file.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
+   !> @date July, 2015
+   !> - bug fix: do not use scale factor an offset for case no0d, no1d...
    !>
-   !> @param[in] id_fileid file id
+   !> @param[in] td_file file structure
    !-------------------------------------------------------------------
    SUBROUTINE iom_rstdimg__write_var(td_file)
       IMPLICIT NONE
@@ -1673,20 +1675,22 @@ CONTAINS
          ! change FillValue to 0.
          CALL var_chg_FillValue(td_file%t_var(ji),0._dp)
 
-         ! use scale factor and offset
-         WHERE( td_file%t_var(ji)%d_value(:,:,:,:) /= &
-         &      td_file%t_var(ji)%d_fill )
-            td_file%t_var(ji)%d_value(:,:,:,:) = &
-            &  (td_file%t_var(ji)%d_value(:,:,:,:)-td_file%t_var(ji)%d_ofs) /&
-            &    td_file%t_var(ji)%d_scf
-         END WHERE
-
          cl_name(ji)  = TRIM(td_file%t_var(ji)%c_name)
          dl_value(ji) = REAL(td_file%t_var(ji)%i_rec,dp)
          
          SELECT CASE (TRIM(td_file%t_var(ji)%c_name))
             CASE('no0d','no1d','no2d','no3d')
             CASE DEFAULT
+               
+               ! use scale factor and offset
+               WHERE( td_file%t_var(ji)%d_value(:,:,:,:) /= &
+               &      td_file%t_var(ji)%d_fill )
+                  td_file%t_var(ji)%d_value(:,:,:,:) = &
+                  &   ( td_file%t_var(ji)%d_value(:,:,:,:) - &
+                  &     td_file%t_var(ji)%d_ofs ) / &
+                  &   td_file%t_var(ji)%d_scf
+               END WHERE
+
                DO jk=1,td_file%t_var(ji)%t_dim(3)%i_len
                   SELECT CASE (td_file%t_var(ji)%i_ndim)
                      CASE(0)

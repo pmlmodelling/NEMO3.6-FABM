@@ -86,7 +86,7 @@
 !> @author
 !> J.Paul
 ! REVISION HISTORY:
-!> @date Nov, 2013 - Initial Version
+!> @date November, 2013 - Initial Version
 !>
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -136,7 +136,7 @@ CONTAINS
    !> and finally read dimensions.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_mpp mpp structure
    !-------------------------------------------------------------------
@@ -223,7 +223,7 @@ CONTAINS
    !> in write mode.
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_mpp mpp structure
    !-------------------------------------------------------------------
@@ -250,7 +250,7 @@ CONTAINS
    !> @brief This subroutine close files composing mpp structure.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_mpp mpp structure
    !-------------------------------------------------------------------
@@ -290,7 +290,7 @@ CONTAINS
    !> as well as East West ovelap of the global domain.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date October, 2014
    !> - use start and count array instead of domain structure.
    !>
@@ -366,7 +366,7 @@ CONTAINS
    !> If variable name is not present, check variable standard name.<br/>
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date October, 2014
    !> - use start and count array instead of domain structure.
    !
@@ -432,7 +432,7 @@ CONTAINS
    !> as well as East West ovelap of the global domain.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date October, 2014
    !> - use start and count array instead of domain structure.
    !>
@@ -622,7 +622,7 @@ CONTAINS
    !> optionally, you could specify the dimension order (default 'xyzt')
    !
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date July, 2015 - add dimension order option 
    !
    !> @param[inout] td_mpp mpp structure

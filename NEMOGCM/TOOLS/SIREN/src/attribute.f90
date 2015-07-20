@@ -369,7 +369,7 @@ CONTAINS
    !> Optionaly you could specify the type of the variable to be saved.
    !>
    !> @author J.Paul
-   !> @dtae November, 2013 - Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] cd_name   attribute name
    !> @param[in] dd_value  attribute value

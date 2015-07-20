@@ -245,7 +245,7 @@ CONTAINS
    !> @brief This subroutine print some information about domain strucutre.
    !
    !> @author J.Paul
-   !> - Nov, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[inout] td_dom dom structure
    !-------------------------------------------------------------------
@@ -293,7 +293,7 @@ CONTAINS
    !> periodicity, pivot point, and East-West overlap.
    !
    !> @author J.Paul
-   !> @date June, 2013- Initial Version
+   !> @date June, 2013 - Initial Version
    !> @date September, 2014
    !> - add boundary index
    !> - add ghost cell factor
@@ -424,7 +424,7 @@ CONTAINS
    !> periodicity, pivot point, and East-West overlap.
    !
    !> @author J.Paul
-   !> @date June, 2013- Initial Version
+   !> @date June, 2013 - Initial Version
    !> @date September, 2014
    !> - add boundary index
    !> - add ghost cell factor
@@ -549,7 +549,7 @@ CONTAINS
    !> of the sub domain.
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain structure
    !> @param[in] id_imin   i-direction sub-domain lower left  point indice
@@ -722,7 +722,7 @@ CONTAINS
    !> with north fold boundary condition.
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial verison
    !
    !> @param[inout] td_dom domain strcuture
    !-------------------------------------------------------------------
@@ -756,7 +756,7 @@ CONTAINS
    !> with symmetric boundary condition across the equator.
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !-------------------------------------------------------------------
@@ -775,7 +775,7 @@ CONTAINS
    !> with cyclic east-west boundary.
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !-------------------------------------------------------------------
@@ -807,7 +807,7 @@ CONTAINS
    !> with closed boundaries.
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !-------------------------------------------------------------------
@@ -825,7 +825,7 @@ CONTAINS
    !> This subroutine compute size of global domain 
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !-------------------------------------------------------------------
@@ -863,7 +863,7 @@ CONTAINS
    !> This subroutine compute size of a semi global domain 
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !> @note never tested
@@ -913,7 +913,7 @@ CONTAINS
    !> condition
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !-------------------------------------------------------------------
@@ -952,7 +952,7 @@ CONTAINS
    !> condition.
    !>
    !> @author J.Paul
-   !> - April, 2013- Subroutine written
+   !> @date April, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !> @note never tested
@@ -980,7 +980,7 @@ CONTAINS
    !> condition, and which overlap east-west boundary
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !-------------------------------------------------------------------
@@ -1042,7 +1042,7 @@ CONTAINS
    !> condition, and which do not overlap east-west boundary
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !-------------------------------------------------------------------
@@ -1083,7 +1083,7 @@ CONTAINS
    !> condition, and which overlap east-west boundary
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !> @note never tested
@@ -1181,7 +1181,7 @@ CONTAINS
    !> condition, and which do not overlap east-west boundary
    !>
    !> @author J.Paul
-   !> - November, 2013- Subroutine written
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !> @note never tested
@@ -1293,7 +1293,7 @@ CONTAINS
    !> (default=im_minext)
    !>
    !> @author J.Paul
-   !> @date November, 2013
+   !> @date November, 2013 - Initial version
    !> @date September, 2014
    !> - take into account number of ghost cell
    !
@@ -1434,7 +1434,7 @@ CONTAINS
    !> it remove extra point added. 
    !
    !> @author J.Paul
-   !> @date November, 2013
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !-------------------------------------------------------------------
@@ -1477,7 +1477,7 @@ CONTAINS
    !> save value on ghost cell. 
    !> 
    !> @author J.Paul
-   !> @date November, 2013
+   !> @date November, 2013 - Initial version
    !> @date September, 2014
    !> - take into account boundary for one point size domain
    !> @date December, 2014
@@ -1716,7 +1716,7 @@ CONTAINS
    !>  This subroutine clean domain structure.
    !
    !> @author J.Paul
-   !> @date November, 2013
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_dom domain strcuture
    !-------------------------------------------------------------------

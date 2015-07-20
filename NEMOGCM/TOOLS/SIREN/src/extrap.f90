@@ -399,6 +399,7 @@ CONTAINS
    !> @date November, 2013 - Initial Version
    !> @date July, 2015 
    !> - compute coef indices to be used
+   !> - bug fix: force coef indice to 1, for dimension lenth equal to 1
    !
    !> @param[inout] dd_value  3D array of variable to be extrapolated
    !> @param[in] dd_fill      FillValue of variable
@@ -526,7 +527,7 @@ CONTAINS
                               il_imax=ji
                               ! coef indices to be used
                               il_i1 = 1
-                              il_i2 = 2
+                              il_i2 = 1
                            ENDIF
 
 
@@ -540,7 +541,7 @@ CONTAINS
                               il_jmax=jj
                               ! coef indices to be used
                               il_j1 = 1
-                              il_j2 = 2
+                              il_j2 = 1
                            ENDIF
 
                            il_kmin=MAX(jk-il_radius,1)
@@ -553,7 +554,7 @@ CONTAINS
                               il_kmax=jk
                               ! coef indices to be used
                               il_k1 = 1
-                              il_k2 = 2
+                              il_k2 = 1
                            ENDIF
 
                            dd_value(ji,jj,jk,jl)=extrap__3D_min_error_fill( &
@@ -600,7 +601,7 @@ CONTAINS
                               il_imax=ji
                               ! coef indices to be used
                               il_i1 = 1
-                              il_i2 = 2
+                              il_i2 = 1
                            ENDIF
 
 
@@ -614,7 +615,7 @@ CONTAINS
                               il_jmax=jj
                               ! coef indices to be used
                               il_j1 = 1
-                              il_j2 = 2
+                              il_j2 = 1
                            ENDIF
 
                            il_kmin=MAX(jk-il_radius,1)
@@ -627,7 +628,7 @@ CONTAINS
                               il_kmax=jk
                               ! coef indices to be used
                               il_k1 = 1
-                              il_k2 = 2
+                              il_k2 = 1
                            ENDIF
 
                            dd_value(ji,jj,jk,jl)=extrap__3D_min_error_fill( &
@@ -712,7 +713,7 @@ CONTAINS
                               il_imax=ji
                               ! coef indices to be used
                               il_i1 = 1
-                              il_i2 = 2
+                              il_i2 = 1
                            ENDIF
 
                            il_jmin=MAX(jj-il_radius,1)
@@ -725,7 +726,7 @@ CONTAINS
                               il_jmax=jj
                               ! coef indices to be used
                               il_j1 = 1
-                              il_j2 = 2
+                              il_j2 = 1
                            ENDIF
 
                            il_kmin=MAX(jk-il_radius,1)
@@ -738,7 +739,7 @@ CONTAINS
                               il_kmax=jk
                               ! coef indices to be used
                               il_k1 = 1
-                              il_k2 = 2
+                              il_k2 = 1
                            ENDIF
 
                            dd_value(ji,jj,jk,jl)=extrap__3D_dist_weight_fill( &
@@ -777,7 +778,7 @@ CONTAINS
                               il_imax=ji
                               ! coef indices to be used
                               il_i1 = 1
-                              il_i2 = 2
+                              il_i2 = 1
                            ENDIF
 
                            il_jmin=MAX(jj-il_radius,1)
@@ -790,7 +791,7 @@ CONTAINS
                               il_jmax=jj
                               ! coef indices to be used
                               il_j1 = 1
-                              il_j2 = 2
+                              il_j2 = 1
                            ENDIF
 
                            il_kmin=MAX(jk-il_radius,1)
@@ -803,7 +804,7 @@ CONTAINS
                               il_kmax=jk
                               ! coef indices to be used
                               il_k1 = 1
-                              il_k2 = 2
+                              il_k2 = 1
                            ENDIF
 
                            dd_value(ji,jj,jk,jl)=extrap__3D_dist_weight_fill( &
@@ -922,7 +923,7 @@ CONTAINS
    !> taylor expansion
    !> 
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !>
    !> @param[in] dd_value  3D array of variable to be extrapolated
    !> @param[in] dd_fill   FillValue of variable
@@ -1088,7 +1089,7 @@ CONTAINS
    !> @details 
    !>
    !> @author J.Paul
-   !> - November, 2013 - Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] dd_value  3D array of variable to be extrapolated
    !> @param[in] dd_fill   FillValue of variable
@@ -1171,7 +1172,7 @@ CONTAINS
    !> optionaly you could specify size of extra bands in i- and j-direction
    !>
    !> @author J.Paul
-   !> - November, 2013-Initial version
+   !> @date November, 2013 - Initial version
    !
    !> @param[inout] td_var variable 
    !> @param[in] id_isize  i-direction size of extra bands (default=im_minext)
@@ -1273,7 +1274,7 @@ CONTAINS
    !> optionaly you could specify size of extra bands in i- and j-direction
    !>
    !> @author J.Paul
-   !> - November, 2013 - Initial version
+   !> @date November, 2013 - Initial version
    !>
    !> @param[inout] td_var variable 
    !> @param[in] id_isize  i-direction size of extra bands (default=im_minext)

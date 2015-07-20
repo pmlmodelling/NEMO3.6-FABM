@@ -60,7 +60,8 @@
 !> @date November, 2013 - Initial Version
 !> @date October, 2014
 !> - use mpp file structure instead of file
-!> @date November, 2014 - Fix memory leaks bug
+!> @date November, 2014 
+!> - Fix memory leaks bug
 !
 !> @note Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
 !----------------------------------------------------------------------
@@ -117,7 +118,7 @@ CONTAINS
    !> this subroutine
    !>   
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date November, 2014
    !>    - use function instead of overload assignment operator (to avoid memory leak)
    !>
@@ -168,8 +169,9 @@ CONTAINS
    !> create pseudo file named 'data-*', with matrix read as variable value.
    !>
    !> @author J.Paul
-   !> - November, 2013- Initial Version
-   !> @date July, 2015 - check if variable to be read is in file
+   !> @date November, 2013 - Initial Version
+   !> @date July, 2015 
+   !> - check if variable to be read is in file
    !>
    !> @param[in] cd_varfile   variable location information (from namelist) 
    !> @return multi file structure
@@ -326,7 +328,7 @@ CONTAINS
    !> @brief This subroutine clean multi file strucutre.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_multi  multi file structure
    !-------------------------------------------------------------------
@@ -357,7 +359,7 @@ CONTAINS
    !> @brief This subroutine print some information about mpp strucutre.
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !
    !> @param[in] td_multi multi file structure
    !-------------------------------------------------------------------
@@ -400,7 +402,7 @@ CONTAINS
    !> @detail
    !
    !> @author J.Paul
-   !> - November, 2013- Initial Version
+   !> @date November, 2013 - Initial Version
    !> @date October, 2014
    !> - use mpp file structure instead of file
    !
