@@ -92,7 +92,7 @@ CONTAINS
       ! ------------------------- !
       ! 1 - Trends due to forcing !
       ! ------------------------- !
-      z_frc_trd_v = r1_rau0 * glob_sum( - ( emp(:,:) - rnf(:,:) + rdivisf * fwfisf(:,:) ) * surf(:,:) ) ! volume fluxes
+      z_frc_trd_v = r1_rau0 * glob_sum( - ( emp(:,:) - rnf(:,:) + fwfisf(:,:) ) * surf(:,:) ) ! volume fluxes
       z_frc_trd_t =           glob_sum( sbc_tsc(:,:,jp_tem) * surf(:,:) )                               ! heat fluxes
       z_frc_trd_s =           glob_sum( sbc_tsc(:,:,jp_sal) * surf(:,:) )                               ! salt fluxes
       ! Add runoff    heat & salt input
@@ -100,9 +100,8 @@ CONTAINS
       IF( ln_rnf_sal)   z_frc_trd_s = z_frc_trd_s + glob_sum( rnf_tsc(:,:,jp_sal) * surf(:,:) )
       ! Add ice shelf heat & salt input
       IF( nn_isf .GE. 1 )  THEN
-          z_frc_trd_t = z_frc_trd_t &
-              &   + glob_sum( ( risf_tsc(:,:,jp_tem) - rdivisf * fwfisf(:,:) * (-1.9) * r1_rau0 ) * surf(:,:) )
-          z_frc_trd_s = z_frc_trd_s + (1.0_wp - rdivisf) * glob_sum( risf_tsc(:,:,jp_sal) * surf(:,:) )
+          z_frc_trd_t = z_frc_trd_t + glob_sum( risf_tsc(:,:,jp_tem) * surf(:,:) )
+          z_frc_trd_s = z_frc_trd_s + glob_sum( risf_tsc(:,:,jp_sal) * surf(:,:) )
       ENDIF
 
       ! Add penetrative solar radiation
@@ -199,7 +198,6 @@ CONTAINS
 !        zvol_tot = zvol_tot + glob_sum( surf(:,:) * sshn(:,:) )
 !      ENDIF
 !!gm end
-
 
       IF( lk_vvl ) THEN
         CALL iom_put( 'bgtemper' , zdiff_hc / zvol_tot )              ! Temperature variation (C) 

@@ -265,8 +265,20 @@ CONTAINS
                fse3t_b(:,:,:) = fse3t_n(:,:,:) + atfp * ( fse3t_b(:,:,:) - 2._wp * fse3t_n(:,:,:) + fse3t_a(:,:,:) )
                ! Add volume filter correction: compatibility with tracer advection scheme
                ! => time filter + conservation correction (only at the first level)
-               fse3t_b(:,:,1) = fse3t_b(:,:,1) - atfp * rdt * r1_rau0 * ( emp_b(:,:) - emp(:,:) &
-                              &                                          -rnf_b(:,:) + rnf(:,:) ) * tmask(:,:,1)
+               IF ( nn_isf == 0) THEN   ! if no ice shelf melting
+                  fse3t_b(:,:,1) = fse3t_b(:,:,1) - atfp * rdt * r1_rau0 * ( emp_b(:,:) - emp(:,:) &
+                                 &                                          -rnf_b(:,:) + rnf(:,:) ) * tmask(:,:,1)
+               ELSE                     ! if ice shelf melting
+                  DO jj = 1,jpj
+                     DO ji = 1,jpi
+                        jk = mikt(ji,jj)
+                        fse3t_b(ji,jj,jk) = fse3t_b(ji,jj,jk) - atfp * rdt * r1_rau0                       &
+                                          &                          * ( (emp_b(ji,jj)    - emp(ji,jj)   ) &
+                                          &                            - (rnf_b(ji,jj)    - rnf(ji,jj)   ) &
+                                          &                            + (fwfisf_b(ji,jj) - fwfisf(ji,jj)) ) * tmask(ji,jj,jk)
+                     END DO
+                  END DO
+               END IF
             ENDIF
             !
             IF( ln_dynadv_vec ) THEN

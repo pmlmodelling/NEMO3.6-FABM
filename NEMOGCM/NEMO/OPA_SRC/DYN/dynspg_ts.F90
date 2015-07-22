@@ -453,10 +453,10 @@ CONTAINS
       !                                   ! -----------------------------------------------
       !                                         ! Surface net water flux and rivers
       IF (ln_bt_fw) THEN
-         zssh_frc(:,:) = zraur * ( emp(:,:) - rnf(:,:) + rdivisf * fwfisf(:,:) )
+         zssh_frc(:,:) = zraur * ( emp(:,:) - rnf(:,:) + fwfisf(:,:) )
       ELSE
          zssh_frc(:,:) = zraur * z1_2 * (  emp(:,:) + emp_b(:,:) - rnf(:,:) - rnf_b(:,:)   &
-                &                        + rdivisf * ( fwfisf(:,:) + fwfisf_b(:,:) )       )
+                &                        + fwfisf(:,:) + fwfisf_b(:,:)                     )
       ENDIF
 #if defined key_asminc
       !                                         ! Include the IAU weighted SSH increment

@@ -27,6 +27,7 @@ MODULE tranxt
    USE dom_oce         ! ocean space and time domain variables 
    USE sbc_oce         ! surface boundary condition: ocean
    USE sbcrnf          ! river runoffs
+   USE sbcisf          ! ice shelf melting/freezing
    USE zdf_oce         ! ocean vertical mixing
    USE domvvl          ! variable volume
    USE dynspg_oce      ! surface     pressure gradient variables
@@ -278,7 +279,7 @@ CONTAINS
       REAL(wp)        , INTENT(in   ), DIMENSION(jpi,jpj,kjpt)      ::  psbc_tc_b ! before surface tracer content
 
       !!     
-      LOGICAL  ::   ll_tra_hpg, ll_traqsr, ll_rnf   ! local logical
+      LOGICAL  ::   ll_tra_hpg, ll_traqsr, ll_rnf, ll_isf   ! local logical
       INTEGER  ::   ji, jj, jk, jn              ! dummy loop indices
       REAL(wp) ::   zfact1, ztc_a , ztc_n , ztc_b , ztc_f , ztc_d    ! local scalar
       REAL(wp) ::   zfact2, ze3t_b, ze3t_n, ze3t_a, ze3t_f, ze3t_d   !   -      -
@@ -294,10 +295,16 @@ CONTAINS
          ll_tra_hpg = ln_dynhpg_imp    ! active  tracers case  and  semi-implicit hpg
          ll_traqsr  = ln_traqsr        ! active  tracers case  and  solar penetration
          ll_rnf     = ln_rnf           ! active  tracers case  and  river runoffs
+         IF (nn_isf .GE. 1) THEN 
+            ll_isf = .TRUE.            ! active  tracers case  and  ice shelf melting/freezing
+         ELSE
+            ll_isf = .FALSE.
+         END IF
       ELSE                          
          ll_tra_hpg = .FALSE.          ! passive tracers case or NO semi-implicit hpg
          ll_traqsr  = .FALSE.          ! active  tracers case and NO solar penetration
          ll_rnf     = .FALSE.          ! passive tracers or NO river runoffs
+         ll_isf     = .FALSE.          ! passive tracers or NO ice shelf melting/freezing
       ENDIF
       !
       DO jn = 1, kjpt      
@@ -320,17 +327,33 @@ CONTAINS
                   ze3t_f = ze3t_n + atfp * ze3t_d
                   ztc_f  = ztc_n  + atfp * ztc_d
                   !
-                  IF( jk == 1 ) THEN           ! first level 
-                     ze3t_f = ze3t_f - zfact2 * ( emp_b(ji,jj) - emp(ji,jj) + rnf(ji,jj) - rnf_b(ji,jj) )
+                  IF( jk == mikt(ji,jj) ) THEN           ! first level 
+                     ze3t_f = ze3t_f - zfact2 * ( (emp_b(ji,jj)    - emp(ji,jj)   )  &
+                            &                   - (rnf_b(ji,jj)    - rnf(ji,jj)   )  &
+                            &                   + (fwfisf_b(ji,jj) - fwfisf(ji,jj))  )
                      ztc_f  = ztc_f  - zfact1 * ( psbc_tc(ji,jj,jn) - psbc_tc_b(ji,jj,jn) )
                   ENDIF
 
-                  IF( ll_traqsr .AND. jn == jp_tem .AND. jk <= nksr )   &     ! solar penetration (temperature only)
+                  ! solar penetration (temperature only)
+                  IF( ll_traqsr .AND. jn == jp_tem .AND. jk <= nksr )                            & 
                      &     ztc_f  = ztc_f  - zfact1 * ( qsr_hc(ji,jj,jk) - qsr_hc_b(ji,jj,jk) ) 
 
-                  IF( ll_rnf .AND. jk <= nk_rnf(ji,jj) )   & 		      ! river runoffs
+                  ! river runoff
+                  IF( ll_rnf .AND. jk <= nk_rnf(ji,jj) )                                          &
                      &     ztc_f  = ztc_f  - zfact1 * ( rnf_tsc(ji,jj,jn) - rnf_tsc_b(ji,jj,jn) ) & 
                      &                              * fse3t_n(ji,jj,jk) / h_rnf(ji,jj)
+
+                  ! ice shelf
+                  IF( ll_isf ) THEN
+                     ! level fully include in the Losch_2008 ice shelf boundary layer
+                     IF ( jk >= misfkt(ji,jj) .AND. jk < misfkb(ji,jj) )                          &
+                        ztc_f  = ztc_f  - zfact1 * ( risf_tsc(ji,jj,jn) - risf_tsc_b(ji,jj,jn) )  &
+                               &                 * fse3t_n(ji,jj,jk) * r1_hisf_tbl (ji,jj)
+                     ! level partially include in Losch_2008 ice shelf boundary layer 
+                     IF ( jk == misfkb(ji,jj) )                                                   &
+                        ztc_f  = ztc_f  - zfact1 * ( risf_tsc(ji,jj,jn) - risf_tsc_b(ji,jj,jn) )  &
+                               &                 * fse3t_n(ji,jj,jk) * r1_hisf_tbl (ji,jj) * ralpha(ji,jj)
+                  END IF
 
                   ze3t_f = 1.e0 / ze3t_f
                   ptb(ji,jj,jk,jn) = ztc_f * ze3t_f       ! ptb <-- ptn filtered

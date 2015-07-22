@@ -90,7 +90,7 @@ CONTAINS
 
       ! Calculate the cumulate surface Flux z_cflxemp (m3/s) over all the domain
       ! -----------------------------------------------------------------------
-      z_cflxemp = SUM ( ( emp(:,:)-rnf(:,:)+rdivisf*fwfisf(:,:) ) * bdytmask(:,:) * e1t(:,:) * e2t(:,:) ) / rau0
+      z_cflxemp = SUM ( ( emp(:,:)-rnf(:,:)+fwfisf(:,:) ) * bdytmask(:,:) * e1t(:,:) * e2t(:,:) ) / rau0
       IF( lk_mpp )   CALL mpp_sum( z_cflxemp )     ! sum over the global domain
 
       ! Transport through the unstructured open boundary

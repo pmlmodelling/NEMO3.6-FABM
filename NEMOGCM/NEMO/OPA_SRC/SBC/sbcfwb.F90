@@ -107,7 +107,7 @@ CONTAINS
       CASE ( 1 )                             !==  global mean fwf set to zero  ==!
          !
          IF( MOD( kt-1, kn_fsbc ) == 0 ) THEN
-            z_fwf = glob_sum( e1e2t(:,:) * ( emp(:,:) - rnf(:,:) + rdivisf * fwfisf(:,:) -  snwice_fmass(:,:) ) ) / area   ! sum over the global domain
+            z_fwf = glob_sum( e1e2t(:,:) * ( emp(:,:) - rnf(:,:) + fwfisf(:,:) - snwice_fmass(:,:) ) ) / area   ! sum over the global domain
             zcoef = z_fwf * rcp
             emp(:,:) = emp(:,:) - z_fwf              * tmask(:,:,1)
             qns(:,:) = qns(:,:) + zcoef * sst_m(:,:) * tmask(:,:,1) ! account for change to the heat budget due to fw correction
@@ -161,7 +161,7 @@ CONTAINS
             zsurf_neg = glob_sum( e1e2t(:,:)*ztmsk_neg(:,:) )  ! Area filled by <0 and >0 erp 
             zsurf_pos = glob_sum( e1e2t(:,:)*ztmsk_pos(:,:) )
             !                                                  ! fwf global mean (excluding ocean to ice/snow exchanges) 
-            z_fwf     = glob_sum( e1e2t(:,:) * ( emp(:,:) - rnf(:,:) + rdivisf * fwfisf(:,:) - snwice_fmass(:,:) ) ) / area
+            z_fwf     = glob_sum( e1e2t(:,:) * ( emp(:,:) - rnf(:,:) + fwfisf(:,:) - snwice_fmass(:,:) ) ) / area
             !            
             IF( z_fwf < 0._wp ) THEN         ! spread out over >0 erp area to increase evaporation
                 zsurf_tospread      = zsurf_pos

@@ -91,7 +91,8 @@ CONTAINS
     INTEGER                      ::   ikt, ikb   ! top and bottom level of the isf boundary layer
     REAL(wp)                     ::   rmin
     REAL(wp)                     ::   zhk
-    CHARACTER(len=256)           ::   cfisf, cvarzisf, cvarhisf   ! name for isf file
+    REAL(wp)                     ::   zt_frz, zpress
+    CHARACTER(len=256)           ::   cfisf , cvarzisf, cvarhisf   ! name for isf file
     CHARACTER(LEN=256)           :: cnameis                     ! name of iceshelf file
     CHARACTER (LEN=32)           :: cvarLeff                    ! variable name for efficient Length scale
     INTEGER           ::   ios           ! Local integer output status for namelist read
@@ -269,12 +270,21 @@ CONTAINS
 
          END IF
          ! compute tsc due to isf
-         ! WARNING water add at temp = 0C, correction term is added in trasbc, maybe better here but need a 3D variable).
-         risf_tsc(:,:,jp_tem) = qisf(:,:) * r1_rau0_rcp !
+         ! WARNING water add at temp = 0C, correction term is added, maybe better here but need a 3D variable).
+!         zpress = grav*rau0*fsdept(ji,jj,jk)*1.e-04
+         zt_frz = -1.9 !eos_fzp( tsn(ji,jj,jk,jp_sal), zpress )
+         risf_tsc(:,:,jp_tem) = qisf(:,:) * r1_rau0_rcp - rdivisf * fwfisf(:,:) * zt_frz * r1_rau0 !
          
          ! salt effect already take into account in vertical advection
          risf_tsc(:,:,jp_sal) = (1.0_wp-rdivisf) * fwfisf(:,:) * stbl(:,:) * r1_rau0
-          
+
+         ! output
+         IF( iom_use('qisf'  ) )   CALL iom_put('qisf'  , qisf)
+         IF( iom_use('fwfisf') )   CALL iom_put('fwfisf', fwfisf * stbl(:,:) / soce )
+
+         ! if apply only on the trend and not as a volume flux (rdivisf = 0), fwfisf have to be set to 0 now
+         fwfisf(:,:) = rdivisf * fwfisf(:,:)         
+ 
          ! lbclnk
          CALL lbc_lnk(risf_tsc(:,:,jp_tem),'T',1.)
          CALL lbc_lnk(risf_tsc(:,:,jp_sal),'T',1.)
@@ -294,9 +304,6 @@ CONTAINS
             END IF
          ENDIF
          ! 
-         ! output
-         CALL iom_put('qisf'  , qisf)
-         IF( iom_use('fwfisf') )   CALL iom_put('fwfisf', fwfisf * stbl(:,:) / soce )
       END IF
   
   END SUBROUTINE sbc_isf

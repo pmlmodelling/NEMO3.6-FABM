@@ -267,7 +267,9 @@ CONTAINS
          sshn(:,:) = ssha(:,:)                           ! now    <-- after  (before already = now)
       ELSE                                         !** Leap-Frog time-stepping: Asselin filter + swap
          sshb(:,:) = sshn(:,:) + atfp * ( sshb(:,:) - 2 * sshn(:,:) + ssha(:,:) )     ! before <-- now filtered
-         IF( lk_vvl ) sshb(:,:) = sshb(:,:) - atfp * rdt / rau0 * ( emp_b(:,:) - emp(:,:) - rnf_b(:,:) + rnf(:,:) ) * ssmask(:,:)
+         IF( lk_vvl ) sshb(:,:) = sshb(:,:) - atfp * rdt / rau0 * ( emp_b(:,:)    - emp(:,:)    &
+                                &                                 - rnf_b(:,:)    + rnf(:,:)    &
+                                &                                 + fwfisf_b(:,:) - fwfisf(:,:) ) * ssmask(:,:)
          sshn(:,:) = ssha(:,:)                           ! now <-- after
       ENDIF
       !

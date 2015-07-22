@@ -119,7 +119,6 @@ CONTAINS
       INTEGER  ::   nk_isf
       REAL(wp) ::   zfact, z1_e3t, zdep
       REAL(wp) ::   zalpha, zhk
-      REAL(wp) ::  zt_frz, zpress
       REAL(wp), POINTER, DIMENSION(:,:,:) ::  ztrdt, ztrds
       !!----------------------------------------------------------------------
       !
@@ -231,26 +230,18 @@ CONTAINS
                ! sign - because fwf sign of evapo (rnf sign of precip)
                DO jk = ikt, ikb - 1
                ! compute tfreez for the temperature correction (we add water at freezing temperature)
-!                  zpress = grav*rau0*fsdept(ji,jj,jk)*1.e-04
-                  zt_frz = -1.9 !eos_fzp( tsn(ji,jj,jk,jp_sal), zpress )
                ! compute trend
                   tsa(ji,jj,jk,jp_tem) = tsa(ji,jj,jk,jp_tem)                                          &
-                     &           + zfact * (risf_tsc_b(ji,jj,jp_tem) + risf_tsc(ji,jj,jp_tem)          &
-                     &               - rdivisf * (fwfisf(ji,jj) + fwfisf_b(ji,jj)) * zt_frz * r1_rau0) &
-                     &           * r1_hisf_tbl(ji,jj)
+                     &           + zfact * (risf_tsc_b(ji,jj,jp_tem) + risf_tsc(ji,jj,jp_tem)) * r1_hisf_tbl(ji,jj)
                   tsa(ji,jj,jk,jp_sal) = tsa(ji,jj,jk,jp_sal)                                          &
                      &           + zfact * (risf_tsc_b(ji,jj,jp_sal) + risf_tsc(ji,jj,jp_sal)) * r1_hisf_tbl(ji,jj)
                END DO
    
                ! level partially include in ice shelf boundary layer 
                ! compute tfreez for the temperature correction (we add water at freezing temperature)
-!               zpress = grav*rau0*fsdept(ji,jj,ikb)*1.e-04
-               zt_frz = -1.9 !eos_fzp( tsn(ji,jj,ikb,jp_sal), zpress )
                ! compute trend
                tsa(ji,jj,ikb,jp_tem) = tsa(ji,jj,ikb,jp_tem)                                           &
-                  &              + zfact * (risf_tsc_b(ji,jj,jp_tem) + risf_tsc(ji,jj,jp_tem)          &
-                  &                  - rdivisf * (fwfisf(ji,jj) + fwfisf_b(ji,jj)) * zt_frz * r1_rau0) & 
-                  &              * r1_hisf_tbl(ji,jj) * ralpha(ji,jj)
+                  &              + zfact * (risf_tsc_b(ji,jj,jp_tem) + risf_tsc(ji,jj,jp_tem)) * r1_hisf_tbl(ji,jj) * ralpha(ji,jj)
                tsa(ji,jj,ikb,jp_sal) = tsa(ji,jj,ikb,jp_sal)                                           &
                   &              + zfact * (risf_tsc_b(ji,jj,jp_sal) + risf_tsc(ji,jj,jp_sal)) * r1_hisf_tbl(ji,jj) * ralpha(ji,jj) 
             END DO
