@@ -194,9 +194,8 @@ CONTAINS
             !CALL fld_fill( sf_qisf  , (/ sn_qisf   /), cn_dirisf, 'sbc_isf_init', 'read heat flux isf data'       , 'namsbc_isf' )
          END IF
          
-         rhisf_tbl_0(:,:) = rhisf_tbl(:,:)
-
          ! compute bottom level of isf tbl and thickness of tbl below the ice shelf
+         rhisf_tbl_0(:,:) = rhisf_tbl(:,:)
          DO jj = 1,jpj
             DO ji = 1,jpi
                ikt = misfkt(ji,jj)
@@ -478,11 +477,8 @@ CONTAINS
                      IF ( (zhtflx - zhtflx_b) .LE. 0.01 ) lit = .FALSE.
 
                      nit = nit + 1
-                     IF (nit .GE. 100) THEN
-                        !WRITE(numout,*) "sbcisf : too many iteration ... ", zhtflx, zhtflx_b,zgammat, rn_gammat0, rn_tfri2, nn_gammablk, ji,jj
-                        !WRITE(numout,*) "sbcisf : too many iteration ... ", (zhtflx - zhtflx_b)/zhtflx
-                        CALL ctl_stop( 'STOP', 'sbc_isf_hol99 : too many iteration ...' )
-                     END IF
+                     IF (nit .GE. 100) CALL ctl_stop( 'STOP', 'sbc_isf_hol99 : too many iteration ...' )
+
 ! save gammat and compute zhtflx_b
                      zgammat2d(ji,jj)=zgammat
                      zhtflx_b = zhtflx
@@ -800,7 +796,7 @@ CONTAINS
                ! determine the deepest level influenced by the boundary layer
                ! test on tmask useless ?????
                DO jk = ikt, mbkt(ji,jj)
-!                  IF ( (SUM(fse3t(ji,jj,ikt:jk-1)) .LT. rhisf_tbl(ji,jj)) .AND. (tmask(ji,jj,jk) == 1) ) ikb = jk
+                  IF ( (SUM(fse3t(ji,jj,ikt:jk-1)) .LT. rhisf_tbl(ji,jj)) .AND. (tmask(ji,jj,jk) == 1) ) ikb = jk
                END DO
                rhisf_tbl(ji,jj) = MIN(rhisf_tbl(ji,jj), SUM(fse3t(ji,jj,ikt:ikb)))  ! limit the tbl to water thickness.
                misfkb(ji,jj) = ikb                                                  ! last wet level of the tbl
