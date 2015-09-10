@@ -28,9 +28,26 @@ MODULE trcice_pisces
 
 CONTAINS
 
+
    SUBROUTINE trc_ice_ini_pisces
       !!----------------------------------------------------------------------
-      !!                   ***  ROUTINE trc_ice_ini_pisces ***
+      !!                   ***  ROUTINE trc_ini_pisces ***
+      !!
+      !! ** Purpose :   Initialisation of the PISCES biochemical model
+      !!----------------------------------------------------------------------
+
+      IF( lk_p4z ) THEN  ;   CALL p4z_ice_ini   !  PISCES
+      ELSE               ;   CALL p2z_ice_ini   !  LOBSTER
+      ENDIF
+
+   END SUBROUTINE trc_ice_ini_pisces
+
+
+   SUBROUTINE p4z_ice_ini
+
+#if defined key_pisces 
+      !!----------------------------------------------------------------------
+      !!                   ***  ROUTINE p4z_ice_ini ***
       !!
       !! ** Purpose :   PISCES fake sea ice model setting
       !!    Method  :   Assign prescribe values to tracer concentrations in sea ice
@@ -261,8 +278,20 @@ CONTAINS
          ENDIF
       !
       END DO ! jn
+#endif
 
-   END SUBROUTINE trc_ice_ini_pisces
+   END SUBROUTINE p4z_ice_ini
+
+   SUBROUTINE p2z_ice_ini
+#if defined key_pisces_reduced 
+      !!----------------------------------------------------------------------
+      !!                   ***  ROUTINE p2z_ice_ini ***
+      !!
+      !! ** Purpose :   Initialisation of the LOBSTER biochemical model
+      !!----------------------------------------------------------------------
+#endif
+   END SUBROUTINE p2z_ice_ini
+
 
 #else
    !!----------------------------------------------------------------------
