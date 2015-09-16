@@ -814,6 +814,17 @@ CONTAINS
          iyear = kyear
          imonth = kmonth
          iday = kday
+         IF ( sdjf%cltype(1:4) == 'week' ) THEN             ! find the day of
+         the beginning of the week
+            isec_week = ksec_week( sdjf%cltype(6:8) )- (86400 * 8 )  
+            llprevmth  = isec_week > nsec_month             ! longer time since
+            beginning of the week than the month
+            llprevyr   = llprevmth .AND. nmonth == 1
+            iyear  = nyear  - COUNT((/llprevyr /))
+            imonth = nmonth - COUNT((/llprevmth/)) + 12 * COUNT((/llprevyr /))
+            iday   = nday   + nmonth_len(nmonth-1) * COUNT((/llprevmth/)) -
+            isec_week / NINT(rday)
+         ENDIF
       ELSE                                                  ! use current day values
          IF ( sdjf%cltype(1:4) == 'week' ) THEN             ! find the day of the beginning of the week
             isec_week  = ksec_week( sdjf%cltype(6:8) )      ! second since the beginning of the week
