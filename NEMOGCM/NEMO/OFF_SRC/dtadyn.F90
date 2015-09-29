@@ -430,12 +430,15 @@ CONTAINS
       IF( ierr > 0 ) THEN
          CALL ctl_stop( 'dta_dyn: unable to allocate sf structure' )   ;   RETURN
       ENDIF
+      !                                         ! fill sf with slf_i and control print
+      CALL fld_fill( sf_dyn, slf_d, cn_dir, 'dta_dyn_init', 'Data in file', 'namdta_dyn' )
       ! Open file for each variable to get his number of dimension
       DO ifpr = 1, jfld
-         CALL iom_open( TRIM( cn_dir )//TRIM( slf_d(ifpr)%clname ), inum )
-         idv   = iom_varid( inum , slf_d(ifpr)%clvar )  ! id of the variable sdjf%clvar
-         idimv = iom_file ( inum )%ndims(idv)             ! number of dimension for variable sdjf%clvar
-         IF( inum /= 0 )   CALL iom_close( inum )       ! close file if already open
+         CALL fld_clopn( sf_dyn(ifpr), nyear, nmonth, nday )
+         idv   = iom_varid( sf_dyn(ifpr)%num , slf_d(ifpr)%clvar )        ! id of the variable sdjf%clvar
+         idimv = iom_file ( sf_dyn(ifpr)%num )%ndims(idv)                 ! number of dimension for variable sdjf%clvar
+         IF( sf_dyn(ifpr)%num /= 0 )   CALL iom_close( sf_dyn(ifpr)%num ) ! close file if already open
+         ierr1=0
          IF( idimv == 3 ) THEN    ! 2D variable
                                       ALLOCATE( sf_dyn(ifpr)%fnow(jpi,jpj,1)    , STAT=ierr0 )
             IF( slf_d(ifpr)%ln_tint ) ALLOCATE( sf_dyn(ifpr)%fdta(jpi,jpj,1,2)  , STAT=ierr1 )
@@ -447,8 +450,6 @@ CONTAINS
             CALL ctl_stop( 'dta_dyn_init : unable to allocate sf_dyn array structure' )   ;   RETURN
          ENDIF
       END DO
-      !                                         ! fill sf with slf_i and control print
-      CALL fld_fill( sf_dyn, slf_d, cn_dir, 'dta_dyn_init', 'Data in file', 'namdta_dyn' )
       !
       IF( lk_ldfslp .AND. .NOT.lk_c1d ) THEN                  ! slopes 
          IF( sf_dyn(jf_tem)%ln_tint ) THEN      ! time interpolation

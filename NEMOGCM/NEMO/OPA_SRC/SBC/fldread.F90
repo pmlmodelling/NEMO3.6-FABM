@@ -31,6 +31,7 @@ MODULE fldread
  
    PUBLIC   fld_map    ! routine called by tides_init
    PUBLIC   fld_read, fld_fill   ! called by sbc... modules
+   PUBLIC   fld_clopn
 
    TYPE, PUBLIC ::   FLD_N      !: Namelist field informations
       CHARACTER(len = 256) ::   clname      ! generic name of the NetCDF flux file
