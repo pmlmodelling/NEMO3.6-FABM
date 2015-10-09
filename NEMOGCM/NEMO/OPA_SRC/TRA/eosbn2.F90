@@ -1240,7 +1240,8 @@ CONTAINS
 902   IF( ios /= 0 ) CALL ctl_nam ( ios , 'nameos in configuration namelist', lwp )
       IF(lwm) WRITE( numond, nameos )
       !
-      rau0        = 1026._wp                 !: volumic mass of reference     [kg/m3]
+      rau0        = 1020._wp                 !: volumic mass of reference     [kg/m3]
+!     rau0        = 1026._wp                 !: volumic mass of reference     [kg/m3]
       rcp         = 3991.86795711963_wp      !: heat capacity     [J/K]
       !
       IF(lwp) THEN                ! Control print
