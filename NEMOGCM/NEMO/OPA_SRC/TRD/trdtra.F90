@@ -202,9 +202,14 @@ CONTAINS
       DO jk = 1, jpkm1         ! advective trend
          DO jj = 2, jpjm1
             DO ji = fs_2, fs_jpim1   ! vector opt.
+#if defined key_tracer_budget
+!              ptrd(ji,jj,jk) = - (     pf (ji,jj,jk) - pf (ji-ii,jj-ij,jk-ik)  )  * tmask(ji,jj,jk)
+               ptrd(ji,jj,jk) = -      pf (ji,jj,jk) * tmask(ji,jj,jk)
+#else
                ptrd(ji,jj,jk) = - (     pf (ji,jj,jk) - pf (ji-ii,jj-ij,jk-ik)                        &
                  &                  - ( pun(ji,jj,jk) - pun(ji-ii,jj-ij,jk-ik) ) * ptn(ji,jj,jk)  )   &
                  &              / ( e1t(ji,jj) * e2t(ji,jj) * fse3t(ji,jj,jk) )  * tmask(ji,jj,jk)
+#endif
             END DO
          END DO
       END DO

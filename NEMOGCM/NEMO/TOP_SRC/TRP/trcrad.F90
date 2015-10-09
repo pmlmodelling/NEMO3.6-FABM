@@ -17,6 +17,9 @@ MODULE trcrad
    USE trd_oce
    USE trdtra
    USE prtctl_trc          ! Print control for debbuging
+#if defined key_tracer_budget
+   USE iom
+#endif
 
    IMPLICIT NONE
    PRIVATE
@@ -109,12 +112,29 @@ CONTAINS
       REAL(wp) :: ztrcorb, ztrmasb   ! temporary scalars
       REAL(wp) :: zcoef, ztrcorn, ztrmasn   !    "         "
       REAL(wp), POINTER, DIMENSION(:,:,:) ::   ztrtrdb, ztrtrdn   ! workspace arrays
+#if defined key_tracer_budget
+      REAL(wp), ALLOCATABLE, SAVE, DIMENSION(:,:,:,:) ::  ztrtrdb_m1 ! slwa 
+#endif
       REAL(wp) :: zs2rdt
       LOGICAL ::   lldebug = .FALSE.
       !!----------------------------------------------------------------------
 
  
       IF( l_trdtrc )  CALL wrk_alloc( jpi, jpj, jpk, ztrtrdb, ztrtrdn )
+#if defined key_tracer_budget
+      IF( kt == nittrc000 .AND. l_trdtrc) THEN
+         ALLOCATE( ztrtrdb_m1(jpi,jpj,jpk,jptra) )  ! slwa
+         IF( ln_rsttr .AND.    &                     ! Restart: read in restart  file
+            iom_varid( numrtr, 'rdb_trend_'//TRIM(ctrcnm(1)), ldstop = .FALSE. ) > 0 ) THEN
+            IF(lwp) WRITE(numout,*) '          nittrc000-nn_dttrc RDB tracer trend read in the restart file'
+            DO jn = 1, jptra
+               CALL iom_get( numrtr, jpdom_autoglo, 'rdb_trend_'//TRIM(ctrcnm(jn)), ztrtrdb_m1(:,:,:,jn) )   ! before tracer trend for rdb
+            END DO
+         ELSE
+           ztrtrdb_m1=0.0
+         ENDIF
+      ENDIF
+#endif
       
       IF( PRESENT( cpreserv )  ) THEN   !  total tracer concentration is preserved 
       
@@ -155,7 +175,17 @@ CONTAINS
                zs2rdt = 1. / ( 2. * rdt )
                ztrtrdb(:,:,:) = ( ptrb(:,:,:,jn) - ztrtrdb(:,:,:) ) * zs2rdt
                ztrtrdn(:,:,:) = ( ptrn(:,:,:,jn) - ztrtrdn(:,:,:) ) * zs2rdt 
+#if defined key_tracer_budget
+! slwa budget code
+               DO jk = 1, jpkm1
+                  ztrtrdb(:,:,jk) = ztrtrdb(:,:,jk) * e1t(:,:) * e2t(:,:) * fse3t(:,:,jk)
+                  ztrtrdn(:,:,jk) = ztrtrdn(:,:,jk) * e1t(:,:) * e2t(:,:) * fse3t(:,:,jk)
+               END DO
+               CALL trd_tra( kt, 'TRC', jn, jptra_radb, ztrtrdb_m1(:,:,:,jn) )
+               ztrtrdb_m1(:,:,:,jn)=ztrtrdb(:,:,:)
+#else
                CALL trd_tra( kt, 'TRC', jn, jptra_radb, ztrtrdb )       ! Asselin-like trend handling
+#endif
                CALL trd_tra( kt, 'TRC', jn, jptra_radn, ztrtrdn )       ! standard     trend handling
               !
             ENDIF
@@ -186,7 +216,17 @@ CONTAINS
                zs2rdt = 1. / ( 2. * rdt * FLOAT( nn_dttrc ) )
                ztrtrdb(:,:,:) = ( ptrb(:,:,:,jn) - ztrtrdb(:,:,:) ) * zs2rdt
                ztrtrdn(:,:,:) = ( ptrn(:,:,:,jn) - ztrtrdn(:,:,:) ) * zs2rdt 
+#if defined key_tracer_budget
+! slwa budget code
+               DO jk = 1, jpkm1
+                  ztrtrdb(:,:,jk) = ztrtrdb(:,:,jk) * e1t(:,:) * e2t(:,:) * fse3t(:,:,jk)
+                  ztrtrdn(:,:,jk) = ztrtrdn(:,:,jk) * e1t(:,:) * e2t(:,:) * fse3t(:,:,jk)
+               END DO
+               CALL trd_tra( kt, 'TRC', jn, jptra_radb, ztrtrdb_m1(:,:,:,jn) )
+               ztrtrdb_m1(:,:,:,jn)=ztrtrdb(:,:,:)
+#else
                CALL trd_tra( kt, 'TRC', jn, jptra_radb, ztrtrdb )       ! Asselin-like trend handling
+#endif
                CALL trd_tra( kt, 'TRC', jn, jptra_radn, ztrtrdn )       ! standard     trend handling
               !
             ENDIF
@@ -194,6 +234,20 @@ CONTAINS
          ENDDO
 
       ENDIF
+
+#if defined key_tracer_budget
+      !                                           Write in the tracer restart file
+      !                                          *******************************
+      IF( lrst_trc ) THEN
+         IF(lwp) WRITE(numout,*)
+         IF(lwp) WRITE(numout,*) 'trc : RDB trend at last time step for tracer budget written in tracer restart file ',   &
+            &                    'at it= ', kt,' date= ', ndastp
+         IF(lwp) WRITE(numout,*) '~~~~'
+         DO jn = 1, jptra
+            CALL iom_rstput( kt, nitrst, numrtw, 'rdb_trend_'//TRIM(ctrcnm(jn)), ztrtrdb_m1(:,:,:,jn) )
+         END DO
+      ENDIF
+#endif
 
       IF( l_trdtrc )  CALL wrk_dealloc( jpi, jpj, jpk, ztrtrdb, ztrtrdn )
 
