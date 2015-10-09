@@ -176,6 +176,7 @@ MODULE dom_oce
    LOGICAL, PUBLIC ::   ln_zps        !: z-coordinate - partial step
    LOGICAL, PUBLIC ::   ln_sco        !: s-coordinate or hybrid z-s coordinate
    LOGICAL, PUBLIC ::   ln_isfcav     !: presence of ISF 
+   LOGICAL, PUBLIC ::   ln_read_zenv     =  .FALSE.   !: Whether to read zenv or calculate it
 
    !! All coordinates
    !! ---------------

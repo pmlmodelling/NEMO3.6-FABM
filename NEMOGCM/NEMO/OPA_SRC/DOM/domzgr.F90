@@ -101,7 +101,7 @@ CONTAINS
       INTEGER ::   ioptio, ibat   ! local integer
       INTEGER ::   ios
       !
-      NAMELIST/namzgr/ ln_zco, ln_zps, ln_sco, ln_isfcav
+      NAMELIST/namzgr/ ln_zco, ln_zps, ln_sco, ln_isfcav, ln_read_zenv
       !!----------------------------------------------------------------------
       !
       IF( nn_timing == 1 )   CALL timing_start('dom_zgr')
@@ -123,6 +123,7 @@ CONTAINS
          WRITE(numout,*) '             z-coordinate - full steps      ln_zco    = ', ln_zco
          WRITE(numout,*) '             z-coordinate - partial steps   ln_zps    = ', ln_zps
          WRITE(numout,*) '             s- or hybrid z-s-coordinate    ln_sco    = ', ln_sco
+         WRITE(numout,*) '             Read Zenv from Bathy T/F ln_read_zenv = ', ln_read_zenv
          WRITE(numout,*) '             ice shelf cavities             ln_isfcav = ', ln_isfcav
       ENDIF
 
@@ -1793,6 +1794,7 @@ CONTAINS
       INTEGER  ::   ji, jj, jk, jl           ! dummy loop argument
       INTEGER  ::   iip1, ijp1, iim1, ijm1   ! temporary integers
       INTEGER  ::   ios                      ! Local integer output status for namelist read
+      INTEGER  ::   inum
       REAL(wp) ::   zrmax, ztaper   ! temporary scalars
       REAL(wp) ::   zrfact
       !
@@ -1806,6 +1808,11 @@ CONTAINS
       IF( nn_timing == 1 )  CALL timing_start('zgr_sco')
       !
       CALL wrk_alloc( jpi, jpj, zenv, ztmp, zmsk, zri, zrj, zhbat , ztmpi1, ztmpi2, ztmpj1, ztmpj2 )
+         IF ( ln_read_zenv ) THEN                  ! Whether we should read zenv or not
+            CALL iom_open ( 'bathy_meter.nc', inum )
+            CALL iom_get  ( inum, jpdom_data, 'zenv', zenv )
+            CALL iom_close( inum )
+         ENDIF
       !
       REWIND( numnam_ref )              ! Namelist namzgr_sco in reference namelist : Sigma-stretching parameters
       READ  ( numnam_ref, namzgr_sco, IOSTAT = ios, ERR = 901)
@@ -1858,6 +1865,14 @@ CONTAINS
       !                                        ! =============================
       !                                        ! Define the envelop bathymetry   (hbatt)
       !                                        ! =============================
+      IF( ln_read_zenv) THEN
+         WRITE(numout,*) '      Zenv is not calculated but read from Bathy File  ln_read_zenv        = ', ln_read_zenv
+      ! smooth the bathymetry (if required)
+      scosrf(:,:) = 0._wp             ! ocean surface depth (here zero: no under ice-shelf sea)
+      scobot(:,:) = bathy(:,:)        ! ocean bottom  depth
+
+      ELSE
+
       ! use r-value to create hybrid coordinates
       zenv(:,:) = bathy(:,:)
       !
@@ -1951,6 +1966,7 @@ CONTAINS
          END DO
       END DO
       !
+      ENDIF       ! End of IF block for reading from a file or calculating zenv
       ! Envelope bathymetry saved in hbatt
       hbatt(:,:) = zenv(:,:) 
       IF( MINVAL( gphit(:,:) ) * MAXVAL( gphit(:,:) ) <= 0._wp ) THEN
