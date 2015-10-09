@@ -32,6 +32,8 @@ MODULE trcnxt
    USE trd_oce
    USE trdtra
    USE tranxt
+   USE trcbdy          ! BDY open boundaries
+   USE bdy_par, only: lk_bdy
 # if defined key_agrif
    USE agrif_top_interp
 # endif
@@ -107,9 +109,7 @@ CONTAINS
       END DO
 
 
-#if defined key_bdy
-!!      CALL bdy_trc( kt )               ! BDY open boundaries
-#endif
+      IF( lk_bdy )  CALL trc_bdy( kt )               ! BDY open boundaries
 #if defined key_agrif
       CALL Agrif_trc                   ! AGRIF zoom boundaries
 #endif

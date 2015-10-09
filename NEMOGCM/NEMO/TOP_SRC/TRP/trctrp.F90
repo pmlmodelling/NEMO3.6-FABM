@@ -26,6 +26,8 @@ MODULE trctrp
    USE trcrad          ! positivity                          (trc_rad routine)
    USE trcsbc          ! surface boundary condition          (trc_sbc routine)
    USE zpshde          ! partial step: hor. derivative       (zps_hde routine)
+   USE trcbdy          ! BDY open boundaries
+   USE bdy_par, only: lk_bdy
 
 #if defined key_agrif
    USE agrif_top_sponge ! tracers sponges
@@ -67,6 +69,7 @@ CONTAINS
          IF( lk_trabbl )        CALL trc_bbl( kstp )            ! advective (and/or diffusive) bottom boundary layer scheme
          IF( ln_trcdmp )        CALL trc_dmp( kstp )            ! internal damping trends
          IF( ln_trcdmp_clo )    CALL trc_dmp_clo( kstp )        ! internal damping trends on closed seas only
+         IF( lk_bdy )           CALL trc_bdy_dmp( kstp )        ! BDY damping trends
                                 CALL trc_adv( kstp )            ! horizontal & vertical advection 
                                 CALL trc_ldf( kstp )            ! lateral mixing
          IF( .NOT. lk_offline .AND. lk_zdfkpp )    &

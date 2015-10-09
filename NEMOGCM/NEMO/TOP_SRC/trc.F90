@@ -13,6 +13,9 @@ MODULE trc
    !!----------------------------------------------------------------------
    USE par_oce
    USE par_trc
+#if defined key_bdy
+   USE bdy_oce, only: nb_bdy, OBC_DATA
+#endif
    
    IMPLICIT NONE
    PUBLIC
@@ -90,6 +93,11 @@ MODULE trc
        CHARACTER(len = 80)  :: cllname  !: long name
        CHARACTER(len = 20)  :: clunit   !: unit
        LOGICAL              :: llinit   !: read in a file or not
+#if defined  key_my_trc
+       LOGICAL              :: llsbc   !: read in a file or not
+       LOGICAL              :: llcbc   !: read in a file or not
+       LOGICAL              :: llobc   !: read in a file or not
+#endif
        LOGICAL              :: llsave   !: save the tracer or not
    END TYPE PTRACER
    CHARACTER(len = 20), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:)    ::  ctrcnm         !: tracer name 
@@ -190,6 +198,13 @@ MODULE trc
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:)   ::  avs_temp      !: salinity vertical diffusivity coeff. at w-point   [m/s]
 # endif
    !
+#if defined key_bdy
+   CHARACTER(len=20), PUBLIC, ALLOCATABLE,  SAVE,  DIMENSION(:)   ::  cn_trc_dflt          ! Default OBC condition for all tracers
+   CHARACTER(len=20), PUBLIC, ALLOCATABLE,  SAVE,  DIMENSION(:)   ::  cn_trc               ! Choice of boundary condition for tracers
+   INTEGER,           PUBLIC, ALLOCATABLE,  SAVE,  DIMENSION(:)   ::  nn_trcdmp_bdy        !: =T Tracer damping
+   ! External data structure of BDY for TOP. Available elements: cn_obc, ll_trc, trcnow, dmp
+   TYPE(OBC_DATA),    PUBLIC, ALLOCATABLE, DIMENSION(:,:), TARGET ::  trcdta_bdy           !: bdy external data (local process)
+#endif
 
    !!----------------------------------------------------------------------
    !! NEMO/TOP 3.3.1 , NEMO Consortium (2010)
@@ -212,6 +227,13 @@ CONTAINS
          &      sbc_trc_b(jpi,jpj,jptra), sbc_trc(jpi,jpj,jptra)                      ,       &  
          &      cvol(jpi,jpj,jpk)     , rdttrc(jpk)           , trai(jptra)           ,       &
          &      ctrcnm(jptra)         , ctrcln(jptra)         , ctrcun(jptra)         ,       & 
+#if defined key_my_trc
+         &      ln_trc_sbc(jptra)     , ln_trc_cbc(jptra)     , ln_trc_obc(jptra)     ,       &
+#endif
+#if defined key_bdy
+         &      cn_trc_dflt(nb_bdy)   , cn_trc(nb_bdy)        , nn_trcdmp_bdy(nb_bdy) ,       &
+         &      trcdta_bdy(jptra,nb_bdy)                                              ,       &
+#endif
          &      ln_trc_ini(jptra)     , ln_trc_wri(jptra)     , qsr_mean(jpi,jpj)     ,  STAT = trc_alloc  )  
 
       IF( trc_alloc /= 0 )   CALL ctl_warn('trc_alloc: failed to allocate arrays')

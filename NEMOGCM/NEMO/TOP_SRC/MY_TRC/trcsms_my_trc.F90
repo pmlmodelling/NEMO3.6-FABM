@@ -17,6 +17,7 @@ MODULE trcsms_my_trc
    USE trc             ! TOP variables
    USE trd_oce
    USE trdtrc
+   USE trcbc, only : trc_bc_read
 
    IMPLICIT NONE
    PRIVATE
@@ -54,6 +55,8 @@ CONTAINS
       IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~~~~'
 
       IF( l_trdtrc )  CALL wrk_alloc( jpi, jpj, jpk, ztrmyt )
+
+      CALL trc_bc_read  ( kt )       ! tracers: surface and lateral Boundary Conditions
 
       IF( l_trdtrc ) THEN      ! Save the trends in the ixed layer
           DO jn = jp_myt0, jp_myt1

@@ -8,6 +8,7 @@ MODULE trcdta
    !!              -   !  2005-03  (O. Aumont, A. El Moussaoui) F90
    !!            3.4   !  2010-11  (C. Ethe, G. Madec)  use of fldread + dynamical allocation 
    !!            3.5   !  2013-08  (M. Vichi)  generalization for other BGC models
+   !!            3.6   !  2015-03  (T. Lovato) revision of code log info
    !!----------------------------------------------------------------------
 #if  defined key_top 
    !!----------------------------------------------------------------------
@@ -71,12 +72,18 @@ CONTAINS
       !
       IF( nn_timing == 1 )  CALL timing_start('trc_dta_init')
       !
+      IF( lwp ) THEN
+         WRITE(numout,*) ' '
+         WRITE(numout,*) '  trc_dta_init : Tracers Initial Conditions (IC)'
+         WRITE(numout,*) '  ~~~~~~~~~~~ '
+      ENDIF
+      !
       !  Initialisation
       ierr0 = 0  ;  ierr1 = 0  ;  ierr2 = 0  ;  ierr3 = 0  
       ! Compute the number of tracers to be initialised with data
       ALLOCATE( n_trc_index(ntrc), slf_i(ntrc), STAT=ierr0 )
       IF( ierr0 > 0 ) THEN
-         CALL ctl_stop( 'trc_nam: unable to allocate n_trc_index' )   ;   RETURN
+         CALL ctl_stop( 'trc_dta_init: unable to allocate n_trc_index' )   ;   RETURN
       ENDIF
       nb_trcdta      = 0
       n_trc_index(:) = 0
@@ -96,11 +103,11 @@ CONTAINS
       !
       REWIND( numnat_ref )              ! Namelist namtrc_dta in reference namelist : Passive tracer input data
       READ  ( numnat_ref, namtrc_dta, IOSTAT = ios, ERR = 901)
-901   IF( ios /= 0 ) CALL ctl_nam ( ios , 'namtrc_dta in reference namelist', lwp )
+901   IF( ios /= 0 ) CALL ctl_nam ( ios , 'namtrc_dta_init in reference namelist', lwp )
 
       REWIND( numnat_cfg )              ! Namelist namtrc_dta in configuration namelist : Passive tracer input data
       READ  ( numnat_cfg, namtrc_dta, IOSTAT = ios, ERR = 902 )
-902   IF( ios /= 0 ) CALL ctl_nam ( ios , 'namtrc_dta in configuration namelist', lwp )
+902   IF( ios /= 0 ) CALL ctl_nam ( ios , 'namtrc_dta_init in configuration namelist', lwp )
       IF(lwm) WRITE ( numont, namtrc_dta )
 
       IF( lwp ) THEN
@@ -108,14 +115,16 @@ CONTAINS
             IF( ln_trc_ini(jn) )  THEN    ! open input file only if ln_trc_ini(jn) is true
                clndta = TRIM( sn_trcdta(jn)%clvar ) 
                clntrc = TRIM( ctrcnm   (jn)       ) 
+               if (jn > jptra) clntrc='Dummy' ! By pass weird formats in ocean.output if ntrc > jptra
                zfact  = rn_trfac(jn)
                IF( clndta /=  clntrc ) THEN 
-                  CALL ctl_warn( 'trc_dta_init: passive tracer data initialisation :  ',   &
-                  &              'the variable name in the data file : '//clndta//   & 
-                  &              '  must be the same than the name of the passive tracer : '//clntrc//' ')
+                  CALL ctl_warn( 'trc_dta_init: passive tracer data initialisation    ',   &
+                  &              'Input name of data file : '//TRIM(clndta)//   &
+                  &              ' differs from that of tracer : '//TRIM(clntrc)//' ')
                ENDIF
-               WRITE(numout,*) ' read an initial file for passive tracer number :', jn, ' name : ', clndta, & 
-               &               ' multiplicative factor : ', zfact
+               WRITE(numout,*) ' '
+               WRITE(numout,'(a, i3,3a,e11.3)') ' Read IC file for tracer number :', &
+               &            jn, ', name : ', TRIM(clndta), ', Multiplicative Scaling factor : ', zfact
             ENDIF
          END DO
       ENDIF
@@ -123,7 +132,7 @@ CONTAINS
       IF( nb_trcdta > 0 ) THEN       !  allocate only if the number of tracer to initialise is greater than zero
          ALLOCATE( sf_trcdta(nb_trcdta), rf_trfac(nb_trcdta), STAT=ierr1 )
          IF( ierr1 > 0 ) THEN
-            CALL ctl_stop( 'trc_dta_ini: unable to allocate  sf_trcdta structure' )   ;   RETURN
+            CALL ctl_stop( 'trc_dta_init: unable to allocate  sf_trcdta structure' )   ;   RETURN
          ENDIF
          !
          DO jn = 1, ntrc
@@ -134,13 +143,13 @@ CONTAINS
                                             ALLOCATE( sf_trcdta(jl)%fnow(jpi,jpj,jpk)   , STAT=ierr2 )
                IF( sn_trcdta(jn)%ln_tint )  ALLOCATE( sf_trcdta(jl)%fdta(jpi,jpj,jpk,2) , STAT=ierr3 )
                IF( ierr2 + ierr3 > 0 ) THEN
-                 CALL ctl_stop( 'trc_dta : unable to allocate passive tracer data arrays' )   ;   RETURN
+                 CALL ctl_stop( 'trc_dta_init : unable to allocate passive tracer data arrays' )   ;   RETURN
                ENDIF
             ENDIF
             !   
          ENDDO
          !                         ! fill sf_trcdta with slf_i and control print
-         CALL fld_fill( sf_trcdta, slf_i, cn_dir, 'trc_dta', 'Passive tracer data', 'namtrc' )
+         CALL fld_fill( sf_trcdta, slf_i, cn_dir, 'trc_dta_init', 'Passive tracer data', 'namtrc' )
          !
       ENDIF
       !

@@ -70,6 +70,13 @@ MODULE bdy_oce
       REAL, POINTER, DIMENSION(:,:)   ::  ht_i  !: Now ice  thickness climatology
       REAL, POINTER, DIMENSION(:,:)   ::  ht_s  !: now snow thickness
 #endif
+#if defined key_top
+      CHARACTER(LEN=20)                   :: cn_obc  !: type of boundary condition to apply
+      REAL(wp)                            :: rn_fac  !: multiplicative scaling factor
+      REAL(wp), POINTER, DIMENSION(:,:)   :: trc     !: now field of the tracer
+      LOGICAL                             :: dmp     !: obc damping term
+#endif
+
    END TYPE OBC_DATA
 
    !!----------------------------------------------------------------------

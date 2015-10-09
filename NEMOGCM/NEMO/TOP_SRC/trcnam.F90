@@ -33,6 +33,12 @@ MODULE trcnam
 
    PUBLIC trc_nam_run  ! called in trcini
    PUBLIC trc_nam      ! called in trcini
+   PUBLIC trc_nam_dia
+#if defined key_trdmxl_trc  || defined key_trdtrc
+   NAMELIST/namtrc_trd/ nn_trd_trc, nn_ctls_trc, rn_ucf_trc, &
+      &                ln_trdmxl_trc_restart, ln_trdmxl_trc_instant, &
+      &                cn_trdrst_trc_in, cn_trdrst_trc_out, ln_trdtrc
+#endif
 
    !! * Substitutions
 #  include "top_substitute.h90"
@@ -56,6 +62,10 @@ CONTAINS
       !!                ( (PISCES, CFC, MY_TRC )
       !!---------------------------------------------------------------------
       INTEGER  ::   jn                  ! dummy loop indice
+#if defined key_trdmxl_trc  || defined key_trdtrc
+      INTEGER :: ios
+#endif
+
       !                                        !   Parameters of the run 
       IF( .NOT. lk_offline ) CALL trc_nam_run
       
@@ -186,7 +196,7 @@ CONTAINS
       !!---------------------------------------------------------------------
 
 
-      IF(lwp) WRITE(numout,*) 'trc_nam : read the passive tracer namelists'
+      IF(lwp) WRITE(numout,*) 'trc_nam_run : read the passive tracer namelists'
       IF(lwp) WRITE(numout,*) '~~~~~~~'
 
       CALL ctl_opn( numnat_ref, 'namelist_top_ref'   , 'OLD'    , 'FORMATTED', 'SEQUENTIAL', -1, numout, .FALSE. )
@@ -279,13 +289,13 @@ CONTAINS
       !!---------------------------------------------------------------------
       TYPE(PTRACER), DIMENSION(jptra) :: sn_tracer  ! type of tracer for saving if not key_iomput
       !!
-      NAMELIST/namtrc/ sn_tracer, ln_trcdta,ln_trcdmp, ln_trcdmp_clo
+      NAMELIST/namtrc/ sn_tracer, ln_trcdta, ln_trcdmp, ln_trcdmp_clo
   
       INTEGER  ::   ios                 ! Local integer output status for namelist read
       INTEGER  ::   jn                  ! dummy loop indice
       !!---------------------------------------------------------------------
       IF(lwp) WRITE(numout,*)
-      IF(lwp) WRITE(numout,*) 'trc_nam : read the passive tracer namelists'
+      IF(lwp) WRITE(numout,*) 'trc_nam_trc : read the passive tracer namelists'
       IF(lwp) WRITE(numout,*) '~~~~~~~'
 
 
@@ -303,6 +313,11 @@ CONTAINS
          ctrcln    (jn) = TRIM( sn_tracer(jn)%cllname )
          ctrcun    (jn) = TRIM( sn_tracer(jn)%clunit  )
          ln_trc_ini(jn) =       sn_tracer(jn)%llinit
+#if defined key_my_trc
+         ln_trc_sbc(jn) =       sn_tracer(jn)%llsbc
+         ln_trc_cbc(jn) =       sn_tracer(jn)%llcbc
+         ln_trc_obc(jn) =       sn_tracer(jn)%llobc
+#endif
          ln_trc_wri(jn) =       sn_tracer(jn)%llsave
       END DO
       
@@ -321,18 +336,14 @@ CONTAINS
       !!---------------------------------------------------------------------
       INTEGER ::  ierr
 #if defined key_trdmxl_trc  || defined key_trdtrc
-      NAMELIST/namtrc_trd/ nn_trd_trc, nn_ctls_trc, rn_ucf_trc, &
-         &                ln_trdmxl_trc_restart, ln_trdmxl_trc_instant, &
-         &                cn_trdrst_trc_in, cn_trdrst_trc_out, ln_trdtrc
+!     NAMELIST/namtrc_trd/ nn_trd_trc, nn_ctls_trc, rn_ucf_trc, &
+!        &                ln_trdmxl_trc_restart, ln_trdmxl_trc_instant, &
+!        &                cn_trdrst_trc_in, cn_trdrst_trc_out, ln_trdtrc
 #endif
       NAMELIST/namtrc_dia/ ln_diatrc, ln_diabio, nn_writedia, nn_writebio
 
       INTEGER  ::   ios                 ! Local integer output status for namelist read
       !!---------------------------------------------------------------------
-
-      IF(lwp) WRITE(numout,*) 
-      IF(lwp) WRITE(numout,*) 'trc_nam_dia : read the passive tracer diagnostics options'
-      IF(lwp) WRITE(numout,*) '~~~~~~~'
 
       IF(lwp) WRITE(numout,*)
       IF(lwp) WRITE(numout,*) 'trc_nam_dia : read the passive tracer diagnostics options'

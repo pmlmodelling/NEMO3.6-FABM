@@ -31,6 +31,7 @@ MODULE trcini
    USE lib_mpp         ! distribued memory computing library
    USE sbc_oce
    USE trcice          ! tracers in sea ice
+   USE trcbc,   only : trc_bc_init ! generalized Boundary Conditions
  
    IMPLICIT NONE
    PRIVATE
@@ -109,6 +110,7 @@ CONTAINS
          !
       ENDIF
 
+      ! Initialisation of tracers Initial Conditions
       IF( ln_trcdta )      CALL trc_dta_init(jptra)
 
 
@@ -143,6 +145,8 @@ CONTAINS
         trb(:,:,:,:) = trn(:,:,:,:)
         ! 
       ENDIF
+! Initialisation of tracers Boundary Conditions  - here so that you can use initial condition as boundary
+      IF( lk_my_trc )     CALL trc_bc_init(jptra)
  
       tra(:,:,:,:) = 0._wp
       IF( ln_zps .AND. .NOT. lk_c1d .AND. .NOT. ln_isfcav )   &              ! Partial steps: before horizontal gradient of passive

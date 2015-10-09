@@ -30,6 +30,7 @@ MODULE dommsk
    USE dynspg_oce      ! choice/control of key cpp for surface pressure gradient
    USE wrk_nemo        ! Memory allocation
    USE timing          ! Timing
+   USE iom    ! slwa
 
    IMPLICIT NONE
    PRIVATE
@@ -134,6 +135,9 @@ CONTAINS
       INTEGER  ::   ijf, ijl, ij0, ij1       !   -       -
       INTEGER  ::   ios
       INTEGER  ::   isrow                    ! index for ORCA1 starting row
+#if defined key_bdy && defined key_cs15
+      INTEGER  ::   inum !slwa
+#endif
       INTEGER , POINTER, DIMENSION(:,:) ::  imsk
       REAL(wp), POINTER, DIMENSION(:,:) ::  zwf
       !!
@@ -171,6 +175,14 @@ CONTAINS
          WRITE(ctmp1,*) ' rn_shlat is negative = ', rn_shlat
          CALL ctl_stop( ctmp1 )
       ENDIF
+!slwa
+! read in mask for unstructured open boundaries
+#if defined key_bdy && defined key_cs15
+         CALL iom_open( 'mask_CS15.nc', inum )
+         CALL iom_get ( inum, jpdom_data, 'bdy_msk', zwf(:,:) )
+         CALL iom_close( inum )
+#endif
+!slwa
 
       ! 1. Ocean/land mask at t-point (computed from mbathy)
       ! -----------------------------
@@ -181,6 +193,9 @@ CONTAINS
          DO jj = 1, jpj
             DO ji = 1, jpi
                IF( REAL( mbathy(ji,jj) - jk, wp ) + 0.1_wp >= 0._wp )   tmask(ji,jj,jk) = 1._wp
+#if defined key_bdy && defined key_cs15
+               tmask(ji,jj,jk) = tmask(ji,jj,jk) * zwf(ji,jj)  ! slwa
+#endif
             END DO  
          END DO  
       END DO  
