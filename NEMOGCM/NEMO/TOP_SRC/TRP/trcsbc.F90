@@ -112,6 +112,7 @@ CONTAINS
            zfact = 1._wp
            sbc_trc_b(:,:,:) = 0._wp
          ENDIF
+         sbc_trc(:,:,:) = 0._wp    !slwa initialise for vvl
       ELSE                                         ! Swap of forcing fields
          IF( ln_top_euler ) THEN
             zfact = 1._wp
