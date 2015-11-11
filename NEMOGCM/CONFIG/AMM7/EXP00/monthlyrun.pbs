@@ -1,0 +1,25 @@
+#!/bin/bash --login
+#####PBS -l select=20
+#PBS -l select=8
+#PBS -l walltime=00:20:00
+#PBS -q short
+#PBS -A n01-Shelf
+
+# Set the number of threads to 1
+#   This prevents any system libraries from automatically 
+#   using threading.
+export OMP_NUM_THREADS=1
+#module load ddt
+module load atp
+export ATP_ENABLED=1
+
+ulimit -s unlimited
+export EXEC=nemo.exe
+#export EXEC=no_vvl_nemo.exe
+
+cd /work/n01/n01/slwa/NEMO/src/NEMO_V3.6_STABLE_top_bdy/NEMO/NEMOGCM/CONFIG/XIOS_AMM7_top/EXP01
+
+aprun -n192 ./$EXEC
+ 
+#qsub process_months
+exit
