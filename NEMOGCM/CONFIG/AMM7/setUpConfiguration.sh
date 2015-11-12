@@ -8,6 +8,10 @@ CONFIGPATH="$HOME"/git/NEMO-shelf/NEMOGCM/CONFIG/AMM7
 
 mkdir -p "$RUNPATH"/fluxes
 rm -rf "$RUNPATH"/fluxes/flx_y????.nc
+rm -rf "$RUNPATH"/fluxes/met_y????.nc
+rm -rf "$RUNPATH"/fluxes/strd_y????.nc
+rm -rf "$RUNPATH"/fluxes/ssrd24_y????.nc
+
 mkdir -p "$RUNPATH"/bdy
 rm -rf "$RUNPATH"/bdy/amm7*_y????m??d??.nc
 
