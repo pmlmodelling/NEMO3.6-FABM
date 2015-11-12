@@ -11,6 +11,10 @@ rm -rf "$RUNPATH"/fluxes/flx_y????.nc
 mkdir -p "$RUNPATH"/bdy
 rm -rf "$RUNPATH"/bdy/amm7*_y????m??d??.nc
 
+#namelists:
+rsync -a "$CONFIGPATH"/EXP00/namelist*_cfg.template $RUNPATH/
+rsync -a "$CONFIGPATH"/EXP00/namelist*_ref $RUNPATH/
+
 #atmospheric deposition:
 
 ln -sf "$INPUTPATH"/AtmosphericDeposition/AMM7_atn_weights.nc "$RUNPATH"/

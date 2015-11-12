@@ -5,7 +5,7 @@
 
 INPUTPATH="/data/euryale4/to_archive/momm-AMM7-inputs"
 RUNPATH="."
-y0=1990
+y0=1995
 
 yn=$1
 yb=$(( $yn-1 ))
