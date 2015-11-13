@@ -114,7 +114,7 @@ CONTAINS
       jgrd = 1      ! Everything is at T-points here
       !
 #if defined key_lim2
-      DO jb = 1, idx%nblen(jgrd)
+      DO jb = 1, idx%nblenrim(jgrd)
          ji    = idx%nbi(jb,jgrd)
          jj    = idx%nbj(jb,jgrd)
          zwgt  = idx%nbw(jb,jgrd)
@@ -134,7 +134,7 @@ CONTAINS
 #elif defined key_lim3
 
       DO jl = 1, jpl
-         DO jb = 1, idx%nblen(jgrd)
+         DO jb = 1, idx%nblenrim(jgrd)
             ji    = idx%nbi(jb,jgrd)
             jj    = idx%nbj(jb,jgrd)
             zwgt  = idx%nbw(jb,jgrd)
@@ -170,7 +170,7 @@ CONTAINS
       END DO
 
       DO jl = 1, jpl
-         DO jb = 1, idx%nblen(jgrd)
+         DO jb = 1, idx%nblenrim(jgrd)
             ji    = idx%nbi(jb,jgrd)
             jj    = idx%nbj(jb,jgrd)
 
@@ -323,7 +323,7 @@ CONTAINS
             CASE ( 'U' )
                
                jgrd = 2      ! u velocity
-               DO jb = 1, idx_bdy(ib_bdy)%nblen(jgrd)
+               DO jb = 1, idx_bdy(ib_bdy)%nblenrim(jgrd)
                   ji    = idx_bdy(ib_bdy)%nbi(jb,jgrd)
                   jj    = idx_bdy(ib_bdy)%nbj(jb,jgrd)
                   zflag = idx_bdy(ib_bdy)%flagu(jb,jgrd)
@@ -352,7 +352,7 @@ CONTAINS
             CASE ( 'V' )
                
                jgrd = 3      ! v velocity
-               DO jb = 1, idx_bdy(ib_bdy)%nblen(jgrd)
+               DO jb = 1, idx_bdy(ib_bdy)%nblenrim(jgrd)
                   ji    = idx_bdy(ib_bdy)%nbi(jb,jgrd)
                   jj    = idx_bdy(ib_bdy)%nbj(jb,jgrd)
                   zflag = idx_bdy(ib_bdy)%flagv(jb,jgrd)
