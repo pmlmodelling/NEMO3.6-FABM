@@ -48,10 +48,10 @@ CONTAINS
       !!
       !!----------------------------------------------------------------------
       INTEGER,                      INTENT(in) ::   kt   ! Main time step counter
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(inout) :: pua2d, pva2d 
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ) :: pub2d, pvb2d
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ) :: phur, phvr
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(in   ) :: pssh
+      REAL(wp), DIMENSION(:,:), INTENT(inout) :: pua2d, pva2d 
+      REAL(wp), DIMENSION(:,:), INTENT(in   ) :: pub2d, pvb2d
+      REAL(wp), DIMENSION(:,:), INTENT(in   ) :: phur, phvr
+      REAL(wp), DIMENSION(:,:), INTENT(in   ) :: pssh
       !!
       INTEGER                                  ::   ib_bdy ! Loop counter
 
@@ -91,7 +91,7 @@ CONTAINS
       TYPE(OBC_INDEX), INTENT(in) ::   idx  ! OBC indices
       TYPE(OBC_DATA),  INTENT(in) ::   dta  ! OBC external data
       INTEGER,         INTENT(in) ::   ib_bdy  ! BDY set index
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(inout) :: pua2d, pva2d 
+      REAL(wp), DIMENSION(:,:), INTENT(inout) :: pua2d, pva2d 
       !!
       INTEGER  ::   jb, jk         ! dummy loop indices
       INTEGER  ::   ii, ij, igrd   ! local integers
@@ -146,8 +146,8 @@ CONTAINS
       TYPE(OBC_INDEX),              INTENT(in) ::   idx  ! OBC indices
       TYPE(OBC_DATA),               INTENT(in) ::   dta  ! OBC external data
       INTEGER,                      INTENT(in) ::   ib_bdy  ! BDY set index
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(inout) :: pua2d, pva2d
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(in) ::   pssh, phur, phvr 
+      REAL(wp), DIMENSION(:,:), INTENT(inout) :: pua2d, pva2d
+      REAL(wp), DIMENSION(:,:), INTENT(in) ::   pssh, phur, phvr 
 
       INTEGER  ::   jb, igrd                         ! dummy loop indices
       INTEGER  ::   ii, ij, iim1, iip1, ijm1, ijp1   ! 2D addresses
@@ -236,8 +236,8 @@ CONTAINS
       TYPE(OBC_INDEX),              INTENT(in) ::   idx  ! OBC indices
       TYPE(OBC_DATA),               INTENT(in) ::   dta  ! OBC external data
       INTEGER,                      INTENT(in) ::   ib_bdy  ! number of current open boundary set
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(inout) :: pua2d, pva2d
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(in) :: pub2d, pvb2d 
+      REAL(wp), DIMENSION(:,:),     INTENT(inout) :: pua2d, pva2d
+      REAL(wp), DIMENSION(:,:),     INTENT(in) :: pub2d, pvb2d 
       LOGICAL,                      INTENT(in) ::   ll_npo  ! flag for NPO version
 
       INTEGER  ::   ib, igrd                               ! dummy loop indices
@@ -270,10 +270,10 @@ CONTAINS
       !! ** Purpose : Duplicate sea level across open boundaries
       !!
       !!----------------------------------------------------------------------
-      REAL(wp), DIMENSION(jpi,jpj), INTENT(inout) ::   zssh ! Sea level
+      REAL(wp), DIMENSION(:,:), INTENT(inout) ::   zssh ! Sea level
       !!
       INTEGER  ::   ib_bdy, ib, igrd                        ! local integers
-      INTEGER  ::   ii, ij, zcoef, zcoef1, zcoef2, ip, jp   !   "       "
+      INTEGER  ::   ii, ij, zcoef, ip, jp   !   "       "
 
       igrd = 1                       ! Everything is at T-points here
 
@@ -282,21 +282,9 @@ CONTAINS
             ii = idx_bdy(ib_bdy)%nbi(ib,igrd)
             ij = idx_bdy(ib_bdy)%nbj(ib,igrd)
             ! Set gradient direction:
-            zcoef1 = bdytmask(ii-1,ij  ) +  bdytmask(ii+1,ij  )
-            zcoef2 = bdytmask(ii  ,ij-1) +  bdytmask(ii  ,ij+1)
-            IF ( zcoef1+zcoef2 == 0 ) THEN
-               ! corner
-!               zcoef = tmask(ii-1,ij,1) + tmask(ii+1,ij,1) +  tmask(ii,ij-1,1) +  tmask(ii,ij+1,1)
-!               zssh(ii,ij) = zssh(ii-1,ij  ) * tmask(ii-1,ij  ,1) + &
-!                 &           zssh(ii+1,ij  ) * tmask(ii+1,ij  ,1) + &
-!                 &           zssh(ii  ,ij-1) * tmask(ii  ,ij-1,1) + &
-!                 &           zssh(ii  ,ij+1) * tmask(ii  ,ij+1,1)
-               zcoef = bdytmask(ii-1,ij) + bdytmask(ii+1,ij) +  bdytmask(ii,ij-1) +  bdytmask(ii,ij+1)
-               zssh(ii,ij) = zssh(ii-1,ij  ) * bdytmask(ii-1,ij  ) + &
-                 &           zssh(ii+1,ij  ) * bdytmask(ii+1,ij  ) + &
-                 &           zssh(ii  ,ij-1) * bdytmask(ii  ,ij-1) + &
-                 &           zssh(ii  ,ij+1) * bdytmask(ii  ,ij+1)
-               zssh(ii,ij) = ( zssh(ii,ij) / MAX( 1, zcoef) ) * tmask(ii,ij,1)
+            zcoef = bdytmask(ii-1,ij) + bdytmask(ii+1,ij) +  bdytmask(ii,ij-1) +  bdytmask(ii,ij+1)
+            IF ( zcoef == 0 ) THEN
+               zssh(ii,ij) = 0._wp
             ELSE
                ip = bdytmask(ii+1,ij  ) - bdytmask(ii-1,ij  )
                jp = bdytmask(ii  ,ij+1) - bdytmask(ii  ,ij-1)
