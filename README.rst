@@ -18,8 +18,7 @@ To compile on *archer* using the intel compiler::
 
   module unload PrgEnv-cray PrgEnv-gnu
   module load PrgEnv-intel
-  module load cray-netcdf-hdfparallel
+  module load cray-netcdf-hdf5parallel
   export XIOS_HOME #set to the basepath of XIOS-1 (compile before, 2 doesn't work!)
   #typical global:
   ./makenemo -m XC_ARCHER_INTEL_NOSIGNEDZERO -n ORCA2_LIM_FABM
-
