@@ -14,4 +14,5 @@
    rn_abs      =   0.58    !  RGB & 2 bands: fraction of light (rn_si1)
    rn_si0      =   0.35    !  RGB & 2 bands: shortess depth of extinction
    rn_si1      =   23.0    !  2 bands: longest depth of extinction
+   ln_qsr_ice  = .true.    !  light penetration for ice-model LIM3
 /
