@@ -186,7 +186,7 @@ CONTAINS
       ll_fw_start = .FALSE.
       !
                                      	                ! time offset in steps for bdy data update
-      IF (.NOT.ln_bt_fw) THEN ; noffset=-2*nn_baro ; ELSE ;  noffset = 0 ; ENDIF
+      IF (.NOT.ln_bt_fw) THEN ; noffset=-nn_baro ; ELSE ;  noffset = 0 ; ENDIF
       !
       IF( kt == nit000 ) THEN             	!* initialisation
          !
@@ -522,8 +522,8 @@ CONTAINS
          !                                                !  ------------------
          ! Update only tidal forcing at open boundaries
 #if defined key_tide
-         IF ( lk_bdy .AND. lk_tide )      CALL bdy_dta_tides( kt, kit=jn, time_offset=(noffset+1) )
-         IF ( ln_tide_pot .AND. lk_tide ) CALL upd_tide( kt, kit=jn, koffset=noffset )
+         IF ( lk_bdy .AND. lk_tide ) CALL bdy_dta_tides( kt, kit=jn, time_offset=(noffset+1) )
+         IF ( ln_tide_pot .AND. lk_tide ) CALL upd_tide( kt, kit=jn, time_offset=noffset )
 #endif
          !
          ! Set extrapolation coefficients for predictor step:
