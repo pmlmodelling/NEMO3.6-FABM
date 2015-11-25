@@ -429,6 +429,7 @@ CONTAINS
       !!
       CHARACTER(len=100)                     ::   cn_dir        ! Root directory for location of data files
       CHARACTER(len=100), DIMENSION(nb_bdy)  ::   cn_dir_array  ! Root directory for location of data files
+      CHARACTER(len = 256)::   clname                           ! temporary file name
       LOGICAL                                ::   ln_full_vel   ! =T => full velocities in 3D boundary data
                                                                 ! =F => baroclinic velocities in 3D boundary data
       INTEGER                                ::   ilen_global   ! Max length required for global bdy dta arrays
@@ -668,14 +669,22 @@ CONTAINS
 #elif defined key_lim3
             ! sea ice
             IF( nn_ice_lim_dta(ib_bdy) .eq. 1 ) THEN
-
-               ! Test for types of ice input (lim2 or lim3) 
-               CALL iom_open ( bn_a_i%clname, inum )
-               id1 = iom_varid ( inum, bn_a_i%clvar, kdimsz=zdimsz, kndims=zndims, ldstop = .FALSE. )
+               ! Test for types of ice input (lim2 or lim3)
+               ! Build file name to find dimensions 
+               clname=TRIM(bn_a_i%clname)
+               IF( .NOT. bn_a_i%ln_clim ) THEN   
+                                                  WRITE(clname, '(a,"_y",i4.4)' ) TRIM( bn_a_i%clname ), nyear    ! add year
+                  IF( bn_a_i%cltype /= 'yearly' ) WRITE(clname, '(a,"m" ,i2.2)' ) TRIM( clname        ), nmonth   ! add month
+               ELSE
+                  IF( bn_a_i%cltype /= 'yearly' ) WRITE(clname, '(a,"_m",i2.2)' ) TRIM( bn_a_i%clname ), nmonth   ! add month
+               ENDIF
+               IF( bn_a_i%cltype == 'daily' .OR. bn_a_i%cltype(1:4) == 'week' ) &
+               &                                  WRITE(clname, '(a,"d" ,i2.2)' ) TRIM( clname        ), nday     ! add day
+               !
+               CALL iom_open  ( clname, inum )
+               id1 = iom_varid( inum, bn_a_i%clvar, kdimsz=zdimsz, kndims=zndims, ldstop = .FALSE. )
                CALL iom_close ( inum )
-               !CALL fld_clopn ( bn_a_i, nyear, nmonth, nday, ldstop=.TRUE. )
-               !CALL iom_open ( bn_a_i%clname, inum )
-               !id1 = iom_varid ( bn_a_i%num, bn_a_i%clvar, kdimsz=zdimsz, kndims=zndims, ldstop = .FALSE. )
+
       	       IF ( zndims == 4 ) THEN
                  ll_bdylim3 = .TRUE.   ! lim3 input
                ELSE
