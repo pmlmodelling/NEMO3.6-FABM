@@ -92,3 +92,5 @@ ln -sf "$INPUTPATH"/BDY-clim/VN34TIDE/amm7_bdytide_T2_grid_T.nc "$RUNPATH"/bdy/
 ln -sf "$INPUTPATH"/BDY-clim/VN34TIDE/amm7_bdytide_T2_grid_U.nc "$RUNPATH"/bdy/
 ln -sf "$INPUTPATH"/BDY-clim/VN34TIDE/amm7_bdytide_T2_grid_V.nc "$RUNPATH"/bdy/
 
+#restart files:
+"$INPUTPATH"/RESTART/restart_20100101.nc restart.nc
