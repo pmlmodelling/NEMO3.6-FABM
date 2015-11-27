@@ -126,9 +126,9 @@ CONTAINS
             iiki = imld(ji,jj)
             iikn = nmln(ji,jj)
             imkt = mikt(ji,jj)
-            hmld (ji,jj) = ( fsdepw(ji,jj,iiki  ) - fsdepw(ji,jj,imkt )            )   * ssmask(ji,jj)    ! Turbocline depth 
-            hmlp (ji,jj) = ( fsdepw(ji,jj,iikn  ) - fsdepw(ji,jj,MAX( imkt,nla10 ) ) ) * ssmask(ji,jj)    ! Mixed layer depth
-            hmlpt(ji,jj) = ( fsdept(ji,jj,iikn-1) - fsdepw(ji,jj,imkt )            )   * ssmask(ji,jj)    ! depth of the last T-point inside the mixed layer
+            hmld (ji,jj) = ( fsdepw(ji,jj,iiki  ) - fsdepw(ji,jj,imkt ) ) * ssmask(ji,jj)    ! Turbocline depth 
+            hmlp (ji,jj) = ( fsdepw(ji,jj,iikn  ) - fsdepw(ji,jj,imkt ) ) * ssmask(ji,jj)    ! Mixed layer depth
+            hmlpt(ji,jj) = ( fsdept(ji,jj,iikn-1) - fsdepw(ji,jj,imkt ) ) * ssmask(ji,jj)    ! depth of the last T-point inside the mixed layer
          END DO
       END DO
       IF( .NOT.lk_offline ) THEN            ! no need to output in offline mode
