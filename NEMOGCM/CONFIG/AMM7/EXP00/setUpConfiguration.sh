@@ -1,7 +1,7 @@
 #!/bin/bash
 
-INPUTPATH="/data/euryale4/to_archive/momm-AMM7-inputs"
-RUNPATH="."
+INPUTPATH="/work/n01/n01/momme/AMM7-inputs"
+RUNPATH="/work/n01/n01/momme/AMM7"
 CONFIGPATH="$HOME"/git/NEMO-shelf/NEMOGCM/CONFIG/AMM7
 
 #prepare folders for annual atmospheric and lateral forcings:
