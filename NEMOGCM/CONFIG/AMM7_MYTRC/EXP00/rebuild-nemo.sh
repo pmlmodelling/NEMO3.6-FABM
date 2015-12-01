@@ -1,14 +1,16 @@
 #!/bin/bash 
 
-module load mpi
+module unload PrgEnv-cray PrgEnv-gnu
+module load PrgEnv-intel
+module load cray-netcdf-hdf5parallel
 
 NEMO_BUILD_DIR=$HOME/git/NEMO-shelf/NEMOGCM/CONFIG
-RUNDIR=/data/euryale4/scratch/momm/NEMO-FABM-AMM7-3.6/AMM7-MYSRC
-export XIOS_HOME=$HOME/git/XIOS-1.0-svn
+RUNDIR=/work/n01/n01/momme/AMM7
+export XIOS_HOME=$HOME/local/xios-intel
 export FABM_HOME=$HOME/local/fabm/nemo
 
-ARCH=GCC_PMPC
-#ARCH=GCC_PMPC_DEBUG
+ARCH=XC_ARCHER_INTEL_NOSIGNEDZERO
+#ARCH=XC_ARCHER_INTEL_NOSIGNEDZERO_DEBUG
 
 cd $NEMO_BUILD_DIR
 echo "Building NEMO-FABM..."
