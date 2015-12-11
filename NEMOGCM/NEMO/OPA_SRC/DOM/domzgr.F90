@@ -1869,9 +1869,10 @@ CONTAINS
              ijp1 = MIN( jj+1, jpj )
              iim1 = MAX( ji-1, 1 )
              ijm1 = MAX( jj-1, 1 )
-             IF( (bathy(iip1,jj) + bathy(iim1,jj) + bathy(ji,ijp1) + bathy(ji,ijm1) +              &
-        &         bathy(iip1,ijp1) + bathy(iim1,ijm1) + bathy(iip1,ijp1) + bathy(iim1,ijm1)) > 0._wp ) THEN
-               zenv(ji,jj) = rn_sbot_min
+             IF( ( + bathy(iim1,ijp1) + bathy(ji,ijp1) + bathy(iip1,ijp1)  &
+                &  + bathy(iim1,jj  )                  + bathy(iip1,jj  )  &
+                &  + bathy(iim1,ijm1) + bathy(ji,ijm1) + bathy(iip1,ijp1)  ) > 0._wp ) THEN
+                zenv(ji,jj) = rn_sbot_min
              ENDIF
            ENDIF
          END DO
