@@ -1,5 +1,5 @@
 % ================================================================
-% Chapter 1 � Ocean Tracers (TRA)
+% Chapter 1 ——— Ocean Tracers (TRA)
 % ================================================================
 \chapter{Ocean Tracers (TRA)}
 \label{TRA}
@@ -1166,63 +1166,118 @@ a swap of tracer arrays is performed: $T^{t-\rdt} = T^t$ and $T^t = T_f$.
 % -------------------------------------------------------------------------------------------------------------
 %        Equation of State
 % -------------------------------------------------------------------------------------------------------------
-\subsection{Equation of State (\np{nn\_eos} = 0, 1 or 2)}
+\subsection{Equation Of Seawater (\np{nn\_eos} = -1, 0, or 1)}
 \label{TRA_eos}
 
-It is necessary to know the equation of state for the ocean very accurately 
-to determine stability properties (especially the Brunt-Vais\"{a}l\"{a} frequency), 
-particularly in the deep ocean. The ocean seawater volumic mass, $\rho$, 
-abusively called density, is a non linear empirical function of \textit{in situ} 
-temperature, salinity and pressure. The reference equation of state is that 
-defined by the Joint Panel on Oceanographic Tables and Standards 
-\citep{UNESCO1983}. It was the standard equation of state used in early 
-releases of OPA. However, even though this computation is fully vectorised, 
-it is quite time consuming ($15$ to $20${\%} of the total CPU time) since 
-it requires the prior computation of the \textit{in situ} temperature from the 
-model \textit{potential} temperature using the \citep{Bryden1973} polynomial 
-for adiabatic lapse rate and a $4^th$ order Runge-Kutta integration scheme. 
-Since OPA6, we have used the \citet{JackMcD1995} equation of state for 
-seawater instead. It allows the computation of the \textit{in situ} ocean density 
-directly as a function of \textit{potential} temperature relative to the surface 
-(an \NEMO variable), the practical salinity (another \NEMO variable) and the 
-pressure (assuming no pressure variation along geopotential surfaces, $i.e.$ 
-the pressure in decibars is approximated by the depth in meters). 
-Both the \citet{UNESCO1983} and \citet{JackMcD1995} equations of state 
-have exactly the same except that the values of the various coefficients have 
-been adjusted by \citet{JackMcD1995} in order to directly use the \textit{potential} 
-temperature instead of the \textit{in situ} one. This reduces the CPU time of the 
-\textit{in situ} density computation to about $3${\%} of the total CPU time, 
-while maintaining a quite accurate equation of state.
+The Equation Of Seawater (EOS) is an empirical nonlinear thermodynamic relationship 
+linking seawater density, $\rho$, to a number of state variables, 
+most typically temperature, salinity and pressure. 
+Because density gradients control the pressure gradient force through the hydrostatic balance, 
+the equation of state provides a fundamental bridge between the distribution of active tracers 
+and the fluid dynamics. Nonlinearities of the EOS are of major importance, in particular 
+influencing the circulation through determination of the static stability below the mixed layer, 
+thus controlling rates of exchange between the atmosphere  and the ocean interior \citep{Roquet_JPO2015}. 
+Therefore an accurate EOS based on either the 1980 equation of state (EOS-80, \cite{UNESCO1983}) 
+or TEOS-10 \citep{TEOS10} standards should be used anytime a simulation of the real 
+ocean circulation is attempted \citep{Roquet_JPO2015}. 
+The use of TEOS-10 is highly recommended because 
+\textit{(i)} it is the new official EOS, 
+\textit{(ii)} it is more accurate, being based on an updated database of laboratory measurements, and 
+\textit{(iii)} it uses Conservative Temperature and Absolute Salinity (instead of potential temperature 
+and practical salinity for EOS-980, both variables being more suitable for use as model variables 
+\citep{TEOS10, Graham_McDougall_JPO13}. 
+EOS-80 is an obsolescent feature of the NEMO system, kept only for backward compatibility.
+For process studies, it is often convenient to use an approximation of the EOS. To that purposed, 
+a simplified EOS (S-EOS) inspired by \citet{Vallis06} is also available.
 
-In the computer code, a \textit{true} density anomaly, $d_a= \rho / \rho_o - 1$, 
-is computed, with $\rho_o$ a reference volumic mass. Called \textit{rau0} 
-in the code, $\rho_o$ is defined in \mdl{phycst}, and a value of $1,035~Kg/m^3$. 
+In the computer code, a density anomaly, $d_a= \rho / \rho_o - 1$, 
+is computed, with $\rho_o$ a reference density. Called \textit{rau0} 
+in the code, $\rho_o$ is set in \mdl{phycst} to a value of $1,026~Kg/m^3$. 
 This is a sensible choice for the reference density used in a Boussinesq ocean 
 climate model, as, with the exception of only a small percentage of the ocean, 
-density in the World Ocean varies by no more than 2$\%$ from $1,035~kg/m^3$ 
-\citep{Gill1982}.
+density in the World Ocean varies by no more than 2$\%$ from that value \citep{Gill1982}.
 
-Options are defined through the  \ngn{nameos} namelist variables.
-The default option (namelist parameter \np{nn\_eos}=0) is the \citet{JackMcD1995} 
-equation of state. Its use is highly recommended. However, for process studies, 
-it is often convenient to use a linear approximation of the density.
+Options are defined through the  \ngn{nameos} namelist variables, and in particular \np{nn\_eos} 
+which controls the EOS used (=-1 for TEOS10 ; =0 for EOS-80 ; =1 for S-EOS).
+\begin{description}
+
+\item[\np{nn\_eos}$=-1$] the polyTEOS10-bsq equation of seawater \citep{Roquet_OM2015} is used.  
+The accuracy of this approximation is comparable to the TEOS-10 rational function approximation, 
+but it is optimized for a boussinesq fluid and the polynomial expressions have simpler 
+and more computationally efficient expressions for their derived quantities 
+which make them more adapted for use in ocean models. 
+Note that a slightly higher precision polynomial form is now used replacement of the TEOS-10 
+rational function approximation for hydrographic data analysis  \citep{TEOS10}. 
+A key point is that conservative state variables are used: 
+Absolute Salinity (unit: g/kg, notation: $S_A$) and Conservative Temperature (unit: $\degres C$, notation: $\Theta$).
+The pressure in decibars is approximated by the depth in meters. 
+With TEOS10, the specific heat capacity of sea water, $C_p$, is a constant. It is set to 
+$C_p=3991.86795711963~J\,Kg^{-1}\,\degres K^{-1}$, according to \citet{TEOS10}.
+
+Choosing polyTEOS10-bsq implies that the state variables used by the model are 
+$\Theta$ and $S_A$. In particular, the initial state deined by the user have to be given as 
+\textit{Conservative} Temperature and \textit{Absolute} Salinity. 
+In addition, setting \np{ln\_useCT} to \textit{true} convert the Conservative SST to potential SST 
+prior to either computing the air-sea and ice-sea fluxes (forced mode) 
+or sending the SST field to the atmosphere (coupled mode).
+
+\item[\np{nn\_eos}$=0$] the polyEOS80-bsq equation of seawater is used.
+It takes the same polynomial form as the polyTEOS10, but the coefficients have been optimized 
+to accurately fit EOS80 (Roquet, personal comm.). The state variables used in both the EOS80 
+and the ocean model are: 
+the Practical Salinity ((unit: psu, notation: $S_p$)) and Potential Temperature (unit: $\degres C$, notation: $\theta$).
+The pressure in decibars is approximated by the depth in meters.  
+With thsi EOS, the specific heat capacity of sea water, $C_p$, is a function of temperature, 
+salinity and pressure \citep{UNESCO1983}. Nevertheless, a severe assumption is made in order to 
+have a heat content ($C_p T_p$) which is conserved by the model: $C_p$ is set to a constant 
+value, the TEOS10 value. 
+ 
+\item[\np{nn\_eos}$=1$] a simplified EOS (S-EOS) inspired by \citet{Vallis06} is chosen, 
+the coefficients of which has been optimized to fit the behavior of TEOS10 (Roquet, personal comm.) 
+(see also \citet{Roquet_JPO2015}). It provides a simplistic linear representation of both 
+cabbeling and thermobaricity effects which is enough for a proper treatment of the EOS 
+in theoretical studies \citep{Roquet_JPO2015}.
 With such an equation of state there is no longer a distinction between 
-\textit{in situ} and \textit{potential} density and both cabbeling and thermobaric
-effects are removed.
-Two linear formulations are available: a function of $T$ only (\np{nn\_eos}=1) 
-and a function of both $T$ and $S$ (\np{nn\_eos}=2):
-\begin{equation} \label{Eq_tra_eos_linear}
+\textit{conservative} and \textit{potential} temperature, as well as between \textit{absolute} 
+and \textit{practical} salinity.
+S-EOS takes the following expression:
+\begin{equation} \label{Eq_tra_S-EOS}
 \begin{split}
-  d_a(T)       &=  \rho (T)      /  \rho_o   - 1     =  \  0.0285         -  \alpha   \;T     \\ 
-  d_a(T,S)    &=  \rho (T,S)   /  \rho_o   - 1     =  \  \beta \; S       -  \alpha   \;T    
+  d_a(T,S,z)  =  ( & - a_0 \; ( 1 + 0.5 \; \lambda_1 \; T_a + \mu_1 \; z ) * T_a  \\
+                                & + b_0 \; ( 1 - 0.5 \; \lambda_2 \; S_a - \mu_2 \; z ) * S_a  \\
+                                & - \nu \; T_a \; S_a \;  ) \; / \; \rho_o                     \\
+  with \ \  T_a = T-10  \; ;  & \;  S_a = S-35  \; ;\;  \rho_o = 1026~Kg/m^3
 \end{split}
 \end{equation} 
-where $\alpha$ and $\beta$ are the thermal and haline expansion 
-coefficients, and $\rho_o$, the reference volumic mass, $rau0$. 
-($\alpha$ and $\beta$ can be modified through the \np{rn\_alpha} and 
-\np{rn\_beta} namelist variables). Note that when $d_a$ is a function 
-of $T$ only (\np{nn\_eos}=1), the salinity is a passive tracer and can be 
-used as such.
+where the computer name of the coefficients as well as their standard value are given in \ref{Tab_SEOS}.
+In fact, when choosing S-EOS, various approximation of EOS can be specified simply by changing 
+the associated coefficients. 
+Setting to zero the two thermobaric coefficients ($\mu_1$, $\mu_2$) remove thermobaric effect from S-EOS.
+setting to zero the three cabbeling coefficients ($\lambda_1$, $\lambda_2$, $\nu$) remove cabbeling effect from S-EOS.
+Keeping non-zero value to $a_0$ and $b_0$ provide a linear EOS function of T and S.
+
+\end{description}
+
+
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+\begin{table}[!tb]
+\begin{center} \begin{tabular}{|p{26pt}|p{72pt}|p{56pt}|p{136pt}|}
+\hline
+coeff.	& computer name   & S-EOS		&  description		                  \\ \hline
+$a_0$       & \np{nn\_a0}     & 1.6550 $10^{-1}$ &  linear thermal expansion coeff. 	\\ \hline
+$b_0$	      & \np{nn\_b0} 	   & 7.6554 $10^{-1}$ &  linear haline  expansion coeff. 	\\ \hline
+$\lambda_1$	& \np{nn\_lambda1}& 5.9520 $10^{-2}$ &  cabbeling coeff. in $T^2$ 	      \\ \hline
+$\lambda_2$	& \np{nn\_lambda2}& 5.4914 $10^{-4}$ &  cabbeling coeff. in $S^2$	 	   \\ \hline
+$\nu$       & \np{nn\_nu}     & 2.4341 $10^{-3}$ &  cabbeling coeff. in $T \, S$ 	   \\ \hline
+$\mu_1$     & \np{nn\_mu1} 	& 1.4970 $10^{-4}$ &  thermobaric coeff. in T    	   \\ \hline
+$\mu_2$     & \np{nn\_mu2} 	& 1.1090 $10^{-5}$ &  thermobaric coeff. in S   	      \\ \hline
+\end{tabular}
+\caption{ \label{Tab_SEOS}
+Standard value of S-EOS coefficients. }
+\end{center}
+\end{table}
+%>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
 
 % -------------------------------------------------------------------------------------------------------------
 %        Brunt-Vais\"{a}l\"{a} Frequency
@@ -1231,52 +1286,30 @@ used as such.
 \label{TRA_bn2}
 
 An accurate computation of the ocean stability (i.e. of $N$, the brunt-Vais\"{a}l\"{a}
- frequency) is of paramount importance as it is used in several ocean 
- parameterisations (namely TKE, KPP, Richardson number dependent 
- vertical diffusion, enhanced vertical diffusion, non-penetrative convection, 
- iso-neutral diffusion). In particular, one must be aware that $N^2$ has to 
- be computed with an \textit{in situ} reference. The expression for $N^2$ 
- depends on the type of equation of state used (\np{nn\_eos} namelist parameter).
-
-For \np{nn\_eos}=0 (\citet{JackMcD1995} equation of state), the \citet{McDougall1987} 
-polynomial expression is used (with the pressure in decibar approximated by 
-the depth in meters): 
+ frequency) is of paramount importance as determine the ocean stratification and 
+ is used in several ocean parameterisations (namely TKE, GLS, Richardson number dependent 
+ vertical diffusion, enhanced vertical diffusion, non-penetrative convection, tidal mixing 
+ parameterisation, iso-neutral diffusion). In particular, $N^2$ has to be computed at the local pressure 
+ (pressure in decibar being approximated by the depth in meters). The expression for $N^2$ 
+ is given by: 
 \begin{equation} \label{Eq_tra_bn2}
-N^2 = \frac{g}{e_{3w}} \; \beta   \ 
-	   \left(  \alpha / \beta \ \delta_{k+1/2}[T]     - \delta_{k+1/2}[S]   \right) 
-\end{equation} 
-where $\alpha$ and $\beta$ are the thermal and haline expansion coefficients. 
-They are a function of  $\overline{T}^{\,k+1/2},\widetilde{S}=\overline{S}^{\,k+1/2} - 35.$, 
-and  $z_w$, with $T$ the \textit{potential} temperature and $\widetilde{S}$ a salinity anomaly. 
-Note that both $\alpha$ and $\beta$ depend on \textit{potential} 
-temperature and salinity which are averaged at $w$-points prior 
-to the computation instead of being computed at $T$-points and 
-then averaged to $w$-points.
-
-When a linear equation of state is used (\np{nn\_eos}=1 or 2, 
-\eqref{Eq_tra_bn2} reduces to:
-\begin{equation} \label{Eq_tra_bn2_linear}
 N^2 =	\frac{g}{e_{3w}} \left(   \beta \;\delta_{k+1/2}[S] - \alpha \;\delta_{k+1/2}[T]   \right)
 \end{equation} 
-where $\alpha$ and $\beta $ are the constant coefficients used to 
-defined the linear equation of state \eqref{Eq_tra_eos_linear}.
+where $(T,S) = (\Theta, S_A)$ for TEOS10, $= (\theta, S_p)$ for TEOS-80, or $=(T,S)$ for S-EOS, 
+and, $\alpha$ and $\beta$ are the thermal and haline expansion coefficients. 
+The coefficients are a polynomial function of temperature, salinity and depth which expression 
+depends on the chosen EOS. They are computed through \textit{eos\_rab}, a \textsc{Fortran} 
+function that can be found in \mdl{eosbn2}.
+
 
 % -------------------------------------------------------------------------------------------------------------
-%        Specific Heat
+%        Potential Energy     
 % -------------------------------------------------------------------------------------------------------------
-\subsection   	[Specific Heat (\textit{phycst})]
-			{Specific Heat (\mdl{phycst})}
-\label{TRA_adv_ldf}
+%\subsection{Potential Energy anomalies}
+%\label{TRA_bn2}
 
-The specific heat of sea water, $C_p$, is a function of temperature, salinity 
-and pressure \citep{UNESCO1983}. It is only used in the model to convert 
-surface heat fluxes into surface temperature increase and so the pressure 
-dependence is neglected. The dependence on $T$ and $S$ is weak. 
-For example, with $S=35~psu$, $C_p$ increases from $3989$ to $4002$ 
-when $T$ varies from -2~\degres C to 31~\degres C. Therefore, $C_p$ has 
-been chosen as a constant: $C_p=4.10^3~J\,Kg^{-1}\,\degres K^{-1}$. 
-Its value is set in \mdl{phycst} module. 
-
+%    =====>>>>> TO BE written
+%
 
 % -------------------------------------------------------------------------------------------------------------
 %        Freezing Point of Seawater
@@ -1297,7 +1330,7 @@ T_f (S,p) = \left( -0.0575 + 1.710523 \;10^{-3} \, \sqrt{S}
 \eqref{Eq_tra_eos_fzp} is only used to compute the potential freezing point of 
 sea water ($i.e.$ referenced to the surface $p=0$), thus the pressure dependent 
 terms in \eqref{Eq_tra_eos_fzp} (last term) have been dropped. The freezing
-point is computed through \textit{tfreez}, a \textsc{Fortran} function that can be found 
+point is computed through \textit{eos\_fzp}, a \textsc{Fortran} function that can be found 
 in \mdl{eosbn2}.  
 
 % ================================================================
