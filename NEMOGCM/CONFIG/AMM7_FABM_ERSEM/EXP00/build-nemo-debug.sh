@@ -16,4 +16,4 @@ cd $NEMO_BUILD_DIR
 echo "Building NEMO-FABM..."
 
 ./makenemo -m $ARCH -n AMM7_TEST clean_config
-./makenemo -m $ARCH -r AMM7_MYTRC -n AMM7_TEST && rsync -a $NEMO_BUILD_DIR/AMM7_TEST/BLD/bin/nemo.exe $RUNDIR/nemo.debug.exe
+./makenemo -m $ARCH -r AMM7_FABM_ERSEM -n AMM7_TEST && rsync -a $NEMO_BUILD_DIR/AMM7_TEST/BLD/bin/nemo.exe $RUNDIR/nemo.debug.exe

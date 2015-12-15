@@ -1,0 +1,312 @@
+<field_definition level="1" prec="4" operation="average" enabled=".TRUE." default_value="1.e20" >
+ <field_group id="ptrc_T" grid_ref="grid_T_3D">
+  <field id="N1_p" long_name="phosphate phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
+  <field id="N3_n" long_name="nitrate nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="N4_n" long_name="ammonium nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="N5_s" long_name="silicate silicate" unit="mmol Si/m^3" default_value="-.200E+21" />
+  <field id="O2_o" long_name="oxygen oxygen" unit="mmol O_2/m^3" default_value="-.200E+21" />
+  <field id="O3_c" long_name="carbonate total dissolved inorganic carbon" unit="mmol C/m^3" default_value="-.200E+21" />
+  <field id="O3_bioalk" long_name="carbonate bioalkalinity" unit="umol/kg" default_value="-.200E+21" />
+  <field id="B1_c" long_name="bacteria carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="B1_n" long_name="bacteria nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="B1_p" long_name="bacteria phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
+  <field id="P1_c" long_name="diatoms carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="P1_n" long_name="diatoms nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="P1_p" long_name="diatoms phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
+  <field id="P1_Chl" long_name="diatoms chlorophyll a" unit="mg/m^3" default_value="-.200E+21" />
+  <field id="P1_s" long_name="diatoms silicate" unit="mmol Si/m^3" default_value="-.200E+21" />
+  <field id="L2_c" long_name="calcite carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="P2_c" long_name="nanophytoplankton carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="P2_n" long_name="nanophytoplankton nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="P2_p" long_name="nanophytoplankton phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
+  <field id="P2_Chl" long_name="nanophytoplankton chlorophyll a" unit="mg/m^3" default_value="-.200E+21" />
+  <field id="P3_c" long_name="picophytoplankton carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="P3_n" long_name="picophytoplankton nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="P3_p" long_name="picophytoplankton phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
+  <field id="P3_Chl" long_name="picophytoplankton chlorophyll a" unit="mg/m^3" default_value="-.200E+21" />
+  <field id="P4_c" long_name="microphytoplankton carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="P4_n" long_name="microphytoplankton nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="P4_p" long_name="microphytoplankton phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
+  <field id="P4_Chl" long_name="microphytoplankton chlorophyll a" unit="mg/m^3" default_value="-.200E+21" />
+  <field id="Z4_c" long_name="mesozooplankton carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="Z5_c" long_name="microzooplankton carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="Z5_n" long_name="microzooplankton nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="Z5_p" long_name="microzooplankton phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
+  <field id="Z6_c" long_name="nanoflagellates carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="Z6_n" long_name="nanoflagellates nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="Z6_p" long_name="nanoflagellates phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
+  <field id="R1_c" long_name="labile dissolved organic matter carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="R1_n" long_name="labile dissolved organic matter nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="R1_p" long_name="labile dissolved organic matter phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
+  <field id="R2_c" long_name="semi-labile dissolved organic matter carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="R3_c" long_name="semi-refractory dissolved organic matter carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="R4_c" long_name="small-size pom carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="R4_n" long_name="small-size pom nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="R4_p" long_name="small-size pom phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
+  <field id="R6_c" long_name="medium-size pom carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="R6_n" long_name="medium-size pom nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="R6_p" long_name="medium-size pom phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
+  <field id="R6_s" long_name="medium-size pom silicate" unit="mmol Si/m^3" default_value="-.200E+21" />
+  <field id="R8_c" long_name="large-size pom carbon" unit="mg C/m^3" default_value="-.200E+21" />
+  <field id="R8_n" long_name="large-size pom nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
+  <field id="R8_p" long_name="large-size pom phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
+  <field id="R8_s" long_name="large-size pom silicate" unit="mmol Si/m^3" default_value="-.200E+21" />
+ </field_group>
+ <field_group id="sf1D_T" grid_ref="grid_T_2D">
+  <field id="ben_col_D1m" long_name="benthic column depth of bottom interface of oxygenated layer" unit="m" default_value="-.200E+21" />
+  <field id="ben_col_D2m" long_name="benthic column depth of bottom interface of oxidized layer" unit="m" default_value="-.200E+21" />
+  <field id="Q1_c" long_name="benthic dissolved organic matter carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Q1_p" long_name="benthic dissolved organic matter phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
+  <field id="Q1_n" long_name="benthic dissolved organic matter nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="Y4_c" long_name="benthic meiofauna carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Y3_c" long_name="benthic suspension feeder carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Y2_c" long_name="benthic deposit feeder carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Q6_c" long_name="benthic particulate organic matter carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Q6_p" long_name="benthic particulate organic matter phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
+  <field id="Q6_n" long_name="benthic particulate organic matter nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="Q6_s" long_name="benthic particulate organic matter silicate" unit="mmol Si/m^2" default_value="-.200E+21" />
+  <field id="Q6_pen_depth_c" long_name="benthic particulate organic matter penetration depth of carbon" unit="m" default_value="-.200E+21" />
+  <field id="Q6_pen_depth_n" long_name="benthic particulate organic matter penetration depth of nitrogen" unit="m" default_value="-.200E+21" />
+  <field id="Q6_pen_depth_p" long_name="benthic particulate organic matter penetration depth of phosphorus" unit="m" default_value="-.200E+21" />
+  <field id="Q6_pen_depth_s" long_name="benthic particulate organic matter penetration depth of silicate" unit="m" default_value="-.200E+21" />
+  <field id="Q7_c" long_name="benthic refractory matter carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Q7_p" long_name="benthic refractory matter phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
+  <field id="Q7_n" long_name="benthic refractory matter nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="Q7_pen_depth_c" long_name="benthic refractory matter penetration depth of carbon" unit="m" default_value="-.200E+21" />
+  <field id="Q7_pen_depth_n" long_name="benthic refractory matter penetration depth of nitrogen" unit="m" default_value="-.200E+21" />
+  <field id="Q7_pen_depth_p" long_name="benthic refractory matter penetration depth of phosphorus" unit="m" default_value="-.200E+21" />
+  <field id="Q17_c" long_name="benthic buried matter carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Q17_p" long_name="benthic buried matter phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
+  <field id="Q17_n" long_name="benthic buried matter nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="bL2_l" long_name="benthic calcite calcite" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="H1_c" long_name="benthic aerobic bacteria carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="H2_c" long_name="benthic anaerobic bacteria carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="K1_p" long_name="benthic phosphate phosphorus" unit="mmol/m^2" default_value="-.200E+21" />
+  <field id="ben_nit_G4n" long_name="benthic nitrogen cycle dinitrogen gas" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="K3_n" long_name="benthic nitrate nitrogen" unit="mmol/m^2" default_value="-.200E+21" />
+  <field id="K4_n" long_name="benthic ammonium nitrogen" unit="mmol/m^2" default_value="-.200E+21" />
+  <field id="K5_s" long_name="benthic silicate silicate" unit="mmol/m^2" default_value="-.200E+21" />
+  <field id="G2_o" long_name="benthic oxygen oxygen" unit="mmol/m^2" default_value="-.200E+21" />
+  <field id="G2_o_deep" long_name="benthic oxygen oxygen below oxygenated layer" unit="mmol/m^2" default_value="-.200E+21" />
+  <field id="G3_c" long_name="benthic dissolved inorganic carbon carbon" unit="mmol/m^2" default_value="-.200E+21" />
+ </field_group>
+ <field_group id="diad_T" grid_ref="grid_T_2D">
+  <field id="particulate_organic_absorption_coefficient_calculator_result" long_name="particulate_organic_absorption_coefficient_calculator result" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="particulate_organic_backscatter_coefficient_calculator_result" long_name="particulate_organic_backscatter_coefficient_calculator result" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="light_EIR" long_name="light shortwave radiation" unit="W/m^2" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="light_parEIR" long_name="light photosynthetically active radiation" unit="W/m^2" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="light_xEPS" long_name="light attenuation coefficient of shortwave flux" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="light_iopABS" long_name="light absorption coefficient of shortwave flux" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="light_iopBBS" long_name="light backscatter coefficient of shortwave flux" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="N1_p_sms" long_name="phosphate phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="N1_p_w" long_name="phosphate phosphorus vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="N3_n_sms" long_name="nitrate nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="N3_n_w" long_name="nitrate nitrogen vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="N4_n_sms" long_name="ammonium nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="N4_n_w" long_name="ammonium nitrogen vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="N5_s_sms" long_name="silicate silicate sources-sinks" unit="mmol Si/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="N5_s_w" long_name="silicate silicate vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="O2_o_sms" long_name="oxygen oxygen sources-sinks" unit="mmol O_2/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="O2_o_w" long_name="oxygen oxygen vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="O2_eO2mO2" long_name="oxygen relative oxygen saturation" unit="1" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="O2_osat" long_name="oxygen oxygen saturation concentration" unit="mmol O_2/m^3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="O2_AOU" long_name="oxygen apparent oxygen utilisation" unit="mmol O_2/m^3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="O3_c_sms" long_name="carbonate total dissolved inorganic carbon sources-sinks" unit="mmol C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="O3_c_w" long_name="carbonate total dissolved inorganic carbon vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="O3_TA" long_name="carbonate total alkalinity" unit="umol/kg" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="O3_bioalk_sms" long_name="carbonate bioalkalinity sources-sinks" unit="umol/kg/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="O3_bioalk_w" long_name="carbonate bioalkalinity vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="O3_pH" long_name="carbonate pH" unit="-" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="O3_pCO2" long_name="carbonate partial pressure of CO2" unit="1e-6" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="O3_CarbA" long_name="carbonate carbonic acid concentration" unit="mmol/m^3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="O3_BiCarb" long_name="carbonate bicarbonate concentration" unit="mmol/m^3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="O3_Carb" long_name="carbonate carbonate concentration" unit="mmol/m^3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="O3_Om_cal" long_name="carbonate calcite saturation" unit="-" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="O3_Om_arg" long_name="carbonate aragonite saturation" unit="-" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="B1_c_sms" long_name="bacteria carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_c_w" long_name="bacteria carbon vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_n_sms" long_name="bacteria nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_n_w" long_name="bacteria nitrogen vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_p_sms" long_name="bacteria phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_p_w" long_name="bacteria phosphorus vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_N1p_sms" long_name="bacteria phosphate sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_N4n_sms" long_name="bacteria ammonium sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_R1c_sms" long_name="bacteria labile dissolved organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_R1p_sms" long_name="bacteria labile dissolved organic phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_R1n_sms" long_name="bacteria labile dissolved organic nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_R2c_sms" long_name="bacteria semi-labile dissolved organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP1c_sms" long_name="bacteria carbon in substrate 1 sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP1n_sms" long_name="bacteria nitrogen in substrate 1 sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP1p_sms" long_name="bacteria phosphorus in substrate 1 sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP2c_sms" long_name="bacteria carbon in substrate 2 sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP2n_sms" long_name="bacteria nitrogen in substrate 2 sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP2p_sms" long_name="bacteria phosphorus in substrate 2 sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP3c_sms" long_name="bacteria carbon in substrate 3 sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP3n_sms" long_name="bacteria nitrogen in substrate 3 sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP3p_sms" long_name="bacteria phosphorus in substrate 3 sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_R3c_sms" long_name="bacteria semi-refractory DOC sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_O3c_sms" long_name="bacteria carbon dioxide sources-sinks" unit="mmol C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_O2o_sms" long_name="bacteria oxygen sources-sinks" unit="mmol O_2/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_alkalinity_expressed_as_mole_equivalent_sms" long_name="bacteria alkalinity_expressed_as_mole_equivalent sources-sinks" unit="mmol m-3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_alkalinity_expressed_as_mole_equivalent_w" long_name="bacteria alkalinity_expressed_as_mole_equivalent vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_fB1O3c" long_name="bacteria respiration" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="B1_RP1_state1_sms" long_name="bacteria RP1 state variable 1 sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP1_state2_sms" long_name="bacteria RP1 state variable 2 sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP1_state3_sms" long_name="bacteria RP1 state variable 3 sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP2_state1_sms" long_name="bacteria RP2 state variable 1 sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP2_state2_sms" long_name="bacteria RP2 state variable 2 sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP2_state3_sms" long_name="bacteria RP2 state variable 3 sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP2_state4_sms" long_name="bacteria RP2 state variable 4 sources-sinks" unit="mmol Si/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP3_state1_sms" long_name="bacteria RP3 state variable 1 sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP3_state2_sms" long_name="bacteria RP3 state variable 2 sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP3_state3_sms" long_name="bacteria RP3 state variable 3 sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="B1_RP3_state4_sms" long_name="bacteria RP3 state variable 4 sources-sinks" unit="mmol Si/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="pel_nit_rate" long_name="pelagic nitrification rate" unit="mmol/m3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="pel_nit_N3n_sms" long_name="pelagic nitrification nitrate sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="pel_nit_N4n_sms" long_name="pelagic nitrification ammonium sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="pel_nit_O2o_sms" long_name="pelagic nitrification oxygen sources-sinks" unit="mmol O_2/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="pel_nit_alkalinity_expressed_as_mole_equivalent_sms" long_name="pelagic nitrification alkalinity_expressed_as_mole_equivalent sources-sinks" unit="mmol m-3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="pel_nit_alkalinity_expressed_as_mole_equivalent_w" long_name="pelagic nitrification alkalinity_expressed_as_mole_equivalent vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_c_sms" long_name="diatoms carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_c_w" long_name="diatoms carbon vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_n_sms" long_name="diatoms nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_n_w" long_name="diatoms nitrogen vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_p_sms" long_name="diatoms phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_p_w" long_name="diatoms phosphorus vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_Chl_sms" long_name="diatoms chlorophyll a sources-sinks" unit="mg/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_Chl_w" long_name="diatoms chlorophyll a vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_s_sms" long_name="diatoms silicate sources-sinks" unit="mmol Si/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_s_w" long_name="diatoms silicate vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_N1p_sms" long_name="diatoms phosphate sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_N3n_sms" long_name="diatoms nitrate sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_N4n_sms" long_name="diatoms ammonium sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_N5s_sms" long_name="diatoms silicate sources-sinks" unit="mmol Si/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_R1c_sms" long_name="diatoms dissolved organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_R1p_sms" long_name="diatoms dissolved organic phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_R1n_sms" long_name="diatoms dissolved organic nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_R2c_sms" long_name="diatoms semi-labile dissolved organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_RPc_sms" long_name="diatoms particulate organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_RPp_sms" long_name="diatoms particulate organic phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_RPn_sms" long_name="diatoms particulate organic nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_RPs_sms" long_name="diatoms particulate organic silicate sources-sinks" unit="mmol Si/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_O2o_sms" long_name="diatoms oxygen sources-sinks" unit="mmol O_2/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_O3c_sms" long_name="diatoms carbon dioxide sources-sinks" unit="mmol C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_alkalinity_expressed_as_mole_equivalent_sms" long_name="diatoms alkalinity_expressed_as_mole_equivalent sources-sinks" unit="mmol m-3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_alkalinity_expressed_as_mole_equivalent_w" long_name="diatoms alkalinity_expressed_as_mole_equivalent vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P1_netPI" long_name="diatoms net primary production" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P1_fO3PIc" long_name="diatoms gross primary production" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P1_fPIO3c" long_name="diatoms respiration" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="L2_c_sms" long_name="calcite carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="L2_c_w" long_name="calcite carbon vertical movement" unit="m/s" default_value="-.116E-03" grid_ref="grid_T_3D" />
+  <field id="L2_RainR" long_name="calcite rain ratio" unit="1" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="L2_O3c_sms" long_name="calcite total dissolved inorganic carbon sources-sinks" unit="mmol C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="L2_alkalinity_expressed_as_mole_equivalent_sms" long_name="calcite alkalinity_expressed_as_mole_equivalent sources-sinks" unit="mmol m-3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="L2_alkalinity_expressed_as_mole_equivalent_w" long_name="calcite alkalinity_expressed_as_mole_equivalent vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_c_sms" long_name="nanophytoplankton carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_c_w" long_name="nanophytoplankton carbon vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_n_sms" long_name="nanophytoplankton nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_n_w" long_name="nanophytoplankton nitrogen vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_p_sms" long_name="nanophytoplankton phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_p_w" long_name="nanophytoplankton phosphorus vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_Chl_sms" long_name="nanophytoplankton chlorophyll a sources-sinks" unit="mg/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_Chl_w" long_name="nanophytoplankton chlorophyll a vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_N1p_sms" long_name="nanophytoplankton phosphate sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_N3n_sms" long_name="nanophytoplankton nitrate sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_N4n_sms" long_name="nanophytoplankton ammonium sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_R1c_sms" long_name="nanophytoplankton dissolved organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_R1p_sms" long_name="nanophytoplankton dissolved organic phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_R1n_sms" long_name="nanophytoplankton dissolved organic nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_R2c_sms" long_name="nanophytoplankton semi-labile dissolved organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_RPc_sms" long_name="nanophytoplankton particulate organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_RPp_sms" long_name="nanophytoplankton particulate organic phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_RPn_sms" long_name="nanophytoplankton particulate organic nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_O2o_sms" long_name="nanophytoplankton oxygen sources-sinks" unit="mmol O_2/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_O3c_sms" long_name="nanophytoplankton carbon dioxide sources-sinks" unit="mmol C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_alkalinity_expressed_as_mole_equivalent_sms" long_name="nanophytoplankton alkalinity_expressed_as_mole_equivalent sources-sinks" unit="mmol m-3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_alkalinity_expressed_as_mole_equivalent_w" long_name="nanophytoplankton alkalinity_expressed_as_mole_equivalent vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_netPI" long_name="nanophytoplankton net primary production" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P2_fO3PIc" long_name="nanophytoplankton gross primary production" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P2_fPIO3c" long_name="nanophytoplankton respiration" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P2_L2c_sms" long_name="nanophytoplankton free calcite sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P2_l" long_name="nanophytoplankton bound calcite" unit="mg C/m^3" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_c_sms" long_name="picophytoplankton carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_c_w" long_name="picophytoplankton carbon vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_n_sms" long_name="picophytoplankton nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_n_w" long_name="picophytoplankton nitrogen vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_p_sms" long_name="picophytoplankton phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_p_w" long_name="picophytoplankton phosphorus vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_Chl_sms" long_name="picophytoplankton chlorophyll a sources-sinks" unit="mg/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_Chl_w" long_name="picophytoplankton chlorophyll a vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_N1p_sms" long_name="picophytoplankton phosphate sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_N3n_sms" long_name="picophytoplankton nitrate sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_N4n_sms" long_name="picophytoplankton ammonium sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_R1c_sms" long_name="picophytoplankton dissolved organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_R1p_sms" long_name="picophytoplankton dissolved organic phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_R1n_sms" long_name="picophytoplankton dissolved organic nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_R2c_sms" long_name="picophytoplankton semi-labile dissolved organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_RPc_sms" long_name="picophytoplankton particulate organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_RPp_sms" long_name="picophytoplankton particulate organic phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_RPn_sms" long_name="picophytoplankton particulate organic nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_O2o_sms" long_name="picophytoplankton oxygen sources-sinks" unit="mmol O_2/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_O3c_sms" long_name="picophytoplankton carbon dioxide sources-sinks" unit="mmol C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_alkalinity_expressed_as_mole_equivalent_sms" long_name="picophytoplankton alkalinity_expressed_as_mole_equivalent sources-sinks" unit="mmol m-3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_alkalinity_expressed_as_mole_equivalent_w" long_name="picophytoplankton alkalinity_expressed_as_mole_equivalent vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P3_netPI" long_name="picophytoplankton net primary production" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P3_fO3PIc" long_name="picophytoplankton gross primary production" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P3_fPIO3c" long_name="picophytoplankton respiration" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P4_c_sms" long_name="microphytoplankton carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_c_w" long_name="microphytoplankton carbon vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_n_sms" long_name="microphytoplankton nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_n_w" long_name="microphytoplankton nitrogen vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_p_sms" long_name="microphytoplankton phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_p_w" long_name="microphytoplankton phosphorus vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_Chl_sms" long_name="microphytoplankton chlorophyll a sources-sinks" unit="mg/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_Chl_w" long_name="microphytoplankton chlorophyll a vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_N1p_sms" long_name="microphytoplankton phosphate sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_N3n_sms" long_name="microphytoplankton nitrate sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_N4n_sms" long_name="microphytoplankton ammonium sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_R1c_sms" long_name="microphytoplankton dissolved organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_R1p_sms" long_name="microphytoplankton dissolved organic phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_R1n_sms" long_name="microphytoplankton dissolved organic nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_R2c_sms" long_name="microphytoplankton semi-labile dissolved organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_RPc_sms" long_name="microphytoplankton particulate organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_RPp_sms" long_name="microphytoplankton particulate organic phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_RPn_sms" long_name="microphytoplankton particulate organic nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_O2o_sms" long_name="microphytoplankton oxygen sources-sinks" unit="mmol O_2/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_O3c_sms" long_name="microphytoplankton carbon dioxide sources-sinks" unit="mmol C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_alkalinity_expressed_as_mole_equivalent_sms" long_name="microphytoplankton alkalinity_expressed_as_mole_equivalent sources-sinks" unit="mmol m-3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_alkalinity_expressed_as_mole_equivalent_w" long_name="microphytoplankton alkalinity_expressed_as_mole_equivalent vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="P4_netPI" long_name="microphytoplankton net primary production" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P4_fO3PIc" long_name="microphytoplankton gross primary production" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P4_fPIO3c" long_name="microphytoplankton respiration" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P1_total_carbon_calculator_result" long_name="diatoms total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P2_total_carbon_calculator_result" long_name="nanophytoplankton total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P3_total_carbon_calculator_result" long_name="picophytoplankton total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P4_total_carbon_calculator_result" long_name="microphytoplankton total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="Z4_total_carbon_calculator_result" long_name="mesozooplankton total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="Z4_total_nitrogen_calculator_result" long_name="mesozooplankton total_nitrogen_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="Z4_total_phosphorus_calculator_result" long_name="mesozooplankton total_phosphorus_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="Z5_total_carbon_calculator_result" long_name="microzooplankton total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="Z6_total_carbon_calculator_result" long_name="nanoflagellates total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="B1_total_carbon_calculator_result" long_name="bacteria total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="R6_total_carbon_calculator_result" long_name="medium-size pom total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="Z4_totprey_calculator_result" long_name="mesozooplankton totprey_calculator result" unit="mg C/m^3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="Z4_c_sms" long_name="mesozooplankton carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_c_w" long_name="mesozooplankton carbon vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_N1p_sms" long_name="mesozooplankton phosphate sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_N4n_sms" long_name="mesozooplankton ammonium sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_R1c_sms" long_name="mesozooplankton dissolved organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_R1p_sms" long_name="mesozooplankton dissolved organic phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_R1n_sms" long_name="mesozooplankton dissolved organic nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_R2c_sms" long_name="mesozooplankton semi-labile dissolved organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_RPc_sms" long_name="mesozooplankton particulate organic carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_RPp_sms" long_name="mesozooplankton particulate organic phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_RPn_sms" long_name="mesozooplankton particulate organic nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_RPs_sms" long_name="mesozooplankton particulate organic silicate sources-sinks" unit="mmol Si/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_O2o_sms" long_name="mesozooplankton oxygen source sources-sinks" unit="mmol O_2/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_O3c_sms" long_name="mesozooplankton carbon dioxide sink sources-sinks" unit="mmol C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_alkalinity_expressed_as_mole_equivalent_sms" long_name="mesozooplankton alkalinity_expressed_as_mole_equivalent sources-sinks" unit="mmol m-3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_alkalinity_expressed_as_mole_equivalent_w" long_name="mesozooplankton alkalinity_expressed_as_mole_equivalent vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_L2c_sms" long_name="mesozooplankton calcite sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Z4_fZIO3c" long_name="mesozooplankton respiration" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="Z4_prey1_state1_sms" long_name="mesozooplankton prey1 state variable 1 sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
