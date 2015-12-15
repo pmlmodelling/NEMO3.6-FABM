@@ -22,3 +22,5 @@ To compile on *archer* using the intel compiler::
   export XIOS_HOME #set to the basepath of XIOS-1 (compile before, 2 doesn't work!)
   #typical global:
   ./makenemo -m XC_ARCHER_INTEL_NOSIGNEDZERO -n ORCA2_LIM_FABM
+
+Shelf-enabled code with FABM coupler is in the ``feat/fabm`` branch.
