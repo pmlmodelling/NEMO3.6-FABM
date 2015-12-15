@@ -24,6 +24,9 @@ MODULE trcnam
    USE trcnam_cfc        ! CFC SMS namelist
    USE trcnam_c14b       ! C14 SMS namelist
    USE trcnam_my_trc     ! MY_TRC SMS namelist
+   ! +++>>> FABM
+   USE trcnam_fabm       ! FABM SMS namelist
+   ! FABM <<<+++
    USE trd_oce       
    USE trdtrc_oce
    USE iom               ! I/O manager
@@ -177,6 +180,12 @@ CONTAINS
       IF( lk_my_trc  ) THEN   ;   CALL trc_nam_my_trc      ! MY_TRC  tracers
       ELSE                    ;   IF(lwp) WRITE(numout,*) '          MY_TRC not used'
       ENDIF
+
+      ! +++>>> FABM
+      IF( lk_fabm    ) THEN   ;   CALL trc_nam_fabm        ! FABM tracers
+      ELSE                    ;   IF(lwp) WRITE(numout,*) '          FABM not used'
+      ENDIF
+      ! FABM <<<+++
       !
    END SUBROUTINE trc_nam
 
@@ -287,7 +296,12 @@ CONTAINS
       !! ** Purpose :   read options for the passive tracer run (namelist) 
       !!
       !!---------------------------------------------------------------------
-      TYPE(PTRACER), DIMENSION(jptra) :: sn_tracer  ! type of tracer for saving if not key_iomput
+      ! --->>> FABM
+      !TYPE(PTRACER), DIMENSION(jptra) :: sn_tracer  ! type of tracer for saving if not key_iomput
+      ! FABM <<<---
+      ! +++>>> FABM
+      TYPE(PTRACER), DIMENSION(jpmaxtrc) :: sn_tracer  ! type of tracer for saving if not key_iomput
+      ! FABM <<<+++
       !!
       NAMELIST/namtrc/ sn_tracer, ln_trcdta, ln_trcdmp, ln_trcdmp_clo
   
@@ -320,7 +334,10 @@ CONTAINS
 #endif
          ln_trc_wri(jn) =       sn_tracer(jn)%llsave
       END DO
-      
+     
+      ! +++>>> FABM
+      if (lk_fabm) CALL trc_nam_fabm_override
+      ! FABM <<<+++
     END SUBROUTINE trc_nam_trc
 
 

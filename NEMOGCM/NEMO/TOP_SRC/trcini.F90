@@ -23,6 +23,9 @@ MODULE trcini
    USE trcini_pisces   ! PISCES   initialisation
    USE trcini_c14b     ! C14 bomb initialisation
    USE trcini_my_trc   ! MY_TRC   initialisation
+   ! +++>>> FABM
+   USE trcini_fabm     ! FABM initialisation
+   ! FABM <<<FABM
    USE trcdta          ! initialisation from files
    USE daymod          ! calendar manager
    USE zpshde          ! partial step: hor. derivative   (zps_hde routine)
@@ -69,6 +72,10 @@ CONTAINS
       IF(lwp) WRITE(numout,*)
       IF(lwp) WRITE(numout,*) 'trc_init : initial set up of the passive tracers'
       IF(lwp) WRITE(numout,*) '~~~~~~~'
+      ! +++>>> FABM
+      ! Allow FABM to update numbers of biogeochemical tracers, diagnostics (jptra etc.)
+      IF( lk_fabm ) CALL nemo_fabm_init
+      ! FABM <<<+++
 
       CALL top_alloc()              ! allocate TOP arrays
 
@@ -101,6 +108,9 @@ CONTAINS
       IF( lk_cfc     )       CALL trc_ini_cfc          ! CFC     tracers
       IF( lk_c14b    )       CALL trc_ini_c14b         ! C14 bomb  tracer
       IF( lk_my_trc  )       CALL trc_ini_my_trc       ! MY_TRC  tracers
+      ! +++>>> FABM
+      IF( lk_fabm    )       CALL trc_ini_fabm         ! FABM    tracers
+      ! FABM <<<+++
 
       CALL trc_ice_ini                                 ! Tracers in sea ice
 

@@ -27,6 +27,9 @@ MODULE trcrst
    USE trcnam_trp
    USE iom
    USE daymod
+   ! +++>>> FABM
+   USE trcrst_fabm
+   ! FABM <<<+++
    IMPLICIT NONE
    PRIVATE
 
@@ -116,6 +119,10 @@ CONTAINS
       DO jn = 1, jptra
          CALL iom_get( numrtr, jpdom_autoglo, 'TRB'//ctrcnm(jn), trb(:,:,:,jn) )
       END DO
+      ! +++>>> FABM
+
+      IF (lk_fabm) CALL trc_rst_read_fabm
+      ! FABM <<<+++
       !
    END SUBROUTINE trc_rst_read
 
@@ -141,6 +148,9 @@ CONTAINS
       DO jn = 1, jptra
          CALL iom_rstput( kt, nitrst, numrtw, 'TRB'//ctrcnm(jn), trb(:,:,:,jn) )
       END DO
+      ! +++>>> FABM
+      IF (lk_fabm) CALL trc_rst_wri_fabm(kt)
+      ! FABM <<<+++
       !
       IF( kt == nitrst ) THEN
           CALL trc_rst_stat            ! statistics

@@ -71,6 +71,9 @@ CONTAINS
 #else
       IF( lk_my_trc  )   CALL trc_wri_my_trc     ! MY_TRC  tracers
 #endif
+      ! +++>>>FABM
+      IF( lk_fabm    )   CALL trc_sms_fabm ( kt )      ! FABM tracers
+      ! FABM <<<+++
       !
       IF( nn_timing == 1 )  CALL timing_stop('trc_wri')
       !

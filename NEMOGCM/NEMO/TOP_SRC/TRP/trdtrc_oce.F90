@@ -21,7 +21,12 @@ MODULE trdtrc_oce
    LOGICAL  ::    ln_trdmxl_trc_restart       !: flag to restart mixed-layer trc diagnostics
    CHARACTER(len=50) ::  cn_trdrst_trc_in     !: suffix of pass. tracer restart name (input)
    CHARACTER(len=50) ::  cn_trdrst_trc_out    !: suffix of pass. tracer restart name (output)
-   LOGICAL, DIMENSION(jptra) ::   ln_trdtrc   !: large trends diagnostic to write or not (namelist)
+   ! --->>> FABM
+   ! LOGICAL, DIMENSION(jptra) ::   ln_trdtrc   !: large trends diagnostic to write or not (namelist)
+   ! FABM <<<---
+   ! +++>>> FABM
+   LOGICAL, DIMENSION(jpmaxtrc) ::   ln_trdtrc   !: large trends diagnostic to write or not (namelist)
+   ! FABM <<<+++
 
 # if defined key_trdtrc && defined key_iomput
    LOGICAL, PARAMETER ::   lk_trdtrc = .TRUE. 
