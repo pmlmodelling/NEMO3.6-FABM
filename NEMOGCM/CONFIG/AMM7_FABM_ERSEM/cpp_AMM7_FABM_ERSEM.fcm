@@ -1,0 +1,8 @@
+bld::tool::fppkeys key_dynspg_ts key_ldfslp \
+                   key_zdfgls \
+                   key_mpp_mpi key_netcdf4 \
+                   key_nosignedzero \
+                   key_traldf_c2d key_dynldf_c2d \
+                   key_bdy \
+                   key_tide  key_iomput key_vvl \
+                   key_top key_fabm key_trdtrc

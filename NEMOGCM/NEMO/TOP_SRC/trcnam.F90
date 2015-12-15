@@ -252,7 +252,12 @@ CONTAINS
       INTEGER :: ios     ! Local integer output status for namelist read
 
       ! --- Namelist declarations --- !
-      TYPE(TRC_I_NML), DIMENSION(jptra) :: sn_tri_tracer
+      ! --->>> FABM
+      !TYPE(TRC_I_NML), DIMENSION(jptra) :: sn_tri_tracer
+      ! FABM <<<--- 
+      ! +++>>> FABM
+      TYPE(TRC_I_NML), DIMENSION(jpmaxtrc) :: sn_tri_tracer
+      ! FABM <<<+++ 
       NAMELIST/namtrc_ice/ nn_ice_tr, sn_tri_tracer
 
       IF(lwp) THEN

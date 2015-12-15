@@ -1,0 +1,180 @@
+#!/bin/bash --login
+#PBS -l select=8
+#PBS -l walltime=12:00:00
+#PBS -A n01-Shelf
+####PBS -q short
+
+# Set the number of threads to 1
+#   This prevents any system libraries from automatically 
+#   using threading.
+export OMP_NUM_THREADS=1
+#module load ddt
+module load atp
+export ATP_ENABLED=1
+
+ulimit -s unlimited
+
+## year and month are the formatted version of running month and year to be used for script launching
+## y and m are the numeric one to be used in counting
+iy1=$((y))
+iy2=$((y+1))
+iy2=$((y)) # just one year for now
+
+# loop for years
+yy=$iy1
+while [  $yy -le $iy2 ]; do
+# loop for years
+year=${yy}
+
+#loop for months
+if [ $yy -eq $iy1 ]; then mm=$m; else mm=1; fi
+while [ $mm -le 12 ]; do
+#loop for months
+
+if [ $mm -lt 10 ] ; then
+   month=0$mm
+else
+   month=$mm
+fi
+
+tpd=288 # time steps per day
+date
+RUNDIR=/work/n01/n01/slwa/NEMO/src/NEMO_V3.6_STABLE_top_bdy/NEMO/NEMOGCM/CONFIG/XIOS_AMM7_top/EXP01/
+echo "Running year $year, month $month ..."
+#get run length in iterations (nit)
+case $month in
+	04|06|09|11) nit=$((30*tpd)) ;;
+	#february considering leap years:
+	02) if [ `expr $year % 4` -ne 0 -o `expr $year % 100` -eq 0 -a `expr $year % 400` -ne 0 ]; then nit=$((28*tpd)); else nit=$((29*tpd)); fi ;;
+	#february not considering leap years:
+	#02) nit=$((28*tpd)) ;;
+	*) nit=$((31*tpd)) ;;
+esac
+
+nitend=`expr $nit0 + $nit`
+nitend=`expr $nitend - 1`
+if [ $nit0 -eq 1 ] ; then
+   rstctl=0
+   rstart=.true. 
+   rsttrc=.false.   # no initial restart for tracer test
+   euler=0
+else
+   rstctl=2
+   rstart=.true.
+   rsttrc=.true.
+   euler=1
+fi
+wrt=$nit
+m1=$((mm+1))
+y1=$year
+if [ $m1 -eq 13 ]; then 
+	m1=1
+	y1=$((year+1))
+fi
+if [ $m1 -lt 10 ] ; then
+   month1=0$m1
+else
+   month1=$m1
+fi
+export EXEC=nemo.exe
+
+cd $RUNDIR
+
+
+rm NE-AMM-$IJ
+cat namelist_cfg.template \
+    | sed "s,__IT000__,$nit0,g" \
+    | sed "s,__ITEND__,$nitend,g" \
+    | sed "s,__DATE0__,${year}${month}01,g" \
+    | sed "s,__STOCK__,$nit,g" \
+    | sed "s,__WRITE__,$wrt,g" \
+    | sed "s,__II__,$I,g" \
+    | sed "s,__JJ__,$J,g" \
+    | sed "s,__IIJJ__,$IJ,g" \
+    | sed "s,__RSTCTL__,$rstctl,g" \
+    | sed "s,__RSTART__,$rstart,g" \
+    | sed "s,__EULER__,$euler,g" \
+    > namelist_cfg
+cat namelist_top_cfg.template \
+    | sed "s,__RSTCTL__,$rstctl,g" \
+    | sed "s,__RSTTR__,$rsttrc,g" \
+    > namelist_top_cfg
+echo "=== running nemo on $IJ cores (24 tasks per node)"
+
+#link boundary files
+#./setAnnualLinks.ROAM.sh $year
+
+aprun -n$IJ ./$EXEC
+ 
+date
+RC=$? ; if test $RC -ne 0 ;  then echo   failed with error code = $RC ; exit ; fi
+
+# submit post processing first - put daymean files in directories
+OUTDIR=$RUNDIR/output_$year$month
+mkdir $OUTDIR
+mv ocean.output $OUTDIR/.
+mv namelist_cfg $OUTDIR/.
+mv solver.stat  $OUTDIR/.
+mv tracer.stat $OUTDIR/.
+
+
+# then deal with restart files
+#slwa
+rm restart.nc
+rm restart_trc.nc
+if [ $nitend -lt 10000 ] ; then
+   nitrst=0000$nitend
+elif [ $nitend -lt 100000 ] ; then
+   nitrst=000$nitend
+elif [ $nitend -lt 1000000 ] ; then
+   nitrst=00$nitend
+elif [ $nitend -lt 10000000 ] ; then
+   nitrst=0$nitend
+elif [ $nitend -lt 100000000 ] ; then
+   nitrst=$nitend
+else
+   echo 'run too long'
+   exit
+fi
+
+
+for i in {0..9}
+do
+ mv  'amm7_'$nitrst'_restart_trc_000'$i.nc 'restart_trc_000'$i.nc
+ mv  'amm7_'$nitrst'_restart_000'$i.nc 'restart_000'$i.nc
+ RC=$? ; if test $RC -ne 0 ;  then echo   failed with error code = $RC ; exit ; fi
+done
+for i in {10..99}
+do
+ mv  'amm7_'$nitrst'_restart_trc_00'$i.nc 'restart_trc_00'$i.nc
+ mv  'amm7_'$nitrst'_restart_00'$i.nc 'restart_00'$i.nc
+done
+for i in {100..600}
+do
+ mv  'amm7_'$nitrst'_restart_trc_0'$i.nc 'restart_trc_0'$i.nc
+ mv  'amm7_'$nitrst'_restart_0'$i.nc 'restart_0'$i.nc
+done
+
+
+# save restart files - takes a lot of time so only do once a year
+if [ $mm -eq 12 ] ; then
+OUTDIR=$RUNDIR/files_restart_$year$month
+mkdir $OUTDIR
+cp restart_* $OUTDIR/.
+fi
+
+nit0=`expr $nitend + 1`
+
+
+mm=$((mm+1))
+done # 1..12 months
+yy=$((yy+1))
+done # year and year+1
+
+# submit next 2 years 
+#if [ $y1 -lt 2100 ]; then
+  #echo 'qsub -v I='$I',J='$J',IJ='$IJ',m='$m1',y='$y1',nit0='$nit0' -o /work/n01/n01/slwa/NEMO//src/NEMO_V3.6_STABLE_top_bdy/NEMO/NEMOGCM/CONFIG/XIOS_AMM7_top/EXP01/NE-AMM7-'$IJ'-'$y1'-'$month1' -N NE'$y1$month1' NE199501 annualrun.pbs'
+  #qsub -v I=$I,J=$J,IJ=$IJ,m=$m1,y=$y1,nit0=$nit0 -o /work/n01/n01/slwa/NEMO//src/NEMO_V3.6_STABLE_top_bdy/NEMO/NEMOGCM/CONFIG/XIOS_AMM7_top/EXP01/NE-AMM7-$IJ-$y1-$month1 -N NE$y1$month1 NE199501 annualrun.pbs
+#fi
+
+exit
