@@ -82,9 +82,16 @@ MODULE trc
          CHARACTER(len=2) :: ctrc_o     ! choice of ocean trc cc
    END TYPE
 
-   REAL(wp), DIMENSION(jptra), PUBLIC         :: trc_ice_ratio, & ! ice-ocean tracer ratio
+   ! --->>> FABM 
+   !REAL(wp), DIMENSION(jptra), PUBLIC         :: trc_ice_ratio, & ! ice-ocean tracer ratio
+   !                                              trc_ice_prescr   ! prescribed ice trc cc
+   !CHARACTER(len=2), DIMENSION(jptra), PUBLIC :: cn_trc_o ! choice of ocean tracer cc
+   ! FABM <<<---
+   ! +++>>> FABM 
+   REAL(wp), DIMENSION(jpmaxtrc), PUBLIC         :: trc_ice_ratio, & ! ice-ocean tracer ratio
                                                  trc_ice_prescr   ! prescribed ice trc cc
-   CHARACTER(len=2), DIMENSION(jptra), PUBLIC :: cn_trc_o ! choice of ocean tracer cc
+   CHARACTER(len=2), DIMENSION(jpmaxtrc), PUBLIC :: cn_trc_o ! choice of ocean tracer cc
+   ! FABM <<<+++
 
    !! information for outputs
    !! --------------------------------------------------
