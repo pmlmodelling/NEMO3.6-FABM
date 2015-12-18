@@ -316,7 +316,7 @@ CONTAINS
                   zind = 0.5 - SIGN( 0.5, fsdepw(ji,jj,jk) - zhlc(ji,jj) )
                   zwlc = zind * rn_lc * zus * SIN( rpi * fsdepw(ji,jj,jk) / zhlc(ji,jj) )
                   !                                           ! TKE Langmuir circulation source term
-                  en(ji,jj,jk) = en(ji,jj,jk) + rdt * ( zwlc * zwlc * zwlc ) / zhlc(ji,jj) * wmask(ji,jj,jk) * tmask(ji,jj,1)
+                  en(ji,jj,jk) = en(ji,jj,jk) + rdt * ( 1._wp - fr_i(ji,jj) ) * ( zwlc * zwlc * zwlc ) / zhlc(ji,jj) * wmask(ji,jj,jk) * tmask(ji,jj,1)
                END DO
             END DO
          END DO
