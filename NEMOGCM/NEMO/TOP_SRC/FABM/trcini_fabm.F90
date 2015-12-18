@@ -48,38 +48,42 @@ CONTAINS
       jpdia2d = jpdia2d + size(model%horizontal_diagnostic_variables)
       jpdia3d = jpdia3d + size(model%diagnostic_variables)
       jpdiabio = jpdiabio + jp_fabm
-
-      OPEN(UNIT=xml_unit,FILE='field_def_fabm.xml',ACTION='WRITE',STATUS='REPLACE')
-
-      WRITE (xml_unit,1000) '<field_definition level="1" prec="4" operation="average" enabled=".TRUE." default_value="1.e20" >'
-
-      WRITE (xml_unit,1000) ' <field_group id="ptrc_T" grid_ref="grid_T_3D">'
-      DO jn=1,jp_fabm
-         CALL write_variable_xml(xml_unit,model%state_variables(jn))
-      END DO
-      WRITE (xml_unit,1000) ' </field_group>'
       
-      WRITE (xml_unit,1000) ' <field_group id="sf1D_T" grid_ref="grid_T_2D">'
-      DO jn=1,jp_fabm_surface
-         CALL write_variable_xml(xml_unit,model%surface_state_variables(jn))
-      END DO
-      DO jn=1,jp_fabm_bottom
-         CALL write_variable_xml(xml_unit,model%bottom_state_variables(jn))
-      END DO
-      WRITE (xml_unit,1000) ' </field_group>'
+      IF (lwp) THEN
+         ! write field_def_fabm.xml on lead process
+         OPEN(UNIT=xml_unit,FILE='field_def_fabm.xml',ACTION='WRITE',STATUS='REPLACE')
 
-      WRITE (xml_unit,1000) ' <field_group id="diad_T" grid_ref="grid_T_2D">'
-      DO jn=1,size(model%diagnostic_variables)
-          CALL write_variable_xml(xml_unit,model%diagnostic_variables(jn),.TRUE.)
-      END DO
-      DO jn=1,size(model%horizontal_diagnostic_variables)
-          CALL write_variable_xml(xml_unit,model%horizontal_diagnostic_variables(jn))
-      END DO
-      WRITE (xml_unit,1000) ' </field_group>'
+         WRITE (xml_unit,1000) '<field_definition level="1" prec="4" operation="average" enabled=".TRUE." default_value="1.e20" >'
 
-      WRITE (xml_unit,1000) '</field_definition>'
+         WRITE (xml_unit,1000) ' <field_group id="ptrc_T" grid_ref="grid_T_3D">'
+         DO jn=1,jp_fabm
+            CALL write_variable_xml(xml_unit,model%state_variables(jn))
+         END DO
+         WRITE (xml_unit,1000) ' </field_group>'
+      
+         WRITE (xml_unit,1000) ' <field_group id="sf1D_T" grid_ref="grid_T_2D">'
+         DO jn=1,jp_fabm_surface
+            CALL write_variable_xml(xml_unit,model%surface_state_variables(jn))
+         END DO
+         DO jn=1,jp_fabm_bottom
+            CALL write_variable_xml(xml_unit,model%bottom_state_variables(jn))
+         END DO
+         WRITE (xml_unit,1000) ' </field_group>'
 
-      CLOSE(xml_unit)
+         WRITE (xml_unit,1000) ' <field_group id="diad_T" grid_ref="grid_T_2D">'
+         DO jn=1,size(model%diagnostic_variables)
+            CALL write_variable_xml(xml_unit,model%diagnostic_variables(jn),.TRUE.)
+         END DO
+         DO jn=1,size(model%horizontal_diagnostic_variables)
+            CALL write_variable_xml(xml_unit,model%horizontal_diagnostic_variables(jn))
+         END DO
+         WRITE (xml_unit,1000) ' </field_group>'
+
+         WRITE (xml_unit,1000) '</field_definition>'
+
+         CLOSE(xml_unit)
+      END IF
+      IF( lk_mpp )   CALL mppsync !Ensure field_def_fabm is ready.
 
 1000 FORMAT (A)
 
