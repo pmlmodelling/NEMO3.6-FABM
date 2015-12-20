@@ -33,7 +33,7 @@
 #%XIOS_HOME           /work/n01/n01/acc/XIOS_r484
 # set your XIOS_HOME environment variable or replace with appropriate path:
 %XIOS_HOME           $XIOS_HOME
-%FABM_HOME           $HOME/local/fabm/nemo
+%FABM_HOME           $HOME/local/fabm/nemo-debug
 #OASIS_HOME          
 
 %NCDF_INC            -I%NCDF_HOME/include -I%HDF5_HOME/include
