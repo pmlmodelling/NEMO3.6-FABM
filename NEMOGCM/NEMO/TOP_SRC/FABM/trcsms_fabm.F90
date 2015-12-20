@@ -424,7 +424,7 @@ CONTAINS
       ALLOCATE(w_if(jpk-1,jp_fabm))
       ALLOCATE(flux_if(jpk-1,jp_fabm))
       ALLOCATE(flux_ct(jpk,jp_fabm))
-      ALLOCATE(current_total(jpi,jp_fabm))
+      ALLOCATE(current_total(jpi,SIZE(model%conserved_quantities)))
 
       CALL compute_rates
 
