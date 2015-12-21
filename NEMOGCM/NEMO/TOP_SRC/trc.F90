@@ -100,7 +100,12 @@ MODULE trc
        CHARACTER(len = 80)  :: cllname  !: long name
        CHARACTER(len = 20)  :: clunit   !: unit
        LOGICAL              :: llinit   !: read in a file or not
-#if defined  key_my_trc
+! --->>> FABM
+!!#if defined  key_my_trc
+! FABM <<<---
+! +++ FABM
+#if defined  key_fabm
+! FABM <<<+++
        LOGICAL              :: llsbc   !: read in a file or not
        LOGICAL              :: llcbc   !: read in a file or not
        LOGICAL              :: llobc   !: read in a file or not
@@ -234,7 +239,12 @@ CONTAINS
          &      sbc_trc_b(jpi,jpj,jptra), sbc_trc(jpi,jpj,jptra)                      ,       &  
          &      cvol(jpi,jpj,jpk)     , rdttrc(jpk)           , trai(jptra)           ,       &
          &      ctrcnm(jptra)         , ctrcln(jptra)         , ctrcun(jptra)         ,       & 
-#if defined key_my_trc
+! --->>> FABM
+!!#if defined key_my_trc
+! FABM <<<---
+! +++>>> FABM
+#if defined key_fabm
+! FABM <<<+++
          &      ln_trc_sbc(jptra)     , ln_trc_cbc(jptra)     , ln_trc_obc(jptra)     ,       &
 #endif
 #if defined key_bdy
