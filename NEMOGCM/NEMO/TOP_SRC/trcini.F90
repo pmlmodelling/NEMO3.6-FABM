@@ -156,7 +156,12 @@ CONTAINS
         ! 
       ENDIF
 ! Initialisation of tracers Boundary Conditions  - here so that you can use initial condition as boundary
-      IF( lk_my_trc )     CALL trc_bc_init(jptra)
+      ! --->>> FABM
+      !IF( lk_my_trc )     CALL trc_bc_init(jptra)
+      ! FABM <<<---
+      ! FABM +++>>>
+      IF( lk_fabm )     CALL trc_bc_init(jptra)
+      ! FABM <<<+++
  
       tra(:,:,:,:) = 0._wp
       IF( ln_zps .AND. .NOT. lk_c1d .AND. .NOT. ln_isfcav )   &              ! Partial steps: before horizontal gradient of passive
