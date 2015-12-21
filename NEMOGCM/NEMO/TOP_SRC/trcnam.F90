@@ -332,7 +332,7 @@ CONTAINS
          ctrcln    (jn) = TRIM( sn_tracer(jn)%cllname )
          ctrcun    (jn) = TRIM( sn_tracer(jn)%clunit  )
          ln_trc_ini(jn) =       sn_tracer(jn)%llinit
-#if defined key_my_trc
+#if defined key_fabm
          ln_trc_sbc(jn) =       sn_tracer(jn)%llsbc
          ln_trc_cbc(jn) =       sn_tracer(jn)%llcbc
          ln_trc_obc(jn) =       sn_tracer(jn)%llobc
