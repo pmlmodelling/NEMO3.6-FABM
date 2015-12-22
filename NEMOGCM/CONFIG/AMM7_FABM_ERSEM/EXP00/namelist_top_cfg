@@ -13,7 +13,7 @@
 &namtrc_run     !   run information
 !-----------------------------------------------------------------------
    nn_dttrc      =  1        !  time step frequency for passive sn_tracers
-   nn_writetrc   =  5475     !  time step frequency for sn_tracer outputs
+   nn_writetrc   =  1440     !  time step frequency for sn_tracer outputs
    ln_top_euler  = .false.    !  use Euler time-stepping for TOP
    ln_rsttr      = .false. ! start from a restart file (T) or not (F)
    nn_rsttr      = 0 ! restart control = 0 initial time step is not compared to the restart file value
@@ -100,7 +100,7 @@
 !----------------------------------------------------------------------
    ln_diatrc     =  .true.   !  save additional diag. (T) or not (F)
    ln_diabio     =  .true.   !  output biological trends
-   nn_writedia   =  5475     !  time step frequency for diagnostics
+   nn_writedia   =  1440     !  time step frequency for diagnostics
    nn_writebio   =    10     !: frequency of biological outputs
 /
 !----------------------------------------------------------------------
