@@ -93,6 +93,7 @@
  <field_group id="diad_T" grid_ref="grid_T_2D">
   <field id="particulate_organic_absorption_coefficient_calculator_result" long_name="particulate_organic_absorption_coefficient_calculator result" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="particulate_organic_backscatter_coefficient_calculator_result" long_name="particulate_organic_backscatter_coefficient_calculator result" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="adESS_data" long_name="adESS data" unit="" default_value="0.700E-01" grid_ref="grid_T_3D" />
   <field id="light_EIR" long_name="light shortwave radiation" unit="W/m^2" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="light_parEIR" long_name="light photosynthetically active radiation" unit="W/m^2" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="light_xEPS" long_name="light attenuation coefficient of shortwave flux" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
@@ -533,6 +534,7 @@
   <field id="N5_s_bfl" long_name="silicate silicate bottom flux" unit="mmol Si/m^3*m/s" default_value="0.000E+00" />
   <field id="O2_o_sfl" long_name="oxygen oxygen surface flux" unit="mmol O_2/m^3*m/s" default_value="0.000E+00" />
   <field id="O2_o_bfl" long_name="oxygen oxygen bottom flux" unit="mmol O_2/m^3*m/s" default_value="0.000E+00" />
+  <field id="pco2a_data" long_name="pco2a data" unit="" default_value="0.385E+03" />
   <field id="O3_c_sfl" long_name="carbonate total dissolved inorganic carbon surface flux" unit="mmol C/m^3*m/s" default_value="0.000E+00" />
   <field id="O3_c_bfl" long_name="carbonate total dissolved inorganic carbon bottom flux" unit="mmol C/m^3*m/s" default_value="0.000E+00" />
   <field id="O3_bioalk_sfl" long_name="carbonate bioalkalinity surface flux" unit="umol/kg*m/s" default_value="0.000E+00" />
@@ -614,6 +616,7 @@
   <field id="pel_nit_O2o_bfl" long_name="pelagic nitrification oxygen bottom flux" unit="mmol O_2/m^3*m/s" default_value="0.000E+00" />
   <field id="pel_nit_alkalinity_expressed_as_mole_equivalent_sfl" long_name="pelagic nitrification alkalinity_expressed_as_mole_equivalent surface flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
   <field id="pel_nit_alkalinity_expressed_as_mole_equivalent_bfl" long_name="pelagic nitrification alkalinity_expressed_as_mole_equivalent bottom flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
+  <field id="tauB_data" long_name="tauB data" unit="" default_value="0.000E+00" />
   <field id="ben_col_D1m_sms" long_name="benthic column depth of bottom interface of oxygenated layer sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="ben_col_D2m_sms" long_name="benthic column depth of bottom interface of oxidized layer sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="ben_col_poro" long_name="benthic column porosity" unit="-" default_value="0.400E+00" />
