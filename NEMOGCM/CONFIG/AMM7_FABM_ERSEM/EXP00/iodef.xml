@@ -142,10 +142,10 @@
         </file>
 
        <file id="file50" name_suffix="_ptrc_T" description="tracer variables" >
-          <field field_ref="AREA"     name="AREA"    long_name="cell area" operation="instant" />
-          <field field_ref="DEPTH"    name="DEPTH"   long_name="cell depth" operation="instant" />
-          <field field_ref="TR1"      name="TR1"     long_name="passive tracer density" operation="instant" />
+          <field field_ref="N1_p"      name="N1_p"     long_name="Phosphate" operation="instant" />
           <!-- <field field_ref="TR1_pool" name="TR1_pool" long_name="passive tracer pool" operation="instant" />
+          <field field_ref="DEPTH"    name="DEPTH"   long_name="cell depth" operation="instant" />
+          <field field_ref="AREA"     name="AREA"    long_name="cell area" operation="instant" />
           <field field_ref="XAD_TR1"  name="XAD_TR1" long_name="tracer trend advection in x direction" operation="average" freq_op="1ts" />
           <field field_ref="YAD_TR1"  name="YAD_TR1" long_name="tracer trend advection in y direction" operation="average" freq_op="1ts" />
           <field field_ref="LDF_TR1"  name="LDF_TR1" long_name="tracer trend from horizontal diffusion" operation="average" freq_op="1ts" />
