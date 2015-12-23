@@ -370,6 +370,7 @@ CONTAINS
 
       IF ( PRESENT(jit) ) THEN 
 
+#ifdef key_bdy
          ! OPEN boundary conditions (use time_offset=+1 as they are applied at the end of the step)
          IF( nb_trcobc > 0 ) THEN
            if (lwp) write(numout,'(a,i5,a,i10)') '   reading OBC data for ', nb_trcobc ,' variable(s) at step ', kt
@@ -377,6 +378,7 @@ CONTAINS
              CALL fld_read(kt=kt, kn_fsbc=1, sd=sf_trcobc(:,ib), map=nbmap_ptr(:,ib), kit=jit, kt_offset=+1)
            ENDDO
          ENDIF
+#endif
 
          ! SURFACE boundary conditions
          IF( nb_trcsbc > 0 ) THEN
@@ -392,6 +394,7 @@ CONTAINS
 
       ELSE
 
+#ifdef key_bdy
          ! OPEN boundary conditions (use time_offset=+1 as they are applied at the end of the step)
          IF( nb_trcobc > 0 ) THEN
            if (lwp) write(numout,'(a,i5,a,i10)') '   reading OBC data for ', nb_trcobc ,' variable(s) at step ', kt
@@ -399,6 +402,7 @@ CONTAINS
              CALL fld_read(kt=kt, kn_fsbc=1, sd=sf_trcobc(:,ib), map=nbmap_ptr(:,ib), kt_offset=+1)
            ENDDO
          ENDIF
+#endif
 
          ! SURFACE boundary conditions
          IF( nb_trcsbc > 0 ) THEN
