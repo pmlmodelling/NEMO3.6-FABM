@@ -1,0 +1,54 @@
+!!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!! NEMO/TOP1 :  Configuration namelist : used to overwrite defaults values defined in SHARED/namelist_top_ref
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!-----------------------------------------------------------------------
+&namtrc_run     !   run information
+!-----------------------------------------------------------------------
+   ln_top_euler  = .true.    !  use Euler time-stepping for TOP
+/
+!-----------------------------------------------------------------------
+&namtrc     !   tracers definition
+!-----------------------------------------------------------------------
+!                !    name   !           title of the field              ! initial data ! initial data ! save   !
+!                !           !                                           !  units       ! from file    ! or not ! 
+!                !           !                                           !              ! or not       !        !
+!   sn_tracer(1)   = 'nut_c     ' , 'Nitrogen      ',  'mmol/m3' ,  .false.     ,  .true.
+!   sn_tracer(2)   = 'phy_c' , 'Phytoplankton ',  'mmol/m3 '   ,  .false.     ,  .true.
+!   sn_tracer(3)   = 'zoo_c      ' , 'Zooplankton         ',  'mmol/m3' ,  .false.     ,  .true.
+!   sn_tracer(4)   = 'det_c   ' , 'Detritus                  ',  'mmol/m3' ,  .false.    ,  .true.
+/
+!-----------------------------------------------------------------------
+&namtrc_dta      !    Initialisation from data input file
+!-----------------------------------------------------------------------
+!          !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!          !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
+   !sn_trcdta(1)  = 'data_DIC_nomask'        ,        -12        ,  'DIC'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   !rn_trfac(1)   =   1.0e-06  !  multiplicative factor
+/
+!-----------------------------------------------------------------------
+&namtrc_adv    !   advection scheme for passive tracer 
+!-----------------------------------------------------------------------
+   ln_trcadv_tvd     =  .false.  !  TVD scheme
+   ln_trcadv_muscl   =  .true.   !  MUSCL scheme
+/
+!-----------------------------------------------------------------------
+&namtrc_ldf    !   lateral diffusion scheme for passive tracer 
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namtrc_zdf        !   vertical physics
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namtrc_rad        !  treatment of negative concentrations 
+!-----------------------------------------------------------------------
+   ln_trcrad   =  .true.  !  artificially correct negative concentrations (T) or not (F)
+/
+!-----------------------------------------------------------------------
+&namtrc_dia       !   parameters for passive tracer additional diagnostics
+!----------------------------------------------------------------------
+/
+!----------------------------------------------------------------------
+&namtrc_bc        !   data for boundary conditions
+!-----------------------------------------------------------------------
+/

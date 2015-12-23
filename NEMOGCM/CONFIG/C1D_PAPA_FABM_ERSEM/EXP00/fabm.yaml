@@ -1,0 +1,729 @@
+instances:
+  zenithAngle:
+    model: ersem/zenith_angle
+  light:
+    model: ersem/light_iop
+    parameters:
+      a0w: 0.03
+      b0w: 0.0015
+      pEIR_eow: 0.5
+  N1:
+    long_name: phosphate
+    model: ersem/pelagic_base
+    parameters:
+      composition: p
+      c0: 0.001
+    initialization:
+      p: 0.4
+  N3:
+    long_name: nitrate
+    model: ersem/pelagic_base
+    parameters:
+      composition: n
+      c0: 0.001
+    initialization:
+      n: 8.0
+  N4:
+    long_name: ammonium
+    model: ersem/pelagic_base
+    parameters:
+      composition: n
+      c0: 0.001
+    initialization:
+      n: 0.1
+  N5:
+    long_name: silicate
+    model: ersem/pelagic_base
+    parameters:
+      composition: s
+      s0: 0.0003
+    initialization:
+      s: 4.5
+  O2:
+    long_name: oxygen
+    model: ersem/oxygen
+    parameters:
+      ISWO2: 2
+    initialization:
+      o: 300.0
+  O3:
+    long_name: carbonate
+    model: ersem/carbonate
+    parameters:
+      iswCO2: 1
+      iswASFLUX: 1
+      iswtalk: 2
+    initialization:
+      c: 2130.0
+  R1:
+    long_name: labile dissolved organic matter
+    model: ersem/pelagic_base
+    parameters:
+      composition: cnp
+      c0: 0.0034
+    initialization:
+      c: 10.0
+      n: 0.14
+      p: 0.01
+  R2:
+    long_name: semi-labile dissolved organic matter
+    model: ersem/pelagic_base
+    parameters:
+      composition: c
+      c0: 0.0033
+    initialization:
+      c: 12.0
+  R3:
+    long_name: semi-refractory dissolved organic matter
+    model: ersem/pelagic_base
+    parameters:
+      composition: c
+      c0: 0.0033
+    initialization:
+      c: 12.0
+  R4:
+    long_name: small-size pom
+    model: ersem/pelagic_base
+    parameters:
+      composition: cnpf
+      iopABS: 1.0e-05
+      iopBBS: 1.6e-05
+      rm: 1.0
+      sedimentation: true
+      qQ1c: 0.0
+      qQ7c: 0.1
+      xR1n: 1.0
+      xR1p: 1.2
+      xR7n: 1.0
+      xR7p: 0.6
+      c0: 0.0033
+    initialization:
+      c: 7.2
+      n: 0.1
+      p: 0.007
+    coupling:
+      Q1: Q1
+      Q6: Q6
+      Q7: Q7
+  R6:
+    long_name: medium-size pom
+    model: ersem/pelagic_base
+    parameters:
+      composition: cnpsf
+      iopABS: 1.0e-05
+      iopBBS: 1.6e-05
+      rm: 5.0
+      sedimentation: true
+      qQ1c: 0.0
+      qQ7c: 0.1
+      xR1n: 1.0
+      xR1p: 1.2
+      xR7n: 1.0
+      xR7p: 0.6
+      c0: 0.0033
+    initialization:
+      c: 17.0
+      n: 0.24
+      p: 0.02
+      s: 0.1
+    coupling:
+      Q1: Q1
+      Q6: Q6
+      Q7: Q7
+  R8:
+    long_name: large-size pom
+    model: ersem/pelagic_base
+    parameters:
+      composition: cnps
+      iopABS: 1.0e-05
+      iopBBS: 1.6e-05
+      rm: 10.0
+      sedimentation: true
+      qQ1c: 0.0
+      qQ7c: 0.1
+      xR1n: 1.0
+      xR1p: 1.2
+      xR7n: 1.0
+      xR7p: 0.6
+      c0: 0.0033
+    initialization:
+      c: 0.17
+      n: 0.0024
+      p: 0.0002
+      s: 0.001
+    coupling:
+      Q1: Q1
+      Q6: Q6
+      Q7: Q7
+  Q1:
+    long_name: benthic dissolved organic matter
+    model: ersem/benthic_base
+    parameters:
+      composition: cnp
+      remin: 0.1
+      pN3: 0.9
+    initialization:
+      c: 18.9
+      n: 0.6
+      p: 0.0035
+    coupling:
+      O3c: O3/c
+      N1p: N1/p
+      N3n: N3/n
+      N4n: N4/n
+  Q6:
+    long_name: benthic particulate organic matter
+    model: ersem/benthic_base
+    parameters:
+      composition: cnpsf
+      resuspension: true
+      remin: 0.05
+      pN3: 0.9
+    initialization:
+      c: 3052.0
+      n: 3.5
+      p: 0.5
+      s: 149.0
+    coupling:
+      O3c: O3/c
+      N1p: N1/p
+      N3n: N3/n
+      N4n: N4/n
+      N5s: N5/s
+      RP: R6
+  Q7:
+    long_name: benthic refractory matter
+    model: ersem/benthic_base
+    parameters:
+      composition: cnp
+      remin: 0.01
+      pN3: 0.9
+    initialization:
+      c: 30520.0
+      n: 80.0
+      p: 8.0
+    coupling:
+      O3c: O3/c
+      N1p: N1/p
+      N3n: N3/n
+      N4n: N4/n
+  B1:
+    long_name: bacteria
+    model: ersem/bacteria_docdyn
+    parameters:
+      iswBlim: 2
+      q10: 2.0
+      chdo: 0.31
+      chn: 0.5
+      chp: 0.1
+      sd: 0.05
+      sum: 2.2
+      pu: 0.6
+      puo: 0.2
+      srs: 0.1
+      sR1B1: 1.0
+      qpc: 0.0019
+      qnc: 0.0167
+      ur_O2: 0.1
+      sR1N1: 0.0
+      sR1N4: 0.0
+      fsink: 7.0e-05
+      c0: 0.01
+      nRP: 3
+      sRP1R1: 0.01
+      sRP2R1: 0.0025
+      sRP3R1: 0.001
+      rR2: 0.0075
+      rR3: 0.0025
+      frR3: 0.3
+    initialization:
+      c: 15.7
+      n: 0.26
+      p: 0.029
+    coupling:
+      N1p: N1/p                                       # phosphate (mmol P/m^3)
+      N4n: N4/n                                       # ammonium (mmol N/m^3)
+      R1c: R1/c                                       # labile dissolved organic carbon (mg C/m^3)
+      R1p: R1/p                                       # labile dissolved organic phosphorus (mmol P/m^3)
+      R1n: R1/n                                       # labile dissolved organic nitrogen (mmol N/m^3)
+      R2c: R2/c                                       # semi-labile dissolved organic carbon (mg C/m^3)
+      R3c: R3/c                                       # semi-refractory dissolved organic carbon (mg C/m^3)
+      RP1: R4
+      RP2: R6
+      RP3: R8
+      O2o: O2/o                                       # oxygen (mmol O_2/m^3)
+      O3c: O3/c                                       # carbon dioxide (mmol C/m^3)
+  pel_nit:
+    long_name: pelagic nitrification
+    model: ersem/nitrification
+    parameters:
+      q10: 2.0
+      ISWph: 1
+      sN4N3: 0.5
+      chN3o: 2700.0
+      chN4n: 0.5
+    coupling:
+      N3n: N3/n                                       # nitrate (mmol N/m^3)
+      N4n: N4/n                                       # ammonium (mmol N/m^3)
+      O2o: O2/o                                       # oxygen (mmol O_2/m^3)
+  P1:
+    long_name: diatoms
+    model: ersem/primary_producer
+    parameters:
+      sum: 1.375
+      q10: 2.0
+      srs: 0.04
+      pu_ea: 0.2
+      pu_ra: 0.2
+      qnlc: 0.0042
+      qplc: 0.0001
+      xqcp: 1.0
+      xqcn: 1.0
+      xqp: 2.0
+      xqn: 1.075
+      qun3: 0.0025
+      qun4: 0.0025
+      qurp: 0.003
+      snplux: 1.0
+      use_Si: true
+      qsc: 0.0118
+      chs: 0.2
+      sdo: 0.05
+      alpha: 4.0
+      beta: 0.07
+      phim: 0.06
+      Limnut: 1
+      uB1c_O2: 0.11
+      urB1_O2: 0.1
+      iopABS: 0.007
+      iopBBS: 0.00048
+      c0: 0.0001
+      resm: 5.0
+      esni: 0.7
+      cenh: false
+      sedimentation: true
+      qQ1c: 0.2
+      qQ7c: 0.005
+      xR1n: 1.0
+      xR1p: 1.2
+      xR7n: 1.0
+      xR7p: 0.6
+      docdyn: true
+    initialization:
+      c: 8.0
+      n: 0.1114
+      p: 0.009
+      s: 0.128
+      Chl: 0.4
+    coupling:
+      N1p: N1/p                                       # phosphate (mmol P/m^3)
+      N3n: N3/n                                       # nitrate (mmol N/m^3)
+      N4n: N4/n                                       # ammonium (mmol N/m^3)
+      N5s: N5/s                                       # silicate (mmol Si/m^3)
+      R1c: R1/c                                       # dissolved organic carbon (mg C/m^3)
+      R1p: R1/p                                       # dissolved organic phosphorus (mmol P/m^3)
+      R1n: R1/n                                       # dissolved organic nitrogen (mmol N/m^3)
+      R2c: R2/c                                       # semi-labile dissolved organic carbon (mg C/m^3)
+      RP: R6
+      O2o: O2/o                                       # oxygen (mmol O_2/m^3)
+      O3c: O3/c                                       # carbon dioxide (mmol C/m^3)
+      Q1: Q1
+      Q6: Q6
+      Q7: Q7
+  P2:
+    long_name: nanophytoplankton
+    model: ersem/primary_producer
+    parameters:
+      sum: 1.625
+      q10: 2.0
+      srs: 0.04
+      pu_ea: 0.2
+      pu_ra: 0.2
+      qnlc: 0.005
+      qplc: 0.000225
+      xqcp: 1.0
+      xqcn: 1.0
+      xqp: 2.0
+      xqn: 1.075
+      qun3: 0.004
+      qun4: 0.004
+      qurp: 0.004
+      snplux: 1.0
+      use_Si: false
+      sdo: 0.05
+      alpha: 5.0
+      beta: 0.1
+      phim: 0.025
+      Limnut: 1
+      uB1c_O2: 0.11
+      urB1_O2: 0.1
+      iopABS: 0.0041
+      iopBBS: 0.003
+      c0: 0.001
+      calcify: true
+      resm: 0.0
+      esni: 0.7
+      cenh: false
+      sedimentation: true
+      qQ1c: 0.5
+      qQ7c: 0.05
+      xR1n: 1.0
+      xR1p: 1.2
+      xR7n: 1.0
+      xR7p: 0.6
+      docdyn: true
+    initialization:
+      c: 5.9
+      n: 0.0926
+      p: 0.0036
+      Chl: 0.3
+    coupling:
+      N1p: N1/p                                       # phosphate (mmol P/m^3)
+      N3n: N3/n                                       # nitrate (mmol N/m^3)
+      N4n: N4/n                                       # ammonium (mmol N/m^3)
+      R1c: R1/c                                       # dissolved organic carbon (mg C/m^3)
+      R1p: R1/p                                       # dissolved organic phosphorus (mmol P/m^3)
+      R1n: R1/n                                       # dissolved organic nitrogen (mmol N/m^3)
+      R2c: R2/c                                       # semi-labile dissolved organic carbon (mg C/m^3)
+      RP: R4
+      O2o: O2/o                                       # oxygen (mmol O_2/m^3)
+      O3c: O3/c                                       # carbon dioxide (mmol C/m^3)
+      Q1: Q1
+      Q6: Q6
+      Q7: Q7
+      L2c: L2/c                                       # free calcite (mg C/m^3)
+      RainR: L2/RainR                                 # rain ratio (PIC : POC) (-)
+  P3:
+    long_name: picophytoplankton
+    model: ersem/primary_producer
+    parameters:
+      sum: 2.0
+      q10: 2.0
+      srs: 0.045
+      pu_ea: 0.2
+      pu_ra: 0.2
+      qnlc: 0.006
+      qplc: 0.00035
+      xqcp: 1.0
+      xqcn: 1.0
+      xqp: 1.5
+      xqn: 1.05
+      qun3: 0.006
+      qun4: 0.007
+      qurp: 0.006
+      snplux: 1.0
+      use_Si: false
+      sdo: 0.055
+      alpha: 6.0
+      beta: 0.12
+      phim: 0.015
+      Limnut: 1
+      uB1c_O2: 0.11
+      urB1_O2: 0.1
+      iopABS: 0.023
+      iopBBS: 0.003
+      c0: 0.0088
+      resm: 0.0
+      esni: 0.7
+      cenh: false
+      sedimentation: true
+      qQ1c: 0.5
+      qQ7c: 0.05
+      xR1n: 1.0
+      xR1p: 1.2
+      xR7n: 1.0
+      xR7p: 0.6
+      docdyn: true
+    initialization:
+      c: 5.9
+      n: 0.0926
+      p: 0.0036
+      Chl: 0.3
+    coupling:
+      N1p: N1/p                                       # phosphate (mmol P/m^3)
+      N3n: N3/n                                       # nitrate (mmol N/m^3)
+      N4n: N4/n                                       # ammonium (mmol N/m^3)
+      R1c: R1/c                                       # dissolved organic carbon (mg C/m^3)
+      R1p: R1/p                                       # dissolved organic phosphorus (mmol P/m^3)
+      R1n: R1/n                                       # dissolved organic nitrogen (mmol N/m^3)
+      R2c: R2/c                                       # semi-labile dissolved organic carbon (mg C/m^3)
+      RP: R4
+      O2o: O2/o                                       # oxygen (mmol O_2/m^3)
+      O3c: O3/c                                       # carbon dioxide (mmol C/m^3)
+      Q1: Q1
+      Q6: Q6
+      Q7: Q7
+  P4:
+    long_name: microphytoplankton
+    model: ersem/primary_producer
+    parameters:
+      sum: 1.125
+      q10: 2.0
+      srs: 0.035
+      pu_ea: 0.2
+      pu_ra: 0.2
+      qnlc: 0.0042
+      qplc: 0.0001
+      xqcp: 1.0
+      xqcn: 1.0
+      xqp: 2.7
+      xqn: 1.1
+      qun3: 0.002
+      qun4: 0.002
+      qurp: 0.002
+      snplux: 1.0
+      use_Si: false
+      sdo: 0.045
+      alpha: 3.0
+      beta: 0.06
+      phim: 0.045
+      Limnut: 1
+      uB1c_O2: 0.11
+      urB1_O2: 0.1
+      iopABS: 0.008
+      iopBBS: 0.00048
+      c0: 0.0001
+      resm: 5.0
+      esni: 0.7
+      cenh: false
+      sedimentation: true
+      qQ1c: 0.5
+      qQ7c: 0.05
+      xR1n: 1.0
+      xR1p: 1.2
+      xR7n: 1.0
+      xR7p: 0.6
+      docdyn: true
+    initialization:
+      c: 5.9
+      n: 0.0926
+      p: 0.0036
+      Chl: 0.3
+    coupling:
+      N1p: N1/p                                       # phosphate (mmol P/m^3)
+      N3n: N3/n                                       # nitrate (mmol N/m^3)
+      N4n: N4/n                                       # ammonium (mmol N/m^3)
+      R1c: R1/c                                       # dissolved organic carbon (mg C/m^3)
+      R1p: R1/p                                       # dissolved organic phosphorus (mmol P/m^3)
+      R1n: R1/n                                       # dissolved organic nitrogen (mmol N/m^3)
+      R2c: R2/c                                       # semi-labile dissolved organic carbon (mg C/m^3)
+      RP: R6
+      O2o: O2/o                                       # oxygen (mmol O_2/m^3)
+      O3c: O3/c                                       # carbon dioxide (mmol C/m^3)
+      Q1: Q1
+      Q6: Q6
+      Q7: Q7
+  Z4:
+    long_name: mesozooplankton
+    model: ersem/mesozooplankton
+    parameters:
+      q10: 2.0
+      minfood: 12.0
+      chuc: 36.0
+      sum: 1.0
+      pu: 0.6
+      pu_ea: 0.5
+      pu_eaR: 0.9
+      pe_R1: 0.5
+      srs: 0.015
+      sd: 0.05
+      sdo: 0.2
+      chro: 7.81
+      qpc: 0.000786
+      qnc: 0.0126
+      Minprey: 300.0
+      repw: 0.0025
+      mort: 0.0025
+      R1R2: 1.0
+      xR1p: 1.2
+      xR1n: 1.0
+      urB1_O2: 0.1
+      gutdiss: 0.5
+      c0: 0.0033
+      nprey: 9
+      suprey1: 0.15
+      suprey2: 0.05
+      suprey3: 0.0
+      suprey4: 0.15
+      suprey5: 0.25
+      suprey6: 0.25
+      suprey7: 0.05
+      suprey8: 0.0
+      suprey9: 0.1
+      prey9ispom: true
+    initialization:
+      c: 1.2
+    coupling:
+      prey1: P1
+      prey2: P2
+      prey3: P3
+      prey4: P4
+      prey5: Z4
+      prey6: Z5
+      prey7: Z6
+      prey8: B1
+      prey9: R6
+      N1p: N1/p                                       # phosphate (mmol P/m^3)
+      N4n: N4/n                                       # ammonium (mmol N/m^3)
+      R1c: R1/c                                       # dissolved organic carbon (mg C/m^3)
+      R1p: R1/p                                       # dissolved organic phosphorus (mmol P/m^3)
+      R1n: R1/n                                       # dissolved organic nitrogen (mmol N/m^3)
+      R2c: R2/c                                       # semi-labile dissolved organic carbon (mg C/m^3)
+      RP: R8
+      O2o: O2/o                                       # oxygen source (mmol O_2/m^3)
+      O3c: O3/c                                       # carbon dioxide sink (mmol C/m^3)
+      L2c: L2/c                                       # calcite (mg C/m^3)
+      integral_of_totprey_wrt_depth: preyID/data
+  Z5:
+    long_name: microzooplankton
+    model: ersem/microzooplankton
+    parameters:
+      q10: 2.0
+      minfood: 12.0
+      chuc: 32.0
+      sum: 1.25
+      pu: 0.5
+      pu_ea: 0.5
+      pe_R1: 0.5
+      srs: 0.02
+      sd: 0.05
+      sdo: 0.25
+      chro: 7.81
+      qpc: 0.001
+      qnc: 0.0167
+      stempp: 0.5
+      stempn: 0.5
+      R1R2: 1.0
+      xR1p: 1.2
+      xR1n: 1.0
+      urB1_O2: 0.1
+      gutdiss: 0.5
+      c0: 0.0033
+      nprey: 7
+      suprey1: 0.1
+      suprey2: 0.15
+      suprey3: 0.15
+      suprey4: 0.15
+      suprey5: 0.1
+      suprey6: 0.15
+      suprey7: 0.2
+    initialization:
+      c: 7.2
+      n: 0.12
+      p: 0.0113
+    coupling:
+      prey1: B1
+      prey2: P1
+      prey3: P2
+      prey4: P3
+      prey5: P4
+      prey6: Z5
+      prey7: Z6
+      N1p: N1/p                                       # phosphate (mmol P/m^3)
+      N4n: N4/n                                       # ammonium (mmol N/m^3)
+      R1c: R1/c                                       # dissolved organic carbon (mg C/m^3)
+      R1p: R1/p                                       # dissolved organic phosphorus (mmol P/m^3)
+      R1n: R1/n                                       # dissolved organic nitrogen (mmol N/m^3)
+      R2c: R2/c                                       # semi-labile dissolved organic carbon (mg C/m^3)
+      RP: R6
+      O2o: O2/o                                       # oxygen source (mmol O_2/m^3)
+      O3c: O3/c                                       # carbon dioxide sink (mmol C/m^3)
+      L2c: L2/c                                       # calcite (mg C/m^3)
+  Z6:
+    long_name: nanoflagellates
+    model: ersem/microzooplankton
+    parameters:
+      q10: 2.0
+      minfood: 12.0
+      chuc: 28.0
+      sum: 1.5
+      pu: 0.4
+      pu_ea: 0.5
+      pe_R1: 0.5
+      srs: 0.025
+      sd: 0.05
+      sdo: 0.3
+      chro: 7.81
+      qpc: 0.001
+      qnc: 0.0167
+      stempp: 0.5
+      stempn: 0.5
+      R1R2: 1.0
+      xR1p: 1.2
+      xR1n: 1.0
+      urB1_O2: 0.1
+      gutdiss: 1.0
+      c0: 0.0033
+      nprey: 4
+      suprey1: 0.45
+      suprey2: 0.15
+      suprey3: 0.25
+      suprey4: 0.15
+    initialization:
+      c: 2.421
+      n: 0.0505
+      p: 0.047
+    coupling:
+      prey1: B1
+      prey2: P2
+      prey3: P3
+      prey4: Z6
+      N1p: N1/p                                       # phosphate (mmol P/m^3)
+      N4n: N4/n                                       # ammonium (mmol N/m^3)
+      R1c: R1/c                                       # dissolved organic carbon (mg C/m^3)
+      R1p: R1/p                                       # dissolved organic phosphorus (mmol P/m^3)
+      R1n: R1/n                                       # dissolved organic nitrogen (mmol N/m^3)
+      R2c: R2/c                                       # semi-labile dissolved organic carbon (mg C/m^3)
+      RP: R4
+      RPs: R6/s                                       # particulate organic silicate (mmol Si/m^3)
+      O2o: O2/o                                       # oxygen source (mmol O_2/m^3)
+      O3c: O3/c                                       # carbon dioxide sink (mmol C/m^3)
+      L2c: L2/c                                       # calcite (mg C/m^3)
+  L2:
+    long_name: calcite
+    model: ersem/calcification
+    parameters:
+      iswcal: 1
+      ncalc: 0.81
+      ndiss: 2.22
+      Rain0: 0.6
+      sedL2: 10.0
+      sL2O3: 0.03
+      c0: 1.0e-05
+    initialization:
+      c: 0.05
+    coupling:
+      om_cal: O3/Om_cal                               # calcite saturation (-)
+      O3c: O3/c                                       # total dissolved inorganic carbon (mmol C/m^3)
+      bL2c: bL2/l                                     # benthic calcite (mg C/m^2)
+  bL2:
+    long_name: benthic calcite
+    model: ersem/benthic_base
+    parameters:
+      composition: l
+      remin: 0.05
+    initialization:
+      l: 0.05                                         # calcite (mg C/m^2)
+    coupling:
+      O3c: O3/c                                       # dissolved inorganic carbon (umol/m^3)
+  pco2a:
+   model: horizontal_constant
+   parameters:
+     value: 367
+     standard_name: mole_fraction_of_carbon_dioxide_in_air
+  adESS:
+   model: bulk_constant
+   parameters:
+     value: 0.07
+     standard_name: absorption_of_silt
+  tauB:
+   model: horizontal_constant
+   parameters:
+     value: 0.0
+     standard_name: bottom_stress
+  preyID:
+   model: horizontal_constant
+   parameters:
+     value: 1.0e10
+     standard_name: dummy_prey_int
+
