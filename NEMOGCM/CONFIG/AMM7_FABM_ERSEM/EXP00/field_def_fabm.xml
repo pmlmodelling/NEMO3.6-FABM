@@ -52,7 +52,7 @@
   <field id="R8_p" long_name="large-size pom phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="R8_s" long_name="large-size pom silicate" unit="mmol Si/m^3" default_value="-.200E+21" />
  </field_group>
- <field_group id="sf1D_T" grid_ref="grid_T_2D">
+ <field_group id="sf_T" grid_ref="grid_T_2D">
   <field id="ben_col_D1m" long_name="benthic column depth of bottom interface of oxygenated layer" unit="m" default_value="-.200E+21" />
   <field id="ben_col_D2m" long_name="benthic column depth of bottom interface of oxidized layer" unit="m" default_value="-.200E+21" />
   <field id="Q1_c" long_name="benthic dissolved organic matter carbon" unit="mg C/m^2" default_value="-.200E+21" />
@@ -1738,5 +1738,11 @@
   <field id="total_nitrogen_at_interfaces_calculator_result" long_name="total_nitrogen_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
   <field id="total_silicate_at_interfaces_calculator_result" long_name="total_silicate_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
   <field id="total_carbon_at_interfaces_calculator_result" long_name="total_carbon_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
+ </field_group>
+ <field_group id="fabm_scalar" grid_ref="grid_0">
+  <field id="total_phosphorus" long_name="total_phosphorus" unit="mmol m-3" default_value="-.200E+21" />
+  <field id="total_nitrogen" long_name="total_nitrogen" unit="mmol m-3" default_value="-.200E+21" />
+  <field id="total_silicate" long_name="total_silicate" unit="mmol m-3" default_value="-.200E+21" />
+  <field id="total_carbon" long_name="total_carbon" unit="mmol m-3" default_value="-.200E+21" />
  </field_group>
 </field_definition>

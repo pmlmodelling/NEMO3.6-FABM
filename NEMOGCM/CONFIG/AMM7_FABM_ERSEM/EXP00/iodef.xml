@@ -142,54 +142,54 @@
         </file>
 
        <file id="file50" name_suffix="_ptrc_T" description="tracer variables" >
-          <field field_ref="N1_p"      name="N1_p"     long_name="Phosphate" operation="instant" />
-          <field field_ref="N3_n"      name="N3_n"     long_name="Phosphate" operation="instant" />
-          <field field_ref="N4_n"      name="N4_n"     long_name="Phosphate" operation="instant" />
-          <field field_ref="N5_s"      name="N5_s"     long_name="Phosphate" operation="instant" />
-          <field field_ref="O3_c"      name="O3_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="O2_o"      name="O2_o"     long_name="Phosphate" operation="instant" />
-          <field field_ref="P1_c"      name="P1_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="P2_c"      name="P2_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="P3_c"      name="P3_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="P4_c"      name="P4_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="B1_c"      name="B1_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Z4_c"      name="Z4_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Z5_c"      name="Z5_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Z6_c"      name="Z6_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="R4_c"      name="R4_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="R6_c"      name="R6_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="R8_c"      name="R8_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="R1_c"      name="R1_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="R2_c"      name="R2_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="R3_c"      name="R3_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="L2_c"      name="L2_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="bL2_l"      name="bL2_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Q1_c"      name="Q1_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Q6_c"      name="Q6_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Q7_c"      name="Q7_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Q17_c"      name="Q17_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="H1_c"      name="H1_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="H2_c"      name="H2_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Y2_c"      name="Y2_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Y3_c"      name="Y3_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Y4_c"      name="Y4_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="ben_col_D1m"      name="ben_col_D1m"     long_name="Phosphate" operation="instant" />
-          <field field_ref="ben_col_D2m"      name="ben_col_D2m"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Q6_pen_depth_c"      name="Q6_pen_depth_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Q6_pen_depth_n"      name="Q6_pen_depth_n"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Q6_pen_depth_p"      name="Q6_pen_depth_p"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Q6_pen_depth_s"      name="Q6_pen_depth_s"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Q7_pen_depth_c"      name="Q7_pen_depth_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Q7_pen_depth_n"      name="Q7_pen_depth_n"     long_name="Phosphate" operation="instant" />
-          <field field_ref="Q7_pen_depth_p"      name="Q7_pen_depth_p"     long_name="Phosphate" operation="instant" />
-          <field field_ref="K1_p"      name="K1_p"     long_name="Phosphate" operation="instant" />
-          <field field_ref="K3_n"      name="K3_n"     long_name="Phosphate" operation="instant" />
-          <field field_ref="K4_n"      name="K4_n"     long_name="Phosphate" operation="instant" />
-          <field field_ref="K5_s"      name="K5_s"     long_name="Phosphate" operation="instant" />
-          <field field_ref="G2_o"      name="G2_o"     long_name="Phosphate" operation="instant" />
-          <field field_ref="G2_o_deep"      name="G2_o_deep"     long_name="Phosphate" operation="instant" />
-          <field field_ref="G3_c"      name="G3_c"     long_name="Phosphate" operation="instant" />
-          <field field_ref="ben_nit_G4n"      name="G4n"     long_name="Phosphate" operation="instant" />
+          <field field_ref="N1_p" operation="instant" />
+          <field field_ref="N3_n" operation="instant" />
+          <field field_ref="N4_n" operation="instant" />
+          <field field_ref="N5_s" operation="instant" />
+          <field field_ref="O3_c" operation="instant" />
+          <field field_ref="O2_o" operation="instant" />
+          <field field_ref="P1_c" operation="instant" />
+          <field field_ref="P2_c" operation="instant" />
+          <field field_ref="P3_c" operation="instant" />
+          <field field_ref="P4_c" operation="instant" />
+          <field field_ref="B1_c" operation="instant" />
+          <field field_ref="Z4_c" operation="instant" />
+          <field field_ref="Z5_c" operation="instant" />
+          <field field_ref="Z6_c" operation="instant" />
+          <field field_ref="R4_c" operation="instant" />
+          <field field_ref="R6_c" operation="instant" />
+          <field field_ref="R8_c" operation="instant" />
+          <field field_ref="R1_c" operation="instant" />
+          <field field_ref="R2_c" operation="instant" />
+          <field field_ref="R3_c" operation="instant" />
+          <field field_ref="L2_c" operation="instant" />
+          <field field_ref="bL2_l"  operation="instant" />
+          <field field_ref="Q1_c" operation="instant" />
+          <field field_ref="Q6_c" operation="instant" />
+          <field field_ref="Q7_c" operation="instant" />
+          <field field_ref="Q17_c"  operation="instant" />
+          <field field_ref="H1_c" operation="instant" />
+          <field field_ref="H2_c" operation="instant" />
+          <field field_ref="Y2_c" operation="instant" />
+          <field field_ref="Y3_c" operation="instant" />
+          <field field_ref="Y4_c" operation="instant" />
+          <field field_ref="ben_col_D1m" operation="instant" />
+          <field field_ref="ben_col_D2m" operation="instant" />
+          <field field_ref="Q6_pen_depth_c" operation="instant" />
+          <field field_ref="Q6_pen_depth_n" operation="instant" />
+          <field field_ref="Q6_pen_depth_p" operation="instant" />
+          <field field_ref="Q6_pen_depth_s" operation="instant" />
+          <field field_ref="Q7_pen_depth_c" operation="instant" />
+          <field field_ref="Q7_pen_depth_n" operation="instant" />
+          <field field_ref="Q7_pen_depth_p" operation="instant" />
+          <field field_ref="K1_p" operation="instant" />
+          <field field_ref="K3_n" operation="instant" />
+          <field field_ref="K4_n" operation="instant" />
+          <field field_ref="K5_s" operation="instant" />
+          <field field_ref="G2_o" operation="instant" />
+          <field field_ref="G2_o_deep" operation="instant" />
+          <field field_ref="G3_c" operation="instant" />
+          <field field_ref="ben_nit_G4n" operation="instant" />
           <!-- <field field_ref="TR1_pool" name="TR1_pool" long_name="passive tracer pool" operation="instant" />
           <field field_ref="DEPTH"    name="DEPTH"   long_name="cell depth" operation="instant" />
           <field field_ref="AREA"     name="AREA"    long_name="cell area" operation="instant" />
@@ -200,11 +200,15 @@
           <field field_ref="RDB_TR1"  name="RDB_TR1" long_name="tracer trend from correcting negative concentrations" operation="average" freq_op="1ts" />
           <field field_ref="RDN_TR1"  name="RDN_TR1" long_name="tracer trend from correcting negative concentrations" operation="average" freq_op="1ts" />
           <field field_ref="e3t"      name="e3t"     operation="instant" /> -->
+          <field field_ref="total_chlorophyll_calculator_result"      name="Chl-a"     long_name="Chlorophyll-a" operation="instant" />
         </file>
 
-       <file id="file50" name_suffix="_ptrc_T" description="tracer variables" >
+       <file id="file52" name_suffix="_diad_T" description="tracer variables" >
           <field field_ref="light_EIR"      name="light_EIR"     long_name="Phosphate" operation="instant" />
-          <field field_ref="total_chlorophyll_calculator_result"      name="Chl-a"     long_name="Phosphate" operation="instant" />
+          <field field_ref="total_carbon" operation="instant" />
+          <field field_ref="total_nitrogen" operation="instant" />
+          <field field_ref="total_phosphorus" operation="instant" />
+          <field field_ref="total_silicate" operation="instant" />
         </file>
 
 
@@ -402,6 +406,7 @@
      <grid id="grid_V_3D" domain_ref="grid_V" axis_ref="depthv"/>
      <grid id="grid_W_2D" domain_ref="grid_W"/>
      <grid id="grid_W_3D" domain_ref="grid_W" axis_ref="depthw"/>
+     <grid id="grid_0" domain_ref="no_grid"/>
     </grid_definition>   
   </context>
   
