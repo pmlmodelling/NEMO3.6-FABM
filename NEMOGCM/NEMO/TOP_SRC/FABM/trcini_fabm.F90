@@ -61,7 +61,7 @@ CONTAINS
          END DO
          WRITE (xml_unit,1000) ' </field_group>'
       
-         WRITE (xml_unit,1000) ' <field_group id="sf1D_T" grid_ref="grid_T_2D">'
+         WRITE (xml_unit,1000) ' <field_group id="sf_T" grid_ref="grid_T_2D">'
          DO jn=1,jp_fabm_surface
             CALL write_variable_xml(xml_unit,model%surface_state_variables(jn))
          END DO
@@ -72,10 +72,16 @@ CONTAINS
 
          WRITE (xml_unit,1000) ' <field_group id="diad_T" grid_ref="grid_T_2D">'
          DO jn=1,size(model%diagnostic_variables)
-            CALL write_variable_xml(xml_unit,model%diagnostic_variables(jn),.TRUE.)
+            CALL write_variable_xml(xml_unit,model%diagnostic_variables(jn),3)
          END DO
          DO jn=1,size(model%horizontal_diagnostic_variables)
             CALL write_variable_xml(xml_unit,model%horizontal_diagnostic_variables(jn))
+         END DO
+         WRITE (xml_unit,1000) ' </field_group>'
+
+         WRITE (xml_unit,1000) ' <field_group id="fabm_scalar" grid_ref="grid_0">'
+         DO jn=1,size(model%conserved_quantities)
+            CALL write_variable_xml(xml_unit,model%conserved_quantities(jn))
          END DO
          WRITE (xml_unit,1000) ' </field_group>'
 
@@ -89,27 +95,36 @@ CONTAINS
 
    END SUBROUTINE nemo_fabm_init
 
-   SUBROUTINE write_variable_xml(xml_unit,variable,flag3D)
+   SUBROUTINE write_variable_xml(xml_unit,variable,flag_grid_ref)
       INTEGER,INTENT(IN) :: xml_unit
-      LOGICAL,INTENT(IN),OPTIONAL :: flag3D
+      INTEGER,INTENT(IN),OPTIONAL :: flag_grid_ref
       CLASS (type_external_variable),INTENT(IN) :: variable
 
-      CHARACTER(LEN=20) :: missing_value
-      LOGICAL :: is3D
+      CHARACTER(LEN=20) :: missing_value,string_dimensions
+      INTEGER :: number_dimensions
 
-      ! Check variable dimension, default is 2D:
-      IF (present(flag3D)) THEN
-          is3D=flag3D
+      ! Check variable dimension for grid_ref specificaiton.
+      ! Default is to not specify the grid_ref in the field definition.
+      IF (present(flag_grid_ref)) THEN
+          number_dimensions=flag_grid_ref
       ELSE
-          is3D=.FALSE.
+          number_dimensions=-1 !default, don't specify grid_ref
       ENDIF
 
       WRITE (missing_value,'(E9.3)') variable%missing_value
-      IF (is3D) THEN
+      WRITE (string_dimensions,'(I1)') number_dimensions
+      SELECT CASE (number_dimensions)
+      CASE (3)
          WRITE (xml_unit,'(A)') '  <field id="'//TRIM(variable%name)//'" long_name="'//TRIM(variable%long_name)//'" unit="'//TRIM(variable%units)//'" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
-      ELSE
+      CASE (2)
+         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(variable%name)//'" long_name="'//TRIM(variable%long_name)//'" unit="'//TRIM(variable%units)//'" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_2D"/>'
+      CASE (0)
+         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(variable%name)//'" long_name="'//TRIM(variable%long_name)//'" unit="'//TRIM(variable%units)//'" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="1point"/>'
+      CASE (-1)
          WRITE (xml_unit,'(A)') '  <field id="'//TRIM(variable%name)//'" long_name="'//TRIM(variable%long_name)//'" unit="'//TRIM(variable%units)//'" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
-      ENDIF
+      CASE default
+         IF(lwp) WRITE(numout,*) ' trc_ini_fabm: Failing to initialise output of variable '//TRIM(variable%name)//': Output of '//TRIM(ADJUSTL(string_dimensions))//'-dimensional variables not supported!!!'
+      END SELECT
           
    END SUBROUTINE write_variable_xml
 
