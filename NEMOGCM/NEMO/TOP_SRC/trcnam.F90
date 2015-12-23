@@ -317,6 +317,14 @@ CONTAINS
       IF(lwp) WRITE(numout,*) 'trc_nam_trc : read the passive tracer namelists'
       IF(lwp) WRITE(numout,*) '~~~~~~~'
 
+      ! Initialise logical flags to .FALSE.:
+      sn_tracer(:)%llinit = .FALSE.
+      sn_tracer(:)%llsave = .FALSE.
+#ifdef key_fabm
+      sn_tracer(:)%llsbc = .FALSE.
+      sn_tracer(:)%llcbc = .FALSE.
+      sn_tracer(:)%llcbc = .FALSE.
+#endif
 
       REWIND( numnat_ref )              ! Namelist namtrc in reference namelist : Passive tracer variables
       READ  ( numnat_ref, namtrc, IOSTAT = ios, ERR = 901)
