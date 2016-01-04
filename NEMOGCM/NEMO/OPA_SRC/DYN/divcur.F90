@@ -96,8 +96,8 @@ CONTAINS
       !
       IF( nn_timing == 1 )  CALL timing_start('div_cur')
       !
-      CALL wrk_alloc( jpi  , jpj+2, zwu               )
-      CALL wrk_alloc( jpi+4, jpj  , zwv, kistart = -1 )
+      CALL wrk_alloc( jpi  , jpj+2, zwu  )
+      CALL wrk_alloc( jpi+2, jpj  , zwv  )
       !
       IF( kt == nit000 ) THEN
          IF(lwp) WRITE(numout,*)
@@ -235,8 +235,8 @@ CONTAINS
       ! ---------------------------------=======---======
       CALL lbc_lnk( hdivn, 'T', 1. )   ;   CALL lbc_lnk( rotn , 'F', 1. )    ! lateral boundary cond. (no sign change)
       !
-      CALL wrk_dealloc( jpi  , jpj+2, zwu               )
-      CALL wrk_dealloc( jpi+4, jpj  , zwv, kistart = -1 )
+      CALL wrk_dealloc( jpi  , jpj+2, zwu )
+      CALL wrk_dealloc( jpi+2, jpj  , zwv )
       !
       IF( nn_timing == 1 )  CALL timing_stop('div_cur')
       !

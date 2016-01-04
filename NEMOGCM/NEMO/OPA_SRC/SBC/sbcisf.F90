@@ -52,13 +52,7 @@ MODULE sbcisf
    REAL(wp)   , PUBLIC, ALLOCATABLE, SAVE, DIMENSION (:,:)     ::  ralpha                 !:proportion of bottom cell influenced by tbl 
    REAL(wp)   , PUBLIC, ALLOCATABLE, SAVE, DIMENSION (:,:)     ::  risfLeff               !:effective length (Leff) BG03 nn_isf==2
    REAL(wp)   , PUBLIC, ALLOCATABLE, SAVE, DIMENSION (:,:)     ::  ttbl, stbl, utbl, vtbl !:top boundary layer variable at T point
-#if defined key_agrif
-   ! AGRIF can not handle these arrays as integers. The reason is a mystery but problems avoided by declaring them as reals
-   REAL(wp),    PUBLIC, ALLOCATABLE, SAVE, DIMENSION (:,:)     ::  misfkt, misfkb         !:Level of ice shelf base
-                                                                                          !: (first wet level and last level include in the tbl)
-#else
    INTEGER,    PUBLIC, ALLOCATABLE, SAVE, DIMENSION (:,:)     ::  misfkt, misfkb         !:Level of ice shelf base
-#endif
 
 
    REAL(wp), PUBLIC, SAVE ::   rcpi   = 2000.0_wp     ! phycst ?

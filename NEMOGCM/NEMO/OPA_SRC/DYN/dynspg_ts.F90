@@ -464,8 +464,8 @@ CONTAINS
          zssh_frc(:,:) = zssh_frc(:,:) - ssh_iau(:,:)
       ENDIF
 #endif
-      !                                   !* Fill boundary data arrays with AGRIF
-      !                                   ! -------------------------------------
+      !                                   !* Fill boundary data arrays for AGRIF
+      !                                   ! ------------------------------------
 #if defined key_agrif
          IF( .NOT.Agrif_Root() ) CALL agrif_dta_ts( kt )
 #endif
@@ -899,8 +899,7 @@ CONTAINS
       !
 #if defined key_agrif
       ! Save time integrated fluxes during child grid integration
-      ! (used to update coarse grid transports)
-      ! Useless with 2nd order momentum schemes
+      ! (used to update coarse grid transports at next time step)
       !
       IF ( (.NOT.Agrif_Root()).AND.(ln_bt_fw) ) THEN
          IF ( Agrif_NbStepint().EQ.0 ) THEN

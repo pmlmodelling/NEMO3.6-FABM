@@ -93,15 +93,23 @@ CONTAINS
       !!----------------------------------------------------------------------
       CHARACTER(len=*), INTENT(in)  :: cdname
 #if defined key_iomput
-      TYPE(xios_time)   :: dtime    = xios_time(0, 0, 0, 0, 0, 0)
-      CHARACTER(len=19) :: cldate 
-      CHARACTER(len=10) :: clname
-      INTEGER           ::   ji
+#if ! defined key_xios2
+      TYPE(xios_time)     :: dtime    = xios_time(0, 0, 0, 0, 0, 0)
+      CHARACTER(len=19)   :: cldate 
+#else
+      TYPE(xios_duration) :: dtime    = xios_duration(0, 0, 0, 0, 0, 0)
+      TYPE(xios_date)     :: start_date
+#endif
+      CHARACTER(len=10)   :: clname
+      INTEGER             :: ji
       !
       REAL(wp), ALLOCATABLE, DIMENSION(:,:) :: z_bnds
       !!----------------------------------------------------------------------
-
+#if ! defined key_xios2
       ALLOCATE( z_bnds(jpk,2) )
+#else
+      ALLOCATE( z_bnds(2,jpk) )
+#endif
 
       clname = cdname
       IF( TRIM(Agrif_CFixed()) /= '0' )   clname = TRIM(Agrif_CFixed())//"_"//TRIM(cdname)
@@ -109,6 +117,7 @@ CONTAINS
       CALL iom_swap( cdname )
 
       ! calendar parameters
+#if ! defined key_xios2
       SELECT CASE ( nleapy )        ! Choose calendar for IOIPSL
       CASE ( 1)   ;   CALL xios_set_context_attr(TRIM(clname), calendar_type= "Gregorian")
       CASE ( 0)   ;   CALL xios_set_context_attr(TRIM(clname), calendar_type= "NoLeap")
@@ -116,9 +125,22 @@ CONTAINS
       END SELECT
       WRITE(cldate,"(i4.4,'-',i2.2,'-',i2.2,' 00:00:00')") nyear,nmonth,nday 
       CALL xios_set_context_attr(TRIM(clname), start_date=cldate )
-
+#else
+      ! Calendar type is now defined in xml file 
+      SELECT CASE ( nleapy )        ! Choose calendar for IOIPSL
+      CASE ( 1)   ; CALL xios_define_calendar( TYPE = "Gregorian", time_origin = xios_date(1900,01,01,00,00,00), &
+          &                                    start_date = xios_date(nyear,nmonth,nday,0,0,0) )
+      CASE ( 0)   ; CALL xios_define_calendar( TYPE = "NoLeap"   , time_origin = xios_date(1900,01,01,00,00,00), &
+          &                                    start_date = xios_date(nyear,nmonth,nday,0,0,0) )
+      CASE (30)   ; CALL xios_define_calendar( TYPE = "D360"     , time_origin = xios_date(1900,01,01,00,00,00), &
+          &                                    start_date = xios_date(nyear,nmonth,nday,0,0,0) )
+      END SELECT
+#endif
       ! horizontal grid definition
+
+#if ! defined key_xios2
       CALL set_scalar
+#endif
 
       IF( TRIM(cdname) == TRIM(cxios_context) ) THEN  
          CALL set_grid( "T", glamt, gphit ) 
@@ -169,16 +191,31 @@ CONTAINS
       CALL iom_set_axis_attr( "depthw", gdepw_1d )
 
       ! Add vertical grid bounds
+#if ! defined key_xios2
       z_bnds(:      ,1) = gdepw_1d(:)
       z_bnds(1:jpkm1,2) = gdepw_1d(2:jpk)
       z_bnds(jpk:   ,2) = gdepw_1d(jpk) + e3t_1d(jpk)
+#else
+      z_bnds(1      ,:) = gdepw_1d(:)
+      z_bnds(2,1:jpkm1) = gdepw_1d(2:jpk)
+      z_bnds(2,jpk:   ) = gdepw_1d(jpk) + e3t_1d(jpk)
+#endif
+
       CALL iom_set_axis_attr( "deptht", bounds=z_bnds )
       CALL iom_set_axis_attr( "depthu", bounds=z_bnds )
       CALL iom_set_axis_attr( "depthv", bounds=z_bnds )
-      z_bnds(:    ,2) = gdept_1d(:)
-      z_bnds(2:jpk,1) = gdept_1d(1:jpkm1)
-      z_bnds(1    ,1) = gdept_1d(1) - e3w_1d(1)
+
+#if ! defined key_xios2
+      z_bnds(:    ,2)  = gdept_1d(:)
+      z_bnds(2:jpk,1)  = gdept_1d(1:jpkm1)
+      z_bnds(1    ,1)  = gdept_1d(1) - e3w_1d(1)
+#else
+      z_bnds(2,:    )  = gdept_1d(:)
+      z_bnds(1,2:jpk)  = gdept_1d(1:jpkm1)
+      z_bnds(1,1    )  = gdept_1d(1) - e3w_1d(1)
+#endif
       CALL iom_set_axis_attr( "depthw", bounds=z_bnds )
+
 
 # if defined key_floats
       CALL iom_set_axis_attr( "nfloat", (/ (REAL(ji,wp), ji=1,nfloat) /) )
@@ -1157,14 +1194,14 @@ CONTAINS
       REAL(wp), DIMENSION(:,:) , OPTIONAL, INTENT(in) ::   bounds_lon, bounds_lat, area
       LOGICAL,  DIMENSION(:,:) , OPTIONAL, INTENT(in) ::   mask
 
+#if ! defined key_xios2
       IF ( xios_is_valid_domain     (cdid) ) THEN
          CALL xios_set_domain_attr     ( cdid, ni_glo=ni_glo, nj_glo=nj_glo, ibegin=ibegin, jbegin=jbegin, ni=ni, nj=nj,   &
             &    data_dim=data_dim, data_ibegin=data_ibegin, data_ni=data_ni, data_jbegin=data_jbegin, data_nj=data_nj ,   &
             &    zoom_ibegin=zoom_ibegin, zoom_jbegin=zoom_jbegin, zoom_ni=zoom_ni, zoom_nj=zoom_nj,                       &
             &    lonvalue=lonvalue, latvalue=latvalue, mask=mask, nvertex=nvertex, bounds_lon=bounds_lon,                  &
             &    bounds_lat=bounds_lat, area=area )
-      ENDIF
-
+     ENDIF
       IF ( xios_is_valid_domaingroup(cdid) ) THEN
          CALL xios_set_domaingroup_attr( cdid, ni_glo=ni_glo, nj_glo=nj_glo, ibegin=ibegin, jbegin=jbegin, ni=ni, nj=nj,   &
             &    data_dim=data_dim, data_ibegin=data_ibegin, data_ni=data_ni, data_jbegin=data_jbegin, data_nj=data_nj ,   &
@@ -1172,9 +1209,36 @@ CONTAINS
             &    lonvalue=lonvalue, latvalue=latvalue, mask=mask, nvertex=nvertex, bounds_lon=bounds_lon,                  &
             &    bounds_lat=bounds_lat, area=area )
       ENDIF
+
+#else
+      IF ( xios_is_valid_domain     (cdid) ) THEN
+         CALL xios_set_domain_attr     ( cdid, ni_glo=ni_glo, nj_glo=nj_glo, ibegin=ibegin, jbegin=jbegin, ni=ni, nj=nj,   &
+            &    data_dim=data_dim, data_ibegin=data_ibegin, data_ni=data_ni, data_jbegin=data_jbegin, data_nj=data_nj ,   &
+            &    lonvalue_1D=lonvalue, latvalue_1D=latvalue, mask_2D=mask, nvertex=nvertex, bounds_lon_1D=bounds_lon,      &
+            &    bounds_lat_1D=bounds_lat, area=area, type='curvilinear')
+     ENDIF
+      IF ( xios_is_valid_domaingroup(cdid) ) THEN
+         CALL xios_set_domaingroup_attr( cdid, ni_glo=ni_glo, nj_glo=nj_glo, ibegin=ibegin, jbegin=jbegin, ni=ni, nj=nj,   &
+            &    data_dim=data_dim, data_ibegin=data_ibegin, data_ni=data_ni, data_jbegin=data_jbegin, data_nj=data_nj ,   &
+            &    lonvalue_1D=lonvalue, latvalue_1D=latvalue, mask_2D=mask, nvertex=nvertex, bounds_lon_1D=bounds_lon,      &
+            &    bounds_lat_1D=bounds_lat, area=area, type='curvilinear' )
+      ENDIF
+#endif
       CALL xios_solve_inheritance()
 
    END SUBROUTINE iom_set_domain_attr
+
+#if defined key_xios2
+  SUBROUTINE iom_set_zoom_domain_attr( cdid, ibegin, jbegin, ni, nj)
+     CHARACTER(LEN=*)                   , INTENT(in) ::   cdid
+     INTEGER                  , OPTIONAL, INTENT(in) ::   ibegin, jbegin, ni, nj
+
+     IF ( xios_is_valid_domain     (cdid) ) THEN
+         CALL xios_set_zoom_domain_attr     ( cdid, ibegin=ibegin, jbegin=jbegin, ni=ni,    &
+           &   nj=nj)
+    ENDIF
+  END SUBROUTINE iom_set_zoom_domain_attr
+#endif
 
 
    SUBROUTINE iom_set_axis_attr( cdid, paxis, bounds )
@@ -1182,24 +1246,34 @@ CONTAINS
       REAL(wp), DIMENSION(:)  , OPTIONAL, INTENT(in) ::   paxis
       REAL(wp), DIMENSION(:,:), OPTIONAL, INTENT(in) ::   bounds
       IF ( PRESENT(paxis) ) THEN
+#if ! defined key_xios2
          IF ( xios_is_valid_axis     (cdid) )   CALL xios_set_axis_attr     ( cdid, size=SIZE(paxis), value=paxis )
          IF ( xios_is_valid_axisgroup(cdid) )   CALL xios_set_axisgroup_attr( cdid, size=SIZE(paxis), value=paxis )
+#else
+         IF ( xios_is_valid_axis     (cdid) )   CALL xios_set_axis_attr     ( cdid, n_glo=SIZE(paxis), value=paxis )
+         IF ( xios_is_valid_axisgroup(cdid) )   CALL xios_set_axisgroup_attr( cdid, n_glo=SIZE(paxis), value=paxis )
+#endif
       ENDIF
       IF ( xios_is_valid_axis     (cdid) )   CALL xios_set_axis_attr     ( cdid, bounds=bounds )
       IF ( xios_is_valid_axisgroup(cdid) )   CALL xios_set_axisgroup_attr( cdid, bounds=bounds )
       CALL xios_solve_inheritance()
    END SUBROUTINE iom_set_axis_attr
 
-
    SUBROUTINE iom_set_field_attr( cdid, freq_op, freq_offset )
       CHARACTER(LEN=*)          , INTENT(in) ::   cdid
-      CHARACTER(LEN=*),OPTIONAL , INTENT(in) ::   freq_op
-      CHARACTER(LEN=*),OPTIONAL , INTENT(in) ::   freq_offset
-      IF ( xios_is_valid_field     (cdid) )   CALL xios_set_field_attr     ( cdid, freq_op=freq_op, freq_offset=freq_offset )
-      IF ( xios_is_valid_fieldgroup(cdid) )   CALL xios_set_fieldgroup_attr( cdid, freq_op=freq_op, freq_offset=freq_offset )
+#if ! defined key_xios2
+      CHARACTER(LEN=*)   ,OPTIONAL , INTENT(in) ::   freq_op
+      CHARACTER(LEN=*)   ,OPTIONAL , INTENT(in) ::   freq_offset
+#else
+      TYPE(xios_duration),OPTIONAL , INTENT(in) ::   freq_op
+      TYPE(xios_duration),OPTIONAL , INTENT(in) ::   freq_offset
+#endif
+      IF ( xios_is_valid_field     (cdid) )   CALL xios_set_field_attr       &
+    &     ( cdid, freq_op=freq_op, freq_offset=freq_offset )
+      IF ( xios_is_valid_fieldgroup(cdid) )   CALL xios_set_fieldgroup_attr  &
+    &                    ( cdid, freq_op=freq_op, freq_offset=freq_offset )
       CALL xios_solve_inheritance()
    END SUBROUTINE iom_set_field_attr
-
 
    SUBROUTINE iom_set_file_attr( cdid, name, name_suffix )
       CHARACTER(LEN=*)          , INTENT(in) ::   cdid
@@ -1212,12 +1286,21 @@ CONTAINS
 
    SUBROUTINE iom_get_file_attr( cdid, name, name_suffix, output_freq )
       CHARACTER(LEN=*)          , INTENT(in ) ::   cdid
-      CHARACTER(LEN=*),OPTIONAL , INTENT(out) ::   name, name_suffix, output_freq
+      CHARACTER(LEN=*),OPTIONAL , INTENT(out) ::   name, name_suffix
+#if ! defined key_xios2
+      CHARACTER(LEN=*),OPTIONAL , INTENT(out) ::    output_freq
+#else
+      TYPE(xios_duration)   ,OPTIONAL , INTENT(out) :: output_freq
+#endif  
       LOGICAL                                 ::   llexist1,llexist2,llexist3
       !---------------------------------------------------------------------
       IF( PRESENT( name        ) )   name = ''          ! default values
       IF( PRESENT( name_suffix ) )   name_suffix = ''
+#if ! defined key_xios2
       IF( PRESENT( output_freq ) )   output_freq = ''
+#else
+      IF( PRESENT( output_freq ) )   output_freq = xios_duration(0,0,0,0,0,0)
+#endif
       IF ( xios_is_valid_file     (cdid) ) THEN
          CALL xios_solve_inheritance()
          CALL xios_is_defined_file_attr     ( cdid, name = llexist1, name_suffix = llexist2, output_freq = llexist3)
@@ -1238,8 +1321,13 @@ CONTAINS
    SUBROUTINE iom_set_grid_attr( cdid, mask )
       CHARACTER(LEN=*)                   , INTENT(in) ::   cdid
       LOGICAL, DIMENSION(:,:,:), OPTIONAL, INTENT(in) ::   mask
+#if ! defined key_xios2
       IF ( xios_is_valid_grid     (cdid) )   CALL xios_set_grid_attr     ( cdid, mask=mask )
       IF ( xios_is_valid_gridgroup(cdid) )   CALL xios_set_gridgroup_attr( cdid, mask=mask )
+#else
+      IF ( xios_is_valid_grid     (cdid) )   CALL xios_set_grid_attr     ( cdid, mask3=mask )
+      IF ( xios_is_valid_gridgroup(cdid) )   CALL xios_set_gridgroup_attr( cdid, mask3=mask )
+#endif
       CALL xios_solve_inheritance()
    END SUBROUTINE iom_set_grid_attr
 
@@ -1281,7 +1369,11 @@ CONTAINS
       
       ni=nlei-nldi+1 ; nj=nlej-nldj+1
 
-      CALL iom_set_domain_attr("grid_"//cdgrd, ni_glo=jpiglo, nj_glo=jpjglo, ibegin=nimpp+nldi-1, jbegin=njmpp+nldj-1, ni=ni, nj=nj)
+#if ! defined key_xios2
+     CALL iom_set_domain_attr("grid_"//cdgrd, ni_glo=jpiglo, nj_glo=jpjglo, ibegin=nimpp+nldi-1, jbegin=njmpp+nldj-1, ni=ni, nj=nj)
+#else
+     CALL iom_set_domain_attr("grid_"//cdgrd, ni_glo=jpiglo, nj_glo=jpjglo, ibegin=nimpp+nldi-2, jbegin=njmpp+nldj-2, ni=ni, nj=nj)
+#endif     
       CALL iom_set_domain_attr("grid_"//cdgrd, data_dim=2, data_ibegin = 1-nldi, data_ni = jpi, data_jbegin = 1-nldj, data_nj = jpj)
       CALL iom_set_domain_attr("grid_"//cdgrd, lonvalue = RESHAPE(plon(nldi:nlei, nldj:nlej),(/ ni*nj /)),   &
          &                                     latvalue = RESHAPE(plat(nldi:nlei, nldj:nlej),(/ ni*nj /)))  
@@ -1429,13 +1521,23 @@ CONTAINS
       ni=nlei-nldi+1 ; nj=nlej-nldj+1            ! define zonal mean domain (jpj*jpk)
       ALLOCATE( zlon(ni*nj) )       ;       zlon(:) = 0.
 
+      CALL dom_ngb( 180., 90., ix, iy, 'T' ) !  i-line that passes near the North Pole : Reference latitude (used in plots)
+#if ! defined key_xios2
       CALL iom_set_domain_attr("gznl", ni_glo=jpiglo, nj_glo=jpjglo, ibegin=nimpp+nldi-1, jbegin=njmpp+nldj-1, ni=ni, nj=nj)
       CALL iom_set_domain_attr("gznl", data_dim=2, data_ibegin = 1-nldi, data_ni = jpi, data_jbegin = 1-nldj, data_nj = jpj)
       CALL iom_set_domain_attr("gznl", lonvalue = zlon,   &
          &                             latvalue = RESHAPE(plat(nldi:nlei, nldj:nlej),(/ ni*nj /)))  
       !
-      CALL dom_ngb( 180., 90., ix, iy, 'T' ) !  i-line that passes near the North Pole : Reference latitude (used in plots)
       CALL iom_set_domain_attr ('ptr', zoom_ibegin=ix, zoom_nj=jpjglo)
+#else
+! Pas teste : attention aux indices !
+      CALL iom_set_domain_attr("ptr", ni_glo=jpiglo, nj_glo=jpjglo, ibegin=nimpp+nldi-2, jbegin=njmpp+nldj-2, ni=ni, nj=nj)
+      CALL iom_set_domain_attr("ptr", data_dim=2, data_ibegin = 1-nldi, data_ni = jpi, data_jbegin = 1-nldj, data_nj = jpj)
+      CALL iom_set_domain_attr("ptr", lonvalue = zlon,   &
+         &                             latvalue = RESHAPE(plat(nldi:nlei, nldj:nlej),(/ ni*nj /)))  
+       CALL iom_set_zoom_domain_attr ('ptr', ibegin=ix, nj=jpjglo)
+#endif
+
       CALL iom_update_file_name('ptr')
       !
    END SUBROUTINE set_grid_znl
@@ -1454,7 +1556,7 @@ CONTAINS
       
       zz=REAL(narea,wp)
       CALL iom_set_domain_attr('scalarpoint', lonvalue=zz, latvalue=zz)
-
+      
    END SUBROUTINE set_scalar
 
 
@@ -1478,14 +1580,26 @@ CONTAINS
       REAL(wp)        ,DIMENSION(11) ::   zlatrama                 ! latitudes  of rama   moorings
       REAL(wp)        ,DIMENSION( 3) ::   zlonpira                 ! longitudes of pirata moorings
       REAL(wp)        ,DIMENSION( 9) ::   zlatpira                 ! latitudes  of pirata moorings
+#if  defined key_xios2
+      TYPE(xios_duration)            ::   f_op, f_of
+#endif
+ 
       !!----------------------------------------------------------------------
       ! 
       ! frequency of the call of iom_put (attribut: freq_op)
-      WRITE(cl1,'(i1)')        1   ;   CALL iom_set_field_attr('field_definition', freq_op = cl1//'ts', freq_offset='0ts')
-      WRITE(cl1,'(i1)')  nn_fsbc   ;   CALL iom_set_field_attr('SBC'             , freq_op = cl1//'ts', freq_offset='0ts')
-      WRITE(cl1,'(i1)')  nn_fsbc   ;   CALL iom_set_field_attr('SBC_scalar'      , freq_op = cl1//'ts', freq_offset='0ts')
-      WRITE(cl1,'(i1)') nn_dttrc   ;   CALL iom_set_field_attr('ptrc_T'          , freq_op = cl1//'ts', freq_offset='0ts')
-      WRITE(cl1,'(i1)') nn_dttrc   ;   CALL iom_set_field_attr('diad_T'          , freq_op = cl1//'ts', freq_offset='0ts')
+#if ! defined key_xios2
+      WRITE(cl1,'(i1)')        1   ;   CALL iom_set_field_attr('field_definition', freq_op=cl1//'ts', freq_offset='0ts')
+      WRITE(cl1,'(i1)')  nn_fsbc   ;   CALL iom_set_field_attr('SBC'             , freq_op=cl1//'ts', freq_offset='0ts')
+      WRITE(cl1,'(i1)')  nn_fsbc   ;   CALL iom_set_field_attr('SBC_scalar'      , freq_op=cl1//'ts', freq_offset='0ts')
+      WRITE(cl1,'(i1)') nn_dttrc   ;   CALL iom_set_field_attr('ptrc_T'          , freq_op=cl1//'ts', freq_offset='0ts')
+      WRITE(cl1,'(i1)') nn_dttrc   ;   CALL iom_set_field_attr('diad_T'          , freq_op=cl1//'ts', freq_offset='0ts')
+#else
+      f_op%timestep = 1        ;  f_of%timestep = 0  ; CALL iom_set_field_attr('field_definition', freq_op=f_op, freq_offset=f_of)
+      f_op%timestep = nn_fsbc  ;  f_of%timestep = 0  ; CALL iom_set_field_attr('SBC'             , freq_op=f_op, freq_offset=f_of)
+      f_op%timestep = nn_fsbc  ;  f_of%timestep = 0  ; CALL iom_set_field_attr('SBC_scalar'      , freq_op=f_op, freq_offset=f_of)
+      f_op%timestep = nn_dttrc ;  f_of%timestep = 0  ; CALL iom_set_field_attr('ptrc_T'          , freq_op=f_op, freq_offset=f_of)
+      f_op%timestep = nn_dttrc ;  f_of%timestep = 0  ; CALL iom_set_field_attr('diad_T'          , freq_op=f_op, freq_offset=f_of)
+#endif
        
       ! output file names (attribut: name)
       DO ji = 1, 9
@@ -1507,7 +1621,11 @@ CONTAINS
          cl1 = clgrd(jg)
          ! Equatorial section (attributs: jbegin, ni, name_suffix)
          CALL dom_ngb( 0., 0., ix, iy, cl1 )
+#if ! defined key_xios2
          CALL iom_set_domain_attr ('Eq'//cl1, zoom_jbegin=iy, zoom_ni=jpiglo)
+#else
+         CALL iom_set_zoom_domain_attr ('Eq'//cl1, jbegin=iy-1, ni=jpiglo)
+#endif
          CALL iom_get_file_attr   ('Eq'//cl1, name_suffix = clsuff             )
          CALL iom_set_file_attr   ('Eq'//cl1, name_suffix = TRIM(clsuff)//'_Eq')
          CALL iom_update_file_name('Eq'//cl1)
@@ -1587,7 +1705,11 @@ CONTAINS
                   ENDIF
                ENDIF
                clname = TRIM(ADJUSTL(clat))//TRIM(ADJUSTL(clon))
+#if ! defined key_xios2
                CALL iom_set_domain_attr (TRIM(clname)//cl1, zoom_ibegin= ix, zoom_jbegin= iy)
+#else
+               CALL iom_set_zoom_domain_attr  (TRIM(clname)//cl1, ibegin= ix-1, jbegin= iy-1)
+#endif
                CALL iom_get_file_attr   (TRIM(clname)//cl1, name_suffix = clsuff                         )
                CALL iom_set_file_attr   (TRIM(clname)//cl1, name_suffix = TRIM(clsuff)//'_'//TRIM(clname))
                CALL iom_update_file_name(TRIM(clname)//cl1)
@@ -1616,11 +1738,19 @@ CONTAINS
       INTEGER            ::   iyear, imonth, iday, isec
       REAL(wp)           ::   zsec
       LOGICAL            ::   llexist
+#if  defined key_xios2
+      TYPE(xios_duration)   ::   output_freq 
+#endif      
       !!----------------------------------------------------------------------
 
-      DO jn = 1,2
 
+      DO jn = 1,2
+#if ! defined key_xios2
          IF( jn == 1 )   CALL iom_get_file_attr( cdid, name        = clname, output_freq = clfreq )
+#else
+         output_freq = xios_duration(0,0,0,0,0,0)
+         IF( jn == 1 )   CALL iom_get_file_attr( cdid, name        = clname, output_freq = output_freq )
+#endif
          IF( jn == 2 )   CALL iom_get_file_attr( cdid, name_suffix = clname )
 
          IF ( TRIM(clname) /= '' ) THEN 
@@ -1631,6 +1761,7 @@ CONTAINS
                idx = INDEX(clname,'@expname@') + INDEX(clname,'@EXPNAME@')
             END DO
 
+#if ! defined key_xios2
             idx = INDEX(clname,'@freq@') + INDEX(clname,'@FREQ@')
             DO WHILE ( idx /= 0 ) 
                IF ( TRIM(clfreq) /= '' ) THEN
@@ -1643,7 +1774,29 @@ CONTAINS
                ENDIF
                idx = INDEX(clname,'@freq@') + INDEX(clname,'@FREQ@')
             END DO
-
+#else
+            idx = INDEX(clname,'@freq@') + INDEX(clname,'@FREQ@')
+            DO WHILE ( idx /= 0 ) 
+              IF ( output_freq%hour /= 0 ) THEN
+                  WRITE(clfreq,'(I19,A1)')INT(output_freq%hour),'h' 
+                  itrlen = LEN_TRIM(ADJUSTL(clfreq))
+              ELSE IF ( output_freq%day /= 0 ) THEN
+                  WRITE(clfreq,'(I19,A1)')INT(output_freq%day),'d' 
+                  itrlen = LEN_TRIM(ADJUSTL(clfreq))
+              ELSE IF ( output_freq%month /= 0 ) THEN   
+                  WRITE(clfreq,'(I19,A1)')INT(output_freq%month),'m' 
+                  itrlen = LEN_TRIM(ADJUSTL(clfreq))
+              ELSE IF ( output_freq%year /= 0 ) THEN   
+                  WRITE(clfreq,'(I19,A1)')INT(output_freq%year),'y' 
+                  itrlen = LEN_TRIM(ADJUSTL(clfreq))
+              ELSE
+                  CALL ctl_stop('error in the name of file id '//TRIM(cdid),   &
+                     & ' attribute output_freq is undefined -> cannot replace @freq@ in '//TRIM(clname) )
+              ENDIF
+              clname = clname(1:idx-1)//TRIM(ADJUSTL(clfreq))//clname(idx+6:LEN_TRIM(clname))
+              idx = INDEX(clname,'@freq@') + INDEX(clname,'@FREQ@')
+            END DO
+#endif
             idx = INDEX(clname,'@startdate@') + INDEX(clname,'@STARTDATE@')
             DO WHILE ( idx /= 0 ) 
                cldate = iom_sdate( fjulday - rdttra(1) / rday )
@@ -1672,6 +1825,7 @@ CONTAINS
                idx = INDEX(clname,'@enddatefull@') + INDEX(clname,'@ENDDATEFULL@')
             END DO
 
+            IF( jn == 1 .AND. TRIM(Agrif_CFixed()) /= '0' )   clname = TRIM(Agrif_CFixed())//"_"//TRIM(clname)
             IF( jn == 1 )   CALL iom_set_file_attr( cdid, name        = clname )
             IF( jn == 2 )   CALL iom_set_file_attr( cdid, name_suffix = clname )
 
@@ -1719,6 +1873,8 @@ CONTAINS
       ELSE                       ;   WRITE(clfmt, "('i',i1,',2i2.2')") INT(LOG10(REAL(iyear,wp))) + 1
       ENDIF
       
+!$AGRIF_DO_NOT_TREAT      
+! Should be fixed in the conv
       IF( llfull ) THEN 
          clfmt = TRIM(clfmt)//",'_',i2.2,':',i2.2,':',i2.2"
          ihour   = isec / 3600
@@ -1729,6 +1885,7 @@ CONTAINS
       ELSE
          WRITE(iom_sdate, '('//TRIM(clfmt)//')') iyear, imonth, iday                          ! date of the end of run
       ENDIF
+!$AGRIF_END_DO_NOT_TREAT      
 
    END FUNCTION iom_sdate
 

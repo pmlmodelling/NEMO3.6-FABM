@@ -32,56 +32,38 @@
 /******************************************************************************/
 /* version 1.7                                                                */
 /******************************************************************************/
+%option warn
+%option noyywrap
+
 %s character
 %{
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-int line_num=1;
-extern FILE * yyin;
-#define MAX_INCLUDE_DEPTH 30
-YY_BUFFER_STATE include_stack[MAX_INCLUDE_DEPTH];
+
+#define YY_NO_INPUT
 %}
 
-COMMENT "%"
-SEPARATEUR "::"
-NIMPORTEQUOI .
-COMMENTAIRES1 {COMMENT}{NIMPORTEQUOI}*{COMMENT}
-PROBTYPE "1D"|"2D"|"3D"
-USEITEM "FIXED_GRIDS"|"ONLY_FIXED_GRIDS"|"F77"
-NAME [a-zA-Z\_][a-zA-Z0-9\_]*
-DIGIT [0-9]+
-NEXTLINE \n+[ \t]+"$"|\n+[ \t]+"&"
+SEPARATEUR      "::"
+COMMENTS        "%".*"%"
+PROBTYPE        "1D"|"2D"|"3D"
+USEITEM         "FIXED_GRIDS"|"ONLY_FIXED_GRIDS"|"F77"
+NAME            [a-zA-Z\_][a-zA-Z0-9\_]*
+INTEGER         [0-9]+
+NEXTLINE        \n+[ \t]+"$"|\n+[ \t]+"&"
 %%
-parammodule return TOK_MODULEMAIN; /* name of the module                      */
-notgriddep  return TOK_NOTGRIDDEP; /* variable which are not grid dependent   */
-use         return TOK_USE;
-{COMMENTAIRES1}    {}
-{SEPARATEUR}        return TOK_SEP;
-{USEITEM}          {strcpy(yylval.na,yytext); return TOK_USEITEM;}
-{PROBTYPE}         {strcpy(yylval.na,yytext); return TOK_PROBTYPE;}
-                                   /* dimension of the problem                */
-{NAME}             {strcpy(yylval.na,yytext); return TOK_NAME;}
-;|\,|\(|\)|:|\[|\] {return (int) *yytext;}
-\n                 {line_num++;return (int) *yytext;}
+parammodule         { return TOK_MODULEMAIN; } /* name of the module                      */
+notgriddep          { return TOK_NOTGRIDDEP; } /* variable which are not grid dependent   */
+use                 { return TOK_USE; }
+{COMMENTS}          { }
+{SEPARATEUR}        { return TOK_SEP; }
+KIND                { return TOK_KIND; }
+\=                  { return TOK_EQUAL; }
+{USEITEM}           { strcpy(yylval.na,yytext); return TOK_USEITEM;  }
+{PROBTYPE}          { strcpy(yylval.na,yytext); return TOK_PROBTYPE; }  /* dimension of the problem */
+{NAME}              { strcpy(yylval.na,yytext); return TOK_NAME; }
+{INTEGER}           { strcpy(yylval.na,yytext); return TOK_CSTINT; }
+;|\,|\(|\)|:|\[|\]  { return (int) *yytext; }
+\n                  { line_num++; return (int) *yytext; }
 [ \t]+ ;
 %%
-
-
-int yywrap()
-{
-}
-
-
-yyerror(char *s)
-{
-if (!strcasecmp(curfile,mainfile))
-{
-   printf("Dans convert %s line %d, fichier %s\n",s,line_num,curfile);
-}
-else
-{
-   printf("Dans convert %s line %d, fichier %s\n",s,line_num,curfile);
-}
-exit(0);
-}

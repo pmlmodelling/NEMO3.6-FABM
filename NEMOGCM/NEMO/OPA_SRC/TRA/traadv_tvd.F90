@@ -325,7 +325,7 @@ CONTAINS
       !
       CALL wrk_alloc( jpi, jpj, zwx_sav, zwy_sav )
       CALL wrk_alloc( jpi, jpj, jpk, zwi, zwz , zhdiv, zwz_sav, zwzts )
-      CALL wrk_alloc( jpi, jpj, jpk, 3, ztrs )
+      CALL wrk_alloc( jpi, jpj, jpk, kjpt+1, ztrs )
       !
       IF( kt == kit000 )  THEN
          IF(lwp) WRITE(numout,*)
@@ -563,7 +563,7 @@ CONTAINS
       END DO
       !
                    CALL wrk_dealloc( jpi, jpj, jpk, zwi, zwz, zhdiv, zwz_sav, zwzts )
-                   CALL wrk_dealloc( jpi, jpj, jpk, 3, ztrs )
+                   CALL wrk_dealloc( jpi, jpj, jpk, kjpt+1, ztrs )
                    CALL wrk_dealloc( jpi, jpj, zwx_sav, zwy_sav )
       IF( l_trd )  CALL wrk_dealloc( jpi, jpj, jpk, ztrdx, ztrdy, ztrdz )
       !

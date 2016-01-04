@@ -111,6 +111,7 @@ MODULE step_oce
 
 #if defined key_agrif
    USE agrif_opa_sponge ! Momemtum and tracers sponges
+   USE agrif_opa_update ! Update (2-way nesting)
 #endif
 #if defined key_top
    USE trcstp           ! passive tracer time-stepping      (trc_stp routine)

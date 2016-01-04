@@ -520,7 +520,7 @@ CONTAINS
       USE oce       , ONLY : sshn, sshb, snwice_mass, snwice_mass_b, snwice_fmass
 #endif
       !
-      INTEGER :: ierr,ierr1,ierr2,ierr3,ierr4,ierr5,ierr6
+      INTEGER :: ierr,ierr1,ierr2,ierr3,ierr4,ierr5,ierr6,ierr7,ierr8
       INTEGER :: jpm
       !!----------------------------------------------------------------------
       !
@@ -544,7 +544,9 @@ CONTAINS
       ALLOCATE( vb(jpi,jpj,1)       , STAT=ierr4 )
       ALLOCATE( tsb(jpi,jpj,1,jpm)  , STAT=ierr5 )
       ALLOCATE( sshn(jpi,jpj)       , STAT=ierr6 )
-      ierr = ierr + ierr1 + ierr2 + ierr3 + ierr4 + ierr5 + ierr6 
+      ALLOCATE( un(jpi,jpj,1)       , STAT=ierr7 )
+      ALLOCATE( vn(jpi,jpj,1)       , STAT=ierr8 )
+      ierr = ierr + ierr1 + ierr2 + ierr3 + ierr4 + ierr5 + ierr6  + ierr7 + ierr8
 #endif
       !
       IF( lk_mpp    )   CALL mpp_sum( ierr )

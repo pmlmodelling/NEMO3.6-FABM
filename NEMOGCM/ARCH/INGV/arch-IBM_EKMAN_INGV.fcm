@@ -14,6 +14,8 @@
 # MK          make
 # USER_INC    additional include files for the compiler,  e.g. -I<include dir>
 # USER_LIB    additional libraries to pass to the linker, e.g. -l<library>
+# CC          C compiler used to compile conv for AGRIF
+# CFLAGS      compiler flags used with CC
 
 %NCDF_INC            -I/srv/lib/netcdf-x/include
 %NCDF_LIB            -L/srv/lib/netcdf-x/lib -lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lcurl -lstdc++

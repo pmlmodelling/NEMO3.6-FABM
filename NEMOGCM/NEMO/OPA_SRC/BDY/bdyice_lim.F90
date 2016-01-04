@@ -106,6 +106,10 @@ CONTAINS
       INTEGER  ::   ji, jj, ii, ij     ! local scalar
       REAL(wp) ::   zwgt, zwgt1        ! local scalar
       REAL(wp) ::   ztmelts, zdh
+#if  defined key_lim2 && ! defined key_lim2_vp && defined key_agrif
+     USE ice_2, vt_s => hsnm
+     USE ice_2, vt_i => hicm
+#endif
 
       !!------------------------------------------------------------------------------
       !

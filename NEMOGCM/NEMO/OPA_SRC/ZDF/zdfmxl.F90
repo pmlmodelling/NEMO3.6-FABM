@@ -26,6 +26,7 @@ MODULE zdfmxl
    PRIVATE
 
    PUBLIC   zdf_mxl       ! called by step.F90
+   PUBLIC   zdf_mxl_alloc ! Used in zdf_tke_init
 
    INTEGER , PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   nmln    !: number of level in the mixed layer (used by TOP)
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) ::   hmld    !: mixing layer depth (turbocline)      [m]

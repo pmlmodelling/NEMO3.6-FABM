@@ -125,14 +125,6 @@ CONTAINS
       IF(   ln_rnf_tem   )   CALL fld_read ( kt, nn_fsbc, sf_t_rnf )    ! idem for runoffs temperature if required
       IF(   ln_rnf_sal   )   CALL fld_read ( kt, nn_fsbc, sf_s_rnf )    ! idem for runoffs salinity    if required
       !
-      ! Runoff reduction only associated to the ORCA2_LIM configuration
-      ! when reading the NetCDF file runoff_1m_nomask.nc
-      IF( cp_cfg == 'orca' .AND. jp_cfg == 2 .AND. .NOT. l_rnfcpl )   THEN
-         WHERE( 40._wp < gphit(:,:) .AND. gphit(:,:) < 65._wp )
-            sf_rnf(1)%fnow(:,:,1) = 0.85 * sf_rnf(1)%fnow(:,:,1)
-         END WHERE
-      ENDIF
-      !
       IF( MOD( kt - 1, nn_fsbc ) == 0 ) THEN
          !
          IF( .NOT. l_rnfcpl )   rnf(:,:) = rn_rfact * ( sf_rnf(1)%fnow(:,:,1) )       ! updated runoff value at time step kt

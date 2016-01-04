@@ -49,7 +49,7 @@ MODULE step
 CONTAINS
 
 #if defined key_agrif
-   SUBROUTINE stp( )
+   RECURSIVE SUBROUTINE stp( )
       INTEGER             ::   kstp   ! ocean time-step index
 #else
    SUBROUTINE stp( kstp )
@@ -78,9 +78,13 @@ CONTAINS
 
 #if defined key_agrif
       kstp = nit000 + Agrif_Nb_Step()
-!      IF ( Agrif_Root() .and. lwp) Write(*,*) '---'
-!      IF (lwp) Write(*,*) 'Grid Number',Agrif_Fixed(),' time step ',kstp
+      IF ( lk_agrif_debug ) THEN
+         IF ( Agrif_Root() .and. lwp) Write(*,*) '---'
+         IF (lwp) Write(*,*) 'Grid Number',Agrif_Fixed(),' time step ',kstp, 'int tstep',Agrif_NbStepint()
+      ENDIF
+
       IF ( kstp == (nit000 + 1) ) lk_agrif_fstep = .FALSE.
+
 # if defined key_iomput
       IF( Agrif_Nbstepint() == 0 )   CALL iom_swap( cxios_context )
 # endif
@@ -109,7 +113,8 @@ CONTAINS
       !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
       ! Update stochastic parameters and random T/S fluctuations
       !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                        CALL sto_par( kstp )          ! Stochastic parameters
+       IF( ln_sto_eos ) CALL sto_par( kstp )          ! Stochastic parameters
+       IF( ln_sto_eos ) CALL sto_pts( tsn  )          ! Random T/S fluctuations
 
       !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
       ! Ocean physics update                (ua, va, tsa used as workspace)
@@ -151,7 +156,6 @@ CONTAINS
       !  LATERAL  PHYSICS
       !
       IF( lk_ldfslp ) THEN                            ! slope of lateral mixing
-         IF(ln_sto_eos ) CALL sto_pts( tsn )          ! Random T/S fluctuations
                          CALL eos( tsb, rhd, gdept_0(:,:,:) )               ! before in situ density
          IF( ln_zps .AND. .NOT. ln_isfcav)                               &
             &            CALL zps_hde    ( kstp, jpts, tsb, gtsu, gtsv,  &  ! Partial steps: before horizontal gradient
@@ -187,7 +191,6 @@ CONTAINS
           ! In case the time splitting case, update almost all momentum trends here:
           ! Note that the computation of vertical velocity above, hence "after" sea level
           ! is necessary to compute momentum advection for the rhs of barotropic loop:
-            IF(ln_sto_eos ) CALL sto_pts( tsn )                             ! Random T/S fluctuations
                             CALL eos    ( tsn, rhd, rhop, fsdept_n(:,:,:) ) ! now in situ density for hpg computation
             IF( ln_zps .AND. .NOT. ln_isfcav)                               &
                &            CALL zps_hde    ( kstp, jpts, tsn, gtsu, gtsv,  &    ! Partial steps: before horizontal gradient
@@ -199,7 +202,7 @@ CONTAINS
 
                                   ua(:,:,:) = 0.e0             ! set dynamics trends to zero
                                   va(:,:,:) = 0.e0
-          IF(  ln_asmiau .AND. &
+          IF(  lk_asminc .AND. ln_asmiau .AND. &
              & ln_dyninc       )  CALL dyn_asm_inc  ( kstp )   ! apply dynamics assimilation increment
           IF( ln_neptsimp )       CALL dyn_nept_cor ( kstp )   ! subtract Neptune velocities (simplified)
           IF( lk_bdy           )  CALL bdy_dyn3d_dmp( kstp )   ! bdy damping trends
@@ -247,7 +250,7 @@ CONTAINS
       !<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              tsa(:,:,:,:) = 0.e0            ! set tracer trends to zero
 
-      IF(  ln_asmiau .AND. &
+      IF(  lk_asminc .AND. ln_asmiau .AND. &
          & ln_trainc     )   CALL tra_asm_inc( kstp )       ! apply tracer assimilation increment
                              CALL tra_sbc    ( kstp )       ! surface boundary condition
       IF( ln_traqsr      )   CALL tra_qsr    ( kstp )       ! penetrative solar radiation qsr
@@ -269,7 +272,6 @@ CONTAINS
       IF( ln_dynhpg_imp  ) THEN                             ! semi-implicit hpg (time stepping then eos)
          IF( ln_zdfnpc   )   CALL tra_npc( kstp )                ! update after fields by non-penetrative convection
                              CALL tra_nxt( kstp )                ! tracer fields at next time step
-            IF( ln_sto_eos ) CALL sto_pts( tsn )                 ! Random T/S fluctuations
                              CALL eos    ( tsa, rhd, rhop, fsdept_n(:,:,:) )  ! Time-filtered in situ density for hpg computation
             IF( ln_zps .AND. .NOT. ln_isfcav)                                &
                &             CALL zps_hde    ( kstp, jpts, tsa, gtsu, gtsv,  &    ! Partial steps: before horizontal gradient
@@ -280,7 +282,6 @@ CONTAINS
                &                                    gtui, gtvi, grui, grvi, arui, arvi, gzui, gzvi, ge3rui, ge3rvi    ) ! of t, s, rd at the last ocean level
       ELSE                                                  ! centered hpg  (eos then time stepping)
          IF ( .NOT. lk_dynspg_ts ) THEN                     ! eos already called in time-split case
-            IF( ln_sto_eos ) CALL sto_pts( tsn )    ! Random T/S fluctuations
                              CALL eos    ( tsn, rhd, rhop, fsdept_n(:,:,:) )  ! now in situ density for hpg computation
          IF( ln_zps .AND. .NOT. ln_isfcav)                                   &
                &             CALL zps_hde    ( kstp, jpts, tsn, gtsu, gtsv,  &    ! Partial steps: before horizontal gradient
@@ -313,7 +314,7 @@ CONTAINS
                                ua(:,:,:) = 0.e0             ! set dynamics trends to zero
                                va(:,:,:) = 0.e0
 
-        IF(  ln_asmiau .AND. &
+        IF(  lk_asminc .AND. ln_asmiau .AND. &
            & ln_dyninc      )  CALL dyn_asm_inc( kstp )     ! apply dynamics assimilation increment
         IF( ln_bkgwri )        CALL asm_bkg_wri( kstp )     ! output background fields
         IF( ln_neptsimp )      CALL dyn_nept_cor( kstp )    ! subtract Neptune velocities (simplified)
@@ -334,12 +335,25 @@ CONTAINS
 
                                CALL ssh_swp( kstp )         ! swap of sea surface height
       IF( lk_vvl           )   CALL dom_vvl_sf_swp( kstp )  ! swap of vertical scale factors
+      !
+      IF( lrst_oce         )   CALL rst_write( kstp )       ! write output ocean restart file
 
+#if defined key_agrif
+      !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+      ! AGRIF
+      !<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<      
+                               CALL Agrif_Integrate_ChildGrids( stp )  
+
+      IF ( Agrif_NbStepint().EQ.0 ) THEN
+                               CALL Agrif_Update_Tra()      ! Update active tracers
+                               CALL Agrif_Update_Dyn()      ! Update momentum
+      ENDIF
+#endif
       IF( ln_diahsb        )   CALL dia_hsb( kstp )         ! - ML - global conservation diagnostics
       IF( lk_diaobs  )         CALL dia_obs( kstp )         ! obs-minus-model (assimilation) diagnostics (call after dynamics update)
 
       !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-      ! Control and restarts
+      ! Control
       !<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                CALL stp_ctl( kstp, indic )
       IF( indic < 0        )   THEN
@@ -351,7 +365,6 @@ CONTAINS
          IF(lwm) CALL FLUSH    ( numond )     ! flush output namelist oce
          IF( lwm.AND.numoni /= -1 ) CALL FLUSH    ( numoni )     ! flush output namelist ice
       ENDIF
-      IF( lrst_oce         )   CALL rst_write    ( kstp )   ! write output ocean restart file
 
       !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
       ! Coupled mode
@@ -366,6 +379,7 @@ CONTAINS
 #endif
       !
       IF( nn_timing == 1 .AND.  kstp == nit000  )   CALL timing_reset
+      !     
       !
    END SUBROUTINE stp
 

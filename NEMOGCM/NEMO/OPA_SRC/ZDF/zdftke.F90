@@ -52,6 +52,12 @@ MODULE zdftke
    USE wrk_nemo       ! work arrays
    USE timing         ! Timing
    USE lib_fortran    ! Fortran utilities (allows no signed zero when 'key_nosignedzero' defined)  
+#if defined key_agrif
+   USE agrif_opa_interp
+   USE agrif_opa_update
+#endif
+
+
 
    IMPLICIT NONE
    PRIVATE
@@ -84,11 +90,8 @@ MODULE zdftke
    REAL(wp) ::   rhftau_add = 1.e-3_wp     ! add offset   applied to HF part of taum  (nn_etau=3)
    REAL(wp) ::   rhftau_scl = 1.0_wp       ! scale factor applied to HF part of taum  (nn_etau=3)
 
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   en             !: now turbulent kinetic energy   [m2/s2]
    REAL(wp)        , ALLOCATABLE, SAVE, DIMENSION(:,:)   ::   htau           ! depth of tke penetration (nn_htau)
    REAL(wp)        , ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   dissl          ! now mixing lenght of dissipation
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   avt_k , avm_k  ! not enhanced Kz
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   avmu_k, avmv_k ! not enhanced Kz
 #if defined key_c1d
    !                                                                        !!** 1D cfg only  **   ('key_c1d')
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   e_dis, e_mix   !: dissipation and mixing turbulent lengh scales
@@ -114,9 +117,7 @@ CONTAINS
          &      e_dis(jpi,jpj,jpk) , e_mix(jpi,jpj,jpk) ,                          &
          &      e_pdl(jpi,jpj,jpk) , e_ric(jpi,jpj,jpk) ,                          &
 #endif
-         &      en    (jpi,jpj,jpk) , htau  (jpi,jpj)    , dissl(jpi,jpj,jpk) ,     & 
-         &      avt_k (jpi,jpj,jpk) , avm_k (jpi,jpj,jpk),                          &
-         &      avmu_k(jpi,jpj,jpk) , avmv_k(jpi,jpj,jpk), STAT= zdf_tke_alloc      )
+         &      htau  (jpi,jpj)    , dissl(jpi,jpj,jpk) , STAT= zdf_tke_alloc      )
          !
       IF( lk_mpp             )   CALL mpp_sum ( zdf_tke_alloc )
       IF( zdf_tke_alloc /= 0 )   CALL ctl_warn('zdf_tke_alloc: failed to allocate arrays')
@@ -188,6 +189,11 @@ CONTAINS
       avmu_k(:,:,:) = avmu(:,:,:) 
       avmv_k(:,:,:) = avmv(:,:,:) 
       !
+#if defined key_agrif
+      ! Update child grid f => parent grid 
+      IF( .NOT.Agrif_Root() )   CALL Agrif_Update_Tke( kt )      ! children only
+#endif      
+     ! 
    END SUBROUTINE zdf_tke
 
 
@@ -316,7 +322,8 @@ CONTAINS
                   zind = 0.5 - SIGN( 0.5, fsdepw(ji,jj,jk) - zhlc(ji,jj) )
                   zwlc = zind * rn_lc * zus * SIN( rpi * fsdepw(ji,jj,jk) / zhlc(ji,jj) )
                   !                                           ! TKE Langmuir circulation source term
-                  en(ji,jj,jk) = en(ji,jj,jk) + rdt * ( 1._wp - fr_i(ji,jj) ) * ( zwlc * zwlc * zwlc ) / zhlc(ji,jj) * wmask(ji,jj,jk) * tmask(ji,jj,1)
+                  en(ji,jj,jk) = en(ji,jj,jk) + rdt * ( 1._wp - fr_i(ji,jj) ) * ( zwlc * zwlc * zwlc ) /   &
+                     &   zhlc(ji,jj) * wmask(ji,jj,jk) * tmask(ji,jj,1)
                END DO
             END DO
          END DO
@@ -709,7 +716,7 @@ CONTAINS
       !! ** Action  :   Increase by 1 the nstop flag is setting problem encounter
       !!----------------------------------------------------------------------
       INTEGER ::   ji, jj, jk   ! dummy loop indices
-      INTEGER ::   ios
+      INTEGER ::   ios, ierr
       !!
       NAMELIST/namzdf_tke/ rn_ediff, rn_ediss , rn_ebb , rn_emin  ,   &
          &                 rn_emin0, rn_bshear, nn_mxl , ln_mxl0  ,   &
@@ -767,7 +774,10 @@ CONTAINS
          rn_mxl0 = rmxl_min
       ENDIF
       
-      IF( nn_etau == 2  )   CALL zdf_mxl( nit000 )      ! Initialization of nmln 
+      IF( nn_etau == 2  ) THEN
+          ierr = zdf_mxl_alloc()
+          nmln(:,:) = nlb10           ! Initialization of nmln
+      ENDIF
 
       !                               !* depth of penetration of surface tke
       IF( nn_etau /= 0 ) THEN      

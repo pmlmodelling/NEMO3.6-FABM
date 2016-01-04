@@ -69,6 +69,6 @@ mkdir -p ${NEW_CONF}/${TEST_NAME}
 
 export EXE_DIR=${CONFIG_DIR}/${NEW_CONF}/${TEST_NAME}
 
-cp -r ${CONFIG_DIR}/${NEW_CONF}/EXP00/* ${EXE_DIR}/.
+cp -rL ${CONFIG_DIR}/${NEW_CONF}/EXP00/* ${EXE_DIR}/.
 cp -r ${SETTE_DIR}/iodef_sette.xml ${EXE_DIR}/iodef.xml
 cd ${EXE_DIR}

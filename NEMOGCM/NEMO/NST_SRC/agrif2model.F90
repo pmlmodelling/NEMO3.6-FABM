@@ -1,106 +1,89 @@
 #if defined key_agrif
-   !!----------------------------------------------------------------------
-   !! NEMO/NST 3.3 , NEMO Consortium (2010)
-   !! $Id$
-   !! Software governed by the CeCILL licence (NEMOGCM/NEMO_CeCILL.txt)
-   !!----------------------------------------------------------------------
-   SUBROUTINE Agrif2Model
-      !!---------------------------------------------
-      !!   *** ROUTINE Agrif2Model ***
-      !!--------------------------------------------- 
-   END SUBROUTINE Agrif2model
+!!----------------------------------------------------------------------
+!! NEMO/NST 3.6 , NEMO Consortium (2010)
+!! $Id$
+!! Software governed by the CeCILL licence (NEMOGCM/NEMO_CeCILL.txt)
+!!----------------------------------------------------------------------
+SUBROUTINE Agrif2Model
+   !!---------------------------------------------
+   !!   *** ROUTINE Agrif2Model ***
+   !!--------------------------------------------- 
+END SUBROUTINE Agrif2model
 
-   SUBROUTINE Agrif_Set_numberofcells(Agrif_Gr)
-      !!---------------------------------------------
-      !!   *** ROUTINE Agrif_Set_numberofcells ***
-      !!--------------------------------------------- 
-      USE Agrif_Types
-      IMPLICIT NONE
+SUBROUTINE Agrif_Set_numberofcells(Agrif_Gr)
+   !!---------------------------------------------
+   !!   *** ROUTINE Agrif_Set_numberofcells ***
+   !!--------------------------------------------- 
+   USE Agrif_Grids
+   IMPLICIT NONE
 
-      Type(Agrif_Grid), Pointer :: Agrif_Gr
+   TYPE(Agrif_Grid), POINTER :: Agrif_Gr
 
-      IF ( associated(Agrif_Curgrid) )THEN
+   IF ( ASSOCIATED(Agrif_Curgrid) )THEN
 #include "SetNumberofcells.h"
-      ENDIF
+   ENDIF
 
-   END SUBROUTINE Agrif_Set_numberofcells
+END SUBROUTINE Agrif_Set_numberofcells
 
-   SUBROUTINE Agrif_Get_numberofcells(Agrif_Gr)
-      !!---------------------------------------------
-      !!   *** ROUTINE Agrif_Get_numberofcells ***
-      !!--------------------------------------------- 
-      USE Agrif_Types
-      IMPLICIT NONE
+SUBROUTINE Agrif_Get_numberofcells(Agrif_Gr)
+   !!---------------------------------------------
+   !!   *** ROUTINE Agrif_Get_numberofcells ***
+   !!--------------------------------------------- 
+   USE Agrif_Grids
+   IMPLICIT NONE
 
-      Type(Agrif_Grid), Pointer :: Agrif_Gr
+   TYPE(Agrif_Grid), POINTER :: Agrif_Gr
 
+   IF ( ASSOCIATED(Agrif_Curgrid) ) THEN
 #include "GetNumberofcells.h"
+   ENDIF
 
-   END SUBROUTINE Agrif_Get_numberofcells
+END SUBROUTINE Agrif_Get_numberofcells
 
-   SUBROUTINE Agrif_Allocationcalls(Agrif_Gr)
-      !!---------------------------------------------
-      !!   *** ROUTINE Agrif_Allocationscalls ***
-      !!--------------------------------------------- 
-      USE Agrif_Types 
+SUBROUTINE Agrif_Allocationcalls(Agrif_Gr)
+   !!---------------------------------------------
+   !!   *** ROUTINE Agrif_Allocationscalls ***
+   !!--------------------------------------------- 
+   USE Agrif_Grids 
 #include "include_use_Alloc_agrif.h"
-      IMPLICIT NONE
+   IMPLICIT NONE
 
-      Type(Agrif_Grid), Pointer :: Agrif_Gr
+   TYPE(Agrif_Grid), POINTER :: Agrif_Gr
 
 #include "allocations_calls_agrif.h"
 
-   END SUBROUTINE Agrif_Allocationcalls
+END SUBROUTINE Agrif_Allocationcalls
 
-   SUBROUTINE Agrif_probdim_modtype_def()
-      !!---------------------------------------------
-      !!   *** ROUTINE Agrif_probdim_modtype_def ***
-      !!--------------------------------------------- 
-      USE Agrif_Types
-      IMPLICIT NONE
+SUBROUTINE Agrif_probdim_modtype_def()
+   !!---------------------------------------------
+   !!   *** ROUTINE Agrif_probdim_modtype_def ***
+   !!--------------------------------------------- 
+   USE Agrif_Types
+   IMPLICIT NONE
 
 #include "modtype_agrif.h"
 #include "probdim_agrif.h"
 #include "keys_agrif.h"
 
-      Return
+   RETURN
 
-   END SUBROUTINE Agrif_probdim_modtype_def
+END SUBROUTINE Agrif_probdim_modtype_def
 
-   SUBROUTINE Agrif_clustering_def()
-      !!---------------------------------------------
-      !!   *** ROUTINE Agrif_clustering_def ***
-      !!--------------------------------------------- 
-      Use Agrif_Types
-      IMPLICIT NONE
+SUBROUTINE Agrif_clustering_def()
+   !!---------------------------------------------
+   !!   *** ROUTINE Agrif_clustering_def ***
+   !!--------------------------------------------- 
+   IMPLICIT NONE
 
-      Return
+   RETURN
 
-   END SUBROUTINE Agrif_clustering_def
+END SUBROUTINE Agrif_clustering_def
 
-   SUBROUTINE Agrif_comm_def(modelcomm)
-
-      !!---------------------------------------------
-      !!   *** ROUTINE Agrif_clustering_def ***
-      !!--------------------------------------------- 
-      Use Agrif_Types
-      Use lib_mpp
-
-      IMPLICIT NONE
-
-      INTEGER :: modelcomm
-
-#if defined key_mpp_mpi
-      modelcomm = mpi_comm_opa
-#endif
-      Return
-
-   END SUBROUTINE Agrif_comm_def
 #else
-   SUBROUTINE Agrif2Model
-      !!---------------------------------------------
-      !!   *** ROUTINE Agrif2Model ***
-      !!--------------------------------------------- 
-      WRITE(*,*) 'Impossible to bet here'
-   END SUBROUTINE Agrif2model
+SUBROUTINE Agrif2Model
+   !!---------------------------------------------
+   !!   *** ROUTINE Agrif2Model ***
+   !!--------------------------------------------- 
+   WRITE(*,*) 'Impossible to bet here'
+END SUBROUTINE Agrif2model
 #endif
