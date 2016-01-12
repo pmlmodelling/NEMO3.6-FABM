@@ -47,3 +47,12 @@ The initial FABM_ implementation in this branch is carried over from the NEMO-FA
 
 .. _FABM: http://fabm.net
 .. _NEMO-FABM: https://gitlab.ecosystem-modelling.pml.ac.uk/momm/NEMO-FABM
+
+XIOS-1 library bug
+==================
+
+Note that NEMO 3.6 stable is incompatible with XIOS-1 versions more recent than September 2015,
+due to what is supposed to be a bug-fix, that is incompatible with NEMO 3.6 (XIOS-1 commit of 1st October 2015).
+Use the following repository for a NEMO 3.6 compatible version of XIOS-1:
+
+https://gitlab.ecosystem-modelling.pml.ac.uk/momm/XIOS1/tree/nemo3.6-fix
