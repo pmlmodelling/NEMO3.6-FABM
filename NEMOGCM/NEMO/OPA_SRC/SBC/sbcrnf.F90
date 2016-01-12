@@ -51,7 +51,7 @@ MODULE sbcrnf
    LOGICAL           , PUBLIC ::   ln_rnf_mouth    !: specific treatment in mouths vicinity
    REAL(wp)                   ::   rn_hrnf         !: runoffs, depth over which enhanced vertical mixing is used
    REAL(wp)          , PUBLIC ::   rn_avt_rnf      !: runoffs, value of the additional vertical mixing coef. [m2/s]
-   REAL(wp)                   ::   rn_rfact        !: multiplicative factor for runoff
+   REAL(wp)          , PUBLIC ::   rn_rfact        !: multiplicative factor for runoff
 
    LOGICAL           , PUBLIC ::   l_rnfcpl = .false.       ! runoffs recieved from oasis
 
