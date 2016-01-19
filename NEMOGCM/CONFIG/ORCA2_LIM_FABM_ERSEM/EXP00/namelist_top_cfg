@@ -5,6 +5,7 @@
 &namtrc_run     !   run information
 !-----------------------------------------------------------------------
    ln_top_euler  = .true.    !  use Euler time-stepping for TOP
+   ln_rsttr      = .true.   !  start from a restart file (T) or not (F)
 /
 !-----------------------------------------------------------------------
 &namtrc     !   tracers definition
@@ -52,3 +53,9 @@
 &namtrc_bc        !   data for boundary conditions
 !-----------------------------------------------------------------------
 /
+!----------------------------------------------------------------------
+!namtrc_bdy       !   Setup of tracer boundary conditions
+!-----------------------------------------------------------------------
+$namtrc_bdy
+/
+
