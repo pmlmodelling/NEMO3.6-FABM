@@ -4,6 +4,7 @@
          <domain id="grid_T" long_name="grid T"/>
 	 <!--   My zoom: example of hand defined zoom   -->
          <domain id="myzoom" zoom_ibegin="10" zoom_jbegin="10" zoom_ni="5" zoom_nj="5" />
+         <domain id="BATS" zoom_ibegin="111" zoom_jbegin="99" zoom_ni="1" zoom_nj="1" />
          <domain id="1point" zoom_ibegin="10" zoom_jbegin="10" zoom_ni="1" zoom_nj="1" />
          <domain id="ptr" zoom_ibegin="0000"  zoom_jbegin="1" zoom_ni="1" zoom_nj="0000" />
          <!--   Eq section   -->
