@@ -35,7 +35,7 @@ CONTAINS
     IMPLICIT NONE
     !       
     TYPE(Coordinates) :: Grid                     
-    REAL*8 :: za1,za0,zsur,zacr,zkth,zdepth,zdepwp,zmin,zmax,zdiff,ze3tp,ze3wp
+    REAL*8 :: za2,za1,za0,zsur,zacr,zkth,zacr2,zkth2,zdepth,zdepwp,zmin,zmax,zdiff,ze3tp,ze3wp
     INTEGER :: i,j,jk,jj,ji,jpj,jpi,ik,ii,ipt,jpt
     INTEGER, DIMENSION(1) :: k
     INTEGER :: k1
@@ -75,6 +75,7 @@ CONTAINS
        zsur = psur
        za0  = pa0
        za1  = pa1
+       za2  = pa2
        !
     ELSE
        !       
@@ -87,25 +88,52 @@ CONTAINS
        !       
     ENDIF
 
-    zacr = ppacr
-    zkth = ppkth       
+    zacr  = ppacr
+    zkth  = ppkth     
+    zacr2 = ppacr2
+    zkth2 = ppkth2  
     !
-    DO i = 1,N
-       ! 
-       gdepw(i) = (zsur+za0*i+za1*zacr*LOG(COSH((i-zkth)/zacr))) 
-       gdept(i) = (zsur+za0*(i+0.5)+za1*zacr*LOG(COSH(((i+0.5)-zkth)/zacr)))
-       e3w(i)   = (za0 + za1 * TANH((i-zkth)/zacr))
-       e3t(i)   = (za0 + za1 * TANH(((i+0.5)-zkth)/zacr))
-       !
-    END DO
-    !
-
+    IF( ppkth == 0. ) THEN            !  uniform vertical grid 
+         za1 = pphmax / FLOAT(N-1) 
+         DO i = 1, N
+            gdepw(i) = ( i - 1   ) * za1
+            gdept(i) = ( i - 0.5 ) * za1
+            e3w  (i) =  za1
+            e3t  (i) =  za1
+         END DO
+    ELSE                            ! Madec & Imbard 1996 function
+       IF( .NOT. ldbletanh ) THEN
+          DO i = 1,N
+             ! 
+             gdepw(i) = (zsur+za0*i+za1*zacr*LOG(COSH((i-zkth)/zacr))) 
+             gdept(i) = (zsur+za0*(i+0.5)+za1*zacr*LOG(COSH(((i+0.5)-zkth)/zacr)))
+             e3w(i)   = (za0 + za1 * TANH((i-zkth)/zacr))
+             e3t(i)   = (za0 + za1 * TANH(((i+0.5)-zkth)/zacr))
+             !
+          END DO
+       ELSE
+            DO i = 1,N
+               ! Double tanh function
+               gdepw(i) = ( zsur + za0*i  + za1 * zacr * LOG ( COSH( (i-zkth ) / zacr  ) )               &
+                  &                       + za2 * zacr2* LOG ( COSH( (i-zkth2) / zacr2 ) )  )
+               gdept(i) = ( zsur + za0*(i+0.5) + za1 * zacr * LOG ( COSH( ((i+0.5)-zkth ) / zacr  ) )    &
+                  &                            + za2 * zacr2* LOG ( COSH( ((i+0.5)-zkth2) / zacr2 ) )  )
+               e3w  (i) =          za0         + za1        * TANH(       (i-zkth ) / zacr  )            &
+                  &                            + za2        * TANH(       (i-zkth2) / zacr2 )
+               e3t  (i) =          za0         + za1        * TANH(       ((i+0.5)-zkth ) / zacr  )      &
+                  &                            + za2        * TANH(       ((i+0.5)-zkth2) / zacr2 )
+            END DO
+       ENDIF
+    ENDIF
     gdepw(1) = 0.0  
     !
     ! Initialization of constant
     !
     zmax = gdepw(N) + e3t(N)
-    zmin = gdepw(4)
+    IF( rn_hmin < 0. ) THEN  ;   i = - INT( rn_hmin )                                  ! from a nb of level
+    ELSE                     ;   i = MINLOC( gdepw, mask = gdepw > rn_hmin, dim = 1 )  ! from a depth
+    ENDIF
+    zmin = gdepw(i+1)
     !
     ! Initialize bathy_level to the maximum ocean level available
     !
@@ -234,13 +262,14 @@ CONTAINS
     REAL*8,DIMENSION(:,:) :: gdepwChild 
     INTEGER :: i,j,ji,ij,ii,jj,jpt,ipt
     REAL,DIMENSION(N) :: gdepw,e3t
-    REAL :: za0,za1,zsur,zacr,zkth,zmin,zmax,zdepth
+    REAL :: za0,za1,za2,zsur,zacr,zacr2,zkth,zkth2,zmin,zmax,zdepth
     INTEGER :: kbathy,jk,diff
     INTEGER :: bornex,borney,bornex2,borney2
-    !       
+    !
     IF ( ( pa0 == 0 .OR. pa1 == 0 .OR. psur == 0 ) &
          .AND. ppdzmin.NE.0 .AND. pphmax.NE.0 ) THEN 
        !    
+       WRITE(*,*) 'psur,pa0,pa1 computed'
        za1=( ppdzmin - pphmax / (N-1) )          &
             / ( TANH((1-ppkth)/ppacr) - ppacr/(N-1) &
             *  (  LOG( COSH( (N - ppkth) / ppacr) )      &
@@ -252,9 +281,11 @@ CONTAINS
     ELSE IF ( (ppdzmin == 0 .OR. pphmax == 0) .AND. psur.NE.0 .AND. &
          pa0.NE.0 .AND. pa1.NE.0 ) THEN
        !       
+       WRITE(*,*) 'psur,pa0,pa1 given by namelist'
        zsur = psur
        za0  = pa0
        za1  = pa1
+       za2  = pa2
        !
     ELSE
        !       
@@ -262,21 +293,41 @@ CONTAINS
        WRITE(*,*) ' '
        WRITE(*,*) 'please check values of variables'
        WRITE(*,*) 'in namelist vertical_grid section'
-       WRITE(*,*) ' '      
+       WRITE(*,*) ' '  
+       STOP    
        !       
     ENDIF
-    !       
-    zacr = ppacr
-    zkth = ppkth       
+
+    zacr  = ppacr
+    zkth  = ppkth     
+    zacr2 = ppacr2
+    zkth2 = ppkth2  
     !
-    DO i = 1,N
-       ! 
-       gdepw(i) = (zsur+za0*i+za1*zacr*LOG(COSH((i-zkth)/zacr)))
-       e3t(i)   = (za0 + za1 * TANH(((i+0.5)-zkth)/zacr))       
-    END DO
-    !
+    IF( ppkth == 0. ) THEN            !  uniform vertical grid 
+         za1 = pphmax / FLOAT(N-1) 
+         DO i = 1, N
+            gdepw(i) = ( i - 1   ) * za1
+            e3t  (i) =  za1
+         END DO
+    ELSE                            ! Madec & Imbard 1996 function
+       IF( .NOT. ldbletanh ) THEN
+          DO i = 1,N
+             ! 
+             gdepw(i) = (zsur+za0*i+za1*zacr*LOG(COSH((i-zkth)/zacr))) 
+             e3t(i)   = (za0 + za1 * TANH(((i+0.5)-zkth)/zacr))
+             !
+          END DO
+       ELSE
+            DO i = 1,N
+               ! Double tanh function
+               gdepw(i) = ( zsur + za0*i  + za1 * zacr * LOG ( COSH( (i-zkth ) / zacr  ) )               &
+                  &                       + za2 * zacr2* LOG ( COSH( (i-zkth2) / zacr2 ) )  )
+               e3t  (i) =          za0         + za1        * TANH(       ((i+0.5)-zkth ) / zacr  )      &
+                  &                            + za2        * TANH(       ((i+0.5)-zkth2) / zacr2 )
+            END DO
+       ENDIF
+    ENDIF
     gdepw(1) = 0.0
-    !
     !
     diff = 0      
     IF ( MOD(irafx,2) .EQ. 0 ) diff = 1
@@ -343,7 +394,10 @@ CONTAINS
     ! Initialization of constant
     !
     zmax = gdepw(N) + e3t(N)
-    zmin = gdepw(4) 
+    IF( rn_hmin < 0. ) THEN  ;   i = - INT( rn_hmin )                                  ! from a nb of level
+    ELSE                     ;   i = MINLOC( gdepw, mask = gdepw > rn_hmin, dim = 1 )  ! from a depth
+    ENDIF
+    zmin = gdepw(i+1)
     !
     ! check that interpolated value stays at the same level         
     ! 
@@ -645,7 +699,7 @@ CONTAINS
     TYPE(Coordinates) :: Grid 
     REAL*8, DIMENSION(:,:,:) :: fse3u,fse3t,fse3v
     !                                  
-    REAL*8 :: za1,za0,zsur,zacr,zkth,zdepth,zdepwp,zmin,zmax,zdiff,ze3tp,ze3wp
+    REAL*8 :: za2,za1,za0,zsur,zacr,zkth,zacr2,zkth2,zdepth,zdepwp,zmin,zmax,zdiff,ze3tp,ze3wp
     INTEGER :: i,j,jk,jj,ji,jpj,jpi,ik,ii,ipt,jpt,jpk
     INTEGER, DIMENSION(1) :: k
     INTEGER :: k1
@@ -659,7 +713,7 @@ CONTAINS
     !       
     ALLOCATE(gdepw(jpk),e3t(jpk))
     ALLOCATE(gdepw_ps(jpi,jpj,jpk))                  
-    !       
+    !  
     IF ( ( pa0 == 0 .OR. pa1 == 0 .OR. psur == 0 ) &
          .AND. ppdzmin.NE.0 .AND. pphmax.NE.0 ) THEN 
        !    
@@ -667,28 +721,63 @@ CONTAINS
        za1=( ppdzmin - pphmax / (jpk-1) )          &
             / ( TANH((1-ppkth)/ppacr) - ppacr/(jpk-1) &
             *  (  LOG( COSH( (jpk - ppkth) / ppacr) )      &
-            - LOG( COSH( ( 1  - ppkth) / ppacr) )  )  ) 
-       !
+            - LOG( COSH( ( 1  - ppkth) / ppacr) )  )  )
+
        za0  = ppdzmin - za1 * TANH( (1-ppkth) / ppacr )
        zsur = - za0 - za1 * ppacr * LOG( COSH( (1-ppkth) / ppacr )  )
        !
     ELSE IF ( (ppdzmin == 0 .OR. pphmax == 0) .AND. psur.NE.0 .AND. &
          pa0.NE.0 .AND. pa1.NE.0 ) THEN
        !       
+       WRITE(*,*) 'psur,pa0,pa1 given by namelist'
        zsur = psur
        za0  = pa0
-       za1  = pa1   
+       za1  = pa1
+       za2  = pa2
+       !
+    ELSE
+       !       
+       WRITE(*,*) 'ERROR ***** bad vertical grid parameters ...' 
+       WRITE(*,*) ' '
+       WRITE(*,*) 'please check values of variables'
+       WRITE(*,*) 'in namelist vertical_grid section'
+       WRITE(*,*) ' '  
+       STOP    
        !       
     ENDIF
 
-    zacr = ppacr
-    zkth = ppkth       
+    zacr  = ppacr
+    zkth  = ppkth     
+    zacr2 = ppacr2
+    zkth2 = ppkth2  
+    !
+    IF( ppkth == 0. ) THEN            !  uniform vertical grid 
+         za1 = pphmax / FLOAT(jpk-1) 
+         DO i = 1, jpk
+            gdepw(i) = ( i - 1   ) * za1
+            e3t  (i) =  za1
+         END DO
+    ELSE                            ! Madec & Imbard 1996 function
+       IF( .NOT. ldbletanh ) THEN
+          DO i = 1,jpk
+             ! 
+             gdepw(i) = (zsur+za0*i+za1*zacr*LOG(COSH((i-zkth)/zacr))) 
+             e3t(i)   = (za0 + za1 * TANH(((i+0.5)-zkth)/zacr))
+             !
+          END DO
+       ELSE
+            DO i = 1,jpk
+               ! Double tanh function
+               gdepw(i) = ( zsur + za0*i  + za1 * zacr * LOG ( COSH( (i-zkth ) / zacr  ) )               &
+                  &                       + za2 * zacr2* LOG ( COSH( (i-zkth2) / zacr2 ) )  )
+               e3t  (i) =          za0         + za1        * TANH(       ((i+0.5)-zkth ) / zacr  )      &
+                  &                            + za2        * TANH(       ((i+0.5)-zkth2) / zacr2 )
+            END DO
+       ENDIF
+    ENDIF         
     !         
     !                
     DO i = 1,jpk
-       ! 
-       gdepw(i) = (zsur+za0*i+za1*zacr*LOG(COSH((i-zkth)/zacr))) 
-       e3t(i)   = (za0 + za1 * TANH(((i+0.5)-zkth)/zacr))
        !       
        fse3t(:,:,i) = e3t(i)
        gdepw_ps(:,:,i) = gdepw(i)
@@ -699,7 +788,10 @@ CONTAINS
     gdepw_ps(:,:,1) = 0.0 
     !
     zmax = gdepw(jpk) + e3t(jpk)
-    zmin = gdepw(4)
+    IF( rn_hmin < 0. ) THEN  ;   i = - INT( rn_hmin )                                  ! from a nb of level
+    ELSE                     ;   i = MINLOC( gdepw, mask = gdepw > rn_hmin, dim = 1 )  ! from a depth
+    ENDIF
+    zmin = gdepw(i+1)
     !
     DO jj = 1, jpj
        DO ji= 1, jpi

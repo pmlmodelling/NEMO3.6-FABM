@@ -64,6 +64,7 @@ set -o posix
 [ -f ${2}/EXP00/AGRIF_FixedGrids.in ] &&  \cp -R  ${2}/EXP00/AGRIF_FixedGrids.in ${1}/EXP00/.
 [ -f ${2}/EXP00/iodef.xml ] &&  \cp -R  ${2}/EXP00/iodef.xml ${1}/EXP00/.
 [ -f ${2}/EXP00/field_def.xml ] &&  \cp -R  ${2}/EXP00/field_def.xml ${1}/EXP00/.
+[ -f ${2}/EXP00/file_def.xml ] &&  \cp -R  ${2}/EXP00/file_def.xml ${1}/EXP00/.
 [ -f ${2}/EXP00/domain_def.xml ] &&  \cp -R  ${2}/EXP00/domain_def.xml ${1}/EXP00/.
 [ -f ${2}/EXP00/xmlio_server.def ] &&  \cp -R  ${2}/EXP00/xmlio_server.def ${1}/EXP00/.
 [ -d    ${2}/MY_SRC ] && \cp  ${2}/MY_SRC/* ${1}/MY_SRC/. 2> /dev/null

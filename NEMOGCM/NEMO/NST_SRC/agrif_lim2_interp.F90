@@ -8,7 +8,7 @@ MODULE agrif_lim2_interp
    !! History :  2.0   !  04-2008  (F. Dupont)  initial version
    !!            3.4   !  09-2012  (R. Benshila, C. Herbaut) update and EVP
    !!----------------------------------------------------------------------
-#if defined key_agrif && defined key_lim2
+#if defined key_agrif && defined key_lim2 
    !!----------------------------------------------------------------------
    !!   'key_lim2'  :                                 LIM 2.0 sea-ice model
    !!   'key_agrif' :                                 AGRIF library
@@ -40,6 +40,10 @@ MODULE agrif_lim2_interp
    PUBLIC interp_u_ice, interp_v_ice
    PUBLIC interp_adv_ice
 
+   REAL(wp), DIMENSION(:,:)  , ALLOCATABLE, PRIVATE :: uice_agr, vice_agr
+   REAL(wp), DIMENSION(:,:,:), ALLOCATABLE, PRIVATE :: tabice_agr 
+
+
    !!----------------------------------------------------------------------
    !! NEMO/NST 3.4 , NEMO Consortium (2012)
    !! $Id$
@@ -64,8 +68,8 @@ CONTAINS
       Agrif_UseSpecialValue = .FALSE.
       u_ice_nst(:,:) = 0.
       v_ice_nst(:,:) = 0.
-      CALL Agrif_Bc_variable( u_ice_nst, u_ice_id ,procname=interp_u_ice, calledweight=1. )
-      CALL Agrif_Bc_variable( v_ice_nst, v_ice_id ,procname=interp_v_ice, calledweight=1. )
+      CALL Agrif_Bc_variable( u_ice_id ,procname=interp_u_ice, calledweight=1. )
+      CALL Agrif_Bc_variable( v_ice_id ,procname=interp_v_ice, calledweight=1. )
       Agrif_SpecialValue=0.
       Agrif_UseSpecialValue = .FALSE.
       !
@@ -137,7 +141,6 @@ CONTAINS
       !!               we interpolate and store the boundary if needed, ie if
       !!  we are in inside a new parent ice time step
       !!-----------------------------------------------------------------------
-      REAL(wp), DIMENSION(jpi,jpj) :: zuice, zvice
       INTEGER :: ji,jj
       REAL(wp) :: zrhox, zrhoy
       !!-----------------------------------------------------------------------
@@ -154,35 +157,38 @@ CONTAINS
          ! interpolation of boundaries (called weight prevents AGRIF interpolation)
          Agrif_SpecialValue=-9999.
          Agrif_UseSpecialValue = .TRUE.
-         zuice = 0.
-         zvice = 0.
-         CALL Agrif_Bc_variable(zuice,u_ice_id,procname=interp_u_ice, calledweight=1.)
-         CALL Agrif_Bc_variable(zvice,v_ice_id,procname=interp_v_ice, calledweight=1.)
+         IF( .NOT. ALLOCATED(uice_agr) )THEN
+            ALLOCATE(uice_agr(jpi,jpj), vice_agr(jpi,jpj))
+         ENDIF
+         uice_agr = 0.
+         vice_agr = 0.
+         CALL Agrif_Bc_variable(u_ice_id,procname=interp_u_ice, calledweight=1.)
+         CALL Agrif_Bc_variable(v_ice_id,procname=interp_v_ice, calledweight=1.)
          Agrif_SpecialValue=0.
          Agrif_UseSpecialValue = .FALSE.
          !  
          zrhox = agrif_rhox() ;    zrhoy = agrif_rhoy()      
-         zuice(:,:) =  zuice(:,:)/(zrhoy*e2u(:,:))*umask(:,:,1)
-         zvice(:,:) =  zvice(:,:)/(zrhox*e1v(:,:))*vmask(:,:,1)
+         uice_agr(:,:) =  uice_agr(:,:)/(zrhoy*e2u(:,:))*umask(:,:,1)
+         vice_agr(:,:) =  vice_agr(:,:)/(zrhox*e1v(:,:))*vmask(:,:,1)
          ! fill  boundaries
          DO jj = 1, jpj
             DO ji = 1, 2
-               u_ice_oe(ji,  jj,2) = zuice(ji       ,jj) 
-               u_ice_oe(ji+2,jj,2) = zuice(nlci+ji-3,jj)
+               u_ice_oe(ji,  jj,2) = uice_agr(ji       ,jj) 
+               u_ice_oe(ji+2,jj,2) = uice_agr(nlci+ji-3,jj)
             END DO
          END DO
          DO jj = 1, jpj
-            v_ice_oe(2,jj,2) = zvice(2     ,jj) 
-            v_ice_oe(4,jj,2) = zvice(nlci-1,jj)
+            v_ice_oe(2,jj,2) = vice_agr(2     ,jj) 
+            v_ice_oe(4,jj,2) = vice_agr(nlci-1,jj)
          END DO
          DO ji = 1, jpi
-            u_ice_sn(ji,2,2) = zuice(ji,2     ) 
-            u_ice_sn(ji,4,2) = zuice(ji,nlcj-1)
+            u_ice_sn(ji,2,2) = uice_agr(ji,2     ) 
+            u_ice_sn(ji,4,2) = uice_agr(ji,nlcj-1)
          END DO
          DO jj = 1, 2
             DO ji = 1, jpi
-               v_ice_sn(ji,jj  ,2) = zvice(ji,jj       ) 
-               v_ice_sn(ji,jj+2,2) = zvice(ji,nlcj+jj-3)
+               v_ice_sn(ji,jj  ,2) = vice_agr(ji,jj       ) 
+               v_ice_sn(ji,jj+2,2) = vice_agr(ji,nlcj+jj-3)
             END DO
          END DO
          !
@@ -333,7 +339,6 @@ CONTAINS
       !!               we interpolate and store the boundary if needed, ie if
       !!  we are in inside a new parent ice time step
      !!-----------------------------------------------------------------------
-      REAL(wp), DIMENSION(jpi,jpj,7) :: ztab 
       INTEGER :: ji,jj,jn
       !!-----------------------------------------------------------------------
       !
@@ -344,10 +349,13 @@ CONTAINS
          adv_ice_oe(:,:,:,1) =  adv_ice_oe(:,:,:,2)
          adv_ice_sn(:,:,:,1) =  adv_ice_sn(:,:,:,2)
          ! interpolation of boundaries
-         ztab(:,:,:) = 0.
+         IF(.NOT.ALLOCATED(tabice_agr))THEN
+            ALLOCATE(tabice_agr(jpi,jpj,7))   
+         ENDIF
+         tabice_agr(:,:,:) = 0.
          Agrif_SpecialValue=-9999.
          Agrif_UseSpecialValue = .TRUE.
-         CALL Agrif_Bc_variable( ztab, adv_ice_id ,procname=interp_adv_ice,calledweight=1. )
+         CALL Agrif_Bc_variable( adv_ice_id ,procname=interp_adv_ice,calledweight=1. )
          Agrif_SpecialValue=0.
          Agrif_UseSpecialValue = .FALSE.
          !  
@@ -355,8 +363,8 @@ CONTAINS
          DO jn =1,7
             DO jj = 1, jpj
                DO ji=1,2
-                  adv_ice_oe(ji  ,jj,jn,2) = ztab(ji       ,jj,jn) 
-                  adv_ice_oe(ji+2,jj,jn,2) = ztab(nlci-2+ji,jj,jn)
+                  adv_ice_oe(ji  ,jj,jn,2) = tabice_agr(ji       ,jj,jn) 
+                  adv_ice_oe(ji+2,jj,jn,2) = tabice_agr(nlci-2+ji,jj,jn)
                END DO
             END DO
          END DO
@@ -364,8 +372,8 @@ CONTAINS
          Do jn =1,7
             Do jj =1,2
                DO ji = 1, jpi
-                  adv_ice_sn(ji,jj  ,jn,2) = ztab(ji,jj       ,jn) 
-                  adv_ice_sn(ji,jj+2,jn,2) = ztab(ji,nlcj-2+jj,jn)
+                  adv_ice_sn(ji,jj  ,jn,2) = tabice_agr(ji,jj       ,jn) 
+                  adv_ice_sn(ji,jj+2,jn,2) = tabice_agr(ji,nlcj-2+jj,jn)
                END DO
             END DO
          END DO
@@ -383,19 +391,19 @@ CONTAINS
       !!-----------------------------------------------------------------------
       INTEGER :: ji,jj,jn
       REAL(wp) :: zalpha
-      REAL(wp), DIMENSION(jpi,jpj,7) :: ztab 
+      REAL(wp), DIMENSION(jpi,jpj,7) :: tabice_agr 
       !!-----------------------------------------------------------------------      
       !
       IF (Agrif_Root()) RETURN
 
       zalpha = REAL(lim_nbstep,wp) / (Agrif_Rhot()*Agrif_PArent(nn_fsbc)/REAL(nn_fsbc))
       !
-      ztab(:,:,:) = 0.e0
+      tabice_agr(:,:,:) = 0.e0
       DO jn =1,7
          DO jj =1,2
             DO ji = 1, jpi
-               ztab(ji,jj        ,jn) = (1-zalpha)*adv_ice_sn(ji,jj  ,jn,1) + zalpha*adv_ice_sn(ji,jj  ,jn,2) 
-               ztab(ji,nlcj-2+jj ,jn) = (1-zalpha)*adv_ice_sn(ji,jj+2,jn,1) + zalpha*adv_ice_sn(ji,jj+2,jn,2) 
+               tabice_agr(ji,jj        ,jn) = (1-zalpha)*adv_ice_sn(ji,jj  ,jn,1) + zalpha*adv_ice_sn(ji,jj  ,jn,2) 
+               tabice_agr(ji,nlcj-2+jj ,jn) = (1-zalpha)*adv_ice_sn(ji,jj+2,jn,1) + zalpha*adv_ice_sn(ji,jj+2,jn,2) 
             END DO
          END DO
       END DO
@@ -403,19 +411,19 @@ CONTAINS
       DO jn =1,7
          DO jj = 1, jpj
             DO ji=1,2
-               ztab(ji       ,jj,jn) = (1-zalpha)*adv_ice_oe(ji  ,jj,jn,1) + zalpha*adv_ice_oe(ji  ,jj,jn,2) 
-               ztab(nlci-2+ji,jj,jn) = (1-zalpha)*adv_ice_oe(ji+2,jj,jn,1) + zalpha*adv_ice_oe(ji+2,jj,jn,2) 
+               tabice_agr(ji       ,jj,jn) = (1-zalpha)*adv_ice_oe(ji  ,jj,jn,1) + zalpha*adv_ice_oe(ji  ,jj,jn,2) 
+               tabice_agr(nlci-2+ji,jj,jn) = (1-zalpha)*adv_ice_oe(ji+2,jj,jn,1) + zalpha*adv_ice_oe(ji+2,jj,jn,2) 
             END DO
          END DO
       END DO
       !
-      CALL parcoursT( ztab(:,:, 1), frld  )
-      CALL parcoursT( ztab(:,:, 2), hicif )
-      CALL parcoursT( ztab(:,:, 3), hsnif )
-      CALL parcoursT( ztab(:,:, 4), tbif(:,:,1) )
-      CALL parcoursT( ztab(:,:, 5), tbif(:,:,2) )
-      CALL parcoursT( ztab(:,:, 6), tbif(:,:,3) )
-      CALL parcoursT( ztab(:,:, 7), qstoif )
+      CALL parcoursT( tabice_agr(:,:, 1), frld  )
+      CALL parcoursT( tabice_agr(:,:, 2), hicif )
+      CALL parcoursT( tabice_agr(:,:, 3), hsnif )
+      CALL parcoursT( tabice_agr(:,:, 4), tbif(:,:,1) )
+      CALL parcoursT( tabice_agr(:,:, 5), tbif(:,:,2) )
+      CALL parcoursT( tabice_agr(:,:, 6), tbif(:,:,3) )
+      CALL parcoursT( tabice_agr(:,:, 7), qstoif )
       !
    END SUBROUTINE agrif_trp_lim2
 
@@ -498,75 +506,85 @@ CONTAINS
    END SUBROUTINE parcoursT
 
 
-   SUBROUTINE interp_u_ice( tabres, i1, i2, j1, j2 )
+   SUBROUTINE interp_u_ice( tabres, i1, i2, j1, j2, before )
       !!-----------------------------------------------------------------------
       !!                     *** ROUTINE interp_u_ice ***
       !!-----------------------------------------------------------------------
       INTEGER, INTENT(in) :: i1, i2, j1, j2
       REAL(wp), DIMENSION(i1:i2,j1:j2), INTENT(inout) :: tabres
+      LOGICAL, INTENT(in) :: before
       !!
       INTEGER :: ji,jj
       !!-----------------------------------------------------------------------
       !
 #if defined key_lim2_vp
-      DO jj=MAX(j1,2),j2
-         DO ji=MAX(i1,2),i2
-            IF( tmu(ji,jj) == 0. ) THEN
-               tabres(ji,jj) = -9999.
-            ELSE
-               tabres(ji,jj) = e2f(ji-1,jj-1) * u_ice(ji,jj)
-            ENDIF
+      IF( before ) THEN
+         DO jj=MAX(j1,2),j2
+            DO ji=MAX(i1,2),i2
+               IF( tmu(ji,jj) == 0. ) THEN
+                  tabres(ji,jj) = -9999.
+               ELSE
+                  tabres(ji,jj) = e2f(ji-1,jj-1) * u_ice(ji,jj)
+               ENDIF
+            END DO
          END DO
-      END DO
+      ENDIF
 #else
-      DO jj= j1, j2
-         DO ji= i1, i2
-            IF( umask(ji,jj,1) == 0. ) THEN
-               tabres(ji,jj) = -9999.
-            ELSE
-               tabres(ji,jj) = e2u(ji,jj) * u_ice(ji,jj)
-            ENDIF
+      IF( before ) THEN
+         DO jj= j1, j2
+            DO ji= i1, i2
+               IF( umask(ji,jj,1) == 0. ) THEN
+                  tabres(ji,jj) = -9999.
+               ELSE
+                  tabres(ji,jj) = e2u(ji,jj) * u_ice(ji,jj)
+               ENDIF
+            END DO
          END DO
-      END DO
+      ENDIF
 #endif
    END SUBROUTINE interp_u_ice
 
 
-   SUBROUTINE interp_v_ice( tabres, i1, i2, j1, j2 )
+   SUBROUTINE interp_v_ice( tabres, i1, i2, j1, j2, before )
       !!-----------------------------------------------------------------------
       !!                    *** ROUTINE interp_v_ice ***
       !!-----------------------------------------------------------------------      
       INTEGER, INTENT(in) :: i1, i2, j1, j2
       REAL(wp), DIMENSION(i1:i2,j1:j2), INTENT(inout) :: tabres
+      LOGICAL, INTENT(in) :: before
       !!
       INTEGER :: ji, jj
       !!-----------------------------------------------------------------------
       !
 #if defined key_lim2_vp
-      DO jj=MAX(j1,2),j2
-         DO ji=MAX(i1,2),i2
-            IF( tmu(ji,jj) == 0. ) THEN
-               tabres(ji,jj) = -9999.
-            ELSE
-               tabres(ji,jj) = e1f(ji-1,jj-1) * v_ice(ji,jj)
-            ENDIF
+      IF( before ) THEN
+         DO jj=MAX(j1,2),j2
+            DO ji=MAX(i1,2),i2
+               IF( tmu(ji,jj) == 0. ) THEN
+                  tabres(ji,jj) = -9999.
+               ELSE
+                  tabres(ji,jj) = e1f(ji-1,jj-1) * v_ice(ji,jj)
+               ENDIF
+            END DO
          END DO
-      END DO
+      ENDIF   
 #else
-      DO jj= j1 ,j2
-         DO ji = i1, i2
-            IF( vmask(ji,jj,1) == 0. ) THEN
-               tabres(ji,jj) = -9999.
-            ELSE
-               tabres(ji,jj) = e1v(ji,jj) * v_ice(ji,jj)
-            ENDIF
-         END DO
-      END DO
+      IF( before ) THEN
+	      DO jj= j1 ,j2
+	         DO ji = i1, i2
+	            IF( vmask(ji,jj,1) == 0. ) THEN
+	               tabres(ji,jj) = -9999.
+	            ELSE
+	               tabres(ji,jj) = e1v(ji,jj) * v_ice(ji,jj)
+	            ENDIF
+	         END DO
+	      END DO
+      ENDIF
 #endif
    END SUBROUTINE interp_v_ice
 
 
-   SUBROUTINE interp_adv_ice( tabres, i1, i2, j1, j2 )
+   SUBROUTINE interp_adv_ice( tabres, i1, i2, j1, j2, before )
       !!-----------------------------------------------------------------------
       !!                    *** ROUTINE interp_adv_ice ***                           
       !!
@@ -576,25 +594,28 @@ CONTAINS
       !!-----------------------------------------------------------------------
       INTEGER, INTENT(in) :: i1, i2, j1, j2
       REAL(wp), DIMENSION(i1:i2,j1:j2,7), INTENT(inout) :: tabres
+      LOGICAL, INTENT(in) :: before
       !!
       INTEGER :: ji, jj, jk
       !!-----------------------------------------------------------------------
       !
-      DO jj=j1,j2
-         DO ji=i1,i2
-            IF( tms(ji,jj) == 0. ) THEN
-               tabres(ji,jj,:) = -9999. 
-            ELSE
-               tabres(ji,jj, 1) = frld  (ji,jj)
-               tabres(ji,jj, 2) = hicif (ji,jj)
-               tabres(ji,jj, 3) = hsnif (ji,jj)
-               tabres(ji,jj, 4) = tbif  (ji,jj,1)
-               tabres(ji,jj, 5) = tbif  (ji,jj,2)
-               tabres(ji,jj, 6) = tbif  (ji,jj,3)
-               tabres(ji,jj, 7) = qstoif(ji,jj)
-            ENDIF
-         END DO
-      END DO
+      IF( before ) THEN
+	      DO jj=j1,j2
+	         DO ji=i1,i2
+	            IF( tms(ji,jj) == 0. ) THEN
+	               tabres(ji,jj,:) = -9999. 
+	            ELSE
+	               tabres(ji,jj, 1) = frld  (ji,jj)
+	               tabres(ji,jj, 2) = hicif (ji,jj)
+	               tabres(ji,jj, 3) = hsnif (ji,jj)
+	               tabres(ji,jj, 4) = tbif  (ji,jj,1)
+	               tabres(ji,jj, 5) = tbif  (ji,jj,2)
+	               tabres(ji,jj, 6) = tbif  (ji,jj,3)
+	               tabres(ji,jj, 7) = qstoif(ji,jj)
+	            ENDIF
+	         END DO
+	      END DO
+      ENDIF
       !
    END SUBROUTINE interp_adv_ice
 

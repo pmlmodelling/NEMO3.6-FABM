@@ -42,6 +42,9 @@ MODULE zdf_oce
    REAL(wp), PUBLIC, SAVE, ALLOCATABLE, DIMENSION(:,:)   ::   tfrua, tfrva   !: top friction coefficients set in zdfbfr
    REAL(wp), PUBLIC, SAVE, ALLOCATABLE, DIMENSION(:,:,:) ::   avmu , avmv    !: vertical viscosity coef at uw- & vw-pts       [m2/s]
    REAL(wp), PUBLIC, SAVE, ALLOCATABLE, DIMENSION(:,:,:) ::   avm  , avt     !: vertical viscosity & diffusivity coef at w-pt [m2/s]
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   avt_k , avm_k  ! not enhanced Kz
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   avmu_k, avmv_k ! not enhanced Kz
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   en              !: now turbulent kinetic energy   [m2/s2]
  
    !!----------------------------------------------------------------------
    !! NEMO/OPA 4.0 , NEMO Consortium (2011)
@@ -59,7 +62,10 @@ CONTAINS
          &     avtb(jpk) , bfrva(jpi,jpj) , avtb_2d(jpi,jpj) ,      &
          &     tfrua(jpi, jpj), tfrva(jpi, jpj)              ,      &
          &     avmu(jpi,jpj,jpk), avm(jpi,jpj,jpk)           ,      &
-         &     avmv(jpi,jpj,jpk), avt(jpi,jpj,jpk)           , STAT = zdf_oce_alloc )
+         &     avmv  (jpi,jpj,jpk), avt   (jpi,jpj,jpk)      ,      &
+         &     avt_k (jpi,jpj,jpk), avm_k (jpi,jpj,jpk)      ,      & 
+         &     avmu_k(jpi,jpj,jpk), avmv_k(jpi,jpj,jpk)      ,      &
+         &     en    (jpi,jpj,jpk), STAT = zdf_oce_alloc )
          !
       IF( zdf_oce_alloc /= 0 )   CALL ctl_warn('zdf_oce_alloc: failed to allocate arrays')
       !

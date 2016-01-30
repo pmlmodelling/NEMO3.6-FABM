@@ -1289,7 +1289,7 @@ CONTAINS
       INTEGER                   , INTENT(in   ) ::   nrec    ! record number to read (ie time slice)
       CHARACTER(LEN=*)          , INTENT(in   ) ::   lsmfile ! land sea mask file name
       !! 
-      REAL(wp),DIMENSION(:,:,:),ALLOCATABLE     ::   ztmp_fly_dta,zfieldo                  ! temporary array of values on input grid
+      REAL(wp),DIMENSION(:,:,:),ALLOCATABLE     ::   ztmp_fly_dta                          ! temporary array of values on input grid
       INTEGER, DIMENSION(3)                     ::   rec1,recn                             ! temporary arrays for start and length
       INTEGER, DIMENSION(3)                     ::   rec1_lsm,recn_lsm                     ! temporary arrays for start and length in case of seaoverland
       INTEGER                                   ::   ii_lsm1,ii_lsm2,ij_lsm1,ij_lsm2       ! temporary indices
@@ -1355,8 +1355,8 @@ CONTAINS
          jpj2_lsm = jpj1_lsm + recn_lsm(2) - 1
 
 
-         itmpi=SIZE(ztmp_fly_dta(jpi1_lsm:jpi2_lsm,jpj1_lsm:jpj2_lsm,:),1)
-         itmpj=SIZE(ztmp_fly_dta(jpi1_lsm:jpi2_lsm,jpj1_lsm:jpj2_lsm,:),2)
+         itmpi=jpi2_lsm-jpi1_lsm+1
+         itmpj=jpj2_lsm-jpj1_lsm+1
          itmpz=kk
          ALLOCATE(ztmp_fly_dta(itmpi,itmpj,itmpz))
          ztmp_fly_dta(:,:,:) = 0.0

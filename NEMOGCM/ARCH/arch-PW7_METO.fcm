@@ -14,6 +14,8 @@
 # MK          make
 # USER_INC    additional include files for the compiler,  e.g. -I<include dir>
 # USER_LIB    additional libraries to pass to the linker, e.g. -l<library>
+# CC          C compiler used to compile conv for AGRIF
+# CFLAGS      compiler flags used with CC
 
 
 %NCDF_INC            -I/home/cr/ocean/hadcv/netcdf/4.1.3_par/include
@@ -23,7 +25,7 @@
 %CPP	             cpp
 %FC                  mpxlf90_r
 %FCFLAGS             -qrealsize=8 -qextname -qsuffix=f=f90 -qarch=pwr7 -qtune=pwr7 -g -O2 -qstrict -qinitauto=7FBFFFFF
-%FFLAGS              -qrealsize=8 -qextname -qarch=pwr7 -qtune=pwr7 -g -O2 -qstrict -qinitauto=7FBFFFFF -qfixed
+%FFLAGS             -qrealsize=8 -qextname -qsuffix=f=f90 -qarch=pwr7 -qtune=pwr7 -g -O2 -qstrict -qinitauto=7FBFFFFF
 %LD                  mpCC_r
 %LDFLAGS             -lxlf90 -L/projects/um1/lib -lsig -O2 -L MASS
 %FPPFLAGS            -E -P -traditional -I/opt/ibmhpc/pecurrent/ppe.poe/include -I/usr/lpp/ppe.poe/include/thread64
@@ -32,3 +34,5 @@
 %MK                  gmake
 %USER_INC            %NCDF_INC %XIOS_INC
 %USER_LIB            %NCDF_LIB %XIOS_LIB
+%CC                  xlc
+%CFLAGS              -O -qcpluscmt

@@ -24,6 +24,8 @@
 # MK          make
 # USER_INC    complete list of include files
 # USER_LIB    complete list of libraries to pass to the linker
+# CC          C compiler used to compile conv for AGRIF
+# CFLAGS      compiler flags used with CC
 #
 # Note that:
 #  - unix variables "$..." are accpeted and will be evaluated before calling fcm.
@@ -31,26 +33,30 @@
 #
 
 # required modules
-# module load  INTEL/intel_xe_2013 NETCDF/netcdf-4.3_parallel NETCDF/parallel-netcdf-1.3.1 HDF5/hdf5-1.8.11_parallel
+# module load  INTEL/intel_xe_2013 NETCDF/netcdf-4.3_parallel_shared NETCDF/parallel-netcdf-1.3.1 HDF5/hdf5-1.8.11_parallel_shared
 
 # Environment variables set by user. Others should automatically define when loading modules.
-# export XIOS=/users/home/models/nemo/xios
+#export XIOS=/users/home/models/nemo/xios
+#export HDF5=/users/home/opt/hdf5/hdf5-1.8.11_parallel_shared
+#export NETCDF=/users/home/opt/netcdf/netcdf-4.3_parallel_shared
 
-%NCDF_INC            -I$NETCDF/include -I$PNETCDF/include
-%NCDF_LIB            -L$NETCDF/lib -lnetcdff -lnetcdf -L$PNETCDF/lib -lpnetcdf
-%HDF5_INC            -I$PHDF5/include
-%HDF5_LIB            -L$PHDF5/lib -lhdf5_hl -lhdf5
-%XIOS_INC            -I$XIOS/inc
-%XIOS_LIB            -L$XIOS/lib -lxios
+%NCDF_INC            -I${NETCDF}/include 
+%NCDF_LIB            -L${NETCDF}/lib -lnetcdff -lnetcdf
+%HDF5_INC            -I${HDF5}/include
+%HDF5_LIB            -L${HDF5}/lib -lhdf5_hl -lhdf5
+%XIOS_INC            -I${XIOS}/inc
+%XIOS_LIB            -L${XIOS}/lib -lxios
 %CPP                 cpp
 %FC                  mpiifort
-%FCFLAGS             -r8 -O3 -xHost -fp-model source -traceback
+%FCFLAGS             -r8 -O3 -xHost -fp-model source -traceback ${CFLAGS} 
 %FFLAGS              %FCFLAGS
 %LD                  mpiifort
 %FPPFLAGS            -P -C -traditional
-%LDFLAGS             -lstdc++ -lz -lgpfs -lcurl
+%LDFLAGS             -lstdc++ -lz -lgpfs -lcurl  ${LDFLAGS}
 %AR                  ar 
 %ARFLAGS             -r
 %MK                  gmake
 %USER_INC            %XIOS_INC %NCDF_INC %HDF5_INC
 %USER_LIB            %XIOS_LIB %NCDF_LIB %HDF5_LIB
+%CC                  icc
+%CFLAGS              -O0

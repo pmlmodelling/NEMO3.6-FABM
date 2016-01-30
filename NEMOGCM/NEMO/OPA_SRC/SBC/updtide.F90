@@ -30,7 +30,7 @@ MODULE updtide
    !!----------------------------------------------------------------------
 CONTAINS
 
-   SUBROUTINE upd_tide( kt, kit, kbaro, koffset )
+   SUBROUTINE upd_tide( kt, kit, time_offset )
       !!----------------------------------------------------------------------
       !!                 ***  ROUTINE upd_tide  ***
       !!
@@ -41,10 +41,10 @@ CONTAINS
       !! ** Action  :   pot_astro   actronomical potential
       !!----------------------------------------------------------------------      
       INTEGER, INTENT(in)           ::   kt      ! ocean time-step index
-      INTEGER, INTENT(in), OPTIONAL ::   kit     ! external mode sub-time-step index (lk_dynspg_ts=T only)
-      INTEGER, INTENT(in), OPTIONAL ::   kbaro   ! number of sub-time-step           (lk_dynspg_ts=T only)
-      INTEGER, INTENT(in), OPTIONAL ::   koffset ! time offset in number 
-                                                 ! of sub-time-steps                 (lk_dynspg_ts=T only)
+      INTEGER, INTENT(in), OPTIONAL ::   kit     ! external mode sub-time-step index (lk_dynspg_ts=T)
+      INTEGER, INTENT(in), OPTIONAL ::   time_offset ! time offset in number 
+                                                     ! of internal steps             (lk_dynspg_ts=F)
+                                                     ! of external steps             (lk_dynspg_ts=T)
       !
       INTEGER  ::   joffset      ! local integer
       INTEGER  ::   ji, jj, jk   ! dummy loop indices
@@ -56,10 +56,10 @@ CONTAINS
       zt = ( kt - kt_tide ) * rdt
       !
       joffset = 0
-      IF( PRESENT( koffset ) )   joffset = koffset
+      IF( PRESENT( time_offset ) )   joffset = time_offset
       !
-      IF( PRESENT( kit ) .AND. PRESENT( kbaro ) )   THEN
-         zt = zt + ( kit + 0.5_wp * ( joffset - 1 ) ) * rdt / REAL( kbaro, wp )
+      IF( PRESENT( kit ) )   THEN
+         zt = zt + ( kit +  joffset - 1 ) * rdt / REAL( nn_baro, wp )
       ELSE
          zt = zt + joffset * rdt
       ENDIF
@@ -73,7 +73,7 @@ CONTAINS
       !
       IF( ln_tide_ramp ) THEN         ! linear increase if asked
          zt = ( kt - nit000 ) * rdt
-         IF( PRESENT( kit ) .AND. PRESENT( kbaro ) )   zt = zt + kit * rdt / REAL( kbaro, wp )
+         IF( PRESENT( kit ) )   zt = zt + ( kit + joffset -1) * rdt / REAL( nn_baro, wp )
          zramp = MIN(  MAX( zt / (rdttideramp*rday) , 0._wp ) , 1._wp  )
          pot_astro(:,:) = zramp * pot_astro(:,:)
       ENDIF
@@ -85,11 +85,10 @@ CONTAINS
   !!   Dummy module :                                        NO TIDE
   !!----------------------------------------------------------------------
 CONTAINS
-  SUBROUTINE upd_tide( kt, kit, kbaro, koffset )          ! Empty routine
+  SUBROUTINE upd_tide( kt, kit, time_offset )  ! Empty routine
     INTEGER, INTENT(in)           ::   kt      !  integer  arg, dummy routine
     INTEGER, INTENT(in), OPTIONAL ::   kit     !  optional arg, dummy routine
-    INTEGER, INTENT(in), OPTIONAL ::   kbaro   !  optional arg, dummy routine
-    INTEGER, INTENT(in), OPTIONAL ::   koffset !  optional arg, dummy routine
+    INTEGER, INTENT(in), OPTIONAL ::   time_offset !  optional arg, dummy routine
     WRITE(*,*) 'upd_tide: You should not have seen this print! error?', kt
   END SUBROUTINE upd_tide
 

@@ -16,6 +16,7 @@
     nb_connection_pts = 3    
     removeclosedseas = true
     type_bathy_interp = 0 
+    rn_hmin = -3 
 /   
 
 &nesting    
@@ -38,14 +39,18 @@
     pa0  = 255.58049070440
     pa1  = 245.58132232490
     N  = 31
+    ldbletanh   = .FALSE.
+    ppa2        = 0.0
+    ppkth2      = 0.0
+    ppacr2      = 0.0
 /    
     
 &partial_cells    	
     partial_steps = true
     parent_bathy_meter = 'bathy_meter.nc'
     parent_batmet_name = 'Bathymetry'
-    e3zps_min = 25.
-    e3zps_rat = 0.2
+    e3zps_min = 20.
+    e3zps_rat = 0.1
 /
 
 &nemo_coarse_grid    

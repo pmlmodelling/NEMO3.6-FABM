@@ -185,7 +185,7 @@ fi
 #
   #  if [ ${MPI_FLAG} == "no" ] ; then
 		case ${COMPILER} in 
-			X64_MOBILIS)
+			X64_MOBILIS*)
                                 NB_REM=$( echo $NB_PROC $NXIO_PROC | awk '{print ( $1 + $2 ) % 16}')
 		        	if [ ${NB_REM} == 0 ] ; then
 					# number of processes required is an integer multiple of 16

@@ -101,6 +101,9 @@ CONTAINS
          WRITE(numout,*) 'trc_nxt : time stepping on passive tracers'
       ENDIF
 
+#if defined key_agrif
+      CALL Agrif_trc                   ! AGRIF zoom boundaries
+#endif
       ! Update after tracer on domain lateral boundaries
       DO jn = 1, jptra
          CALL lbc_lnk( tra(:,:,:,jn), 'T', 1. )   
@@ -109,9 +112,6 @@ CONTAINS
 
 #if defined key_bdy
 !!      CALL bdy_trc( kt )               ! BDY open boundaries
-#endif
-#if defined key_agrif
-      CALL Agrif_trc                   ! AGRIF zoom boundaries
 #endif
 
 

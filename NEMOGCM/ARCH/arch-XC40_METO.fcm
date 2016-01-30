@@ -23,6 +23,8 @@
 # MK          make
 # USER_INC    complete list of include files
 # USER_LIB    complete list of libraries to pass to the linker
+# CC          C compiler used to compile conv for AGRIF
+# CFLAGS      compiler flags used with CC
 #
 # Note that:
 #  - unix variables "$..." are accpeted and will be evaluated before calling fcm.
@@ -30,7 +32,7 @@
 #
 %NCDF_HOME           /opt/cray/netcdf-hdf5parallel/4.3.2/CRAY/83
 %HDF5_HOME           /opt/cray/hdf5-parallel/1.8.13/CRAY/83
-%XIOS_HOME           /projects/ocean/nemo/xios/xios_1.0_r618_20150619/XIOS
+%XIOS_HOME           /projects/ocean/nemo/xios/xios_1.0_r629_20150625/XIOS
 
 %NCDF_INC            -I%NCDF_HOME/include -I%HDF5_HOME/include
 %NCDF_LIB            -L%HDF5_HOME/lib -L%NCDF_HOME/lib -lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lz
@@ -50,3 +52,6 @@
 
 %USER_INC            %XIOS_INC
 %USER_LIB            %XIOS_LIB
+
+%CC                  cc
+%CFLAGS              -O0

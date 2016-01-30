@@ -211,7 +211,8 @@ CONTAINS
       INTEGER  ::   kit000    
       CHARACTER(len=3) ::   cdtype
       REAL, DIMENSION(:,:,:) ::   pun, pvn, pwn
-      WRITE(*,*) 'tra_adv_eiv: You should not have seen this print! error?', kt, cdtype, pun(1,1,1), pvn(1,1,1), pwn(1,1,1)
+      WRITE(*,*) 'tra_adv_eiv: You should not have seen this print! error?', &
+          &  kt, cdtype, pun(1,1,1), pvn(1,1,1), pwn(1,1,1)
    END SUBROUTINE tra_adv_eiv
 #endif
 
