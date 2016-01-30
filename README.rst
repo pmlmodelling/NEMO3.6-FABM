@@ -63,7 +63,7 @@ Removed sections are encapsulated as::
 The initial FABM_ implementation in this branch is carried over from the NEMO-FABM_ repository developed by M. Butenschön and J. Bruggeman, as a single patch commit.
 
 .. _FABM: http://fabm.net
-.. _NEMO: http://nemo-ocean.eu
+.. _NEMO: http://www.nemo-ocean.eu
 .. _ERSEM: http://shelfseasmodelling.org
 .. _NEMO-FABM: https://gitlab.ecosystem-modelling.pml.ac.uk/momm/NEMO-FABM
 
