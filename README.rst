@@ -2,7 +2,7 @@
 Fork of NEMO_ 3.6 stable branch with modifcations for FABM_ and shelf systems.
 ============================================================================
 
-This master branch includes modifications for shelf systems and FABM_.
+This master branch includes modifications for shelf systems and FABM_ with ERSEM_ enabled.
 
 The pure NEMO_-code without shelf and FABM modifications is in the ``feat/NEMO-svn`` branch.
 It should remain untouched in order to enable conflict-free syncing with the central NEMO repository.
