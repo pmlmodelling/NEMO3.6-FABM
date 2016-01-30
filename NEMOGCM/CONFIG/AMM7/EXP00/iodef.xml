@@ -139,7 +139,7 @@
           <field field_ref="O1x_v"        name="O1x_v"    long_name="O1 current barotropic along j-axis harmonic real part "       />
           <field field_ref="O1y_v"        name="O1y_v"    long_name="O1 current barotropic along j-axis harmonic imaginary part "  />
         </file>
-
+      <!--
        <file id="file50" name_suffix="_ptrc_T" description="tracer variables" >
           <field field_ref="AREA"     name="AREA"    long_name="cell area" operation="instant" />
           <field field_ref="DEPTH"    name="DEPTH"   long_name="cell depth" operation="instant" />
@@ -153,7 +153,7 @@
           <field field_ref="RDN_TR1"  name="RDN_TR1" long_name="tracer trend from correcting negative concentrations" operation="average" freq_op="1ts" />
           <field field_ref="e3t"      name="e3t"     operation="instant" />
         </file>
-
+      -->
 
       </file_group>
 

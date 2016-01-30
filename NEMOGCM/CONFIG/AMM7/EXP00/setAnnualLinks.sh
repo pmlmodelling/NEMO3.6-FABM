@@ -3,8 +3,8 @@
 #   1: simulation year
 #
 
-INPUTPATH="/data/euryale4/to_archive/momm-AMM7-inputs"
-RUNPATH="."
+INPUTPATH="/work/n01/n01/momme/AMM7-inputs"
+RUNPATH="/work/n01/n01/momme/AMM7"
 y0=1995
 
 yn=$1
@@ -30,10 +30,10 @@ rm -rf "$RUNPATH"/bdy/amm7*_y????m??d??.nc
 for y in $yb $yn $ya
 do
   #atmospheric forcings:
-  ln -sf "$INPUTPATH"/FLUXES/ERA_INT_LSM/flx_y"$y".nc "$RUNPATH"/fluxes
-  ln -sf "$INPUTPATH"/FLUXES/ERA_INT_LSM/met_y"$y".nc "$RUNPATH"/fluxes
-  ln -sf "$INPUTPATH"/FLUXES/ERA_INT_LSM/strd_y"$y".nc "$RUNPATH"/fluxes
-  ln -sf "$INPUTPATH"/FLUXES/ERA_INT_LSM/ssrd24_y"$y".nc "$RUNPATH"/fluxes
+  ln -sf "$INPUTPATH"/FLUXES/ERA_INT_LSM/flx_y"$y".nc "$RUNPATH"/fluxes/
+  ln -sf "$INPUTPATH"/FLUXES/ERA_INT_LSM/met_y"$y".nc "$RUNPATH"/fluxes/
+  ln -sf "$INPUTPATH"/FLUXES/ERA_INT_LSM/strd_y"$y".nc "$RUNPATH"/fluxes/
+  ln -sf "$INPUTPATH"/FLUXES/ERA_INT_LSM/ssrd24_y"$y".nc "$RUNPATH"/fluxes/
 
   #lateral boundary conditions:
   ln -sf "$INPUTPATH"/BDY/NWS_INPUT/amm7_bdyT_y"$y"m??d??.nc "$RUNPATH"/bdy

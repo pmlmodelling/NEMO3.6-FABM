@@ -1,7 +1,7 @@
 #!/bin/bash
 
-INPUTPATH="/data/euryale4/to_archive/momm-AMM7-inputs"
-RUNPATH="."
+INPUTPATH="/work/n01/n01/momme/AMM7-inputs"
+RUNPATH="/work/n01/n01/momme/AMM7"
 CONFIGPATH="$HOME"/git/NEMO-shelf/NEMOGCM/CONFIG/AMM7
 
 #prepare folders for annual atmospheric and lateral forcings:
@@ -93,4 +93,4 @@ ln -sf "$INPUTPATH"/BDY-clim/VN34TIDE/amm7_bdytide_T2_grid_U.nc "$RUNPATH"/bdy/
 ln -sf "$INPUTPATH"/BDY-clim/VN34TIDE/amm7_bdytide_T2_grid_V.nc "$RUNPATH"/bdy/
 
 #restart files:
-"$INPUTPATH"/RESTART/restart_20100101.nc restart.nc
+"$INPUTPATH"/RESTART/restart.fixed.nc restart.nc
