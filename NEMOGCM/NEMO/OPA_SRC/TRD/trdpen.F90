@@ -98,9 +98,9 @@ CONTAINS
                                 IF( .NOT.lk_vvl ) THEN                   ! cst volume : adv flux through z=0 surface
                                    CALL wrk_alloc( jpi, jpj, z2d )
                                    z2d(:,:) = wn(:,:,1) * ( &
-                                   	  &   - ( rab_n(:,:,1,jp_tem) + rab_pe(:,:,1,jp_tem) ) * tsn(:,:,1,jp_tem)    &
-                                   	  &   + ( rab_n(:,:,1,jp_sal) + rab_pe(:,:,1,jp_sal) ) * tsn(:,:,1,jp_sal)    &
-                                      &   					) / fse3t(:,:,1)
+                                       &   - ( rab_n(:,:,1,jp_tem) + rab_pe(:,:,1,jp_tem) ) * tsn(:,:,1,jp_tem)    &
+                                       &   + ( rab_n(:,:,1,jp_sal) + rab_pe(:,:,1,jp_sal) ) * tsn(:,:,1,jp_sal)    &
+                                       &             ) / fse3t(:,:,1)
                                    CALL iom_put( "petrd_sad" , z2d )
                                    CALL wrk_dealloc( jpi, jpj, z2d )
                                 ENDIF

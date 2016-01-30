@@ -5,7 +5,7 @@
 &namrun        !   parameters of the run
 !-----------------------------------------------------------------------
    cn_exp      = "Agulhas" !  experience name 
-   nn_itend    =     480   !  last  time step
+   nn_itend    =   10950   !  last  time step
    nn_stock    =   10950   !  frequency of creation of a restart file (modulo referenced to 1)
    nn_write    =   10950   !  frequency of write in the output file   (modulo referenced to nn_it000)
    ln_clobber  = .true.    !  clobber (overwrite) an existing file

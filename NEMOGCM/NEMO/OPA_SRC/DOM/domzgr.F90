@@ -219,9 +219,15 @@ CONTAINS
          &  ppa0  == pp_to_be_computed  .AND.  &
          &  ppsur == pp_to_be_computed           ) THEN
          !
+#if defined key_agrif
+         za1  = (  ppdzmin - pphmax / FLOAT(jpkdta-1)  )                                                   &
+            & / ( TANH((1-ppkth)/ppacr) - ppacr/FLOAT(jpkdta-1) * (  LOG( COSH( (jpkdta - ppkth) / ppacr) )&
+            &                                                      - LOG( COSH( ( 1  - ppkth) / ppacr) )  )  )
+#else
          za1  = (  ppdzmin - pphmax / FLOAT(jpkm1)  )                                                      &
             & / ( TANH((1-ppkth)/ppacr) - ppacr/FLOAT(jpk-1) * (  LOG( COSH( (jpk - ppkth) / ppacr) )      &
             &                                                   - LOG( COSH( ( 1  - ppkth) / ppacr) )  )  )
+#endif
          za0  = ppdzmin - za1 *              TANH( (1-ppkth) / ppacr )
          zsur =   - za0 - za1 * ppacr * LOG( COSH( (1-ppkth) / ppacr )  )
       ELSE
@@ -236,7 +242,11 @@ CONTAINS
          IF(  ppkth == 0._wp ) THEN              
               WRITE(numout,*) '            Uniform grid with ',jpk-1,' layers'
               WRITE(numout,*) '            Total depth    :', zhmax
+#if defined key_agrif
+              WRITE(numout,*) '            Layer thickness:', zhmax/(jpkdta-1)
+#else
               WRITE(numout,*) '            Layer thickness:', zhmax/(jpk-1)
+#endif
          ELSE
             IF( ppa1 == 0._wp .AND. ppa0 == 0._wp .AND. ppsur == 0._wp ) THEN
                WRITE(numout,*) '         zsur, za0, za1 computed from '
@@ -260,8 +270,12 @@ CONTAINS
 
       ! Reference z-coordinate (depth - scale factor at T- and W-points)
       ! ======================
-      IF( ppkth == 0._wp ) THEN            !  uniform vertical grid       
+      IF( ppkth == 0._wp ) THEN            !  uniform vertical grid 
+#if defined key_agrif
+         za1 = zhmax / FLOAT(jpkdta-1) 
+#else
          za1 = zhmax / FLOAT(jpk-1) 
+#endif
          DO jk = 1, jpk
             zw = FLOAT( jk )
             zt = FLOAT( jk ) + 0.5_wp
@@ -1884,9 +1898,10 @@ CONTAINS
              ijp1 = MIN( jj+1, jpj )
              iim1 = MAX( ji-1, 1 )
              ijm1 = MAX( jj-1, 1 )
-             IF( (bathy(iip1,jj) + bathy(iim1,jj) + bathy(ji,ijp1) + bathy(ji,ijm1) +              &
-        &         bathy(iip1,ijp1) + bathy(iim1,ijm1) + bathy(iip1,ijp1) + bathy(iim1,ijm1)) > 0._wp ) THEN
-               zenv(ji,jj) = rn_sbot_min
+             IF( ( + bathy(iim1,ijp1) + bathy(ji,ijp1) + bathy(iip1,ijp1)  &
+                &  + bathy(iim1,jj  )                  + bathy(iip1,jj  )  &
+                &  + bathy(iim1,ijm1) + bathy(ji,ijm1) + bathy(iip1,ijp1)  ) > 0._wp ) THEN
+                zenv(ji,jj) = rn_sbot_min
              ENDIF
            ENDIF
          END DO

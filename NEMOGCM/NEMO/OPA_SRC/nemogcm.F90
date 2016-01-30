@@ -160,9 +160,13 @@ CONTAINS
              ENDIF
           ENDIF
 
+#if defined key_agrif
+          CALL Agrif_Regrid()
+#endif
+
          DO WHILE ( istp <= nitend .AND. nstop == 0 )
 #if defined key_agrif
-            CALL Agrif_Step( stp )           ! AGRIF: time stepping
+            CALL stp                         ! AGRIF: time stepping
 #else
             CALL stp( istp )                 ! standard time stepping
 #endif
@@ -186,7 +190,7 @@ CONTAINS
       ENDIF
       !
 #if defined key_agrif
-      IF ( Agrif_Level() < Agrif_MaxLevel() ) THEN 
+      IF( .NOT. Agrif_Root() ) THEN
          CALL Agrif_ParentGrid_To_ChildGrid()
          IF( lk_diaobs ) CALL dia_obs_wri
          IF( nn_timing == 1 )   CALL timing_finalize
@@ -335,8 +339,16 @@ CONTAINS
          jpi = ( jpiglo-2*jpreci + (jpni-1) ) / jpni + 2*jpreci   ! first  dim.
          jpj = ( jpjglo-2*jprecj + (jpnj-1) ) / jpnj + 2*jprecj   ! second dim.
 #endif
-      ENDIF
+      ENDIF         
          jpk = jpkdta                                             ! third dim
+#if defined key_agrif
+         ! simple trick to use same vertical grid as parent
+         ! but different number of levels: 
+         ! Save maximum number of levels in jpkdta, then define all vertical grids
+         ! with this number.
+         ! Suppress once vertical online interpolation is ok
+         IF(.NOT.Agrif_Root()) jpkdta = Agrif_Parent(jpkdta)
+#endif
          jpim1 = jpi-1                                            ! inner domain indices
          jpjm1 = jpj-1                                            !   "           "
          jpkm1 = jpk-1                                            !   "           "
@@ -711,12 +723,13 @@ CONTAINS
       !
       INTEGER :: ifac, jl, inu
       INTEGER, PARAMETER :: ntest = 14
-      INTEGER :: ilfax(ntest)
+      INTEGER, DIMENSION(ntest) :: ilfax
       !
-      ! lfax contains the set of allowed factors.
-      data (ilfax(jl),jl=1,ntest) / 16384, 8192, 4096, 2048, 1024, 512, 256,  &
-         &                            128,   64,   32,   16,    8,   4,   2  /
+      ! ilfax contains the set of allowed factors.
+      ilfax(:) = (/(2**jl,jl=ntest,1,-1)/)
       !!----------------------------------------------------------------------
+      ! ilfax contains the set of allowed factors.
+      ilfax(:) = (/(2**jl,jl=ntest,1,-1)/)
 
       ! Clear the error flag and initialise output vars
       kerr = 0

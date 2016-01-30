@@ -32,6 +32,8 @@
 # MK          make
 # USER_INC    complete list of include files
 # USER_LIB    complete list of libraries to pass to the linker
+# CC          C compiler used to compile conv for AGRIF
+# CFLAGS      compiler flags used with CC
 #
 # Note that:
 #  - unix variables "$..." are accpeted and will be evaluated before calling fcm.
@@ -61,3 +63,6 @@
 %MK                  make
 %USER_INC            %XIOS_INC %OASIS_INC %NCDF_INC
 %USER_LIB            %XIOS_LIB %OASIS_LIB %NCDF_LIB
+
+%CC                  cc
+%CFLAGS              -O0

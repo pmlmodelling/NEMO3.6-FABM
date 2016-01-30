@@ -1,12 +1,14 @@
 !-----------------------------------------------------------------------
-&namtrd        !   diagnostics on dynamics and/or tracer trends         ("key_trddyn" and/or "key_trdtra")
-!              !       or mixed-layer trends or barotropic vorticity    ("key_trdmld" or     "key_trdvor")
+&namtrd        !   diagnostics on dynamics and/or tracer trends
+!              !       and/or mixed-layer trends and/or barotropic vorticity
 !-----------------------------------------------------------------------
-   nn_trd      = 365       !  time step frequency dynamics and tracers trends
-   nn_ctls     =   0       !  control surface type in mixed-layer trends (0,1 or n<jpk)
-   rn_ucf      =   1.      !  unit conversion factor (=1 -> /seconds ; =86400. -> /day)
-   cn_trdrst_in      = "restart_mld"   ! suffix of ocean restart name (input)
-   cn_trdrst_out     = "restart_mld"   ! suffix of ocean restart name (output)
-   ln_trdmld_restart = .false.         !  restart for ML diagnostics
-   ln_trdmld_instant = .false.         !  flag to diagnose trends of instantantaneous or mean ML T/S
+   ln_glo_trd  = .false.   ! (T) global domain averaged diag for T, T^2, KE, and PE
+   ln_dyn_trd  = .false.   ! (T) 3D momentum trend output
+   ln_dyn_mxl  = .FALSE.   ! (T) 2D momentum trends averaged over the mixed layer (not coded yet)
+   ln_vor_trd  = .FALSE.   ! (T) 2D barotropic vorticity trends (not coded yet)
+   ln_KE_trd   = .false.   ! (T) 3D Kinetic   Energy     trends
+   ln_PE_trd   = .false.   ! (T) 3D Potential Energy     trends
+   ln_tra_trd  = .FALSE.   ! (T) 3D tracer trend output
+   ln_tra_mxl  = .false.   ! (T) 2D tracer trends averaged over the mixed layer (not coded yet)
+   nn_trd      = 365       !  print frequency (ln_glo_trd=T) (unit=time step)
 /

@@ -14,7 +14,7 @@ MODULE trdmxl_oce
    PUBLIC   trdmxl_oce_alloc    ! Called in trdmxl.F90
 
    !                                                !* mixed layer trend indices
-   INTEGER, PUBLIC, PARAMETER ::   jpltrd = 11      !: number of mixed-layer trends arrays
+   INTEGER, PUBLIC, PARAMETER ::   jpltrd = 12      !: number of mixed-layer trends arrays
    INTEGER, PUBLIC            ::   jpktrd           !: max level for mixed-layer trends diag.
    !
    INTEGER, PUBLIC, PARAMETER ::   jpmxl_xad =  1   !: i-componant of advection   
@@ -27,8 +27,8 @@ MODULE trdmxl_oce
    INTEGER, PUBLIC, PARAMETER ::   jpmxl_bbl =  8   !: bottom boundary layer (advective/diffusive)
    INTEGER, PUBLIC, PARAMETER ::   jpmxl_for =  9   !: forcing 
    INTEGER, PUBLIC, PARAMETER ::   jpmxl_dmp = 10   !: internal restoring trend
-   INTEGER, PUBLIC, PARAMETER ::   jpmxl_zdfp = 11   !: asselin trend (**MUST BE THE LAST ONE**)
-   INTEGER, PUBLIC, PARAMETER ::   jpmxl_atf  = 12   !: asselin trend (**MUST BE THE LAST ONE**)
+   INTEGER, PUBLIC, PARAMETER ::   jpmxl_zdfp = 11  !: iso-neutral diffusion:"pure" vertical diffusion
+   INTEGER, PUBLIC, PARAMETER ::   jpmxl_atf  = 12  !: asselin trend (**MUST BE THE LAST ONE**)
    !                                                            !!* Namelist namtrd_mxl:  trend diagnostics in the mixed layer *
    INTEGER           , PUBLIC ::   nn_ctls  = 0                  !: control surface type for trends vertical integration
    REAL(wp)          , PUBLIC ::   rn_rho_c = 0.01               !: density criteria for MLD definition

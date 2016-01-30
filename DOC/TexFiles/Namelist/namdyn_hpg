@@ -4,7 +4,7 @@
    ln_hpg_zco  = .false.   !  z-coordinate - full steps
    ln_hpg_zps  = .true.    !  z-coordinate - partial steps (interpolation)
    ln_hpg_sco  = .false.   !  s-coordinate (standard jacobian formulation)
-   ln_hpg_isf  = .false.   !  s-coordinate (sco ) adapted to ice shelf cavity
+   ln_hpg_isf  = .false.   !  s-coordinate (sco ) adapted to isf
    ln_hpg_djc  = .false.   !  s-coordinate (Density Jacobian with Cubic polynomial)
    ln_hpg_prj  = .false.   !  s-coordinate (Pressure Jacobian scheme)
    ln_dynhpg_imp = .false. !  time stepping: semi-implicit time scheme  (T)

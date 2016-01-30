@@ -543,7 +543,8 @@ CONTAINS
 #if defined key_agrif
          IF ( cp_cfg == 'eel' .AND. jp_cfg == 6 ) THEN    ! for EEL6 configuration only
             IF( .NOT. Agrif_Root() ) THEN
-              zphi0 = ppgphi0 - FLOAT( Agrif_Parent(jpjglo)/2)*Agrif_Parent(ppe2_m) / (ra * rad)
+              zphi0 = ppgphi0 - FLOAT( Agrif_Parent(jpjglo)/2)*Agrif_Parent(ppe2_m)   & 
+                    &           / (ra * rad)
             ENDIF
          ENDIF
 #endif         

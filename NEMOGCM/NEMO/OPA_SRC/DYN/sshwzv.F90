@@ -30,7 +30,6 @@ MODULE sshwzv
    USE bdy_par         
    USE bdydyn2d        ! bdy_ssh routine
 #if defined key_agrif
-   USE agrif_opa_update
    USE agrif_opa_interp
 #endif
 #if defined key_asminc   
@@ -272,11 +271,6 @@ CONTAINS
                                 &                                 + fwfisf_b(:,:) - fwfisf(:,:) ) * ssmask(:,:)
          sshn(:,:) = ssha(:,:)                           ! now <-- after
       ENDIF
-      !
-      ! Update velocity at AGRIF zoom boundaries
-#if defined key_agrif
-      IF ( .NOT.Agrif_Root() ) CALL Agrif_Update_Dyn( kt )
-#endif
       !
       IF(ln_ctl)   CALL prt_ctl( tab2d_1=sshb, clinfo1=' sshb  - : ', mask1=tmask, ovlap=1 )
       !

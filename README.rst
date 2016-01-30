@@ -9,6 +9,7 @@ Compilation using ``makenemo``
 
 To compile on a typical PML workstation using the ``makenemo`` tool provided with NEMO::
 
+<<<<<<< HEAD
   module load mpi #required on fedora
   export XIOS_HOME #set to the basepath of XIOS-1 (compile before, 2 doesn't work!)
   # typical global configuration:

@@ -1,2 +1,2 @@
-gmake -f Makefile.lex clean
-gmake -f Makefile.lex
+make -f Makefile.lex clean
+make -f Makefile.lex

@@ -39,73 +39,67 @@
 #include "decl.h"
 
 /******************************************************************************/
-/*                          varisallocatable_0                                */
+/*                          variscoupled_0                                    */
 /******************************************************************************/
 /* Firstpass 0                                                                */
 /******************************************************************************/
 /*                                                                            */
 /******************************************************************************/
-int variscoupled_0(char *ident)
+int variscoupled_0(const char *ident)
 {
-   listallocate *newvaralloc;
-  listvarpointtovar *pointtmplist; 
-  listcouple *coupletmp;   
-  int out;
-
-   out =0;
-   if (firstpass == 0 )
-   {
-  pointtmplist = List_CouplePointed_Var;
-  while ( pointtmplist && out == 0)
-  {
-      coupletmp = pointtmplist->t_couple;
-      while ( coupletmp && out == 0)
-      {
-           /* we should find the same variable name in the same subroutine    */
-           if ( !strcasecmp(ident,coupletmp->c_namevar) &&
-                !strcasecmp(subroutinename,
-                                       pointtmplist->t_cursubroutine) &&
-                 strcasecmp(coupletmp->c_namepointedvar,"")
-              )
-           {
-              out = 1;
-           }
-         coupletmp = coupletmp->suiv;
-     }
-     pointtmplist = pointtmplist->suiv;
-   }
-   }
-   return out;
+    listvarpointtovar *pointtmplist; 
+    listcouple *coupletmp;   
+    int out = 0;
+    
+    if (firstpass == 0 )
+    {
+        pointtmplist = List_CouplePointed_Var;
+        while ( pointtmplist && out == 0)
+        {
+            coupletmp = pointtmplist->t_couple;
+            while ( coupletmp && out == 0)
+            {
+                /* we should find the same variable name in the same subroutine    */
+                if ( !strcasecmp(ident, coupletmp->c_namevar) &&
+                     !strcasecmp(subroutinename, pointtmplist->t_cursubroutine) &&
+                      strcasecmp(coupletmp->c_namepointedvar, "") )
+                {
+                    out = 1;
+                }
+                coupletmp = coupletmp->suiv;
+            }
+            pointtmplist = pointtmplist->suiv;
+        }
+    }
+    return out;
 }
 
-char * getcoupledname_0(char *ident)
+const char * getcoupledname_0(const char *ident)
 {
-   listallocate *newvaralloc;
-  listvarpointtovar *pointtmplist; 
-  listcouple *coupletmp;   
-  int out;
-
-   out =0;
-   if (firstpass == 0 )
-   {
-  pointtmplist = List_CouplePointed_Var;
-  while ( pointtmplist && out == 0)
-  {
-      coupletmp = pointtmplist->t_couple;
-      while ( coupletmp && out == 0)
-      {
-           /* we should find the same variable name in the same subroutine    */
-           if ( !strcasecmp(ident,coupletmp->c_namevar) &&
-                !strcasecmp(subroutinename,
-                                       pointtmplist->t_cursubroutine) &&
-                 strcasecmp(coupletmp->c_namepointedvar,"")
-              )
-           {
-              return(coupletmp->c_namepointedvar);
-           }
-         coupletmp = coupletmp->suiv;
-     }
-     pointtmplist = pointtmplist->suiv;
-   }
-   }
+    listvarpointtovar *pointtmplist; 
+    listcouple *coupletmp;   
+    int out = 0;
+    
+    if (firstpass == 0 )
+    {
+        pointtmplist = List_CouplePointed_Var;
+        while ( pointtmplist && out == 0)
+        {
+            coupletmp = pointtmplist->t_couple;
+            while ( coupletmp && out == 0)
+            {
+                /* we should find the same variable name in the same subroutine    */
+                if ( !strcasecmp(coupletmp->c_namevar,ident) &&
+                     !strcasecmp(pointtmplist->t_cursubroutine,subroutinename) &&
+                      strcasecmp(coupletmp->c_namepointedvar,"") )
+                {
+                    return coupletmp->c_namepointedvar;
+                }
+                coupletmp = coupletmp->suiv;
+            }
+            pointtmplist = pointtmplist->suiv;
+        }
+    }
+    printf("end of getcoupledname_0 -- you should not be there !!! \n");
+    return NULL;
 }

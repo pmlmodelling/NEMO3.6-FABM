@@ -1017,6 +1017,8 @@ CONTAINS
       IF( lk_vvl ) THEN
          CALL histdef( id_i, "vovvldep", "T point depth"         , "m"      ,   &   ! t-point depth
             &          jpi, jpj, nh_i, jpk, 1, jpk, nz_i, 32, clop, zsto, zout )
+         CALL histdef( id_i, "vovvle3t", "T point thickness"         , "m"      ,   &   ! t-point depth
+            &          jpi, jpj, nh_i, jpk, 1, jpk, nz_i, 32, clop, zsto, zout )
       END IF
 
 #if defined key_lim2
@@ -1047,6 +1049,10 @@ CONTAINS
       CALL histwrite( id_i, "soicecov", kt, fr_i             , jpi*jpj    , idex )    ! ice fraction
       CALL histwrite( id_i, "sozotaux", kt, utau             , jpi*jpj    , idex )    ! i-wind stress
       CALL histwrite( id_i, "sometauy", kt, vtau             , jpi*jpj    , idex )    ! j-wind stress
+      IF( lk_vvl ) THEN
+         CALL histwrite( id_i, "vovvldep", kt, fsdept_n(:,:,:), jpi*jpj*jpk, idex )!  T-cell depth       
+         CALL histwrite( id_i, "vovvle3t", kt, fse3t_n (:,:,:), jpi*jpj*jpk, idex )!  T-cell thickness  
+      END IF
 
       ! 3. Close the file
       ! -----------------

@@ -297,6 +297,14 @@ CONTAINS
          ENDIF
       ENDIF
 
+#if defined key_agrif
+      IF (Agrif_Root()) THEN
+         CALL Agrif_MPI_Init(mpi_comm_opa)
+      ELSE
+         CALL Agrif_MPI_set_grid_comm(mpi_comm_opa)
+      ENDIF
+#endif
+
       CALL mpi_comm_rank( mpi_comm_opa, mpprank, ierr )
       CALL mpi_comm_size( mpi_comm_opa, mppsize, ierr )
       mynode = mpprank

@@ -39,33 +39,31 @@
 
 
 /******************************************************************************/
-/*                            associate                                       */
+/*                         open_for_write                                     */
 /******************************************************************************/
 /* This subroutine is used to open a file                                     */
 /******************************************************************************/
-FILE * associate (char *filename)
+FILE* open_for_write (const char *filename)
 {
-  char filefich[LONG_C];
-  sprintf(filefich,"%s/%s",nomdir,filename);
-  return fopen (filefich, "w");
+    char filefich[LONG_FNAME];
+    sprintf(filefich,"%s/%s",include_dir,filename);
+    return fopen(filefich, "w");
 }
 
-
 /******************************************************************************/
-/*                          associateaplus                                    */
+/*                          open_for_append                                   */
 /******************************************************************************/
 /* This subroutine is used to open a file with option a+                      */
 /******************************************************************************/
-FILE * associateaplus (char *filename)
+FILE* open_for_append (const char *filename)
 {
-  char filefich[LONG_C];
-  sprintf(filefich,"%s/%s",nomdir,filename);
-  return fopen (filefich, "a+");
+    char filefich[LONG_M];
+    sprintf(filefich,"%s/%s",include_dir,filename);
+    return fopen(filefich, "a+");
 }
 
-
 /******************************************************************************/
-/*                           setposcurname                                       */
+/*                           setposcurname                                    */
 /******************************************************************************/
 /* This subroutine is used to know the current position in the file in argument    */
 /******************************************************************************/
@@ -75,8 +73,8 @@ FILE * associateaplus (char *filename)
 /******************************************************************************/
 long int setposcurname(FILE *fileout)
 {
-   fflush(fileout);
-   return ftell(fileout);
+    fflush(fileout);
+    return ftell(fileout);
 }
 
 /******************************************************************************/
@@ -90,57 +88,41 @@ long int setposcurname(FILE *fileout)
 /******************************************************************************/
 long int setposcur()
 {
-   fflush(fortranout);
-   return ftell(fortranout);
-}
-
-/******************************************************************************/
-/*                      setposcurinoldfortranout                              */
-/******************************************************************************/
-/* This subroutine is used to know the position in the oldfortranout         */
-/******************************************************************************/
-/*                                                                            */
-/*             setposcurinoldfortranout ---------> position in file           */
-/*                                                                            */
-/******************************************************************************/
-long int setposcurinoldfortranout()
-{
-   fflush(oldfortranout);
-   return ftell(oldfortranout);
+    return setposcurname(fortran_out);
 }
 
 /******************************************************************************/
 /*                         copyuse_0                                          */
 /******************************************************************************/
 /* Firstpass 0                                                                */
-/* We should write in the fortranout the USE tok_name                         */
+/* We should write in the fortran_out the USE tok_name                         */
 /* read in the original file                                                  */
 /******************************************************************************/
 /*                                                                            */
 /******************************************************************************/
-void copyuse_0(char *namemodule)
+void copyuse_0(const char *namemodule)
 {
-   if (firstpass == 0 && IsTabvarsUseInArgument_0() == 1 )
-   {
-      /* We should write this declaration into the original subroutine too    */
-      fprintf(oldfortranout,"      USE %s \n",namemodule);
-   }
+    if ( IsTabvarsUseInArgument_0() == 1 )
+    {
+        /* We should write this declaration into the original subroutine too    */
+        fprintf(oldfortran_out,"      use %s\n", namemodule);
+    }
 }
 
 /******************************************************************************/
 /*                         copyuseonly_0                                      */
 /******************************************************************************/
 /* Firstpass 0                                                                */
-/* We should write in the fortranout the USE tok_name, only                   */
+/* We should write in the fortran_out the USE tok_name, only                   */
 /* read in the original file                                                  */
 /******************************************************************************/
 /*                                                                            */
 /******************************************************************************/
-void copyuseonly_0(char *namemodule)
+void copyuseonly_0(const char *namemodule)
 {
    if (firstpass == 0 && IsTabvarsUseInArgument_0() == 1 )
    {
       /* We should write this declaration into the original subroutine too    */
-      fprintf(oldfortranout,"      USE %s , ONLY : \n",namemodule);
+      fprintf(oldfortran_out,"      use %s , only : \n", namemodule);
    }
 }
