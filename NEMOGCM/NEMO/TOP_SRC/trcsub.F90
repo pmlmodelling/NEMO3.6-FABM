@@ -19,7 +19,7 @@ MODULE trcsub
    USE zdftke          ! twice TKE (en)
 #endif
 #if defined key_zdfgls
-   USE zdfgls, ONLY: en
+!  USE zdfgls, ONLY: en
 #endif
    USE trabbl
    USE zdf_oce
