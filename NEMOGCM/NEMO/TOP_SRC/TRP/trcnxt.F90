@@ -167,9 +167,8 @@ CONTAINS
             DO jk = 1, jpkm1
                zfact = 1.e0 / r2dt(jk)  
                ztrdt(:,:,jk,jn) = ( trb(:,:,jk,jn) - ztrdt(:,:,jk,jn) ) * zfact 
-               CALL trd_tra( kt, 'TRC', jn, jptra_atf, ztrdt )
+!slwa          CALL trd_tra( kt, 'TRC', jn, jptra_atf, ztrdt )
 #if defined key_tracer_budget
-! slwa budget code
                ztrdt(:,:,jk,jn) = ztrdt(:,:,jk,jn) * e1t(:,:) * e2t(:,:) * e3t_n(:,:,jk)  ! slwa vvl
                !ztrdt(:,:,jk,jn) = ztrdt(:,:,jk,jn) * e1t(:,:) * e2t(:,:) * e3t_0(:,:,jk)  ! slwa CHANGE for vvl
 #endif
