@@ -60,7 +60,7 @@ Removed sections are encapsulated as::
 
 (In the FCM scripts the ``!`` is replaced by ``#``.)
 
-The initial FABM_ implementation in this branch is carried over from the NEMO-FABM_ repository developed by M. Butenschön and J. Bruggeman, as a single patch commit.
+The initial FABM_ implementation in this repository is carried over from the NEMO-FABM_ repository developed by M. Butenschön and J. Bruggeman, as a single patch commit.
 
 .. _FABM: http://fabm.net
 .. _NEMO: http://www.nemo-ocean.eu
