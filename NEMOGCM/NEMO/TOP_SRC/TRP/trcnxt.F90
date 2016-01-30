@@ -122,6 +122,9 @@ CONTAINS
 #endif
 
 
+#if defined key_agrif
+      CALL Agrif_trc                   ! AGRIF zoom boundaries
+#endif
       ! Update after tracer on domain lateral boundaries
       DO jn = 1, jptra
          CALL lbc_lnk( tra(:,:,:,jn), 'T', 1. )   
@@ -129,9 +132,6 @@ CONTAINS
 
 
       IF( lk_bdy )  CALL trc_bdy( kt )               ! BDY open boundaries
-#if defined key_agrif
-      CALL Agrif_trc                   ! AGRIF zoom boundaries
-#endif
 
 
       ! set time step size (Euler/Leapfrog)

@@ -51,24 +51,21 @@ CONTAINS
       !!----------------------------------------------------------------------
       INTEGER, INTENT(in) :: kt
       !!
-      REAL(wp), DIMENSION(jpi,jpj)  :: zvel
-      REAL(wp), DIMENSION(jpi,jpj,7):: zadv
       !!----------------------------------------------------------------------
       !
       IF((Agrif_NbStepint() .NE. (Agrif_irhot()-1)).AND.(kt /= 0)) RETURN
 
       Agrif_UseSpecialValueInUpdate = .TRUE.
       Agrif_SpecialValueFineGrid = 0.
-
 # if defined TWO_WAY
       IF( MOD(nbcline,nbclineupdate) == 0) THEN
-         CALL Agrif_Update_Variable( zadv , adv_ice_id , procname = update_adv_ice  )
-         CALL Agrif_Update_Variable( zvel , u_ice_id   , procname = update_u_ice    )
-         CALL Agrif_Update_Variable( zvel , v_ice_id   , procname = update_v_ice    )
+         CALL Agrif_Update_Variable( adv_ice_id , procname = update_adv_ice  )
+         CALL Agrif_Update_Variable( u_ice_id   , procname = update_u_ice    )
+         CALL Agrif_Update_Variable( v_ice_id   , procname = update_v_ice    )
       ELSE
-         CALL Agrif_Update_Variable( zadv , adv_ice_id , locupdate=(/0,2/), procname = update_adv_ice  )
-         CALL Agrif_Update_Variable( zvel , u_ice_id   , locupdate=(/0,1/), procname = update_u_ice    )
-         CALL Agrif_Update_Variable( zvel , v_ice_id   , locupdate=(/0,1/), procname = update_v_ice    )
+         CALL Agrif_Update_Variable( adv_ice_id , locupdate=(/0,2/), procname = update_adv_ice  )
+         CALL Agrif_Update_Variable( u_ice_id   , locupdate=(/0,1/), procname = update_u_ice    )
+         CALL Agrif_Update_Variable( v_ice_id   , locupdate=(/0,1/), procname = update_v_ice    )
       ENDIF
 # endif
       !

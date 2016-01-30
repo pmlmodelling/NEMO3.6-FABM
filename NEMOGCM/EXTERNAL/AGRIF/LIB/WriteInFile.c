@@ -42,62 +42,32 @@
 /******************************************************************************/
 /* This subroutine is used to write the string s into the fileout             */
 /******************************************************************************/
-void tofich_reste (FILE * filout, char *s,int returnlineornot)
+void tofich_reste (FILE * filout, const char *s, int do_returnline)
 {
-  char temp[61];
-  char *tmp;
-  int size;
-  int val_min;
+    const size_t line_length = 66;
+    char temp[line_length+1];
+    size_t s_length;
 
-  if (strlen (s) <= 60)
+    s_length = strlen(s);
+
+    if ( !strcmp(&s[strlen(s)-1], "\n") )
+        s_length = strlen(s)-1;
+
+    if ( s_length <= line_length )
     {
-      if ( returnlineornot == 0 ) fprintf (filout, "     &%s", s);
-      else if ( returnlineornot == 2 ) fprintf (filout, "&%s", s);
-      else if ( returnlineornot == 3 ) fprintf (filout, "&%s\n", s);
-      else                             fprintf (filout, "     &%s\n", s);
-      if ( returnlineornot == 0 ||
-           returnlineornot == 2 ) colnum=colnum+strlen(s)+6;
-      else colnum=0;
+        if ( do_returnline ) fprintf(filout, "     &%s\n", s);
+        else                 fprintf(filout, "&%s", s);
     }
-  else
+    else
     {
-      val_min = 60;
-      strncpy (temp, s, 60);
-      strcpy (&temp[60], "\0");
+        strncpy(temp, s, line_length);
+        temp[line_length] = '\0';
+        if ( retour77 == 0 && (s_length-strlen(temp) > 0) )
+                fprintf(filout, "     &%s&\n", temp);
+        else    fprintf(filout, "     &%s\n", temp);
 
-      tmp = strrchr(temp, '+');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, '-');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, '/');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, '*');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, '%');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, ',');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, ')');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, '(');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-
-      size = val_min;
-
-      strcpy (&temp[60-size], "\0");
-
-      if ( retour77 == 0 ) fprintf (filout, "     &%s&\n", temp);
-      else fprintf (filout, "     &%s\n", temp);
-      colnum=0;
-      tofich_reste (filout, (char *) &s[60-size],returnlineornot);
+        if ( s_length-strlen(temp) > 0 )
+            tofich_reste(filout, (char *) &s[line_length], do_returnline);
     }
 }
 
@@ -106,62 +76,31 @@ void tofich_reste (FILE * filout, char *s,int returnlineornot)
 /******************************************************************************/
 /* This subroutine is used to write the string s into the fileout             */
 /******************************************************************************/
-void tofich (FILE * filout, char *s, int returnlineornot)
+void tofich (FILE * filout, const char *s, int do_returnline)
 {
-  char temp[61];
-  char *tmp;
-  int size;
-  int val_min;
+    const size_t line_length = 66;
+    char temp[line_length+1];
+    size_t s_length;
 
-  if (strlen (s) <= 60)
+    s_length = strlen(s);
+
+    if ( !strcmp(&s[strlen(s)-1], "\n") )
+        s_length = strlen(s)-1;
+
+    if ( s_length <= line_length )
     {
-      if ( returnlineornot == 0 ) fprintf (filout, "      %s", s);
-      else if ( returnlineornot == 2 ) fprintf (filout, "%s", s);
-      else if ( returnlineornot == 3 ) fprintf (filout, "%s\n", s);
-      else                             fprintf (filout, "      %s\n", s);
-      if ( returnlineornot == 0 || returnlineornot == 2 )
-                                                      colnum=colnum+strlen(s)+6;
-      else colnum=0;
+        if ( do_returnline ) fprintf(filout, "      %s\n", s);
+        else                 fprintf(filout, "%s", s);
     }
-  else
+    else
     {
-      val_min = 60;
-      strncpy (temp, s, 60);
-      strcpy (&temp[60], "\0");
+        strncpy(temp, s, line_length);
+        temp[line_length] = '\0';
 
-      tmp = strrchr(temp, '+');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, '-');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, '/');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, '*');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, '%');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, ',');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, ')');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
-      tmp = strrchr(temp, '(');
-      if ( tmp )
-      if ( strlen(tmp) < val_min ) val_min = strlen(tmp);
+        if ( retour77 == 0 )    fprintf(filout, "      %s&\n", temp);
+        else                    fprintf(filout, "      %s\n", temp);
 
-      size = val_min;
-
-      strcpy (&temp[60-size], "\0");
-
-      if ( retour77 == 0 ) fprintf (filout, "      %s&\n", temp);
-      else fprintf (filout, "      %s\n", temp);
-      colnum=0;
-      tofich_reste (filout, (char *) &s[60-size], returnlineornot);
+        tofich_reste(filout, (char *) &s[line_length], do_returnline);
     }
 }
 
@@ -172,79 +111,49 @@ void tofich (FILE * filout, char *s, int returnlineornot)
 /******************************************************************************/
 void tofich_blanc (FILE * filout, int size)
 {
-  int i;
+    const char* empty_char = " ";
+    int i = 0;
 
-  if (size <= 65) fprintf (filout, "%*s\n",size,EmptyChar);
-  else
-  {
-      i=0;
-      do
-      {
-         fprintf (filout, "%*s\n",65,EmptyChar);
-         i = i+1;
-      } while ( i <= size / 65 );
-         fprintf (filout, "%*s\n",size%65,EmptyChar);
-  }
+    if (size <= 65)
+        fprintf(filout, "%*s\n", size, empty_char);
+    else
+    {
+        do
+        {
+            fprintf(filout, "%*s\n", 65, empty_char);
+            i++;
+        }
+        while ( i <= size / 65 );
 
+        fprintf(filout, "%*s\n", size%65, empty_char);
+    }
 }
-/******************************************************************************/
-/*                       tofich_line                                          */
-/******************************************************************************/
-/* This subroutine is used to write size blank into the fileout               */
-/******************************************************************************/
-void tofich_line (FILE * filout, int size, int long position)
-{
-  int i;
-  int retour;
-
-  if (size <= 65) fprintf (filout, "%*s",size,EmptyChar);
-  else
-  {
-      i=0;
-      do
-      {
-         fprintf (filout, "%*s",65,EmptyChar);
-         i = i+1;
-      } while ( i <= size / 65 );
-         fprintf (filout, "%*s",size%65,EmptyChar);
-  }
-
-   if ( !strstr(motparse1,"\n") ) retour=0;
-   else retour=1;
-
-   fseek(filout,position,SEEK_SET);
-   if (retour == 1 ) fprintf (filout, "\n");
-
-}
-
 
 /******************************************************************************/
 /*                           RemoveWordSET_0                                  */
 /******************************************************************************/
 /* This subroutine is used to remove a sentence in the file filout            */
 /******************************************************************************/
-void RemoveWordSET_0(FILE * filout, long int position, long int sizetoremove)
+void RemoveWordSET_0(FILE * filout, long int position, int sizetoremove)
 {
-   if ( firstpass == 0 && couldaddvariable == 1 )
-   {
-      fseek(filout,position,SEEK_SET);
-      tofich_line(filout,sizetoremove,position);
+    if ( inside_type_declare || firstpass ) return;
 
-   }
+    fseek(filout, position, SEEK_SET);
+    tofich_blanc(filout, sizetoremove);
+    fseek(filout, position, SEEK_SET);
 }
-
 
 /******************************************************************************/
 /*                         RemoveWordCUR_0                                    */
 /******************************************************************************/
 /* This subroutine is used to remove a sentence in the file filout            */
 /******************************************************************************/
-void RemoveWordCUR_0(FILE * filout, long int position, long int sizetoremove)
+void RemoveWordCUR_0(FILE * filout, int sizetoremove)
 {
-   if ( firstpass == 0  && couldaddvariable == 1 )
-   {
-      fseek(filout,position,SEEK_CUR);
-      tofich_blanc(filout,sizetoremove);
+    if ( inside_type_declare || firstpass ) return;
 
-   }
+    fseek(filout, (long int)(-sizetoremove), SEEK_CUR);
+    tofich_blanc(filout, sizetoremove);
+    fseek(filout, (long int)(-sizetoremove), SEEK_CUR);
+    if ( strstr(fortran_text, "\n") )   fprintf(filout, "\n");
 }

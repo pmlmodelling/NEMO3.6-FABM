@@ -50,9 +50,11 @@ MODULE agrif_types
   ! 
   INTEGER jpizoom,jpjzoom,nb_connection_pts
   !      
-  REAL*8 ppacr,ppdzmin,pphmax,ppkth,smoothing_factor,e3zps_min,e3zps_rat
-  REAL*8 psur,pa0,pa1,adatrj
+  REAL*8 rn_hmin
+  REAL*8 ppkth2, ppacr2, ppkth,ppacr,ppdzmin,pphmax,smoothing_factor,e3zps_min,e3zps_rat
+  REAL*8 psur,pa0,pa1,pa2,adatrj
   !       
+  LOGICAL ldbletanh
   LOGICAL partial_steps,smoothing,bathy_update
   LOGICAL new_topo,removeclosedseas,dimg,iom_activated
   !       
@@ -69,11 +71,11 @@ MODULE agrif_types
   NAMELIST /coarse_grid_files/parent_coordinate_file,parent_meshmask_file
   !      
   NAMELIST /bathymetry/new_topo,elevation_database,elevation_name,smoothing,smoothing_factor, &
-       nb_connection_pts,removeclosedseas,type_bathy_interp      
+       nb_connection_pts,removeclosedseas,type_bathy_interp,rn_hmin      
   !      
   NAMELIST /nesting/imin,imax,jmin,jmax,rho,rhot,bathy_update,updated_parent_file      
   !
-  NAMELIST /vertical_grid/ppkth,ppacr,ppdzmin,pphmax,psur,pa0,pa1,N
+  NAMELIST /vertical_grid/ppkth,ppacr,ppdzmin,pphmax,psur,pa0,pa1,N,ldbletanh,ppa2,ppkth2,ppacr2
   ! 
   NAMELIST /partial_cells/partial_steps,parent_bathy_meter,parent_batmet_name,e3zps_min,e3zps_rat      
   !

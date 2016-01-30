@@ -285,24 +285,32 @@ set_xio_file_type () {
         echo "executing script : set_xio_file_type $@" >> ${SETTE_DIR}/output.sette
         echo "################" >> ${SETTE_DIR}/output.sette
 
+        inxml=$1
         VAR_NAME=$( grep "^.*<.*file_definition.*type.*=" ${EXE_DIR}/$1 | sed -e "s% *\!.*%%" )
         if [ ${#VAR_NAME} -eq 0 ]
         then
+# This may have failed because the job is using XIOS_2.0 conventions and the file descriptions have moved to file_def.xml
+# Check again in case this is the case
+          VAR_NAME=$( grep "^.*<.*file_definition.*type.*=" ${EXE_DIR}/file_def.xml | sed -e "s% *\!.*%%" )
+          inxml="file_def.xml"
+          if [ ${#VAR_NAME} -eq 0 ]
+          then
                 echo "doing \"set_xio_file_type $@\". "
                 echo "xml_tag: file_definition with variable: type is empty"
-                echo "confirm that an appropriate file_definition is in \"${EXE_DIR}/$1\" "
+                echo "confirm that an appropriate file_definition is in \"${EXE_DIR}/$1\" or file_def.xml"
                 echo "exit"
                 echo "error in executing script : set_xio_file_type $@" >> ${SETTE_DIR}/output.sette
                 echo "....." >> ${SETTE_DIR}/output.sette
                 exit 1
+          fi
         fi
         if [ $2 == "one_file" ] 
         then
-           sed -e "s:multiple_file:one_file:" ${EXE_DIR}/$1 > ${EXE_DIR}/$1.tmp
+           sed -e "s:multiple_file:one_file:" ${EXE_DIR}/$inxml > ${EXE_DIR}/$inxml.tmp
         else
-           sed -e "s:one_file:multiple_file:" ${EXE_DIR}/$1 > ${EXE_DIR}/$1.tmp
+           sed -e "s:one_file:multiple_file:" ${EXE_DIR}/$inxml > ${EXE_DIR}/$inxml.tmp
         fi
-        mv ${EXE_DIR}/$1.tmp ${EXE_DIR}/$1
+        mv ${EXE_DIR}/$inxml.tmp ${EXE_DIR}/$inxml
 
         echo "finished script : set_xio_file_type $@" >> ${SETTE_DIR}/output.sette
         echo "++++++++++++++++" >> ${SETTE_DIR}/output.sette
@@ -335,13 +343,19 @@ set_xio_using_server () {
         VAR_NAME=$( grep "^.*<.*variable id.*=.*using_server.*=.*boolean" ${EXE_DIR}/$1 | sed -e "s% *\!.*%%" )
         if [ ${#VAR_NAME} -eq 0 ]
         then
+# This may have failed because the iodef file is using XIOS_2.0 syntax where "boolean" has reduced to "bool"
+# Check again in case this is the case
+          VAR_NAME=$( grep "^.*<.*variable id.*=.*using_server.*=.*bool" ${EXE_DIR}/$1 | sed -e "s% *\!.*%%" )
+           if [ ${#VAR_NAME} -eq 0 ]
+           then
                 echo "doing \"set_xio_using_server $@\". "
-                echo "xml_tag: "variable id=using_server" with variable: boolean is empty"
+                echo "xml_tag: "variable id=using_server" with either variable: boolean or bool is empty"
                 echo "confirm that an appropriate variable id is in \"${EXE_DIR}/$1\" "
                 echo "exit"
                 echo "error in executing script : set_xio_using_server $@" >> ${SETTE_DIR}/output.sette
                 echo "....." >> ${SETTE_DIR}/output.sette
                 exit 1
+           fi
         fi
         if [ $2 == "false" ]
         then

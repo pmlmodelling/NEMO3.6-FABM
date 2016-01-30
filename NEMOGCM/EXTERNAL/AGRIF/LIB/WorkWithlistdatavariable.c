@@ -50,30 +50,24 @@
 void Add_Data_Var_1 (listvar **curlist,char *name,char *values)
 {
   listvar *newvar;
-  char ligne[LONG_C];
+  char ligne[LONG_M];
 
 //  if ( firstpass == 1 )
 //  {
-     newvar=(listvar *)malloc(sizeof(listvar));
-     newvar->var=(variable *)malloc(sizeof(variable));
+     newvar=(listvar *)calloc(1,sizeof(listvar));
+     newvar->var=(variable *)calloc(1,sizeof(variable));
      /*                                                                       */
      Init_Variable(newvar->var);
      /*                                                                       */
      if ( inmoduledeclare == 1 ) newvar->var->v_module=1;
      strcpy(newvar->var->v_nomvar,name);
-     Save_Length(name,4);
      strcpy(newvar->var->v_subroutinename,subroutinename);
-     Save_Length(subroutinename,11);
      strcpy(newvar->var->v_modulename,curmodulename);
-     Save_Length(curmodulename,6);
-     strcpy(newvar->var->v_commoninfile,mainfile);
-     Save_Length(mainfile,10);
+     strcpy(newvar->var->v_commoninfile,cur_filename);
      if (strchr(values,',') && strncasecmp(values,"'",1))
-            {
-            sprintf(ligne,"(/%s/)",values);
-            }
+        sprintf(ligne,"(/%s/)",values);
      else
-       strcpy(ligne,values);
+        strcpy(ligne,values);
        
      strcpy(newvar->var->v_initialvalue,ligne);
      Save_Length(ligne,14);
@@ -92,52 +86,60 @@ void Add_Data_Var_1 (listvar **curlist,char *name,char *values)
 
 void Add_Data_Var_Names_01 (listvar **curlist,listname *l1,listname *l2)
 {
-  listvar *newvar;
-  listvar *tmpvar;
-  listname *tmpvar1;
-  listname *tmpvar2;  
-  char ligne[LONG_C];
+    listvar *newvar;
+    listvar *tmpvar;
+    listname *tmpvar1;
+    listname *tmpvar2;  
+    variable *found_var = NULL;
+    
+    tmpvar1 = l1;
+    tmpvar2 = l2;
   
-  tmpvar1 = l1;
-  tmpvar2 = l2;
-  
-  while (tmpvar1)
-     {
-     newvar=(listvar *)malloc(sizeof(listvar));
-     newvar->var=(variable *)malloc(sizeof(variable));
-     /*                                                                       */
-     Init_Variable(newvar->var);
-     /*                                                                       */
-     if ( inmoduledeclare == 1 ) newvar->var->v_module=1;
-     strcpy(newvar->var->v_nomvar,tmpvar1->n_name);
-     Save_Length(tmpvar1->n_name,4);
-     strcpy(newvar->var->v_subroutinename,subroutinename);
-     Save_Length(subroutinename,11);
-     strcpy(newvar->var->v_modulename,curmodulename);
-     Save_Length(curmodulename,6);
-     strcpy(newvar->var->v_commoninfile,mainfile);
-     Save_Length(mainfile,10);
-       
-     strcpy(newvar->var->v_initialvalue,tmpvar2->n_name);
-     Save_Length(tmpvar2->n_name,14);
-     newvar->suiv = NULL;
-     
-     if ( ! (*curlist) )
-     {
-        *curlist  = newvar ;
-     }
-     else
-     {
-        tmpvar = *curlist;
-        while (tmpvar->suiv)
-          tmpvar=tmpvar->suiv;
-        tmpvar->suiv = newvar;
-     }
-     
-  tmpvar1 = tmpvar1->suiv;
-  tmpvar2 = tmpvar2->suiv;  
-  }
-  return;
+    while (tmpvar1)
+    {
+        newvar = (listvar *) calloc(1,sizeof(listvar));
+        newvar->var = (variable *) calloc(1,sizeof(variable));
 
+        Init_Variable(newvar->var);
 
+        if ( inmoduledeclare == 1 ) newvar->var->v_module=1;
+     
+        found_var = get_variable_in_list_from_name(List_Common_Var, tmpvar1->n_name);
+        if ( ! found_var )  found_var = get_variable_in_list_from_name(List_Global_Var,tmpvar1->n_name);
+        if ( ! found_var )  found_var = get_variable_in_list_from_name(List_SubroutineDeclaration_Var,tmpvar1->n_name);
+        
+        if ( found_var && found_var->v_nbdim > 0 )
+        {
+            printf("##############################################################################################################\n");
+            printf("## CONV Error : arrays in data_stmt_object lists not yet supported. Please complain to the proper authorities.\n");
+            printf("##   variable name : %s (in %s:%s:%s)\n", found_var->v_nomvar, found_var->v_modulename,
+                                                              found_var->v_subroutinename, found_var->v_commonname);
+            exit(1);
+        }
+        
+        strcpy(newvar->var->v_nomvar,tmpvar1->n_name);
+        strcpy(newvar->var->v_subroutinename,subroutinename);
+        strcpy(newvar->var->v_modulename,curmodulename);
+        strcpy(newvar->var->v_commoninfile,cur_filename);
+        strcpy(newvar->var->v_initialvalue,tmpvar2->n_name);
+
+        Save_Length(tmpvar2->n_name,14);
+
+        newvar->suiv = NULL;
+     
+        if ( *curlist != NULL )
+        {
+            tmpvar = *curlist;
+            while (tmpvar->suiv)
+                tmpvar = tmpvar->suiv;
+            tmpvar->suiv = newvar;
+        }
+        else
+        {
+            *curlist  = newvar ;
+        }
+     
+        tmpvar1 = tmpvar1->suiv;
+        tmpvar2 = tmpvar2->suiv;  
+    }
 }

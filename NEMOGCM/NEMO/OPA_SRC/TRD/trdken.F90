@@ -116,30 +116,30 @@ CONTAINS
       END DO
       !
       SELECT CASE( ktrd )
-      	CASE( jpdyn_hpg )   ;   CALL iom_put( "ketrd_hpg", zke )    ! hydrostatic pressure gradient
-      	CASE( jpdyn_spg )   ;   CALL iom_put( "ketrd_spg", zke )    ! surface pressure gradient
-      	CASE( jpdyn_spgexp );   CALL iom_put( "ketrd_spgexp", zke ) ! surface pressure gradient (explicit)
-      	CASE( jpdyn_spgflt );   CALL iom_put( "ketrd_spgflt", zke ) ! surface pressure gradient (filter)
-      	CASE( jpdyn_pvo )   ;   CALL iom_put( "ketrd_pvo", zke )    ! planetary vorticity
-      	CASE( jpdyn_rvo )   ;   CALL iom_put( "ketrd_rvo", zke )    ! relative  vorticity     (or metric term)
-      	CASE( jpdyn_keg )   ;   CALL iom_put( "ketrd_keg", zke )    ! Kinetic Energy gradient (or had)
-      	CASE( jpdyn_zad )   ;   CALL iom_put( "ketrd_zad", zke )    ! vertical   advection
-      	CASE( jpdyn_ldf )   ;   CALL iom_put( "ketrd_ldf", zke )    ! lateral diffusion
-      	CASE( jpdyn_zdf )   ;   CALL iom_put( "ketrd_zdf", zke )    ! vertical diffusion 
+        CASE( jpdyn_hpg )   ;   CALL iom_put( "ketrd_hpg", zke )    ! hydrostatic pressure gradient
+        CASE( jpdyn_spg )   ;   CALL iom_put( "ketrd_spg", zke )    ! surface pressure gradient
+        CASE( jpdyn_spgexp );   CALL iom_put( "ketrd_spgexp", zke ) ! surface pressure gradient (explicit)
+        CASE( jpdyn_spgflt );   CALL iom_put( "ketrd_spgflt", zke ) ! surface pressure gradient (filter)
+        CASE( jpdyn_pvo )   ;   CALL iom_put( "ketrd_pvo", zke )    ! planetary vorticity
+        CASE( jpdyn_rvo )   ;   CALL iom_put( "ketrd_rvo", zke )    ! relative  vorticity     (or metric term)
+        CASE( jpdyn_keg )   ;   CALL iom_put( "ketrd_keg", zke )    ! Kinetic Energy gradient (or had)
+        CASE( jpdyn_zad )   ;   CALL iom_put( "ketrd_zad", zke )    ! vertical   advection
+        CASE( jpdyn_ldf )   ;   CALL iom_put( "ketrd_ldf", zke )    ! lateral diffusion
+        CASE( jpdyn_zdf )   ;   CALL iom_put( "ketrd_zdf", zke )    ! vertical diffusion 
                                  !                                   ! wind stress trends
-                              	CALL wrk_alloc( jpi, jpj, z2dx, z2dy, zke2d )
-         						z2dx(:,:) = un(:,:,1) * ( utau_b(:,:) + utau(:,:) ) * e1u(:,:) * e2u(:,:) * umask(:,:,1)
-         						z2dy(:,:) = vn(:,:,1) * ( vtau_b(:,:) + vtau(:,:) ) * e1v(:,:) * e2v(:,:) * vmask(:,:,1)
-         						zke2d(1,:) = 0._wp   ;   zke2d(:,1) = 0._wp
-         						DO jj = 2, jpj
-            					   DO ji = 2, jpi
-               						zke2d(ji,jj) = 0.5_wp * (   z2dx(ji,jj) + z2dx(ji-1,jj)   &
-                  					&                         + z2dy(ji,jj) + z2dy(ji,jj-1)   ) * r1_bt(ji,jj,1)
-            					   END DO
-         						END DO
-                              	CALL iom_put( "ketrd_tau", zke2d )
-                              	CALL wrk_dealloc( jpi, jpj     , z2dx, z2dy, zke2d )
-      	CASE( jpdyn_bfr )   ;   CALL iom_put( "ketrd_bfr", zke )    ! bottom friction (explicit case) 
+                                CALL wrk_alloc( jpi, jpj, z2dx, z2dy, zke2d )
+                     z2dx(:,:) = un(:,:,1) * ( utau_b(:,:) + utau(:,:) ) * e1u(:,:) * e2u(:,:) * umask(:,:,1)
+                     z2dy(:,:) = vn(:,:,1) * ( vtau_b(:,:) + vtau(:,:) ) * e1v(:,:) * e2v(:,:) * vmask(:,:,1)
+                     zke2d(1,:) = 0._wp   ;   zke2d(:,1) = 0._wp
+                     DO jj = 2, jpj
+                         DO ji = 2, jpi
+                           zke2d(ji,jj) = 0.5_wp * (   z2dx(ji,jj) + z2dx(ji-1,jj)   &
+                            &                         + z2dy(ji,jj) + z2dy(ji,jj-1)   ) * r1_bt(ji,jj,1)
+                         END DO
+                     END DO
+                                CALL iom_put( "ketrd_tau", zke2d )
+                                CALL wrk_dealloc( jpi, jpj     , z2dx, z2dy, zke2d )
+        CASE( jpdyn_bfr )   ;   CALL iom_put( "ketrd_bfr", zke )    ! bottom friction (explicit case) 
 !!gm TO BE DONE properly
 !!gm only valid if ln_bfrimp=F otherwise the bottom stress as to be recomputed at the end of the computation....
 !         IF(.NOT. ln_bfrimp) THEN
@@ -161,7 +161,7 @@ CONTAINS
 !                              CALL iom_put( "ketrd_bfr", zke2d )    ! bottom friction (explicit case)
 !         ENDIF
 !!gm end
-      	CASE( jpdyn_atf )   ;   CALL iom_put( "ketrd_atf", zke )    ! asselin filter trends 
+        CASE( jpdyn_atf )   ;   CALL iom_put( "ketrd_atf", zke )    ! asselin filter trends 
 !! a faire !!!!  idee changer dynnxt pour avoir un appel a jpdyn_bfr avant le swap !!!
 !! reflechir a une possible sauvegarde du "vrai" un,vn pour le calcul de atf....
 !
@@ -183,14 +183,14 @@ CONTAINS
 !            END DO
 !                              CALL iom_put( "ketrd_bfri", zke2d )
 !         ENDIF
-      	CASE( jpdyn_ken )   ;   ! kinetic energy
-      							! called in dynnxt.F90 before asselin time filter
-      							! with putrd=ua and pvtrd=va
-      							zke(:,:,:) = 0.5_wp * zke(:,:,:)
-      							CALL iom_put( "KE", zke )
-      							!
-      							CALL ken_p2k( kt , zke )
-            					CALL iom_put( "ketrd_convP2K", zke )     ! conversion -rau*g*w
+        CASE( jpdyn_ken )   ;   ! kinetic energy
+                    ! called in dynnxt.F90 before asselin time filter
+                    ! with putrd=ua and pvtrd=va
+                    zke(:,:,:) = 0.5_wp * zke(:,:,:)
+                    CALL iom_put( "KE", zke )
+                    !
+                    CALL ken_p2k( kt , zke )
+                      CALL iom_put( "ketrd_convP2K", zke )     ! conversion -rau*g*w
          !
       END SELECT
       !

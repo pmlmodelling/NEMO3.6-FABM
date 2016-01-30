@@ -41,13 +41,8 @@ MODULE zdfgls
 
    LOGICAL , PUBLIC, PARAMETER ::   lk_zdfgls = .TRUE.   !: TKE vertical mixing flag
    !
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   en      !: now turbulent kinetic energy
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   mxln    !: now mixing length
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   zwall   !: wall function
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   avt_k   ! not enhanced Kz
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   avm_k   ! not enhanced Kz
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   avmu_k  ! not enhanced Kz
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:,:) ::   avmv_k  ! not enhanced Kz
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)   ::   ustars2 !: Squared surface velocity scale at T-points
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:)   ::   ustarb2 !: Squared bottom  velocity scale at T-points
 
@@ -119,10 +114,8 @@ CONTAINS
       !!----------------------------------------------------------------------
       !!                ***  FUNCTION zdf_gls_alloc  ***
       !!----------------------------------------------------------------------
-      ALLOCATE( en(jpi,jpj,jpk),  mxln(jpi,jpj,jpk), zwall(jpi,jpj,jpk) ,     &
-         &      avt_k (jpi,jpj,jpk) , avm_k (jpi,jpj,jpk),                    &
-         &      avmu_k(jpi,jpj,jpk) , avmv_k(jpi,jpj,jpk),                    &
-         &      ustars2(jpi,jpj), ustarb2(jpi,jpj)                      , STAT= zdf_gls_alloc )
+      ALLOCATE( mxln(jpi,jpj,jpk), zwall(jpi,jpj,jpk) ,     &
+         &      ustars2(jpi,jpj) , ustarb2(jpi,jpj)   , STAT= zdf_gls_alloc )
          !
       IF( lk_mpp             )   CALL mpp_sum ( zdf_gls_alloc )
       IF( zdf_gls_alloc /= 0 )   CALL ctl_warn('zdf_gls_alloc: failed to allocate arrays')

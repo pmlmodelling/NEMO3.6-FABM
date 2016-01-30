@@ -52,13 +52,7 @@ MODULE sbcisf
    REAL(wp)   , PUBLIC, ALLOCATABLE, SAVE, DIMENSION (:,:)     ::  ralpha                 !:proportion of bottom cell influenced by tbl 
    REAL(wp)   , PUBLIC, ALLOCATABLE, SAVE, DIMENSION (:,:)     ::  risfLeff               !:effective length (Leff) BG03 nn_isf==2
    REAL(wp)   , PUBLIC, ALLOCATABLE, SAVE, DIMENSION (:,:)     ::  ttbl, stbl, utbl, vtbl !:top boundary layer variable at T point
-#if defined key_agrif
-   ! AGRIF can not handle these arrays as integers. The reason is a mystery but problems avoided by declaring them as reals
-   REAL(wp),    PUBLIC, ALLOCATABLE, SAVE, DIMENSION (:,:)     ::  misfkt, misfkb         !:Level of ice shelf base
-                                                                                          !: (first wet level and last level include in the tbl)
-#else
    INTEGER,    PUBLIC, ALLOCATABLE, SAVE, DIMENSION (:,:)     ::  misfkt, misfkb         !:Level of ice shelf base
-#endif
 
 
    REAL(wp), PUBLIC, SAVE ::   rcpi   = 2000.0_wp     ! phycst ?
@@ -176,7 +170,7 @@ CONTAINS
            DO ji = 1, jpi
               DO jj = 1, jpj
                   jk = 2
-                  DO WHILE ( jk .LE. mbkt(ji,jj) .AND. fsdepw(ji,jj,jk) < rzisf_tbl(ji,jj) ) ;  jk = jk + 1 ;  END DO
+                  DO WHILE ( jk .LE. mbkt(ji,jj) .AND. gdepw_0(ji,jj,jk) < rzisf_tbl(ji,jj) ) ;  jk = jk + 1 ;  END DO
                   misfkt(ji,jj) = jk-1
                END DO
             END DO
@@ -194,29 +188,9 @@ CONTAINS
             !CALL fld_fill( sf_qisf  , (/ sn_qisf   /), cn_dirisf, 'sbc_isf_init', 'read heat flux isf data'       , 'namsbc_isf' )
          END IF
          
-         ! compute bottom level of isf tbl and thickness of tbl below the ice shelf
+         ! save initial top boundary layer thickness         
          rhisf_tbl_0(:,:) = rhisf_tbl(:,:)
-         DO jj = 1,jpj
-            DO ji = 1,jpi
-               ikt = misfkt(ji,jj)
-               ikb = misfkt(ji,jj)
-               ! thickness of boundary layer at least the top level thickness
-               rhisf_tbl(ji,jj) = MAX(rhisf_tbl_0(ji,jj), fse3t_n(ji,jj,ikt))
 
-               ! determine the deepest level influenced by the boundary layer
-               ! test on tmask useless ?????
-               DO jk = ikt, mbkt(ji,jj)
-                  IF ( (SUM(fse3t_n(ji,jj,ikt:jk-1)) .LT. rhisf_tbl(ji,jj)) .AND. (tmask(ji,jj,jk) == 1) ) ikb = jk
-               END DO
-               rhisf_tbl(ji,jj) = MIN(rhisf_tbl(ji,jj), SUM(fse3t_n(ji,jj,ikt:ikb)))  ! limit the tbl to water thickness.
-               misfkb(ji,jj) = ikb                                                  ! last wet level of the tbl
-               r1_hisf_tbl(ji,jj) = 1._wp / rhisf_tbl(ji,jj)
-
-               zhk           = SUM( fse3t(ji, jj, ikt:ikb - 1)) * r1_hisf_tbl(ji,jj)  ! proportion of tbl cover by cell from ikt to ikb - 1
-               ralpha(ji,jj) = rhisf_tbl(ji,jj) * (1._wp - zhk ) / fse3t(ji,jj,ikb)  ! proportion of bottom cell influenced by boundary layer
-            END DO
-         END DO
-         
       END IF
 
       !                                            ! ---------------------------------------- !
@@ -229,6 +203,26 @@ CONTAINS
 
       IF( MOD( kt-1, nn_fsbc) == 0 ) THEN
 
+         ! compute bottom level of isf tbl and thickness of tbl below the ice shelf
+         DO jj = 1,jpj
+            DO ji = 1,jpi
+               ikt = misfkt(ji,jj)
+               ikb = misfkt(ji,jj)
+               ! thickness of boundary layer at least the top level thickness
+               rhisf_tbl(ji,jj) = MAX(rhisf_tbl_0(ji,jj), fse3t_n(ji,jj,ikt))
+
+               ! determine the deepest level influenced by the boundary layer
+               DO jk = ikt, mbkt(ji,jj)
+                  IF ( (SUM(fse3t_n(ji,jj,ikt:jk-1)) .LT. rhisf_tbl(ji,jj)) .AND. (tmask(ji,jj,jk) == 1) ) ikb = jk
+               END DO
+               rhisf_tbl(ji,jj) = MIN(rhisf_tbl(ji,jj), SUM(fse3t_n(ji,jj,ikt:ikb)))  ! limit the tbl to water thickness.
+               misfkb(ji,jj) = ikb                                                  ! last wet level of the tbl
+               r1_hisf_tbl(ji,jj) = 1._wp / rhisf_tbl(ji,jj)
+
+               zhk           = SUM( fse3t(ji, jj, ikt:ikb - 1)) * r1_hisf_tbl(ji,jj)  ! proportion of tbl cover by cell from ikt to ikb - 1
+               ralpha(ji,jj) = rhisf_tbl(ji,jj) * (1._wp - zhk ) / fse3t(ji,jj,ikb)  ! proportion of bottom cell influenced by boundary layer
+            END DO
+         END DO
 
          ! compute salf and heat flux
          IF (nn_isf == 1) THEN

@@ -16,11 +16,13 @@ MODULE stpctl
    USE oce             ! ocean dynamics and tracers variables
    USE dom_oce         ! ocean space and time domain variables 
    USE sol_oce         ! ocean space and time domain variables 
+   USE sbc_oce         ! surface boundary conditions variables
    USE in_out_manager  ! I/O manager
    USE lbclnk          ! ocean lateral boundary conditions (or mpp link)
    USE lib_mpp         ! distributed memory computing
    USE dynspg_oce      ! pressure gradient schemes 
    USE c1d             ! 1D vertical configuration
+
 
    IMPLICIT NONE
    PRIVATE
@@ -51,6 +53,7 @@ CONTAINS
       INTEGER, INTENT( in ) ::   kt         ! ocean time-step index
       INTEGER, INTENT( inout ) ::   kindic  ! indicator of solver convergence
       !!
+      CHARACTER(len = 32) ::        clfname ! time stepping output file name
       INTEGER  ::   ji, jj, jk              ! dummy loop indices
       INTEGER  ::   ii, ij, ik              ! temporary integers
       REAL(wp) ::   zumax, zsmin, zssh2     ! temporary scalars
@@ -62,8 +65,13 @@ CONTAINS
          WRITE(numout,*)
          WRITE(numout,*) 'stp_ctl : time-stepping control'
          WRITE(numout,*) '~~~~~~~'
-         ! open time.step file
-         CALL ctl_opn( numstp, 'time.step', 'REPLACE', 'FORMATTED', 'SEQUENTIAL', -1, numout, lwp, narea )
+         ! open time.step file with special treatment for SAS
+         IF ( nn_components == jp_iam_sas ) THEN
+            clfname = 'time.step.sas'
+         ELSE
+            clfname = 'time.step'
+         ENDIF
+         CALL ctl_opn( numstp, TRIM(clfname), 'REPLACE', 'FORMATTED', 'SEQUENTIAL', -1, numout, lwp, narea )
       ENDIF
 
       IF(lwp) WRITE ( numstp, '(1x, i8)' )   kt      !* save the current time step in numstp

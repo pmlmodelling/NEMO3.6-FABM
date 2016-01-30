@@ -51,7 +51,7 @@ MODULE sbcrnf
    LOGICAL           , PUBLIC ::   ln_rnf_mouth    !: specific treatment in mouths vicinity
    REAL(wp)                   ::   rn_hrnf         !: runoffs, depth over which enhanced vertical mixing is used
    REAL(wp)          , PUBLIC ::   rn_avt_rnf      !: runoffs, value of the additional vertical mixing coef. [m2/s]
-   REAL(wp)                   ::   rn_rfact        !: multiplicative factor for runoff
+   REAL(wp)          , PUBLIC ::   rn_rfact        !: multiplicative factor for runoff
 
    LOGICAL           , PUBLIC ::   l_rnfcpl = .false.       ! runoffs recieved from oasis
 
@@ -124,14 +124,6 @@ CONTAINS
       IF( .NOT. l_rnfcpl )   CALL fld_read ( kt, nn_fsbc, sf_rnf   )    ! Read Runoffs data and provide it at kt
       IF(   ln_rnf_tem   )   CALL fld_read ( kt, nn_fsbc, sf_t_rnf )    ! idem for runoffs temperature if required
       IF(   ln_rnf_sal   )   CALL fld_read ( kt, nn_fsbc, sf_s_rnf )    ! idem for runoffs salinity    if required
-      !
-      ! Runoff reduction only associated to the ORCA2_LIM configuration
-      ! when reading the NetCDF file runoff_1m_nomask.nc
-      IF( cp_cfg == 'orca' .AND. jp_cfg == 2 .AND. .NOT. l_rnfcpl )   THEN
-         WHERE( 40._wp < gphit(:,:) .AND. gphit(:,:) < 65._wp )
-            sf_rnf(1)%fnow(:,:,1) = 0.85 * sf_rnf(1)%fnow(:,:,1)
-         END WHERE
-      ENDIF
       !
       IF( MOD( kt - 1, nn_fsbc ) == 0 ) THEN
          !

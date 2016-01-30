@@ -151,9 +151,11 @@ CONTAINS
          IF( iom_use( "CO3sat" ) ) CALL iom_put( "CO3sat", aksp(:,:,:) * 1.e+3 / calcon      * tmask(:,:,:) )
          IF( iom_use( "DCAL"   ) ) CALL iom_put( "DCAL"  , zcaldiss(:,:,:) * 1.e+3 * rfact2r   * tmask(:,:,:) )
       ELSE
-         trc3d(:,:,:,jp_pcs0_3d    ) = -1. * LOG10( hi(:,:,:) ) * tmask(:,:,:)
-         trc3d(:,:,:,jp_pcs0_3d + 1) = zco3(:,:,:)              * tmask(:,:,:)
-         trc3d(:,:,:,jp_pcs0_3d + 2) = aksp(:,:,:) / calcon     * tmask(:,:,:)
+         IF( ln_diatrc ) THEN
+            trc3d(:,:,:,jp_pcs0_3d    ) = -1. * LOG10( hi(:,:,:) ) * tmask(:,:,:)
+            trc3d(:,:,:,jp_pcs0_3d + 1) = zco3(:,:,:)              * tmask(:,:,:)
+            trc3d(:,:,:,jp_pcs0_3d + 2) = aksp(:,:,:) / calcon     * tmask(:,:,:)
+         ENDIF
       ENDIF
       !
       IF(ln_ctl)   THEN  ! print mean trends (used for debugging)
@@ -222,4 +224,4 @@ CONTAINS
    END SUBROUTINE p4z_lys
 #endif 
    !!======================================================================
-END MODULE  p4zlys
+END MODULE p4zlys

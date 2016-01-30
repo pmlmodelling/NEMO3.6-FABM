@@ -2,8 +2,9 @@
 &namdom        !   space and time domain (bathymetry, mesh, timestep)
 !-----------------------------------------------------------------------
    nn_bathy    =    1      !  compute (=0) or read (=1) the bathymetry file
-   nn_closea    =   0      !  remove (=0) or keep (=1) closed seas and lakes (ORCA)
-   nn_msh      =    0      !  create (=1) a mesh file or not (=0)
+   rn_bathy    =    0.     !  value of the bathymetry. if (=0) bottom flat at jpkm1
+   nn_closea   =    0      !  remove (=0) or keep (=1) closed seas and lakes (ORCA)
+   nn_msh      =    1      !  create (=1) a mesh file or not (=0)
    rn_hmin     =   -3.     !  min depth of the ocean (>0) or min number of ocean level (<0)
    rn_e3zps_min=   20.     !  partial step thickness is set larger than the minimum of
    rn_e3zps_rat=    0.1    !  rn_e3zps_min and rn_e3zps_rat*e3t, with 0<rn_e3zps_rat<1
@@ -15,6 +16,7 @@
    rn_rdtmin   = 28800.          !  minimum time step on tracers (used if nn_acc=1)
    rn_rdtmax   = 28800.          !  maximum time step on tracers (used if nn_acc=1)
    rn_rdth     =  800.           !  depth variation of tracer time step  (used if nn_acc=1)
+   ln_crs      = .false.      !  Logical switch for coarsening module
    jphgr_msh   =       0               !  type of horizontal mesh
                                        !  = 0 curvilinear coordinate on the sphere read in coordinate.nc
                                        !  = 1 geographical mesh on the sphere with regular grid-spacing

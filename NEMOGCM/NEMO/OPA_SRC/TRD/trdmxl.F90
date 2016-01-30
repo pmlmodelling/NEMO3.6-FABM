@@ -164,13 +164,13 @@ CONTAINS
 
 
 
-		SELECT CASE( ktrd )
-		CASE( jptra_npc  )               ! non-penetrative convection: regrouped with zdf
+      SELECT CASE( ktrd )
+      CASE( jptra_npc  )               ! non-penetrative convection: regrouped with zdf
 !!gm : to be completed ! 
-!		   IF( ....
+!         IF( ....
 !!gm end
-		CASE( jptra_zdfp )               ! iso-neutral diffusion: "pure" vertical diffusion
-		   !                                   ! regroup iso-neutral diffusion in one term
+      CASE( jptra_zdfp )               ! iso-neutral diffusion: "pure" vertical diffusion
+         !                                   ! regroup iso-neutral diffusion in one term
          tmltrd(:,:,jpmxl_ldf) = tmltrd(:,:,jpmxl_ldf) + ( tmltrd(:,:,jpmxl_zdf) - tmltrd(:,:,jpmxl_zdfp) )
          smltrd(:,:,jpmxl_ldf) = smltrd(:,:,jpmxl_ldf) + ( smltrd(:,:,jpmxl_zdf) - smltrd(:,:,jpmxl_zdfp) )
          !                                   ! put in zdf the dia-neutral diffusion
@@ -810,7 +810,7 @@ CONTAINS
 
 
 
-   	nkstp     = nit000 - 1              ! current time step indicator initialization
+      nkstp     = nit000 - 1              ! current time step indicator initialization
 
 
 
@@ -850,7 +850,7 @@ CONTAINS
  
       IF( nn_ctls == 1 ) THEN
          CALL ctl_opn( inum, 'ctlsurf_idx', 'OLD', 'UNFORMATTED', 'SEQUENTIAL', -1, numout, lwp )
-         READ ( inum ) nbol
+         READ ( inum, * ) nbol
          CLOSE( inum )
       END IF
 

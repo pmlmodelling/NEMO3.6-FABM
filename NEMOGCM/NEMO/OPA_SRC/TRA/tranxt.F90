@@ -46,7 +46,6 @@ MODULE tranxt
    USE wrk_nemo        ! Memory allocation
    USE timing          ! Timing
 #if defined key_agrif
-   USE agrif_opa_update
    USE agrif_opa_interp
 #endif
 
@@ -110,14 +109,15 @@ CONTAINS
 
       ! Update after tracer on domain lateral boundaries
       ! 
+#if defined key_agrif
+      CALL Agrif_tra                     ! AGRIF zoom boundaries
+#endif
+      !
       CALL lbc_lnk( tsa(:,:,:,jp_tem), 'T', 1._wp )      ! local domain boundaries  (T-point, unchanged sign)
       CALL lbc_lnk( tsa(:,:,:,jp_sal), 'T', 1._wp )
       !
 #if defined key_bdy 
       IF( lk_bdy )   CALL bdy_tra( kt )  ! BDY open boundaries
-#endif
-#if defined key_agrif
-      CALL Agrif_tra                     ! AGRIF zoom boundaries
 #endif
  
       ! set time step size (Euler/Leapfrog)
@@ -148,14 +148,9 @@ CONTAINS
            &                                                              sbc_tsc, sbc_tsc_b, jpts )  ! variable volume level (vvl) 
          ELSE                 ;   CALL tra_nxt_fix( kt, nit000,         'TRA', tsb, tsn, tsa, jpts )  ! fixed    volume level 
          ENDIF
-      ENDIF 
+      ENDIF     
       !
-#if defined key_agrif
-      ! Update tracer at AGRIF zoom boundaries
-      IF( .NOT.Agrif_Root() )    CALL Agrif_Update_Tra( kt )      ! children only
-#endif      
-      !
-      ! trends computation
+     ! trends computation
       IF( l_trdtra ) THEN      ! trend of the Asselin filter (tb filtered - tb)/dt     
          DO jk = 1, jpkm1
             zfact = 1._wp / r2dtra(jk)             

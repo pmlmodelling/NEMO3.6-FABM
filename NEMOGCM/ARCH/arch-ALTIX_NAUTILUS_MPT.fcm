@@ -23,6 +23,8 @@
 # MK          make
 # USER_INC    complete list of include files
 # USER_LIB    complete list of libraries to pass to the linker
+# CC          C compiler used to compile conv for AGRIF
+# CFLAGS      compiler flags used with CC
 #
 # Note that:
 #  - unix variables "$..." are accpeted and will be evaluated before calling fcm.
@@ -57,3 +59,6 @@
 # - if debugging use these flags
 #FCFLAGS             -g -traceback -r8 -O0 -xT -ip -vec-report0
 #FFLAGS              -g -traceback -r8 -O0 -xT -ip -vec-report0
+
+%CC                  cc
+%CFLAGS              -O0

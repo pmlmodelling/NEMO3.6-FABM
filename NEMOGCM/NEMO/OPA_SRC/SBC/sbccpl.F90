@@ -1028,11 +1028,13 @@ CONTAINS
       IF( srcv(jpr_ocx1)%laction ) THEN                      ! received by sas in case of opa <-> sas coupling
          ssu_m(:,:) = frcv(jpr_ocx1)%z3(:,:,1)
          ub (:,:,1) = ssu_m(:,:)                             ! will be used in sbcice_lim in the call of lim_sbc_tau
+         un (:,:,1) = ssu_m(:,:)                             ! will be used in sbc_cpl_snd if atmosphere coupling
          CALL iom_put( 'ssu_m', ssu_m )
       ENDIF
       IF( srcv(jpr_ocy1)%laction ) THEN
          ssv_m(:,:) = frcv(jpr_ocy1)%z3(:,:,1)
          vb (:,:,1) = ssv_m(:,:)                             ! will be used in sbcice_lim in the call of lim_sbc_tau
+         vn (:,:,1) = ssv_m(:,:)                             ! will be used in sbc_cpl_snd if atmosphere coupling
          CALL iom_put( 'ssv_m', ssv_m )
       ENDIF
       !                                                      ! ======================== !
@@ -1742,7 +1744,7 @@ CONTAINS
                   WHERE( SUM( a_i, dim=3 ) /= 0. )
                      ztmp3(:,:,1) = SUM( tn_ice * a_i, dim=3 ) / SUM( a_i, dim=3 )
                   ELSEWHERE
-                     ztmp3(:,:,1) = rt0 ! TODO: Is freezing point a good default? (Maybe SST is better?)
+                     ztmp3(:,:,1) = rt0
                   END WHERE
                CASE default   ;   CALL ctl_stop( 'sbc_cpl_snd: wrong definition of sn_snd_temp%clcat' )
                END SELECT
@@ -1773,13 +1775,42 @@ CONTAINS
       !                                                      !           Albedo          !
       !                                                      ! ------------------------- !
       IF( ssnd(jps_albice)%laction ) THEN                         ! ice 
-         SELECT CASE( sn_snd_alb%cldes )
-         CASE( 'ice'          )   ; ztmp3(:,:,1:jpl) = alb_ice(:,:,1:jpl)
-         CASE( 'weighted ice' )   ; ztmp3(:,:,1:jpl) = alb_ice(:,:,1:jpl) * a_i(:,:,1:jpl)
-         CASE default             ; CALL ctl_stop( 'sbc_cpl_snd: wrong definition of sn_snd_alb%cldes' )
+          SELECT CASE( sn_snd_alb%cldes )
+          CASE( 'ice' )
+             SELECT CASE( sn_snd_alb%clcat )
+             CASE( 'yes' )   
+                ztmp3(:,:,1:jpl) = alb_ice(:,:,1:jpl)
+             CASE( 'no' )
+                WHERE( SUM( a_i, dim=3 ) /= 0. )
+                   ztmp1(:,:) = SUM( alb_ice (:,:,1:jpl) * a_i(:,:,1:jpl), dim=3 ) / SUM( a_i(:,:,1:jpl), dim=3 )
+                ELSEWHERE
+                   ztmp1(:,:) = albedo_oce_mix(:,:)
+                END WHERE
+             CASE default   ;   CALL ctl_stop( 'sbc_cpl_snd: wrong definition of sn_snd_alb%clcat' )
+             END SELECT
+          CASE( 'weighted ice' )   ;
+             SELECT CASE( sn_snd_alb%clcat )
+             CASE( 'yes' )   
+                ztmp3(:,:,1:jpl) =  alb_ice(:,:,1:jpl) * a_i(:,:,1:jpl)
+             CASE( 'no' )
+                WHERE( fr_i (:,:) > 0. )
+                   ztmp1(:,:) = SUM (  alb_ice(:,:,1:jpl) * a_i(:,:,1:jpl), dim=3 )
+                ELSEWHERE
+                   ztmp1(:,:) = 0.
+                END WHERE
+             CASE default   ;   CALL ctl_stop( 'sbc_cpl_snd: wrong definition of sn_snd_ice%clcat' )
+             END SELECT
+          CASE default      ;   CALL ctl_stop( 'sbc_cpl_snd: wrong definition of sn_snd_alb%cldes' )
          END SELECT
-         CALL cpl_snd( jps_albice, isec, ztmp3, info )
+
+         SELECT CASE( sn_snd_alb%clcat )
+            CASE( 'yes' )   
+               CALL cpl_snd( jps_albice, isec, ztmp3, info )      !-> MV this has never been checked in coupled mode
+            CASE( 'no'  )   
+               CALL cpl_snd( jps_albice, isec, RESHAPE ( ztmp1, (/jpi,jpj,1/) ), info ) 
+         END SELECT
       ENDIF
+
       IF( ssnd(jps_albmix)%laction ) THEN                         ! mixed ice-ocean
          ztmp1(:,:) = albedo_oce_mix(:,:) * zfr_l(:,:)
          DO jl=1,jpl

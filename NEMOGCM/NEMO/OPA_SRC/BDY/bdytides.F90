@@ -415,7 +415,7 @@ CONTAINS
       
       ! Absolute time from model initialization:   
       IF( PRESENT(kit) ) THEN  
-         z_arg = ( kt + (kit+0.5_wp*(time_add-1)) / REAL(nn_baro,wp) ) * rdt
+         z_arg = ( kt + (kit+time_add-1) / REAL(nn_baro,wp) ) * rdt
       ELSE                              
          z_arg = ( kt + time_add ) * rdt
       ENDIF

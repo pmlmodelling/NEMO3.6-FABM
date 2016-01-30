@@ -75,7 +75,7 @@ CONTAINS
       !-------------------
       INTEGER  ::   ib_bdy, ii, ij, ik, igrd, ib, ir, iseg ! dummy loop indices
       INTEGER  ::   icount, icountr, ibr_max, ilen1, ibm1  ! local integers
-      INTEGER  ::   iw, ie, is, in, inum, id_dummy         !   -       -
+      INTEGER  ::   iwe, ies, iso, ino, inum, id_dummy         !   -       -
       INTEGER  ::   igrd_start, igrd_end, jpbdta           !   -       -
       INTEGER  ::   jpbdtau, jpbdtas                       !   -       -
       INTEGER  ::   ib_bdy1, ib_bdy2, ib1, ib2             !   -       -
@@ -776,10 +776,10 @@ CONTAINS
 !      ie = mig(1) + nlci-1 - 1   ! if monotasking and no zoom, ie=jpim1
 !      is = mjg(1) + 1            ! if monotasking and no zoom, is=2
 !      in = mjg(1) + nlcj-1 - 1   ! if monotasking and no zoom, in=jpjm1      
-      iw = mig(1) - jpizoom + 2         ! if monotasking and no zoom, iw=2
-      ie = mig(1) + nlci - jpizoom - 1  ! if monotasking and no zoom, ie=jpim1
-      is = mjg(1) - jpjzoom + 2         ! if monotasking and no zoom, is=2
-      in = mjg(1) + nlcj - jpjzoom - 1  ! if monotasking and no zoom, in=jpjm1
+      iwe = mig(1) - jpizoom + 2         ! if monotasking and no zoom, iw=2
+      ies = mig(1) + nlci - jpizoom - 1  ! if monotasking and no zoom, ie=jpim1
+      iso = mjg(1) - jpjzoom + 2         ! if monotasking and no zoom, is=2
+      ino = mjg(1) + nlcj - jpjzoom - 1  ! if monotasking and no zoom, in=jpjm1
 
       ALLOCATE( nbondi_bdy(nb_bdy))
       ALLOCATE( nbondj_bdy(nb_bdy))
@@ -852,8 +852,8 @@ CONTAINS
                   ENDIF    
                ENDIF
                ! check if point is in local domain
-               IF(  nbidta(ib,igrd,ib_bdy) >= iw .AND. nbidta(ib,igrd,ib_bdy) <= ie .AND.   &
-                  & nbjdta(ib,igrd,ib_bdy) >= is .AND. nbjdta(ib,igrd,ib_bdy) <= in       ) THEN
+               IF(  nbidta(ib,igrd,ib_bdy) >= iwe .AND. nbidta(ib,igrd,ib_bdy) <= ies .AND.   &
+                  & nbjdta(ib,igrd,ib_bdy) >= iso .AND. nbjdta(ib,igrd,ib_bdy) <= ino      ) THEN
                   !
                   icount = icount  + 1
                   !
@@ -889,14 +889,15 @@ CONTAINS
          com_west_b = 0
          com_south_b = 0
          com_north_b = 0
+
          DO igrd = 1, jpbgrd
             icount  = 0
             ! Loop on rimwidth to ensure outermost points come first in the local arrays.
             DO ir=1, nn_rimwidth(ib_bdy)
                DO ib = 1, nblendta(igrd,ib_bdy)
                   ! check if point is in local domain and equals ir
-                  IF(  nbidta(ib,igrd,ib_bdy) >= iw .AND. nbidta(ib,igrd,ib_bdy) <= ie .AND.   &
-                     & nbjdta(ib,igrd,ib_bdy) >= is .AND. nbjdta(ib,igrd,ib_bdy) <= in .AND.   &
+                  IF(  nbidta(ib,igrd,ib_bdy) >= iwe .AND. nbidta(ib,igrd,ib_bdy) <= ies .AND.   &
+                     & nbjdta(ib,igrd,ib_bdy) >= iso .AND. nbjdta(ib,igrd,ib_bdy) <= ino .AND.   &
                      & nbrdta(ib,igrd,ib_bdy) == ir  ) THEN
                      !
                      icount = icount  + 1
@@ -1593,7 +1594,7 @@ CONTAINS
                nstop = nstop + 1
             ELSE
                ! This is a corner
-               WRITE(numout,*) 'Found a South-West corner at (i,j): ', jpiwob(ib), jpjwdt(ib)
+               IF(lwp) WRITE(numout,*) 'Found a South-West corner at (i,j): ', jpiwob(ib), jpjwdt(ib)
                CALL bdy_ctl_corn(npckgw(ib), icornw(ib,1))
                itest=itest+1
             ENDIF
@@ -1607,7 +1608,7 @@ CONTAINS
                nstop = nstop + 1
             ELSE
                ! This is a corner
-               WRITE(numout,*) 'Found a North-West corner at (i,j): ', jpiwob(ib), jpjwft(ib)
+               IF(lwp) WRITE(numout,*) 'Found a North-West corner at (i,j): ', jpiwob(ib), jpjwft(ib)
                CALL bdy_ctl_corn(npckgw(ib), icornw(ib,2))
                itest=itest+1
             ENDIF
@@ -1637,7 +1638,7 @@ CONTAINS
                nstop = nstop + 1 
             ELSE
                ! This is a corner
-               WRITE(numout,*) 'Found a South-East corner at (i,j): ', jpieob(ib)+1, jpjedt(ib)
+               IF(lwp) WRITE(numout,*) 'Found a South-East corner at (i,j): ', jpieob(ib)+1, jpjedt(ib)
                CALL bdy_ctl_corn(npckge(ib), icorne(ib,1))
                itest=itest+1
             ENDIF
@@ -1651,7 +1652,7 @@ CONTAINS
                nstop = nstop + 1
             ELSE
                ! This is a corner
-               WRITE(numout,*) 'Found a North-East corner at (i,j): ', jpieob(ib)+1, jpjeft(ib)
+               IF(lwp) WRITE(numout,*) 'Found a North-East corner at (i,j): ', jpieob(ib)+1, jpjeft(ib)
                CALL bdy_ctl_corn(npckge(ib), icorne(ib,2))
                itest=itest+1
             ENDIF

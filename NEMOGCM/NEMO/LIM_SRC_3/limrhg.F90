@@ -158,7 +158,7 @@ CONTAINS
       CALL wrk_alloc( jpi,jpj, zpresh, zfrld1, zmass1, zcorl1, za1ct , zpreshc, zfrld2, zmass2, zcorl2, za2ct )
       CALL wrk_alloc( jpi,jpj, u_oce2, u_ice2, v_oce1 , v_ice1 , zmask               )
       CALL wrk_alloc( jpi,jpj, zf1   , zu_ice, zf2   , zv_ice , zdt    , zds  )
-      CALL wrk_alloc( jpi,jpj, zdt   , zds   , zs1   , zs2   , zs12   , zresr , zpice                 )
+      CALL wrk_alloc( jpi,jpj, zs1   , zs2   , zs12   , zresr , zpice                 )
 
 #if  defined key_lim2 && ! defined key_lim2_vp
 # if defined key_agrif
@@ -689,7 +689,7 @@ CONTAINS
       CALL wrk_dealloc( jpi,jpj, zpresh, zfrld1, zmass1, zcorl1, za1ct , zpreshc, zfrld2, zmass2, zcorl2, za2ct )
       CALL wrk_dealloc( jpi,jpj, u_oce2, u_ice2, v_oce1 , v_ice1 , zmask               )
       CALL wrk_dealloc( jpi,jpj, zf1   , zu_ice, zf2   , zv_ice , zdt    , zds  )
-      CALL wrk_dealloc( jpi,jpj, zdt   , zds   , zs1   , zs2   , zs12   , zresr , zpice                 )
+      CALL wrk_dealloc( jpi,jpj, zs1   , zs2   , zs12   , zresr , zpice                 )
 
    END SUBROUTINE lim_rhg
 
