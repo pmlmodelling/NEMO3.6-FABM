@@ -113,7 +113,6 @@ CONTAINS
       ! Initialisation of tracers Initial Conditions
       IF( ln_trcdta )      CALL trc_dta_init(jptra)
 
-
       IF( ln_rsttr ) THEN
         !
         CALL trc_rst_read              ! restart from a file
@@ -141,6 +140,14 @@ CONTAINS
             ENDDO
             CALL wrk_dealloc( jpi, jpj, jpk, ztrcdta )
         ENDIF
+! slwa temporary insert initialise tracer
+            trn(:,:,:,:)  = 0._wp
+            if(nproc.eq.39)then
+              DO jn = 1, jptra
+                  trn(:,:,:,jn) = 100._wp * tmask(:,:,:)
+              ENDDO
+            endif
+!!!! slwa temp
         !
         trb(:,:,:,:) = trn(:,:,:,:)
         ! 
