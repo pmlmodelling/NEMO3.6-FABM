@@ -144,6 +144,7 @@ CONTAINS
       LOGICAL  ::   ll_init			    ! if true, special startup of 2d equations
       INTEGER  ::   ji, jj, jk, jn   		! dummy loop indices
       INTEGER  ::   ikbu, ikbv, noffset    	! local integers
+      REAL(wp) ::   zmdi
       REAL(wp) ::   zraur, z1_2dt_b, z2dt_bf  	! local scalars
       REAL(wp) ::   zx1, zy1, zx2, zy2         !   -      -
       REAL(wp) ::   z1_12, z1_8, z1_4, z1_2 	  !   -      -
@@ -169,6 +170,7 @@ CONTAINS
       CALL wrk_alloc( jpi, jpj, zsshu_a, zsshv_a                                   )
       CALL wrk_alloc( jpi, jpj, zhf )
       !
+      zmdi=1.e+20                               !  missing data indicator for masking
       !                                         !* Local constant initialization
       z1_12 = 1._wp / 12._wp 
       z1_8  = 0.125_wp                                   
