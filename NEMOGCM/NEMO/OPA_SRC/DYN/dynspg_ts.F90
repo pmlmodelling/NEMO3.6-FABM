@@ -40,6 +40,7 @@ MODULE dynspg_ts
    USE wrk_nemo        ! Memory Allocation
    USE timing          ! Timing    
    USE sbcapr          ! surface boundary condition: atmospheric pressure
+   USE diatmb          ! Top,middle,bottom output
    USE dynadv, ONLY: ln_dynadv_vec
 #if defined key_agrif
    USE agrif_opa_interp ! agrif
@@ -143,6 +144,7 @@ CONTAINS
       LOGICAL  ::   ll_init			    ! if true, special startup of 2d equations
       INTEGER  ::   ji, jj, jk, jn   		! dummy loop indices
       INTEGER  ::   ikbu, ikbv, noffset    	! local integers
+      REAL(wp) ::   zmdi
       REAL(wp) ::   zraur, z1_2dt_b, z2dt_bf  	! local scalars
       REAL(wp) ::   zx1, zy1, zx2, zy2         !   -      -
       REAL(wp) ::   z1_12, z1_8, z1_4, z1_2 	  !   -      -
@@ -168,6 +170,7 @@ CONTAINS
       CALL wrk_alloc( jpi, jpj, zsshu_a, zsshv_a                                   )
       CALL wrk_alloc( jpi, jpj, zhf )
       !
+      zmdi=1.e+20                               !  missing data indicator for masking
       !                                         !* Local constant initialization
       z1_12 = 1._wp / 12._wp 
       z1_8  = 0.125_wp                                   
@@ -925,6 +928,10 @@ CONTAINS
       CALL wrk_dealloc( jpi, jpj, zsshu_a, zsshv_a                                   )
       CALL wrk_dealloc( jpi, jpj, zhf )
       !
+      IF ( ln_diatmb ) THEN
+         CALL iom_put( "baro_u" , un_b*umask(:,:,1)+zmdi*(1-umask(:,:,1 ) ) )  ! Barotropic  U Velocity
+         CALL iom_put( "baro_v" , vn_b*vmask(:,:,1)+zmdi*(1-vmask(:,:,1 ) ) )  ! Barotropic  V Velocity
+      ENDIF
       IF( nn_timing == 1 )  CALL timing_stop('dyn_spg_ts')
       !
    END SUBROUTINE dyn_spg_ts

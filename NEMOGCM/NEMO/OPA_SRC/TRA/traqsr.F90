@@ -45,6 +45,7 @@ MODULE traqsr
    LOGICAL , PUBLIC ::   ln_qsr_bio   !: bio-model      light absorption flag
    LOGICAL , PUBLIC ::   ln_qsr_ice   !: light penetration for ice-model LIM3 (clem)
    INTEGER , PUBLIC ::   nn_chldta    !: use Chlorophyll data (=1) or not (=0)
+   INTEGER , PUBLIC ::   nn_kd490dta  !: use kd490dta data (=1) or not (=0)
    REAL(wp), PUBLIC ::   rn_abs       !: fraction absorbed in the very near surface (RGB & 2 bands)
    REAL(wp), PUBLIC ::   rn_si0       !: very near surface depth of extinction      (RGB & 2 bands)
    REAL(wp), PUBLIC ::   rn_si1       !: deepest depth of extinction (water type I)       (2 bands)
@@ -53,6 +54,7 @@ MODULE traqsr
    REAL(wp) ::   xsi0r                           !: inverse of rn_si0
    REAL(wp) ::   xsi1r                           !: inverse of rn_si1
    TYPE(FLD), ALLOCATABLE, DIMENSION(:) ::   sf_chl   ! structure of input Chl (file informations, fields read)
+   TYPE(FLD), ALLOCATABLE, DIMENSION(:) ::   sf_kd490 ! structure of input kd490 (file informations, fields read)
    INTEGER, PUBLIC ::   nksr              ! levels below which the light cannot penetrate ( depth larger than 391 m)
    REAL(wp), DIMENSION(3,61) ::   rkrgb   !: tabulated attenuation coefficients for RGB absorption
 
@@ -305,6 +307,50 @@ CONTAINS
             ENDIF
             !
          ENDIF
+! slwa
+         IF( nn_kd490dta == 1 ) THEN                      !  use KD490 data read in   !
+            !                                             ! ------------------------- !
+               nksr = jpk - 1
+               !
+               CALL fld_read( kt, 1, sf_kd490 )     ! Read kd490 data and provide it at the current time step
+               !
+               zcoef  = ( 1. - rn_abs )
+               ze0(:,:,1) = rn_abs  * qsr(:,:)
+               ze1(:,:,1) = zcoef * qsr(:,:)
+               zea(:,:,1) =         qsr(:,:)
+               !
+               DO jk = 2, nksr+1
+!CDIR NOVERRCHK
+                  DO jj = 1, jpj
+!CDIR NOVERRCHK   
+                     DO ji = 1, jpi
+                        zc0 = ze0(ji,jj,jk-1) * EXP( - fse3t(ji,jj,jk-1) * xsi0r     )
+                        zc1 = ze1(ji,jj,jk-1) * EXP( - fse3t(ji,jj,jk-1) * sf_kd490(1)%fnow(ji,jj,1) )
+                        ze0(ji,jj,jk) = zc0
+                        ze1(ji,jj,jk) = zc1
+                        zea(ji,jj,jk) = ( zc0 + zc1 ) * tmask(ji,jj,jk)
+                     END DO
+                  END DO
+               END DO
+               ! clem: store attenuation coefficient of the first ocean level
+               IF ( ln_qsr_ice ) THEN
+                  DO jj = 1, jpj
+                     DO ji = 1, jpi
+                        zzc0 = rn_abs * EXP( - fse3t(ji,jj,1) * xsi0r     )
+                        zzc1 = zcoef  * EXP( - fse3t(ji,jj,1) * sf_kd490(1)%fnow(ji,jj,1) )
+                        fraqsr_1lev(ji,jj) = 1.0 - ( zzc0 + zzc1 ) * tmask(ji,jj,2) 
+                     END DO
+                  END DO
+               ENDIF
+               !
+               DO jk = 1, nksr                                        ! compute and add qsr trend to ta
+                  qsr_hc(:,:,jk) = r1_rau0_rcp * ( zea(:,:,jk) - zea(:,:,jk+1) )
+               END DO
+               zea(:,:,nksr+1:jpk) = 0.e0     ! 
+               CALL iom_put( 'qsr3d', zea )   ! Shortwave Radiation 3D distribution
+               !
+        ENDIF   ! use KD490 data
+!slwa
          !
          !                                        Add to the general trend
          DO jk = 1, nksr
@@ -373,9 +419,10 @@ CONTAINS
       !
       CHARACTER(len=100) ::   cn_dir   ! Root directory for location of ssr files
       TYPE(FLD_N)        ::   sn_chl   ! informations about the chlorofyl field to be read
+      TYPE(FLD_N)        ::   sn_kd490 ! informations about the kd490 field to be read
       !!
-      NAMELIST/namtra_qsr/  sn_chl, cn_dir, ln_traqsr, ln_qsr_rgb, ln_qsr_2bd, ln_qsr_bio, ln_qsr_ice,  &
-         &                  nn_chldta, rn_abs, rn_si0, rn_si1
+      NAMELIST/namtra_qsr/  sn_chl, sn_kd490, cn_dir, ln_traqsr, ln_qsr_rgb, ln_qsr_2bd, ln_qsr_bio, ln_qsr_ice,  &
+         &                  nn_chldta, rn_abs, rn_si0, rn_si1, nn_kd490dta
       !!----------------------------------------------------------------------
 
       !
@@ -408,6 +455,7 @@ CONTAINS
          WRITE(numout,*) '      RGB & 2 bands: fraction of light (rn_si1)    rn_abs = ', rn_abs
          WRITE(numout,*) '      RGB & 2 bands: shortess depth of extinction  rn_si0 = ', rn_si0
          WRITE(numout,*) '      2 bands: longest depth of extinction         rn_si1 = ', rn_si1
+         WRITE(numout,*) '      read in KD490 data                       nn_kd490dta  = ', nn_kd490dta
       ENDIF
 
       IF( ln_traqsr ) THEN     ! control consistency
@@ -421,6 +469,7 @@ CONTAINS
          IF( ln_qsr_rgb  )   ioptio = ioptio + 1
          IF( ln_qsr_2bd  )   ioptio = ioptio + 1
          IF( ln_qsr_bio  )   ioptio = ioptio + 1
+         IF( nn_kd490dta == 1 )   ioptio = ioptio + 1
          !
          IF( ioptio /= 1 ) &
             CALL ctl_stop( '          Choose ONE type of light penetration in namelist namtra_qsr',  &
@@ -430,6 +479,7 @@ CONTAINS
          IF( ln_qsr_rgb .AND. nn_chldta == 1 )   nqsr =  2
          IF( ln_qsr_2bd                      )   nqsr =  3
          IF( ln_qsr_bio                      )   nqsr =  4
+         IF( nn_kd490dta == 1                )   nqsr =  5
          !
          IF(lwp) THEN                   ! Print the choice
             WRITE(numout,*)
@@ -437,6 +487,7 @@ CONTAINS
             IF( nqsr ==  2 )   WRITE(numout,*) '         R-G-B   light penetration - Chl data '
             IF( nqsr ==  3 )   WRITE(numout,*) '         2 bands light penetration'
             IF( nqsr ==  4 )   WRITE(numout,*) '         bio-model light penetration'
+            IF( nqsr ==  5 )   WRITE(numout,*) '         KD490 light penetration'
          ENDIF
          !
       ENDIF
@@ -446,8 +497,20 @@ CONTAINS
          !
          xsi0r = 1.e0 / rn_si0
          xsi1r = 1.e0 / rn_si1
+         IF( nn_kd490dta == 1 ) THEN           !* KD490 data : set sf_kd490 structure
+            IF(lwp) WRITE(numout,*)
+            IF(lwp) WRITE(numout,*) '        KD490 read in a file'
+            ALLOCATE( sf_kd490(1), STAT=ierror )
+            IF( ierror > 0 ) THEN
+               CALL ctl_stop( 'tra_qsr_init: unable to allocate sf_kd490 structure' )   ;   RETURN
+            ENDIF
+            ALLOCATE( sf_kd490(1)%fnow(jpi,jpj,1)   )
+            IF( sn_kd490%ln_tint )ALLOCATE( sf_kd490(1)%fdta(jpi,jpj,1,2) )
+            !                                        ! fill sf_kd490 with sn_kd490 and control print
+            CALL fld_fill( sf_kd490, (/ sn_kd490 /), cn_dir, 'tra_qsr_init',   &
+               &                                         'Solar penetration function of read KD490', 'namtra_qsr' )
          !                                ! ---------------------------------- !
-         IF( ln_qsr_rgb ) THEN            !  Red-Green-Blue light penetration  !
+         ELSEIF( ln_qsr_rgb ) THEN            !  Red-Green-Blue light penetration  !
             !                             ! ---------------------------------- !
             !
             CALL trc_oce_rgb( rkrgb )           !* tabulated attenuation coef.

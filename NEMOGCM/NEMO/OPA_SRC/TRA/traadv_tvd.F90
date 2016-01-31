@@ -99,6 +99,10 @@ CONTAINS
          l_trd = .FALSE.
          IF( ( cdtype == 'TRA' .AND. l_trdtra ) .OR. ( cdtype == 'TRC' .AND. l_trdtrc ) ) l_trd = .TRUE.
       ENDIF
+! slwa unless you use l_trdtra too, the above switches off trend calculations for l_trdtrc
+         l_trd = .FALSE.
+         IF( ( cdtype == 'TRA' .AND. l_trdtra ) .OR. ( cdtype == 'TRC' .AND. l_trdtrc ) ) l_trd = .TRUE.
+!slwa
       !
       IF( l_trd )  THEN
          CALL wrk_alloc( jpi, jpj, jpk, ztrdx, ztrdy, ztrdz )
