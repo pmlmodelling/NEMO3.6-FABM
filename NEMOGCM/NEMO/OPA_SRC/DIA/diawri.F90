@@ -43,6 +43,8 @@ MODULE diawri
    USE lbclnk          ! ocean lateral boundary conditions (or mpp link)
    USE in_out_manager  ! I/O manager
    USE diadimg         ! dimg direct access file format output
+   USE diatmb          ! Top,middle,bottom output
+   USE dia25h          ! 25h Mean output
    USE iom
    USE ioipsl
    USE dynspg_oce, ONLY: un_adv, vn_adv ! barotropic velocities     
@@ -378,6 +380,15 @@ CONTAINS
       !
       CALL wrk_dealloc( jpi , jpj      , z2d )
       CALL wrk_dealloc( jpi , jpj, jpk , z3d )
+      !
+      ! If we want tmb values 
+
+      IF (ln_diatmb) THEN
+         CALL dia_tmb
+      ENDIF
+      IF (ln_dia25h) THEN
+         CALL dia_25h( kt )
+      ENDIF
       !
       IF( nn_timing == 1 )   CALL timing_stop('dia_wri')
       !

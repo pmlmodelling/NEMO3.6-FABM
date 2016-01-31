@@ -40,6 +40,7 @@ MODULE dynspg_ts
    USE wrk_nemo        ! Memory Allocation
    USE timing          ! Timing    
    USE sbcapr          ! surface boundary condition: atmospheric pressure
+   USE diatmb          ! Top,middle,bottom output
    USE dynadv, ONLY: ln_dynadv_vec
 #if defined key_agrif
    USE agrif_opa_interp ! agrif
@@ -925,6 +926,10 @@ CONTAINS
       CALL wrk_dealloc( jpi, jpj, zsshu_a, zsshv_a                                   )
       CALL wrk_dealloc( jpi, jpj, zhf )
       !
+      IF ( ln_diatmb ) THEN
+         CALL iom_put( "baro_u" , un_b*umask(:,:,1)+zmdi*(1-umask(:,:,1 ) ) )  ! Barotropic  U Velocity
+         CALL iom_put( "baro_v" , vn_b*vmask(:,:,1)+zmdi*(1-vmask(:,:,1 ) ) )  ! Barotropic  V Velocity
+      ENDIF
       IF( nn_timing == 1 )  CALL timing_stop('dyn_spg_ts')
       !
    END SUBROUTINE dyn_spg_ts
