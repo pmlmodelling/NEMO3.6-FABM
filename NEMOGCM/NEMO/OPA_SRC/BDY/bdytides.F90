@@ -101,6 +101,7 @@ CONTAINS
       ENDIF
 
       REWIND(numnam_cfg)
+      REWIND(numnam_ref)   ! slwa
 
       DO ib_bdy = 1, nb_bdy
          IF( nn_dyn2d_dta(ib_bdy) .ge. 2 ) THEN
