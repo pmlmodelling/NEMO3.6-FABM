@@ -12,7 +12,7 @@ MODULE dia25h
    USE iom             ! I/0 library
    USE wrk_nemo        ! working arrays
 #if defined key_zdftke 
-   USE zdftke, ONLY: en
+   USE zdf_oce, ONLY: en
 #endif
    USE zdf_oce, ONLY: avt, avm
 #if defined key_zdfgls
