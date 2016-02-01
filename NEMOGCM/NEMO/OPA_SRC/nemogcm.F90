@@ -84,6 +84,8 @@ MODULE nemogcm
    USE sbc_oce, ONLY: lk_oasis
    USE stopar
    USE stopts
+   USE diatmb          ! Top,middle,bottom output
+   USE dia25h          ! 25h mean output
 
    IMPLICIT NONE
    PRIVATE
@@ -474,6 +476,8 @@ CONTAINS
       !                                     ! Assimilation increments
       IF( lk_asminc     )   CALL asm_inc_init   ! Initialize assimilation increments
       IF(lwp) WRITE(numout,*) 'Euler time step switch is ', neuler
+                            CALL dia_tmb_init  ! TMB outputs
+                            CALL dia_25h_init  ! 25h mean  outputs
       !
    END SUBROUTINE nemo_init
 
@@ -629,6 +633,7 @@ CONTAINS
       USE ldfdyn_oce, ONLY: ldfdyn_oce_alloc
       USE ldftra_oce, ONLY: ldftra_oce_alloc
       USE trc_oce   , ONLY: trc_oce_alloc
+      USE diainsitutem, ONLY: insitu_tem_alloc
 #if defined key_diadct 
       USE diadct    , ONLY: diadct_alloc 
 #endif 
@@ -645,6 +650,7 @@ CONTAINS
       ierr = ierr + ldfdyn_oce_alloc()          ! ocean lateral  physics : dynamics
       ierr = ierr + ldftra_oce_alloc()          ! ocean lateral  physics : tracers
       ierr = ierr + zdf_oce_alloc   ()          ! ocean vertical physics
+      ierr = ierr + insitu_tem_alloc()
       !
       ierr = ierr + trc_oce_alloc   ()          ! shared TRC / TRA arrays
       !
