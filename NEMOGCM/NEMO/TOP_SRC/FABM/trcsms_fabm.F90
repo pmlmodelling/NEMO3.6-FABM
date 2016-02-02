@@ -24,6 +24,8 @@ MODULE trcsms_fabm
 
    USE st2D_fabm
 
+   USE fldread         !  time interpolation
+
    USE fabm
 
    IMPLICIT NONE
@@ -53,6 +55,14 @@ MODULE trcsms_fabm
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:,:) :: prn,rho
 
    REAL(wp), PUBLIC :: daynumber_in_year
+
+   TYPE type_input_variable
+      TYPE (type_horizontal_variable_id)   :: horizontal_id
+      TYPE(FLD), ALLOCATABLE, DIMENSION(:) :: sf
+      INTEGER                              :: ntimes
+      TYPE(type_input_variable), POINTER   :: next => null()
+   END TYPE
+   TYPE (type_input_variable), POINTER, SAVE :: first_input_variable => NULL()
 
    TYPE (type_bulk_variable_id),SAVE :: swr_id
 
@@ -85,6 +95,8 @@ CONTAINS
       IF(lwp) WRITE(numout,*)
       IF(lwp) WRITE(numout,*) ' trc_sms_fabm:  FABM model'
       IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~~~~'
+
+      CALL update_inputs( kt )
 
       CALL compute_rates
 
@@ -283,19 +295,24 @@ CONTAINS
       !!
       !! ** Purpose :   routine to integrate 2d states in time
       !!
-      !! ** Method  :   
+      !! ** Method  :   based on integration of 3D passive tracer fields
+      !!                implemented in TOP_SRC/TRP/trcnxt.F90, plus
+      !!                tra_nxt_fix in OPA_SRC/TRA/tranxt.F90. Similar to
+      !!                time integration of sea surface height in
+      !!                OPA_SRC/DYN/sshwzv.F90.
       !!----------------------------------------------------------------------
       !
       INTEGER, INTENT(in) ::   kt   ! ocean time-step index
       REAL(wp) :: z2dt
 !!----------------------------------------------------------------------
       !
-      IF( neuler == 0 .AND. kt == nit000 ) THEN
+      IF( neuler == 0 .AND. kt == nittrc000 ) THEN
           z2dt = rdt                  ! set time step size (Euler)
       ELSE
           z2dt = 2._wp * rdt          ! set time step size (Leapfrog)
       ENDIF
 
+      ! Forward Euler time step to compute "now"
       fabm_st2Da(:,:,:) = fabm_st2db(:,:,:) + z2dt * fabm_st2da(:,:,:)
 
       IF( neuler == 0 .AND. kt == nittrc000 ) THEN        ! Euler time-stepping at first time-step
@@ -324,7 +341,30 @@ CONTAINS
       ALLOCATE( rho(jpi, jpj, jpk))
       ! ALLOCATE( tab(...) , STAT=trc_sms_fabm_alloc )
 
-      ! Make FABM aware of diagsntoics that are not needed [not included in output]
+      ! Allocate arrays to hold state for surface-attached and bottom-attached state variables
+      ALLOCATE(fabm_st2Dn(jpi, jpj, jp_fabm_surface+jp_fabm_bottom))
+      ALLOCATE(fabm_st2Da(jpi, jpj, jp_fabm_surface+jp_fabm_bottom))
+      ALLOCATE(fabm_st2Db(jpi, jpj, jp_fabm_surface+jp_fabm_bottom))
+
+      ! Work array to hold surface and bottom fluxes
+      ALLOCATE(flux(jpi,jp_fabm))
+
+      ! Work array to hold extinction coefficients
+      ALLOCATE(ext(jpi))
+
+      ! Allocate work arrays for vertical movement
+      ALLOCATE(w_ct(jpi,jpk,jp_fabm))
+      ALLOCATE(w_if(jpk-1,jp_fabm))
+      ALLOCATE(flux_if(jpk-1,jp_fabm))
+      ALLOCATE(flux_ct(jpk,jp_fabm))
+      ALLOCATE(current_total(jpi,SIZE(model%conserved_quantities)))
+
+      trc_sms_fabm_alloc = 0      ! set to zero if no array to be allocated
+      !
+      IF( trc_sms_fabm_alloc /= 0 ) CALL ctl_warn('trc_sms_fabm_alloc : failed to allocate arrays')
+      !
+
+      ! Make FABM aware of diagnostics that are not needed [not included in output]
       DO jn=1,size(model%diagnostic_variables)
           !model%diagnostic_variables(jn)%save = iom_use(model%diagnostic_variables(jn)%name)
       END DO
@@ -332,7 +372,10 @@ CONTAINS
           !model%horizontal_diagnostic_variables(jn)%save = iom_use(model%horizontal_diagnostic_variables(jn)%name)
       END DO
 
+      ! Provide FABM with domain extents [after this, the save attribute of diagnostic variables can no longe change!]
       call fabm_set_domain(model,jpi, jpj, jpk)
+
+      ! Provide FABM with the vertical indices of the surface and bottom, and the land-sea mask.
       call model%set_bottom_index(mbkt)  ! NB mbkt extents should match dimension lengths provided to fabm_set_domain
       call model%set_surface_index(1)
       call fabm_set_mask(model,tmask,tmask(:,:,1)) ! NB tmask extents should match dimension lengths provided to fabm_set_domain
@@ -341,11 +384,6 @@ CONTAINS
       do jn=1,jp_fabm
          call fabm_link_bulk_state_data(model,jn,trn(:,:,:,jp_fabm_m1+jn))
       end do
-
-      ! Allocate arrays to hold state for surface-attached and bottom-attached state variables
-      ALLOCATE(fabm_st2Dn(jpi, jpj, jp_fabm_surface+jp_fabm_bottom))
-      ALLOCATE(fabm_st2Da(jpi, jpj, jp_fabm_surface+jp_fabm_bottom))
-      ALLOCATE(fabm_st2Db(jpi, jpj, jp_fabm_surface+jp_fabm_bottom))
       DO jn=1,jp_fabm_surface
          CALL fabm_link_surface_state_data(model,jn,fabm_st2Dn(:,:,jn))
       END DO
@@ -372,7 +410,10 @@ CONTAINS
       call fabm_link_horizontal_data(model,standard_variables%surface_downwelling_shortwave_flux,qsr(:,:))
       call fabm_link_horizontal_data(model,standard_variables%bottom_depth_below_geoid,bathy(:,:))
 
-      swr_id  = model%get_bulk_variable_id(standard_variables%downwelling_shortwave_flux)
+      swr_id = model%get_bulk_variable_id(standard_variables%downwelling_shortwave_flux)
+
+      ! Obtain user-specified input variables (read from NetCDF file)
+      call initialize_inputs
 
       ! Check whether FABM has all required data
       call fabm_check_ready(model)
@@ -410,30 +451,83 @@ CONTAINS
       END DO
 
       ! Copy initial condition for interface-attached state variables to "previous" state field
-      ! NB NEMO does this itself for pelagic state variables (trb).
+      ! NB NEMO does this itself for pelagic state variables (trb) in TOP_SRC/trcini.F90.
       fabm_st2Db = fabm_st2Dn
 
-      ! Work array to hold surface and bottom fluxes
-      ALLOCATE(flux(jpi,jp_fabm))
-
-      ! Work array to hold extinction coefficients
-      ALLOCATE(ext(jpi))
-
-      ! Allocate work arrays for vertical movement
-      ALLOCATE(w_ct(jpi,jpk,jp_fabm))
-      ALLOCATE(w_if(jpk-1,jp_fabm))
-      ALLOCATE(flux_if(jpk-1,jp_fabm))
-      ALLOCATE(flux_ct(jpk,jp_fabm))
-      ALLOCATE(current_total(jpi,SIZE(model%conserved_quantities)))
-
+      ! Ensure that all FABM diagnostics have a valid value.
       CALL compute_rates
 
-      trc_sms_fabm_alloc = 0      ! set to zero if no array to be allocated
-      !
-      IF( trc_sms_fabm_alloc /= 0 ) CALL ctl_warn('trc_fabm_alloc : failed to allocate arrays')
-      !
    END FUNCTION trc_sms_fabm_alloc
 
+   SUBROUTINE initialize_inputs
+      TYPE(FLD_N)        :: sn, sn_empty
+      CHARACTER(LEN=256) :: name
+      NAMELIST /variable/ name,sn
+      LOGICAL :: ext
+      INTEGER :: num, ierr, nmlunit
+      TYPE (type_input_variable),POINTER :: input_variable
+      REAL(wp), DIMENSION(1) :: zsteps
+
+      ! Check if fabm_input.nml exists - if not, do nothing and return.
+      INQUIRE( FILE='fabm_input.nml', EXIST=ext )
+      IF (.NOT.ext) return
+
+      ! Open fabm_input.nml
+      CALL ctl_opn( nmlunit, 'fabm_input.nml', 'OLD', 'FORMATTED', 'SEQUENTIAL', -1, num, .FALSE. )
+
+      ! Read any number of "variable" namelists
+      DO
+         ! Initialize namelist variables
+         name = ''
+         sn = sn_empty
+
+         ! Read the namelist
+         READ(nmlunit,nml=variable,err=98,end=99)
+
+         ! Transfer namelist settings to new input_variable object
+         ALLOCATE(input_variable, STAT=ierr)
+         IF( ierr > 0 ) CALL ctl_stop( 'STOP', 'trcsms_fabm:initialize_inputs: unable to allocate input_variable object for variable '//TRIM(name) )
+         input_variable%horizontal_id = fabm_get_horizontal_variable_id(model,name)
+         IF (.NOT.fabm_is_variable_used(input_variable%horizontal_id)) THEN
+            ! This variable was not found among FABM's horizontal variables (at least, those that are read by one or more FABM modules)
+            CALL ctl_stop('STOP', 'trcsms_fabm:initialize_inputs: variable "'//TRIM(name)//'" was not found among horizontal FABM variables.')
+         END IF
+         ALLOCATE(input_variable%sf(1), STAT=ierr)
+         IF( ierr > 0 ) CALL ctl_stop( 'STOP', 'trcsms_fabm:initialize_inputs: unable to allocate sf structure for variable '//TRIM(name) )
+         CALL fld_fill(input_variable%sf, (/sn/), '', 'trcsms_fabm:initialize_inputs', 'FABM variable '//TRIM(name), 'variable' )
+                          ALLOCATE( input_variable%sf(1)%fnow(jpi,jpj,1)   )
+         IF( sn%ln_tint ) ALLOCATE( input_variable%sf(1)%fdta(jpi,jpj,1,2) )
+
+         ! Provide FABM with pointer to field that will receive prescribed data.
+         ! NB source=data_source_user guarantees that the prescribed data takes priority over any data FABM may already have for that variable.
+         CALL fabm_link_horizontal_data(model,input_variable%horizontal_id,input_variable%sf(1)%fnow(:,:,1),source=data_source_user)
+
+         ! Get number of record in file (if there is only one, we will read data only at the very first time step)
+         CALL iom_open ( TRIM( sn%clname ) , num )
+         CALL iom_gettime( num, zsteps, kntime=input_variable%ntimes)
+         CALL iom_close( num )
+
+         ! Prepend new input variable to list.
+         input_variable%next => first_input_variable
+         first_input_variable => input_variable
+      END DO
+
+98    CALL ctl_stop('STOP', 'trcsms_fabm:initialize_inputs: unable to read namelist "variable"')
+
+99    RETURN
+
+   END SUBROUTINE initialize_inputs
+
+   SUBROUTINE update_inputs( kt )
+      INTEGER, INTENT(IN) :: kt
+      TYPE (type_input_variable),POINTER :: input_variable
+
+      input_variable => first_input_variable
+      DO WHILE (ASSOCIATED(input_variable))
+         IF( kt == nit000 .OR. ( kt /= nit000 .AND. input_variable%ntimes > 1 ) ) CALL fld_read( kt, 1, input_variable%sf )
+         input_variable => input_variable%next
+      END DO
+   END SUBROUTINE update_inputs
 
 #else
    !!----------------------------------------------------------------------
