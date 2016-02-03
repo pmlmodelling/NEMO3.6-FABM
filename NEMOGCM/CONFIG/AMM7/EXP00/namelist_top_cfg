@@ -15,8 +15,8 @@
    nn_dttrc      =  1        !  time step frequency for passive sn_tracers
    nn_writetrc   =  5475     !  time step frequency for sn_tracer outputs
    ln_top_euler  = .false.    !  use Euler time-stepping for TOP
-   ln_rsttr      = .false. ! start from a restart file (T) or not (F)
-   nn_rsttr      = 0 ! restart control = 0 initial time step is not compared to the restart file value
+   ln_rsttr      = .true. ! start from a restart file (T) or not (F)
+   nn_rsttr      = 2 ! restart control = 0 initial time step is not compared to the restart file value
                            !                  = 1 do not use the value in the restart file
                            !                  = 2 calendar parameters read in the restart file
    cn_trcrst_in  = "restart_trc"   !  suffix of pass. sn_tracer restart name (input)
@@ -127,7 +127,7 @@
    cn_dir_obc        =  './'      !  root directory for the location of OPEN data files
 !          !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
 !          !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
-   sn_trcobc2(1) = 'amm7skagbdy_trc' ,    -1 , 'TR1'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(1) = 'amm7skagbdy_trc' ,    -1 , 'DIC'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
    rn_trofac(1) = 1
 
 !----------------------------------------------------------------------
