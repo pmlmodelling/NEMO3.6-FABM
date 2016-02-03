@@ -466,7 +466,9 @@ CONTAINS
       LOGICAL :: ext
       INTEGER :: num, ierr, nmlunit
       TYPE (type_input_variable),POINTER :: input_variable
-      REAL(wp), DIMENSION(1) :: zsteps
+      INTEGER , PARAMETER :: nbtimes = 365  !: maximum number of times record in a file
+
+      REAL(wp), DIMENSION(nbtimes) :: zsteps
 
       ! Check if fabm_input.nml exists - if not, do nothing and return.
       INQUIRE( FILE='fabm_input.nml', EXIST=ext )
