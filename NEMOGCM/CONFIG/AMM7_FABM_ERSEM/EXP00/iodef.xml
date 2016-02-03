@@ -515,6 +515,7 @@
           <field field_ref="ssu"          name="uos"     long_name="sea_surface_x_velocity"    />
           <field field_ref="uoce"         name="uo"      long_name="sea_water_x_velocity" />
           <field field_ref="utau"         name="tauuo"   long_name="surface_downward_x_stress" />
+          <field field_ref="ubar"         name="ubar"    long_name="barotropic_x_velocity" />
         </file>
 
         <file id="file24" name_suffix="_grid_V" description="ocean V grid variables" >
@@ -522,6 +523,7 @@
           <field field_ref="ssv"          name="vos"     long_name="sea_surface_y_velocity"    />
           <field field_ref="voce"         name="vo"      long_name="sea_water_y_velocity" />
           <field field_ref="vtau"         name="tauvo"   long_name="surface_downward_y_stress" />
+          <field field_ref="vbar"         name="vbar"    long_name="barotropic_y_velocity" />
         </file>
 
         <file id="file25" name_suffix="_grid_W" description="ocean W grid variables" >

@@ -21,9 +21,12 @@
 
          <field id="toce"         long_name="temperature"                               unit="degC"   grid_ref="grid_T_3D"/>
          <field id="toce_e3t"     long_name="temperature * e3t"                         unit="degC*m" grid_ref="grid_T_3D" > toce * e3t </field >
+         <field id="temper25h"    long_name="25h mean temperature"                      unit="degC"   grid_ref="grid_T_3D"/>
+         <field id="tempis25h"    long_name="25h mean in-situ temperature"              unit="degC"   grid_ref="grid_T_3D"/>
          <field id="soce"         long_name="salinity"                                  unit="psu"    grid_ref="grid_T_3D"/>
          <field id="soce_e3t"     long_name="salinity * e3t"                            unit="psu*m"  grid_ref="grid_T_3D" > soce * e3t </field >
 
+         <field id="salin25h"     long_name="25h mean salinity"                         unit="psu"    grid_ref="grid_T_3D"/>
          <field id="sst"          long_name="sea surface temperature"                   unit="degC"                     />
          <field id="sst_m"        long_name="sea surface temperature: mean"             unit="degC"                     />
          <field id="sst2"         long_name="square of sea surface temperature"         unit="degC2"                     >  sst * sst </field >
@@ -42,6 +45,7 @@
 
          <field id="ssh"          long_name="sea surface height"                        unit="m"                        />
          <field id="ssh_m"        long_name="sea surface height: mean"                  unit="m"                        />
+         <field id="ssh25h"       long_name="sea surface height: 25h mean"              unit="m"                        />
          <field id="ssh2"         long_name="square of sea surface height"              unit="m2"                        >  ssh * ssh </field >
          <field id="sshmax"       long_name="max of sea surface height"            field_ref="ssh"  operation="maximum" />
          <field id="taubot"       long_name="bottom stress"                             unit="N/m2"                     />
@@ -355,11 +359,13 @@
          <field id="e3u"          long_name="U-cell thickness"                               unit="m"        grid_ref="grid_U_3D" />
          <field id="utau"         long_name="Wind Stress along i-axis"                       unit="N/m2"                          />
          <field id="uoce"         long_name="ocean current along i-axis"                     unit="m/s"      grid_ref="grid_U_3D" />
+         <field id="vozocrtx25h"  long_name="ocean current along i-axis: 25h mean "          unit="m/s"      grid_ref="grid_U_3D" />
          <field id="uoce_e3u"     long_name="ocean current along i-axis * e3u"               unit="m2/s"     grid_ref="grid_U_3D"  > uoce * e3u </field>
          <field id="ssu"          long_name="ocean surface current along i-axis"             unit="m/s"                           />
          <field id="ssu_m"        long_name="ocean surface current along i-axis: mean"       unit="m/s"                           />
          <field id="sbu"          long_name="ocean bottom current along i-axis"              unit="m/s"                           />
          <field id="ubar"         long_name="barotropic current along i-axis"                unit="m/s"                           />
+         <field id="baro_u"       long_name="barotropic current along i-axis"                unit="m/s"                           />
          <field id="uocetr_eff"   long_name="Effective ocean transport along i-axis"         unit="m3/s"     grid_ref="grid_U_3D" />
          <field id="uocet"        long_name="ocean transport along i-axis times temperature" unit="degC.m/s" grid_ref="grid_U_3D" />
          <field id="uoces"        long_name="ocean transport along i-axis times salinity"    unit="psu.m/s"  grid_ref="grid_U_3D" />
@@ -386,11 +392,13 @@
          <field id="e3v"          long_name="V-cell thickness"                               unit="m"        grid_ref="grid_V_3D" />
          <field id="vtau"         long_name="Wind Stress along j-axis"                       unit="N/m2"                          />
          <field id="voce"         long_name="ocean current along j-axis"                     unit="m/s"      grid_ref="grid_V_3D" />
+         <field id="vomecrty25h"  long_name="ocean current along j-axis: 25h mean"           unit="m/s"      grid_ref="grid_V_3D" />
          <field id="voce_e3v"     long_name="ocean current along j-axis * e3v"               unit="m2/s"     grid_ref="grid_V_3D"  > voce * e3v </field>
          <field id="ssv"          long_name="ocean surface current along j-axis"             unit="m/s"                           />
          <field id="ssv_m"        long_name="ocean surface current along j-axis: mean"       unit="m/s"                           />
          <field id="sbv"          long_name="ocean bottom current along j-axis"              unit="m/s"                           />
          <field id="vbar"         long_name="barotropic current along j-axis"                unit="m/s"                           />
+         <field id="baro_v"       long_name="barotropic current along j-axis"                unit="m/s"                           />
          <field id="vocetr_eff"   long_name="Effective ocean transport along j-axis"         unit="m3/s"     grid_ref="grid_V_3D" />
          <field id="vocet"        long_name="ocean transport along j-axis times temperature" unit="degC.m/s" grid_ref="grid_V_3D" />
          <field id="voces"        long_name="ocean transport along j-axis times salinity"    unit="psu.m/s"  grid_ref="grid_V_3D" />
@@ -416,13 +424,16 @@
       <field_group id="grid_W" grid_ref="grid_W_3D">
         <field id="e3w"          long_name="W-cell thickness"                            unit="m"   />
         <field id="woce"         long_name="ocean vertical velocity"                  unit="m/s"    />
+        <field id="vomecrtz25h"  long_name="ocean vertical velocity: 25h mean"        unit="m/s"    />
         <field id="woce_e3w"     long_name="ocean vertical velocity * e3v"            unit="m2/s"    > woce * e3w </field>
         <field id="wocetr_eff"   long_name="effective ocean vertical transport"       unit="m3/s"   />
         <!-- woce_eiv: available with key_traldf_eiv and key_diaeiv -->
         <field id="woce_eiv"     long_name="EIV ocean vertical velocity"              unit="m/s"    />
         <!-- woce_eiv: available with key_trabbl_adv -->
         <field id="avt"          long_name="vertical eddy diffusivity"                unit="m2/s"   />
+        <field id="avt25h"       long_name="vertical eddy diffusivity: 25h mean"      unit="m2/s"   />
         <field id="avm"          long_name="vertical eddy viscosity"                  unit="m2/s"   />
+        <field id="avm25h"       long_name="vertical eddy viscosity: 25h mean"        unit="m2/s"   />
         <!-- avs: available with key_zdfddm -->
         <field id="avs"          long_name="salt vertical eddy diffusivity"           unit="m2/s"   />
         <!-- avt_evd and avm_evd: available with ln_zdfevd -->
