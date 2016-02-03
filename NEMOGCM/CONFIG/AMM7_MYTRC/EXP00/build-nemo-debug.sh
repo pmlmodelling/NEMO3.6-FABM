@@ -7,7 +7,7 @@ module load cray-netcdf-hdf5parallel
 NEMO_BUILD_DIR=$HOME/git/NEMO-shelf/NEMOGCM/CONFIG
 RUNDIR=/work/n01/n01/momme/AMM7
 export XIOS_HOME=$HOME/local/xios-intel-debug
-export FABM_HOME=$HOME/local/fabm/nemo
+export FABM_HOME=$HOME/local/fabm/nemo-debug
 
 #ARCH=XC_ARCHER_INTEL_NOSIGNEDZERO
 ARCH=XC_ARCHER_INTEL_NOSIGNEDZERO_DEBUG
