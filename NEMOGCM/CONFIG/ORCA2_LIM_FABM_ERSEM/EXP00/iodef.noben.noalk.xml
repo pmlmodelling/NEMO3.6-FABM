@@ -38,7 +38,6 @@
             <field field_ref="N4_n"      operation="average" />
             <field field_ref="N5_s"      operation="average" />
             <field field_ref="O3_c"      operation="average" />
-            <field field_ref="O3_TA"      operation="average" />
             <field field_ref="O2_o"      operation="average" />
             <field field_ref="P1_c"      operation="average" />
             <field field_ref="P2_c"      operation="average" />
@@ -90,7 +89,7 @@
 	  <field field_ref="saltflx"      name="sosflxdo" />
 	  <field field_ref="taum"                         />
 	  <field field_ref="wspd"         name="sowindsp" />
-          <field field_ref="precip"       name="soprecip" />
+      <field field_ref="precip"       name="soprecip" />
 	  <field field_ref="sbt"                          />
 	</file>
 
@@ -135,7 +134,6 @@
           <field field_ref="N4_n"      operation="average" />
           <field field_ref="N5_s"      operation="average" />
           <field field_ref="O3_c"      operation="average" />
-          <field field_ref="O3_TA"      operation="average" />
           <field field_ref="O2_o"      operation="average" />
           <field field_ref="P1_c"      operation="average" />
           <field field_ref="P2_c"      operation="average" />
@@ -359,7 +357,6 @@
             <field field_ref="N4_n"      operation="average" />
             <field field_ref="N5_s"      operation="average" />
             <field field_ref="O3_c"      operation="average" />
-            <field field_ref="O3_TA"      operation="average" />
             <field field_ref="O2_o"      operation="average" />
             <field field_ref="P1_c"      operation="average" />
             <field field_ref="P2_c"      operation="average" />
@@ -381,7 +378,7 @@
             <field field_ref="Q6_c"      operation="average" />
             <field field_ref="Q7_c"      operation="average" />
             <field field_ref="total_chlorophyll_calculator_result"      name="Chl-a"     long_name="Chlorophyll-a" operation="average" />
-	    <field field_ref="light_EIR"      operation="average" />
+            <field field_ref="light_EIR"      operation="average" />
           <!-- <field field_ref="DEPTH"    name="DEPTH"   long_name="cell depth" operation="average" />
           <field field_ref="AREA"     name="AREA"    long_name="cell area" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" /> -->

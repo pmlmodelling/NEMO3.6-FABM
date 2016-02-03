@@ -5,7 +5,6 @@ RUNDIR=/data/ORCA2
 export XIOS_HOME=$HOME/local/xios-gnu-debug
 export FABM_HOME=$HOME/local/fabm/nemo-debug
 
-#ARCH=GCC_UBUNTU
 ARCH=GCC_UBUNTU_DEBUG
 
 cd $NEMO_BUILD_DIR

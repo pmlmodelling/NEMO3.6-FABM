@@ -1,9 +1,9 @@
 
 #!/bin/bash 
 
-NEMO_BUILD_DIR=$HOME/git/NEMO-FABM/NEMOGCM/CONFIG
+NEMO_BUILD_DIR=$HOME/git/NEMO-shelf/NEMOGCM/CONFIG
 RUNDIR=/data/ORCA2
-export XIOS_HOME=$HOME/git/XIOS-1.0
+export XIOS_HOME=$HOME/local/xios-gnu
 export FABM_HOME=$HOME/local/fabm/nemo
 
 ARCH=GCC_UBUNTU
