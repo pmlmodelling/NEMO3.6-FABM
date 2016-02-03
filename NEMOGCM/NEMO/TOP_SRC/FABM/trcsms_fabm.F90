@@ -15,6 +15,7 @@ MODULE trcsms_fabm
    USE par_trc         ! TOP parameters
    USE oce_trc         ! Ocean variables
    USE trc             ! TOP variables
+   USE trcbc
    USE trd_oce
    USE trdtrc
 
