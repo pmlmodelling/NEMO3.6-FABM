@@ -76,7 +76,7 @@ nn_write = 1440
    ln_zco      = .false.   !  z-coordinate - full    steps   (T/F)      ("key_zco" may also be defined)
    ln_zps      = .false.    !  z-coordinate - partial steps   (T/F)
    ln_sco      = .true.   !  s- or hybrid z-s-coordinate    (T/F)
-   ln_read_zenv= .true.
+
 /
 !-----------------------------------------------------------------------
 &namzgr_sco    !   s-coordinate or hybrid z-s-coordinate
@@ -86,10 +86,10 @@ nn_write = 1440
    ln_sigcrit  = .true.    !  use sigma coordinates below critical depth (T) or Z coordinates (F) for Siddorn & Furner stretch
                            !  stretching coefficients for all functions
    rn_sbot_min =   10.0    !  minimum depth of s-bottom surface (>0) (m)
-   rn_sbot_max =  5672.0    !  maximum depth of s-bottom surface (= ocean depth) (>0) (m)
+   rn_sbot_max =  7000.0    !  maximum depth of s-bottom surface (= ocean depth) (>0) (m)
    rn_hc       =  50.0    !  critical depth for transition to stretched coordinates
                         !!!!!!!  Envelop bathymetry
-   rn_rmax     =   0.04    !  maximum cut-off r-value allowed (0<r_max<1)
+   rn_rmax     =    0.24   !  maximum cut-off r-value allowed (0<r_max<1)    ! slwa
    rn_theta    =    6.0    !  surface control parameter (0<=theta<=20)
    rn_bb       =    0.8    !  stretching with SH94 s-sigma   
                         !!!!!!!  SF12 stretching coefficient  (ln_s_sf12 = .true.)
@@ -366,14 +366,14 @@ sn_rcv_co2    =       'coupled'              ,    'no'    ,     ''      ,       
 !-----------------------------------------------------------------------
 !              !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
 !              !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
-   sn_chl      ='chlorophyll',        -1         , 'CHLA'    ,   .true.     , .true. , 'yearly'  , ''       , ''       , ''
+   sn_chl      ='chlorophyll',        -1         , 'Chla'    ,   .true.     , .true. , 'yearly'  , ''       , ''       , ''    
 
    cn_dir      = './'      !  root directory for the location of the runoff files
    ln_traqsr   = .true.    !  Light penetration (T) or not (F)
    ln_qsr_rgb  = .true.    !  RGB (Red-Green-Blue) light penetration
    ln_qsr_2bd  = .false.   !  2 bands              light penetration
    ln_qsr_bio  = .false.   !  bio-model light penetration
-   nn_chldta   =      0    !  RGB : Chl data (=1) or cst value (=0)
+   nn_chldta   =   1 ! slwa 0    !  RGB : Chl data (=1) or cst value (=0)
    rn_abs      =   0.58    !  RGB & 2 bands: fraction of light (rn_si1)
    rn_si0      =   0.35    !  RGB & 2 bands: shortess depth of extinction
    rn_si1      =   23.0    !  2 bands: longest depth of extinction
@@ -409,7 +409,7 @@ sn_rcv_co2    =       'coupled'              ,    'no'    ,     ''      ,       
    cn_dir     = 'FLUXES/'         !  root directory for the location of the bulk files
    ln_ref_apr = .false.           !  ref. pressure: global mean Patm (T) or a constant (F)
    ln_apr_obc = .false.           !  inverse barometer added to OBC ssh data 
-   rn_pref    = 101000.0
+   rn_pref    = 101000.0   ! slwa 0.0
 /
 !-----------------------------------------------------------------------
 &namsbc_ssr    !   surface boundary condition : sea surface restoring
@@ -1069,6 +1069,16 @@ sn_rcv_co2    =       'coupled'              ,    'no'    ,     ''      ,       
     nstep_han  = 15        ! Time step frequency for harmonic analysis
     tname(1)   = 'M2'      ! Name of tidal constituents
     tname(2)   = 'K1'
+/
+!-----------------------------------------------------------------------
+&nam_diatmb    !   Output Top, Middle, Bottom Diagnostics
+!-----------------------------------------------------------------------
+    ln_diatmb   = .false.
+/
+!-----------------------------------------------------------------------
+&nam_dia25h    !   Output 25 hour mean diagnostics
+!-----------------------------------------------------------------------
+    ln_dia25h   = .true.
 /
 !-----------------------------------------------------------------------
 &namdct        ! transports through sections
