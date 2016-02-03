@@ -106,6 +106,7 @@ CONTAINS
 
       IF( l_trdtrc )  CALL wrk_alloc( jpi, jpj, jpk, ztrfabm )
 
+      CALL trc_bc_read  ( kt )       ! tracers: surface and lateral Boundary Conditions
       IF( l_trdtrc ) THEN      ! Save the trends in the ixed layer
           DO jn = jp_fabm0, jp_fabm1
             ztrfabm(:,:,:) = tra(:,:,:,jn)
