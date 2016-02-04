@@ -7,7 +7,7 @@
    nn_no       =       0   !  job number (no more used...)
    cn_exp      =  "amm7"  !  experience name
    nn_it000 = 1
-   nn_itend = 288
+   nn_itend = 105120
    nn_date0 = 19950101
    nn_rstctl = 0 !  restart control = 0 nit000 is not compared to the restart file value
                  !                  = 1 use ndate0 in namelist (not the value in the restart file)
@@ -18,13 +18,14 @@
    cn_ocerst_out  = "restart"   !  suffix of ocean restart name (output)
    cn_ocerst_indir   = "./"   !  directory of ocean restart name (input)
    cn_ocerst_outdir  = "./"   !  directory of ocean restart name (output)
-   nn_istate   =     1     !  output the initial state (1) or not (0)
-   nn_stock = 288
-   nn_write = 288
+   nn_istate   =     0     !  output the initial state (1) or not (0)
+   nn_stock = 105120
+   nn_write = 105120
    ln_dimgnnn  = .false.   !  DIMG file format: 1 file for all processors (F) or by processor (T)
    ln_mskland  = .false.   !  mask land points in NetCDF outputs (costly: + ~15%)
    ln_clobber  = .true.    !  clobber (overwrite) an existing file
    nn_chunksz  =       0   !  chunksize (bytes) for NetCDF file (works only with iom_nf90 routines)
+   nn_euler    = 0 !  =0 start with forward time step or not (=1)
 /
 !-----------------------------------------------------------------------
 &namcfg        !   parameters of the configuration
@@ -122,18 +123,30 @@
 !-----------------------------------------------------------------------
 !  !  file name       ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation !
 !  !                  !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  !
-   sn_wndi     = 'met'             ,       6          , 'U10'     ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin' , ''  , ' '
-   sn_wndj     = 'met'             ,       6          , 'V10'     ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin' , ''  , ' '
-   sn_qsr      = 'ssrd24'          ,      24          , 'SSRD'    ,   .false.    , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
-   sn_qlw      = 'strd'            ,       3          , 'STRD'    ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
-   sn_tair     = 'met'             ,       6          , 'T2'      ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
-   sn_humi     = 'met'             ,       6          , 'Q2'      ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
-   sn_prec     = 'flx'             ,       3          , 'TP'      ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
-   sn_snow     = 'flx'             ,       3          , 'SF'      ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
+cn_dir='./fluxes/'
+ln_taudif=.false.
+rn_pfac=1.0
+rn_vfac=1.
+rn_zqt=2.
+rn_zu=10.
+sn_humi='CUT_ERAI_INCLUDE_MSLP',3,'Q2',.true.,.false.,'daily','weights_erai_amm7_bicubic.nc','','CUT_ERAI_LSM.nc'
+sn_prec='CUT_ERAI_INCLUDE_MSLP',3,'TP',.true.,.false.,'daily','weights_erai_amm7_bicubic.nc','','CUT_ERAI_LSM.nc'
+sn_qlw='CUT_ERAI_INCLUDE_MSLP',3,'STRD',.true.,.false.,'daily','weights_erai_amm7_bicubic.nc','','CUT_ERAI_LSM.nc'
+sn_qsr='CUT_ERAI_INCLUDE_MSLP',3,'SSRD',.true.,.false.,'daily','weights_erai_amm7_bicubic.nc','','CUT_ERAI_LSM.nc'
+sn_snow='CUT_ERAI_INCLUDE_MSLP',3,'SF',.true.,.false.,'daily','weights_erai_amm7_bicubic.nc','','CUT_ERAI_LSM.nc'
+sn_tair='CUT_ERAI_INCLUDE_MSLP',3,'T2',.true.,.false.,'daily','weights_erai_amm7_bicubic.nc','','CUT_ERAI_LSM.nc'
+sn_wndi='CUT_ERAI_INCLUDE_MSLP',3,'U10',.true.,.false.,'daily','weights_erai_amm7_bicubic.nc','Uwnd','CUT_ERAI_LSM.nc'
+sn_wndj='CUT_ERAI_INCLUDE_MSLP',3,'V10',.true.,.false.,'daily','weights_erai_amm7_bicubic.nc','Vwnd','CUT_ERAI_LSM.nc'
+!  sn_wndi     = 'met'             ,       6          , 'U10'     ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin' , ''  , ' '
+!  sn_wndj     = 'met'             ,       6          , 'V10'     ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin' , ''  , ' '
+!  sn_qsr      = 'ssrd24'          ,      24          , 'SSRD'    ,   .false.    , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
+!  sn_qlw      = 'strd'            ,       3          , 'STRD'    ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
+!  sn_tair     = 'met'             ,       6          , 'T2'      ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
+!  sn_humi     = 'met'             ,       6          , 'Q2'      ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
+!  sn_prec     = 'flx'             ,       3          , 'TP'      ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
+!  sn_snow     = 'flx'             ,       3          , 'SF'      ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
    cn_dir      = './fluxes/'      !  root directory for the location of the bulk files
-!  ln_2m       = .true.           !  air temperature and humidity referenced at 2m (T) instead 10m (F)
    ln_taudif   = .false.   !  HF tau contribution: use "mean of stress module - module of the mean stress" data 
-!  ln_bulk2z   = .true.   !  Air temperature/humidity and wind vectors are referenced at heights rn_zqt and rn_zu
    rn_zqt      = 2.        !  Air temperature and humidity reference height (m) (ln_bulk2z)
    rn_zu       = 10.        !  Wind vector reference height (m)                  (ln_bulk2z)
    rn_pfac     = 1.        !  multiplicative factor for precipitation (total & snow)
@@ -152,6 +165,16 @@
 !-----------------------------------------------------------------------
 &namtra_qsr    !   penetrative solar radiation
 !-----------------------------------------------------------------------
+!              !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!              !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
+   sn_kd490    =  'kd490'    ,       -1         , 'kd_490'   ,   .true.     , .true. , 'yearly'  , ''       , ''       , ''
+   cn_dir      = './'      !  root directory for the location of the runoff files
+   ln_traqsr   = .true.    !  Light penetration (T) or not (F)
+   ln_qsr_rgb  = .false.   !  RGB (Red-Green-Blue) light penetration
+   nn_chldta   =   0       !  RGB : Chl data (=1) or cst value (=0)
+   rn_abs      =   0.58    !  RGB & 2 bands: fraction of light (rn_si1)
+   rn_si0      =   0.35    !  RGB & 2 bands: shortess depth of extinction
+   nn_kd490dta =   1       !  read in KD490 data from file
 /
 !-----------------------------------------------------------------------
 &namsbc_rnf    !   runoffs namelist surface boundary condition
@@ -162,10 +185,11 @@
 !-----------------------------------------------------------------------
 ! !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
 ! !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
-   sn_apr     = 'met'      ,       6          , 'MSL'     ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin' , '' , ' '
+!  sn_apr     = 'met'      ,       6          , 'MSL'     ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin' , '' , ' '
+   sn_apr='CUT_ERAI_INCLUDE_MSLP',3,'MSL',.true.,.false.,'daily','weights_erai_amm7_bicubic.nc','','CUT_ERAI_LSM.nc'
    cn_dir     = 'fluxes/'         !  root directory for the location of the bulk files
    ln_ref_apr = .false.           !  ref. pressure: global mean Patm (T) or a constant (F)
-   ln_apr_obc = .false.           !  inverse barometer added to OBC ssh data 
+   ln_apr_obc = .true.  	  !  inverse barometer added to OBC ssh data 
 /
 !-----------------------------------------------------------------------
 &namsbc_ssr    !   surface boundary condition : sea surface restoring
@@ -221,7 +245,7 @@
 &nam_diaharm   !   Harmonic analysis of tidal constituents ('key_diaharm')
 !-----------------------------------------------------------------------
    nit000_han = 1      ! 105121  ! First time step used for harmonic analysis
-   nitend_han = 105120 ! 210528  ! Last time step used for harmonic analysis
+   nitend_han = 12 ! 105120 ! 210528  ! Last time step used for harmonic analysis
    nstep_han  = 12        ! Time step frequency for harmonic analysis
    tname(1)     =   'O1'  !  name of constituent
    tname(2)     =   'P1'
@@ -230,6 +254,16 @@
    tname(5)     =   'M2'
    tname(6)     =   'S2'
    tname(7)     =   'K2'
+/
+!-----------------------------------------------------------------------
+&nam_diatmb    !   Output Top, Middle, Bottom Diagnostics
+!-----------------------------------------------------------------------
+    ln_diatmb   = .false.
+/
+!-----------------------------------------------------------------------
+&nam_dia25h    !   Output 25 hour mean diagnostics
+!-----------------------------------------------------------------------
+    ln_dia25h   = .true.
 /
 !!-----------------------------------------------------------------------
 &nambdy        !  unstructured open boundaries                          ("key_bdy")
@@ -399,14 +433,14 @@
    nn_bc_surf       = 1
    nn_clos          = 1
    nn_stab_func     = 2
-   nn_z0_met        = 2
+   nn_z0_met        = 1
    rn_charn         = 100000.0
    rn_clim_galp     = 0.267
    rn_crban         = 100.0
    rn_emin          = 1.0e-6
    rn_epsmin        = 1.0e-12
    rn_frac_hs       = 1.3
-   rn_hsro          = 0.02
+   rn_hsro          = 0.003
 /
 !-----------------------------------------------------------------------
 &namzdf_ddm    !   double diffusive mixing parameterization             ("key_zdfddm")
@@ -427,9 +461,9 @@
                            !  buffer blocking send or immediate non-blocking sends, resp.
    nn_buffer   =   0       !  size in bytes of exported buffer ('B' case), 0 no exportation
    ln_nnogather=  .false.  !  activate code to avoid mpi_allgather use at the northfold
-   jpni        =  12       !  jpni   number of processors following i (set automatically if < 1)
-   jpnj        =  16       !  jpnj   number of processors following j (set automatically if < 1)
-   jpnij       =  192      !  jpnij  number of local domains (set automatically if < 1)
+   jpni        =  -1       !  jpni   number of processors following i (set automatically if < 1)
+   jpnj        =  -1       !  jpnj   number of processors following j (set automatically if < 1)
+   jpnij       =  -1      !  jpnij  number of local domains (set automatically if < 1)
 /
 !-----------------------------------------------------------------------
 &namctl        !   Control prints & Benchmark
