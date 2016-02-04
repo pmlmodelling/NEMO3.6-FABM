@@ -164,9 +164,9 @@ instances:
     parameters:
       composition: cnp                                     # elemental composition
     initialization:
-      c: 0.001
-      n: 1.26e-05
-      p: 7.86e-07
+      c: 18.9                                              # carbon (mg C/m^2)
+      n: 0.6                                               # nitrogen (mmol N/m^2)
+      p: 0.0035                                            # phosphorus (mmol P/m^2)
   Q6:
     long_name: benthic particulate organic matter
     model: ersem/benthic_column_particulate_matter
@@ -174,10 +174,10 @@ instances:
       composition: cnpsf                                   # elemental composition
       resuspension: true                                   # enable resuspension, default = false
     initialization:
-      c: 0.1
-      n: 0.00126
-      p: 7.86e-05
-      s: 0.001
+      c: 3052.0                                            # carbon (mg C/m^2)
+      n: 3.5                                               # nitrogen (mmol N/m^2)
+      p: 0.5                                               # phosphorus (mmol P/m^2)
+      s: 149.0                                             # silicate (mmol Si/m^2)
       pen_depth_c: 0.0173                                  # penetration depth of carbon (m)
       pen_depth_n: 0.02                                    # penetration depth of nitrogen (m)
       pen_depth_p: 0.025                                   # penetration depth of phosphorus (m)
@@ -191,9 +191,9 @@ instances:
       composition: cnp                                     # elemental composition
       burial: true                                         # enable burial, default = false
     initialization:
-      c: 1.0e-01
-      n: 0.00126
-      p: 7.86e-05
+      c: 30520.0                                           # carbon (mg C/m^2)
+      n: 80.0                                              # nitrogen (mmol N/m^2)
+      p: 8.0                                               # phosphorus (mmol P/m^2)
       pen_depth_c: 0.2                                     # penetration depth of carbon (m)
       pen_depth_n: 0.25                                    # penetration depth of nitrogen (m)
       pen_depth_p: 0.313                                   # penetration depth of phosphorus (m)
