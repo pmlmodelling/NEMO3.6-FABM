@@ -3,7 +3,7 @@
 #   1: simulation year
 #
 
-INPUTPATH="/work/n01/n01/momme/AMM7-inputs"
+INPUTPATH="/work/n01/n01/momme/AMM7-INPUTS"
 RUNPATH="/work/n01/n01/momme/AMM7"
 y0=1995
 
@@ -20,20 +20,14 @@ fi
 
 #prepare folders for annual atmospheric and lateral forcings:
 mkdir -p "$RUNPATH"/fluxes
-rm -rf "$RUNPATH"/fluxes/flx_y????.nc
-rm -rf "$RUNPATH"/fluxes/met_y????.nc
-rm -rf "$RUNPATH"/fluxes/strd_y????.nc
-rm -rf "$RUNPATH"/fluxes/ssrd24_y????.nc
+rm -rf "$RUNPATH"/fluxes/CUT_ERAI_INCLUDE_MSLP_y????m??d??.nc
 mkdir -p "$RUNPATH"/bdy
 rm -rf "$RUNPATH"/bdy/amm7*_y????m??d??.nc
 
 for y in $yb $yn $ya
 do
   #atmospheric forcings:
-  ln -sf "$INPUTPATH"/FLUXES/ERA_INT_LSM/flx_y"$y".nc "$RUNPATH"/fluxes/
-  ln -sf "$INPUTPATH"/FLUXES/ERA_INT_LSM/met_y"$y".nc "$RUNPATH"/fluxes/
-  ln -sf "$INPUTPATH"/FLUXES/ERA_INT_LSM/strd_y"$y".nc "$RUNPATH"/fluxes/
-  ln -sf "$INPUTPATH"/FLUXES/ERA_INT_LSM/ssrd24_y"$y".nc "$RUNPATH"/fluxes/
+  ln -sf "$INPUTPATH"/FLUXES/CUT_ERAI_INCLUDE_MSLP_y"$y"m??d??.nc "$RUNPATH"/fluxes/
 
   #lateral boundary conditions:
   ln -sf "$INPUTPATH"/BDY/NWS_INPUT/amm7_bdyT_y"$y"m??d??.nc "$RUNPATH"/bdy
