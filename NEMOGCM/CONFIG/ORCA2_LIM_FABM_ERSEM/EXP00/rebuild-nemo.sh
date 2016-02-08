@@ -1,4 +1,3 @@
-
 #!/bin/bash 
 
 NEMO_BUILD_DIR=$HOME/git/NEMO-shelf/NEMOGCM/CONFIG
