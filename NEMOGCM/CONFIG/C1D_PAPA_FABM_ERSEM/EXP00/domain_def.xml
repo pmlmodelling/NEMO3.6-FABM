@@ -3,9 +3,8 @@
       <domain_group id="grid_T">
          <domain id="grid_T" long_name="grid T"/>
 	 <!--   My zoom: example of hand defined zoom   -->
-         <domain id="1DT" zoom_ibegin="2" zoom_jbegin="2" zoom_ni="1" zoom_nj="1" />
-	 <!--   My zoom: example of hand defined zoom   -->
          <domain id="myzoom" zoom_ibegin="10" zoom_jbegin="10" zoom_ni="5" zoom_nj="5" />
+         <domain id="1DT" zoom_ibegin="2" zoom_jbegin="2" zoom_ni="1" zoom_nj="1" />
          <domain id="ptr" zoom_ibegin="0000"  zoom_jbegin="1" zoom_ni="1" zoom_nj="0000" />
          <!--   Eq section   -->
          <domain id="EqT" zoom_ibegin="1" zoom_jbegin="0000" zoom_ni="0000" zoom_nj="1" />
@@ -171,7 +170,7 @@
       </domain_group>
 
       <domain_group id="scalarpoint">
-         <domain id="scalarpoint" long_name="scalarpoint"/>
+         <domain id="scalarpoint" long_name="scalar"/>
          <!--
          <domain id="1point" zoom_ibegin="1" zoom_jbegin="1" zoom_ni="1" zoom_nj="1" />
          -->

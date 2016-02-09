@@ -11,6 +11,7 @@
    nn_leapy    =       1   !  Leap year calendar (1) or not (0)
    nn_stock    =   87600   !  frequency of creation of a restart file (modulo referenced to 1)
    nn_write    =     240   !  frequency of write in the output file   (modulo referenced to nn_it000)
+   ln_clobber  = .true.   !  clobber (overwrite) an existing file
 /
 !-----------------------------------------------------------------------
 &namcfg     !   parameters of the configuration   
@@ -140,6 +141,9 @@
 !-----------------------------------------------------------------------
 &namtra_qsr    !   penetrative solar radiation
 !-----------------------------------------------------------------------
+!              !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!              !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
+   sn_chl      ='chlorophyll_PAPASTATION', -1    , 'CHLA'    ,   .true.     , .true. , 'yearly'  , ''       , ''       , ''
 /
 !-----------------------------------------------------------------------
 &namsbc_rnf    !   runoffs namelist surface boundary condition

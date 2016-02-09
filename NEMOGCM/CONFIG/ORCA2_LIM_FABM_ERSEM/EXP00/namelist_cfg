@@ -5,6 +5,12 @@
 !-----------------------------------------------------------------------
 &namrun        !   parameters of the run
 !-----------------------------------------------------------------------
+   ln_rstart   = .false.   !  start from rest (F) or from a restart file (T)
+   ln_clobber  = .true.   !  clobber (overwrite) an existing file
+   nn_rstctl   =       0   !  restart control ==> activated only if ln_rstart=T
+                           !    = 0 nn_date0 read in namelist ; nn_it000 : read in namelist
+                           !    = 1 nn_date0 read in namelist ; nn_it000 : check consistancy between namelist and restart
+                           !    = 2 nn_date0 read in restart  ; nn_it000 : check consistancy between namelist and restart
 /
 !-----------------------------------------------------------------------
 &namcfg        !   parameters of the configuration
@@ -27,6 +33,7 @@
 !-----------------------------------------------------------------------
 &namdom        !   space and time domain (bathymetry, mesh, timestep)
 !-----------------------------------------------------------------------
+   nn_msh      =    0      !  create (=1) a mesh file or not (=0)
    jphgr_msh   =       0               !  type of horizontal mesh
    ppglam0     =  999999.0             !  longitude of first raw and column T-point (jphgr_msh = 1)
    ppgphi0     =  999999.0             ! latitude  of first raw and column T-point (jphgr_msh = 1)
@@ -185,5 +192,13 @@
 /
 !-----------------------------------------------------------------------
 &namdyn_nept  !   Neptune effect (simplified: lateral and vertical diffusions removed)
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namobs       !  observation usage                                      ('key_diaobs')
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&nam_asminc   !   assimilation increments                               ('key_asminc')
 !-----------------------------------------------------------------------
 /
