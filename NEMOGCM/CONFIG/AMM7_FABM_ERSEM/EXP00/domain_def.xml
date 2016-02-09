@@ -4,9 +4,15 @@
          <domain id="grid_T" long_name="grid T"/>
 	 <!--   My zoom: example of hand defined zoom   -->
          <domain id="myzoom" zoom_ibegin="10" zoom_jbegin="10" zoom_ni="5" zoom_nj="5" />
-         <domain id="PAP" zoom_ibegin="30" zoom_jbegin="133" zoom_ni="1" zoom_nj="1" />
          <domain id="L4" zoom_ibegin="142" zoom_jbegin="154" zoom_ni="1" zoom_nj="1" />
-         <domain id="OysterGrounds" zoom_ibegin="214" zoom_jbegin="214" zoom_ni="1" zoom_nj="1" />
+         <domain id="PAP" zoom_ibegin="32" zoom_jbegin="135" zoom_ni="1" zoom_nj="1" />
+         <domain id="OysterGrounds" zoom_ibegin="216" zoom_jbegin="216" zoom_ni="1" zoom_nj="1" />
+         <domain id="BenthicA" zoom_ibegin="125" zoom_jbegin="168" zoom_ni="1" zoom_nj="1" />
+         <domain id="BenthicG" zoom_ibegin="121" zoom_jbegin="166" zoom_ni="1" zoom_nj="1" />
+         <domain id="BenthicH" zoom_ibegin="117" zoom_jbegin="158" zoom_ni="1" zoom_nj="1" />
+         <domain id="BenthicI" zoom_ibegin="116" zoom_jbegin="159" zoom_ni="1" zoom_nj="1" />
+         <domain id="CandyFloss" zoom_ibegin="103" zoom_jbegin="141" zoom_ni="1" zoom_nj="1" />
+         <domain id="CelticDeep2" zoom_ibegin="121" zoom_jbegin="167" zoom_ni="1" zoom_nj="1" />
          <domain id="1point" zoom_ibegin="10" zoom_jbegin="10" zoom_ni="1" zoom_nj="1" />
          <domain id="ptr" zoom_ibegin="0000"  zoom_jbegin="1" zoom_ni="1" zoom_nj="0000" />
          <!--   Eq section   -->
