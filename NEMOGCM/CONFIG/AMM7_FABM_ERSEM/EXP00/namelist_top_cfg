@@ -28,7 +28,7 @@
 &namtrc     !   tracers definition
 !-----------------------------------------------------------------------
 !                    sname       lname                unit ,  init    ,  sbc     ,   cbc   ,  obc   ,  save
-   sn_tracer(1)   = 'TR1     ' , 'Passive Tracer  ',  ' '  , .false.  ,  .false. , .false. , .true. , .true.
+   !sn_tracer(1)   = 'TR1     ' , 'Passive Tracer  ',  ' '  , .false.  ,  .false. , .false. , .true. , .true.
    ln_trcdta     =  .false.  !  Initialisation from data input file (T) or not (F)
    ln_trcdmp     =  .false.  !  add a damping termn (T) or not (F)
    ln_trcdmp_clo =  .false.  !  damping term (T) or not (F) on closed seas
