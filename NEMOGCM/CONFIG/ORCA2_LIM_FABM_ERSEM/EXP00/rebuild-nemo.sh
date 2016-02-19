@@ -9,5 +9,5 @@ ARCH=GCC_UBUNTU
 
 cd $NEMO_BUILD_DIR
 echo "Building NEMO-FABM..."
-
-./makenemo -m $ARCH -n ORCA2_LIM_FABM_TEST && rsync -a $NEMO_BUILD_DIR/ORCA2_LIM_FABM_TEST/BLD/bin/nemo.exe $RUNDIR/
+rm -f $RUNDIR/nemo.exe
+./makenemo -m $ARCH -n ORCA2_LIM_FABM_BLD_SCRATCH > $RUNDIR/compile.log && rsync -a $NEMO_BUILD_DIR/ORCA2_LIM_FABM_BLD_SCRATCH/BLD/bin/nemo.exe $RUNDIR/ $$ echo "Done."

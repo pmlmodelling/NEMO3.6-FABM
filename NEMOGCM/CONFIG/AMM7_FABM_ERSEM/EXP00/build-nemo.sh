@@ -10,10 +10,11 @@ export XIOS_HOME=$HOME/local/xios-intel
 export FABM_HOME=$HOME/local/fabm/nemo
 
 ARCH=XC_ARCHER_INTEL_NOSIGNEDZERO
-#ARCH=XC_ARCHER_INTEL_NOSIGNEDZERO_DEBUG
 
 cd $NEMO_BUILD_DIR
-echo "Building NEMO-FABM..."
+echo "Cleaning old build..."
+rm -f $RUNDIR/nemo.exe
+./makenemo -m $ARCH -n AMM7_BLD_SCRATCH clean_config
 
-./makenemo -m $ARCH -n AMM7_TEST clean_config
-./makenemo -m $ARCH -r AMM7_FABM_ERSEM -n AMM7_TEST && rsync -a $NEMO_BUILD_DIR/AMM7_TEST/BLD/bin/nemo.exe $RUNDIR/
+echo "Building NEMO-FABM..."
+./makenemo -m $ARCH -r AMM7_FABM_ERSEM -n AMM7_BLD_SCRATCH > $RUNDIR/compile.log && rsync -a $NEMO_BUILD_DIR/AMM7_BLD_SCRATCH/BLD/bin/nemo.exe $RUNDIR/ && echo "Done."
