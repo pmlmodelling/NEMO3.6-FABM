@@ -150,17 +150,6 @@ CONTAINS
             ENDDO
             CALL wrk_dealloc( jpi, jpj, jpk, ztrcdta )
         ENDIF
-! slwa temporary insert initialise tracer
-            trn(:,:,:,:)  = 0._wp
-            if(nproc.eq.39)then
-              DO jn = 1, jptra
-                  trn(:,:,:,jn) = 100._wp * tmask(:,:,:)
-              ENDDO
-            endif
-!!!! slwa temp
-        !
-        trb(:,:,:,:) = trn(:,:,:,:)
-        ! 
       ENDIF
 ! Initialisation of tracers Boundary Conditions  - here so that you can use initial condition as boundary
       ! --->>> FABM
