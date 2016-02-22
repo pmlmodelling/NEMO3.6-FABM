@@ -509,7 +509,6 @@
   <field id="G2_o_pel_sms" long_name="benthic oxygen pelagic oxygen sources-sinks" unit="mmol/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="G3_c_pel_sms" long_name="benthic dissolved inorganic carbon pelagic carbon sources-sinks" unit="mmol/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="custom_extinction_calculator_total" long_name="custom_extinction_calculator total custom light extinction" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="attenuation_coefficient_of_photosynthetic_radiative_flux_calculator_result" long_name="attenuation_coefficient_of_photosynthetic_radiative_flux_calculator result" unit="m-1" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="total_phosphorus_calculator_result" long_name="total_phosphorus_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="total_nitrogen_calculator_result" long_name="total_nitrogen_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="total_silicate_calculator_result" long_name="total_silicate_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
@@ -518,8 +517,9 @@
   <field id="photosynthesis_rate_calculator_result" long_name="photosynthesis_rate_calculator result" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="phytoplankton_respiration_rate_calculator_result" long_name="phytoplankton_respiration_rate_calculator result" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="zooplankton_respiration_rate_calculator_result" long_name="zooplankton_respiration_rate_calculator result" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="attenuation_coefficient_of_photosynthetic_radiative_flux_calculator_result" long_name="attenuation_coefficient_of_photosynthetic_radiative_flux_calculator result" unit="m-1" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="zenithAngle_w_bot" long_name="zenithAngle near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
-  <field id="zenithAngle_zenithA" long_name="zenithAngle zenith_angle" unit="degrees" default_value="-.200E+21" />
+  <field id="zenithAngle_zenithA" long_name="zenithAngle zenith_angle" unit="degrees" default_value="0.000E+00" />
   <field id="N1_w_bot" long_name="phosphate near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="N1_p_sfl" long_name="phosphate phosphorus surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
   <field id="N1_p_bfl" long_name="phosphate phosphorus bottom flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
@@ -1265,6 +1265,8 @@
   <field id="Y4_K4n_sms" long_name="benthic meiofauna benthic ammonium in aerobic layer sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="Y4_K1p2_sms" long_name="benthic meiofauna benthic phosphate in anaerobic layer sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="Y4_K4n2_sms" long_name="benthic meiofauna benthic ammonium in anaerobic layer sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="Y4_benTA_sms" long_name="benthic meiofauna benthic alkalinity in aerobic layer sources-sinks" unit="mEq/m^2/s" default_value="0.000E+00" />
+  <field id="Y4_benTA2_sms" long_name="benthic meiofauna benthic alkalinity in anaerobic layer sources-sinks" unit="mEq/m^2/s" default_value="0.000E+00" />
   <field id="Y4_Q6c_sms" long_name="benthic meiofauna particulate organic carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="Y4_Q6n_sms" long_name="benthic meiofauna particulate organic nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="Y4_Q6p_sms" long_name="benthic meiofauna particulate organic phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
@@ -1300,6 +1302,8 @@
   <field id="Y3_K4n_sms" long_name="benthic suspension feeder benthic ammonium in aerobic layer sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="Y3_K1p2_sms" long_name="benthic suspension feeder benthic phosphate in anaerobic layer sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="Y3_K4n2_sms" long_name="benthic suspension feeder benthic ammonium in anaerobic layer sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="Y3_benTA_sms" long_name="benthic suspension feeder benthic alkalinity in aerobic layer sources-sinks" unit="mEq/m^2/s" default_value="0.000E+00" />
+  <field id="Y3_benTA2_sms" long_name="benthic suspension feeder benthic alkalinity in anaerobic layer sources-sinks" unit="mEq/m^2/s" default_value="0.000E+00" />
   <field id="Y3_Q6c_sms" long_name="benthic suspension feeder particulate organic carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="Y3_Q6n_sms" long_name="benthic suspension feeder particulate organic nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="Y3_Q6p_sms" long_name="benthic suspension feeder particulate organic phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
@@ -1404,6 +1408,8 @@
   <field id="Y2_K4n_sms" long_name="benthic deposit feeder benthic ammonium in aerobic layer sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="Y2_K1p2_sms" long_name="benthic deposit feeder benthic phosphate in anaerobic layer sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="Y2_K4n2_sms" long_name="benthic deposit feeder benthic ammonium in anaerobic layer sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_benTA_sms" long_name="benthic deposit feeder benthic alkalinity in aerobic layer sources-sinks" unit="mEq/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_benTA2_sms" long_name="benthic deposit feeder benthic alkalinity in anaerobic layer sources-sinks" unit="mEq/m^2/s" default_value="0.000E+00" />
   <field id="Y2_Q6c_sms" long_name="benthic deposit feeder particulate organic carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="Y2_Q6n_sms" long_name="benthic deposit feeder particulate organic nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="Y2_Q6p_sms" long_name="benthic deposit feeder particulate organic phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
@@ -1497,6 +1503,7 @@
   <field id="H1_K1p_sms" long_name="benthic aerobic bacteria phosphate sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="H1_G2o_sms" long_name="benthic aerobic bacteria oxygen sources-sinks" unit="mmol O_2/m^2/s" default_value="0.000E+00" />
   <field id="H1_G3c_sms" long_name="benthic aerobic bacteria dissolved inorganic carbon sources-sinks" unit="mmol C/m^2/s" default_value="0.000E+00" />
+  <field id="H1_benTA_sms" long_name="benthic aerobic bacteria benthic alkalinity sources-sinks" unit="mEq/m^2/s" default_value="0.000E+00" />
   <field id="H1_Q1c_sms" long_name="benthic aerobic bacteria dissolved organic carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="H1_Q1n_sms" long_name="benthic aerobic bacteria dissolved organic nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="H1_Q1p_sms" long_name="benthic aerobic bacteria dissolved organic phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
@@ -1531,6 +1538,7 @@
   <field id="H2_K1p_sms" long_name="benthic anaerobic bacteria phosphate sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="H2_G2o_sms" long_name="benthic anaerobic bacteria oxygen sources-sinks" unit="mmol O_2/m^2/s" default_value="0.000E+00" />
   <field id="H2_G3c_sms" long_name="benthic anaerobic bacteria dissolved inorganic carbon sources-sinks" unit="mmol C/m^2/s" default_value="0.000E+00" />
+  <field id="H2_benTA_sms" long_name="benthic anaerobic bacteria benthic alkalinity sources-sinks" unit="mEq/m^2/s" default_value="0.000E+00" />
   <field id="H2_Q1c_sms" long_name="benthic anaerobic bacteria dissolved organic carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="H2_Q1n_sms" long_name="benthic anaerobic bacteria dissolved organic nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="H2_Q1p_sms" long_name="benthic anaerobic bacteria dissolved organic phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
@@ -1573,6 +1581,8 @@
   <field id="ben_nit_G2o_sms" long_name="benthic nitrogen cycle oxygen sources-sinks" unit="mmol O_2/m^2/s" default_value="0.000E+00" />
   <field id="ben_nit_N4n_sfl" long_name="benthic nitrogen cycle pelagic ammonium surface flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
   <field id="ben_nit_N4n_bfl" long_name="benthic nitrogen cycle pelagic ammonium bottom flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
+  <field id="ben_nit_benTA_sms" long_name="benthic nitrogen cycle benthic alkalinity in aerobic layer sources-sinks" unit="mEq/m^2/s" default_value="0.000E+00" />
+  <field id="ben_nit_benTA2_sms" long_name="benthic nitrogen cycle benthic alkalinity in anaerobic layer sources-sinks" unit="mEq/m^2/s" default_value="0.000E+00" />
   <field id="ben_nit_G4n_sms" long_name="benthic nitrogen cycle dinitrogen gas sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="ben_nit_K3n2_sms" long_name="benthic nitrogen cycle benthic nitrate in 2nd layer sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="ben_nit_K4n2_sms" long_name="benthic nitrogen cycle benthic ammonium in 2nd layer sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
@@ -1677,6 +1687,10 @@
   <field id="H2_Q7_pen_depth_n_sms" long_name="benthic anaerobic bacteria refractory POM penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="H2_Q7_p_int_sms" long_name="benthic anaerobic bacteria refractory POM column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="H2_Q7_pen_depth_p_sms" long_name="benthic anaerobic bacteria refractory POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_content_calculator_c_c_sms_tot_calculator_result" long_name="benthic deposit feeder total POM content_calculator_c c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_content_calculator_n_c_sms_tot_calculator_result" long_name="benthic deposit feeder total POM content_calculator_n c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_content_calculator_p_c_sms_tot_calculator_result" long_name="benthic deposit feeder total POM content_calculator_p c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_content_calculator_s_c_sms_tot_calculator_result" long_name="benthic deposit feeder total POM content_calculator_s c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
   <field id="Y2_Q6_source_c_int_sms" long_name="benthic deposit feeder total POM column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="Y2_Q6_source_pen_depth_c_sms" long_name="benthic deposit feeder total POM penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="Y2_Q6_source_n_int_sms" long_name="benthic deposit feeder total POM column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
@@ -1696,10 +1710,6 @@
   <field id="Y2_Q6_source_anaerobic_pen_depth_p_sms" long_name="benthic deposit feeder anaerobic POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="Y2_Q6_source_anaerobic_s_int_sms" long_name="benthic deposit feeder anaerobic POM column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
   <field id="Y2_Q6_source_anaerobic_pen_depth_s_sms" long_name="benthic deposit feeder anaerobic POM penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_sink_content_calculator_c_c_sms_tot_calculator_result" long_name="benthic deposit feeder POM sink content_calculator_c c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y2_Q6_sink_content_calculator_n_c_sms_tot_calculator_result" long_name="benthic deposit feeder POM sink content_calculator_n c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y2_Q6_sink_content_calculator_p_c_sms_tot_calculator_result" long_name="benthic deposit feeder POM sink content_calculator_p c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y2_Q6_sink_content_calculator_s_c_sms_tot_calculator_result" long_name="benthic deposit feeder POM sink content_calculator_s c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
   <field id="Y2_Q6_sink_c_int_sms" long_name="benthic deposit feeder POM sink column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="Y2_Q6_sink_pen_depth_c_sms" long_name="benthic deposit feeder POM sink penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="Y2_Q6_sink_n_int_sms" long_name="benthic deposit feeder POM sink column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
@@ -1732,17 +1742,17 @@
   <field id="Y4_Q6_pen_depth_p_sms" long_name="benthic meiofauna POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="Y4_Q6_s_int_sms" long_name="benthic meiofauna POM column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
   <field id="Y4_Q6_pen_depth_s_sms" long_name="benthic meiofauna POM penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="total_bioturbation_activity_at_interfaces_calculator_result" long_name="total_bioturbation_activity_at_interfaces_calculator result" unit="mg C/m^2/d*m" default_value="-.200E+21" />
-  <field id="total_bioirrigation_activity_at_interfaces_calculator_result" long_name="total_bioirrigation_activity_at_interfaces_calculator result" unit="mg C/m^2/d*m" default_value="-.200E+21" />
   <field id="total_phosphorus_at_interfaces_calculator_result" long_name="total_phosphorus_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
   <field id="total_nitrogen_at_interfaces_calculator_result" long_name="total_nitrogen_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
   <field id="total_silicate_at_interfaces_calculator_result" long_name="total_silicate_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
   <field id="total_carbon_at_interfaces_calculator_result" long_name="total_carbon_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
+  <field id="total_bioirrigation_activity_at_interfaces_calculator_result" long_name="total_bioirrigation_activity_at_interfaces_calculator result" unit="mg C/m^2/d*m" default_value="-.200E+21" />
+  <field id="total_bioturbation_activity_at_interfaces_calculator_result" long_name="total_bioturbation_activity_at_interfaces_calculator result" unit="mg C/m^2/d*m" default_value="-.200E+21" />
  </field_group>
  <field_group id="fabm_scalar" grid_ref="grid_0">
-  <field id="total_phosphorus" long_name="total_phosphorus" unit="mmol m-3" default_value="-.200E+21" />
-  <field id="total_nitrogen" long_name="total_nitrogen" unit="mmol m-3" default_value="-.200E+21" />
-  <field id="total_silicate" long_name="total_silicate" unit="mmol m-3" default_value="-.200E+21" />
   <field id="total_carbon" long_name="total_carbon" unit="mmol m-3" default_value="-.200E+21" />
+  <field id="total_silicate" long_name="total_silicate" unit="mmol m-3" default_value="-.200E+21" />
+  <field id="total_nitrogen" long_name="total_nitrogen" unit="mmol m-3" default_value="-.200E+21" />
+  <field id="total_phosphorus" long_name="total_phosphorus" unit="mmol m-3" default_value="-.200E+21" />
  </field_group>
 </field_definition>

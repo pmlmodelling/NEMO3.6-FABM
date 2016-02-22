@@ -8,7 +8,7 @@
    cn_exp      =  "amm7"  !  experience name
    nn_it000 = 1
    nn_itend = 105120
-   nn_date0 = 19950101
+   nn_date0 = 20010101
    nn_rstctl = 0 !  restart control = 0 nit000 is not compared to the restart file value
                  !                  = 1 use ndate0 in namelist (not the value in the restart file)
                  !                  = 2 calendar parameters read in the restart file

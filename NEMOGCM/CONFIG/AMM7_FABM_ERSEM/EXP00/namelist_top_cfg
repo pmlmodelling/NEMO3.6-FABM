@@ -100,8 +100,8 @@
 !----------------------------------------------------------------------
    ln_diatrc     =  .true.   !  save additional diag. (T) or not (F)
    ln_diabio     =  .true.   !  output biological trends
-   nn_writedia   =  1440     !  time step frequency for diagnostics
-   nn_writebio   =    10     !: frequency of biological outputs
+   nn_writedia   =  105120 ! 1440     !  time step frequency for diagnostics
+   nn_writebio   =  105120 ! 10     !: frequency of biological outputs
 /
 !----------------------------------------------------------------------
 ! namtrc_bc       !   data for boundary conditions
