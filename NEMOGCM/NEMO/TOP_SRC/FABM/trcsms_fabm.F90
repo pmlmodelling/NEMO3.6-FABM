@@ -168,7 +168,7 @@ CONTAINS
       ! Compute interfacial source terms and fluxes
       DO jj=1,jpj
          ! Process surface (fabm_do_surface increments rather than sets, so zero flux array first)
-         flux = 0
+         flux = 0._wp
          CALL fabm_do_surface(model,1,jpi,jj,flux,fabm_st2Da(:,jj,1:jp_fabm_surface))
          DO jn=1,jp_fabm
              ! Divide surface fluxes by height of surface layer and add to source terms.
@@ -176,7 +176,7 @@ CONTAINS
          END DO
 
          ! Process bottom (fabm_do_bottom increments rather than sets, so zero flux array first)
-         flux = 0
+         flux = 0._wp
          CALL fabm_do_bottom(model,1,jpi,jj,flux,fabm_st2Da(:,jj,jp_fabm_surface+1:))
          DO jn=1,jp_fabm
              DO ji=1,jpi
@@ -265,7 +265,7 @@ CONTAINS
       REAL(wp) :: total(SIZE(model%conserved_quantities))
       INTEGER :: jk,jj,jn
 
-      total = 0
+      total = 0._wp
 
       DO jk=1,jpk
          DO jj=1,jpj
