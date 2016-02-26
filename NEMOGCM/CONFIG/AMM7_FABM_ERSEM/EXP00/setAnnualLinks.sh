@@ -30,16 +30,16 @@ do
   ln -sf "$INPUTPATH"/FLUXES/CUT_ERAI_INCLUDE_MSLP_y"$y"m??d??.nc "$RUNPATH"/fluxes/
 
   #lateral boundary conditions:
-  ln -sf "$INPUTPATH"/BDY/NWS_INPUT/amm7_bdyT_y"$y"m??d??.nc "$RUNPATH"/bdy
-  ln -sf "$INPUTPATH"/BDY/NWS_INPUT/amm7_bdyU_y"$y"m??d??.nc "$RUNPATH"/bdy
-  ln -sf "$INPUTPATH"/BDY/NWS_INPUT/amm7_bdyV_y"$y"m??d??.nc "$RUNPATH"/bdy
-  ln -sf "$INPUTPATH"/BDY/NWS_INPUT/amm7_bt_bdyT_y"$y"m??d??.nc "$RUNPATH"/bdy/
-  ln -sf "$INPUTPATH"/BDY/NWS_INPUT/amm7_bt_bdyU_y"$y"m??d??.nc "$RUNPATH"/bdy/
-  ln -sf "$INPUTPATH"/BDY/NWS_INPUT/amm7_bt_bdyV_y"$y"m??d??.nc "$RUNPATH"/bdy/
-  ln -sf "$INPUTPATH"/BDY/amm7_skag/amm7skag_bdyT_y"$y"m??d??.nc "$RUNPATH"/bdy
-  ln -sf "$INPUTPATH"/BDY/amm7_skag/amm7skag_bdyU_y"$y"m??d??.nc "$RUNPATH"/bdy
-  ln -sf "$INPUTPATH"/BDY/amm7_skag/amm7skag_bdyV_y"$y"m??d??.nc "$RUNPATH"/bdy
-  ln -sf "$INPUTPATH"/BDY/amm7_skag/amm7skag_bt_bdyT_y"$y"m??d??.nc "$RUNPATH"/bdy/
-  ln -sf "$INPUTPATH"/BDY/amm7_skag/amm7skag_bt_bdyU_y"$y"m??d??.nc "$RUNPATH"/bdy/
-  ln -sf "$INPUTPATH"/BDY/amm7_skag/amm7skag_bt_bdyV_y"$y"m??d??.nc "$RUNPATH"/bdy/
+  ln -sf "$INPUTPATH"/BDY/amm7_bdyT_y"$y"m??d??.nc "$RUNPATH"/bdy
+  #ln -sf "$INPUTPATH"/BDY/amm7_bdyU_y"$y"m??d??.nc "$RUNPATH"/bdy #only needed id full baroclinic velocity fields are required
+  #ln -sf "$INPUTPATH"/BDY/amm7_bdyV_y"$y"m??d??.nc "$RUNPATH"/bdy
+  ln -sf "$INPUTPATH"/BDY/amm7_bt_bdyT_y"$y"m??d??.nc "$RUNPATH"/bdy/
+  ln -sf "$INPUTPATH"/BDY/amm7_bt_bdyU_y"$y"m??d??.nc "$RUNPATH"/bdy/
+  ln -sf "$INPUTPATH"/BDY/amm7_bt_bdyV_y"$y"m??d??.nc "$RUNPATH"/bdy/
+  ln -sf "$INPUTPATH"/BDY/amm7skag_bdyT_y"$y"m??d??.nc "$RUNPATH"/bdy
+  #ln -sf "$INPUTPATH"/BDY/amm7skag_bdyU_y"$y"m??d??.nc "$RUNPATH"/bdy #only needed id full baroclinic velocity fields are required
+  #ln -sf "$INPUTPATH"/BDY/amm7skag_bdyV_y"$y"m??d??.nc "$RUNPATH"/bdy
+  ln -sf "$INPUTPATH"/BDY/amm7skag_bt_bdyT_y"$y"m??d??.nc "$RUNPATH"/bdy/
+  ln -sf "$INPUTPATH"/BDY/amm7skag_bt_bdyU_y"$y"m??d??.nc "$RUNPATH"/bdy/
+  ln -sf "$INPUTPATH"/BDY/amm7skag_bt_bdyV_y"$y"m??d??.nc "$RUNPATH"/bdy/
 done
