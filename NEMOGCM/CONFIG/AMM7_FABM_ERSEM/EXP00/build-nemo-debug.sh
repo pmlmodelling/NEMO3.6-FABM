@@ -2,6 +2,7 @@
 
 module unload PrgEnv-cray PrgEnv-gnu
 module load PrgEnv-intel
+module unload cray-netcdf
 module load cray-netcdf-hdf5parallel
 
 NEMO_BUILD_DIR=$HOME/git/NEMO-shelf/NEMOGCM/CONFIG
