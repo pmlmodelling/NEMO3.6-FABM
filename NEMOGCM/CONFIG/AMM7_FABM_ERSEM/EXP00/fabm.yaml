@@ -9,6 +9,9 @@ instances:
       a0w: 0.03                                            # absorption coefficient of clear water (1/m), default = 0.036
       b0w: 0.0015                                          # backscatter coefficient of clear water (1/m), default = 0.0016
       pEIR_eow: 0.5                                        # photosynthetically active fraction of shortwave radiation (-), default = 0.5
+      relax: 0.
+    initialization:
+      ADY: 0.05
   N1:
     long_name: phosphate
     model: ersem/pelagic_base
@@ -1169,3 +1172,8 @@ instances:
     parameters:
       value: 0.0
       standard_name: bottom_stress
+  ADY_0:  
+    model: horizontal_constant
+    parameters:
+      value: 0.05
+      standard_name: gelbstoff_absorption_from_satellite
