@@ -84,6 +84,7 @@
             <field field_ref="ben_nit_G4n"      operation="average" />
             <field field_ref="total_chlorophyll_calculator_result"      name="Chl-a"     long_name="Chlorophyll-a" operation="average" />
             <field field_ref="light_EIR"      operation="average" />
+            <field field_ref="light_ADY"      operation="average" />
             <field field_ref="toce"      operation="average" />
             <field field_ref="soce"      operation="average" />
             </field_group>
@@ -204,6 +205,7 @@
             <field field_ref="ben_nit_G4n"      operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl-a"     long_name="Chlorophyll-a" operation="average" />
 	  <field field_ref="light_EIR"      operation="average" />
+          <field field_ref="light_ADY"      operation="average" />
           <field field_ref="toce"      operation="average" />
           <field field_ref="soce"      operation="average" />
 	</file>
