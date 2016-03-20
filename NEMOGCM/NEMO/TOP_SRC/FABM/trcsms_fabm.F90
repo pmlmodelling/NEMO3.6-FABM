@@ -168,14 +168,6 @@ CONTAINS
 
       ! Compute interfacial source terms and fluxes
       DO jj=1,jpj
-         ! Process surface (fabm_do_surface increments rather than sets, so zero flux array first)
-         flux = 0._wp
-         CALL fabm_do_surface(model,1,jpi,jj,flux,fabm_st2Da(:,jj,1:jp_fabm_surface))
-         DO jn=1,jp_fabm
-             ! Divide surface fluxes by height of surface layer and add to source terms.
-             tra(:,jj,1,jp_fabm_m1+jn) = tra(:,jj,1,jp_fabm_m1+jn) + flux(:,jn)/fse3t(:,jj,1)
-         END DO
-
          ! Process bottom (fabm_do_bottom increments rather than sets, so zero flux array first)
          flux = 0._wp
          CALL fabm_do_bottom(model,1,jpi,jj,flux,fabm_st2Da(:,jj,jp_fabm_surface+1:))
@@ -185,6 +177,14 @@ CONTAINS
                  ! TODO: is there perhaps an existing variable for fse3t(ji,jj,mbkt(ji,jj))??
                  tra(ji,jj,mbkt(ji,jj),jp_fabm_m1+jn) = tra(ji,jj,mbkt(ji,jj),jp_fabm_m1+jn) + flux(ji,jn)/fse3t(ji,jj,mbkt(ji,jj))
              END DO
+         END DO
+
+         ! Process surface (fabm_do_surface increments rather than sets, so zero flux array first)
+         flux = 0._wp
+         CALL fabm_do_surface(model,1,jpi,jj,flux,fabm_st2Da(:,jj,1:jp_fabm_surface))
+         DO jn=1,jp_fabm
+             ! Divide surface fluxes by height of surface layer and add to source terms.
+             tra(:,jj,1,jp_fabm_m1+jn) = tra(:,jj,1,jp_fabm_m1+jn) + flux(:,jn)/fse3t(:,jj,1)
          END DO
       END DO
 
