@@ -4,11 +4,14 @@ instances:
   zenithAngle:
     model: ersem/zenith_angle
   light:
-    model: ersem/light_iop
+    model: ersem/light_iop_ady
     parameters:
       a0w: 0.03                                            # absorption coefficient of clear water (1/m), default = 0.036
       b0w: 0.0015                                          # backscatter coefficient of clear water (1/m), default = 0.0016
       pEIR_eow: 0.5                                        # photosynthetically active fraction of shortwave radiation (-), default = 0.5
+      relax: 0.143                                         # relaxation towards satellite gelbstoff absorption (1/m), default=0.033
+    initialization:
+      ADY: 0.05
   N1:
     long_name: phosphate
     model: ersem/pelagic_base
@@ -98,8 +101,6 @@ instances:
       xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
       xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
       c0: 0.0033                                           # background carbon concentration (mg C/m^3), default = 0.0
-      iopABS: 1e-05                                        # specific shortwave absorption (m^2/mg C), default = 0.0
-      iopBBS: 1.6e-05                                      # specific shortwave backscatter (m^2/mg C), default = 0.0
     initialization:
       c: 7.2                                               # carbon (mg C/m^3)
       n: 0.1                                               # nitrogen (mmol N/m^3)
@@ -122,8 +123,6 @@ instances:
       xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
       xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
       c0: 0.0033                                           # background carbon concentration (mg C/m^3), default = 0.0
-      iopABS: 1e-05                                        # specific shortwave absorption (m^2/mg C), default = 0.0
-      iopBBS: 1.6e-05                                      # specific shortwave backscatter (m^2/mg C), default = 0.0
     initialization:
       c: 17.0                                              # carbon (mg C/m^3)
       n: 0.24                                              # nitrogen (mmol N/m^3)
@@ -147,8 +146,6 @@ instances:
       xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
       xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
       c0: 0.0033                                           # background carbon concentration (mg C/m^3), default = 0.0
-      iopABS: 1e-05                                        # specific shortwave absorption (m^2/mg C), default = 0.0
-      iopBBS: 1.6e-05                                      # specific shortwave backscatter (m^2/mg C), default = 0.0
     initialization:
       c: 0.17                                              # carbon (mg C/m^3)
       n: 0.0024                                            # nitrogen (mmol N/m^3)
@@ -1159,11 +1156,6 @@ instances:
     parameters:
       value: 385
       standard_name: mole_fraction_of_carbon_dioxide_in_air
-  adESS: 
-    model: bulk_constant
-    parameters:
-      value: 0.07
-      standard_name: absorption_of_silt
   tauB:  
     model: horizontal_constant
     parameters:

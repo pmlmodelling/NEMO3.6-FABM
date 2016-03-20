@@ -35,7 +35,7 @@ ln -sf "$INPUTPATH"/GRID/coordinates.skagbdy.nc "$RUNPATH"/
 ln -sf "$INPUTPATH"/GRID/bathy_meter.nc "$RUNPATH"/
 
 #Light:
-ln -sf "$INPUTPATH"/Light/ady_data_netcdf3.nc "$RUNPATH/"
+ln -sf "$INPUTPATH"/Light/AMM7-ADY-broadband.nc "$RUNPATH/"
 ln -sf "$INPUTPATH"/Light/kd490.nc "$RUNPATH/"
 
 #interpolation weigths for surface flux forcing:
@@ -48,7 +48,8 @@ ln -sf "$INPUTPATH"/RIVERS/rivers.365.nc "$RUNPATH"/rivers.nc
 
 #lateral boundaries from climatology:
 ln -sf "$INPUTPATH"/BDY/amm7skagbdy_trc.nc "$RUNPATH"/
-ln -sf "$INPUTPATH"/BDY/amm7bdy_trc.nc "$RUNPATH"/
+#ln -sf "$INPUTPATH"/BDY/amm7bdy_trc.nc "$RUNPATH"/
+ln -sf "$INPUTPATH"/BDY/amm7bdy_trc.fixed.nc "$RUNPATH"/amm7bdy_trc.nc
 ln -sf "$INPUTPATH"/BDY/amm7_bdytide_K1_grid_T.nc "$RUNPATH"/bdy/
 ln -sf "$INPUTPATH"/BDY/amm7_bdytide_K1_grid_U.nc "$RUNPATH"/bdy/
 ln -sf "$INPUTPATH"/BDY/amm7_bdytide_K1_grid_V.nc "$RUNPATH"/bdy/
