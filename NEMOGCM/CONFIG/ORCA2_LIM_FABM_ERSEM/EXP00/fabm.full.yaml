@@ -101,8 +101,6 @@ instances:
       xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
       xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
       c0: 0.0033                                           # background carbon concentration (mg C/m^3), default = 0.0
-      iopABS: 1.e-05                                        # specific shortwave absorption (m^2/mg C), default = 0.0
-      iopBBS: 1.6e-05                                      # specific shortwave backscatter (m^2/mg C), default = 0.0
     initialization:
       c: 0.1
       n: 0.00126
@@ -125,8 +123,6 @@ instances:
       xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
       xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
       c0: 0.0033                                           # background carbon concentration (mg C/m^3), default = 0.0
-      iopABS: 1e-05                                        # specific shortwave absorption (m^2/mg C), default = 0.0
-      iopBBS: 1.6e-05                                      # specific shortwave backscatter (m^2/mg C), default = 0.0
     initialization:
       c: 0.1
       n: 0.00126
@@ -150,8 +146,6 @@ instances:
       xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
       xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
       c0: 0.0033                                           # background carbon concentration (mg C/m^3), default = 0.0
-      iopABS: 1e-05                                        # specific shortwave absorption (m^2/mg C), default = 0.0
-      iopBBS: 1.6e-05                                      # specific shortwave backscatter (m^2/mg C), default = 0.0
     initialization:
       c: 0.1
       n: 0.00126
