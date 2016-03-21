@@ -13,4 +13,4 @@ rm -f $RUNDIR/nemo-debug.exe
 ./makenemo -m $ARCH -n ORCA2_LIM_FABM_BLD_SCRATCH clean_config
 
 echo "Building NEMO-FABM..."
-./makenemo -m $ARCH -r ORCA2_LIM_FABM_ERSEM -n ORCA2_LIM_FABM_BLD_SCRATCH 2>&1 | tee compile-debug.log && rsync -a $NEMO_BUILD_DIR/ORCA2_LIM_FABM_BLD_SCRATCH/BLD/bin/nemo.exe $RUNDIR/nemo-debug.exe && echo "Done."
+./makenemo -m $ARCH -r ORCA2_LIM_FABM_ERSEM -n ORCA2_LIM_FABM_BLD_SCRATCH | tee compile-debug.log && rsync -a $NEMO_BUILD_DIR/ORCA2_LIM_FABM_BLD_SCRATCH/BLD/bin/nemo.exe $RUNDIR/nemo-debug.exe && echo "Done."

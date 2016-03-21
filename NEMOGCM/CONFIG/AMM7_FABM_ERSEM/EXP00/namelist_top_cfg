@@ -113,9 +113,14 @@
    cn_dir_obc        =  './'      !  root directory for the location of OPEN data files
 !          !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
 !          !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
-!  !sn_trcobc(1) =     'trcbdy'   ,    -1     , 'O3_c'     ,   .true.     , .false., 'monthly' ,    ''    ,   ''  , ' '
-   !sn_trcobc2(1) = 'amm7bdy_trc' ,    -1     , 'nitrate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
-   !rn_trofac(1) = 1
+   sn_trcobc2(1) = 'amm7bdy_trc' ,    -1     , 'phosphate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(2) = 'amm7bdy_trc' ,    -1     , 'nitrate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(4) = 'amm7bdy_trc' ,    -1     , 'silicate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(6) = 'amm7bdy_trc' ,    -1     , 'DIC' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   rn_trofac(1) = 1
+   rn_trofac(2) = 1
+   rn_trofac(4) = 1
+   rn_trofac(6) = 1
 /
 !----------------------------------------------------------------------
 ! namtrc_bc       !   data for boundary conditions
@@ -127,17 +132,23 @@
    cn_dir_obc        =  './'      !  root directory for the location of OPEN data files
 !          !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
 !          !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
-   !sn_trcobc2(1) = 'amm7skagbdy_trc' ,    -1 , 'O3_c'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
-   !rn_trofac(1) = 1
+   sn_trcobc2(1) = 'amm7skagbdy_trc' ,    -1 , 'phosphate'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(2) = 'amm7skagbdy_trc' ,    -1 , 'nitrate'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(4) = 'amm7skagbdy_trc' ,    -1 , 'siliate'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(6) = 'amm7skagbdy_trc' ,    -1 , 'DIC'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   rn_trofac(1) = 1
+   rn_trofac(2) = 1
+   rn_trofac(4) = 1
+   rn_trofac(6) = 1
 
 !----------------------------------------------------------------------
 !namtrc_bdy       !   Setup of tracer boundary conditions
 !-----------------------------------------------------------------------
 &namtrc_bdy
    !cn_trc_dflt     =  'specified','none'   !  OBC applied by default to all tracers
-   cn_trc_dflt     =  'none','none'   !  OBC applied by default to all tracers
-   !cn_trc          =  'frs','frs'   !  Boundary conditions appled to the active tracers (see namtrc)
-   cn_trc          =  'none','none'   !  Boundary conditions appled to the active tracers (see namtrc)
+   cn_trc_dflt     =  'neumann','neumann'   !  OBC applied by default to all tracers
+   cn_trc          =  'orlanski','orlanski'   !  Boundary conditions appled to the active tracers (see namtrc)
+   !cn_trc          =  'neumann','neumann'   !  Boundary conditions appled to the active tracers (see namtrc)
    nn_trcdmp_bdy   = 0,0     !  Use damping timescales defined in nambdy of namelist
                            !  = 0 NO damping of tracers at open boudaries
                            !  = 1 Only for tracers forced with external data
