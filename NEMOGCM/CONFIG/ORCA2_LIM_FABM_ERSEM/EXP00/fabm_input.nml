@@ -1,0 +1,14 @@
+!              !  file name   ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!              !              !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
+&variable
+   name='gelbstoff_absorption_satellite'
+   sn=         'ORCA2-ADY-broadband',192,            'gelbstoff_absorption_satellite', .true.,  .true.,   'yearly',     '',         '',        ''
+/
+&variable
+   name='N3_flux/flux'
+   sn=         'ORCA2-TM3-NDeposition.1993',-12,            'N3_flux', .true.,  .false.,   'yearly',     '',         '',        ''
+/
+&variable
+   name='N4_flux/flux'
+   sn=         'ORCA2-TM3-NDeposition.1993',-12,            'N4_flux', .true.,  .false.,   'yearly',     '',         '',        ''
+/
