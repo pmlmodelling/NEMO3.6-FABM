@@ -714,3 +714,11 @@ instances:
     parameters:
       value: 0.0
       standard_name: bottom_stress
+  N3_flux:  
+    model: external_surface_flux
+    coupling:
+      target: N3/n
+  N4_flux:  
+    model: external_surface_flux
+    coupling:
+      target: N4/n
