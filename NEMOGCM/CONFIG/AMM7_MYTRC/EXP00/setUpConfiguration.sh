@@ -29,7 +29,8 @@ ln -sf "$INPUTPATH"/AtmosphericDeposition/AMM7_atn_weights.nc "$RUNPATH"/
 ln -sf "$INPUTPATH"/AtmosphericDeposition/EMEP_atmosnuts_1980_2009.nc "$RUNPATH"/
 #
 #grid:
-ln -sf "$INPUTPATH"/GRID/coordinates.nc "$RUNPATH"/
+#ln -sf "$INPUTPATH"/GRID/coordinates.nc "$RUNPATH"/
+ln -sf "$INPUTPATH"/GRID/AMM7_coordinates.nc "$RUNPATH"/coordinates.nc
 ln -sf "$INPUTPATH"/GRID/coordinates.bdy.nc "$RUNPATH"/
 ln -sf "$INPUTPATH"/GRID/coordinates.skagbdy.nc "$RUNPATH"/
 ln -sf "$INPUTPATH"/GRID/bathy_meter.nc "$RUNPATH"/
