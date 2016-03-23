@@ -372,7 +372,7 @@ sn_rcv_co2    =       'coupled'              ,    'no'    ,     ''      ,       
    ln_qsr_rgb  = .true.    !  RGB (Red-Green-Blue) light penetration
    ln_qsr_2bd  = .false.   !  2 bands              light penetration
    ln_qsr_bio  = .false.   !  bio-model light penetration
-   nn_chldta   =   1 ! slwa 0    !  RGB : Chl data (=1) or cst value (=0)
+   nn_chldta   =   0       !  RGB : Chl data (=1) or cst value (=0)
    rn_abs      =   0.58    !  RGB & 2 bands: fraction of light (rn_si1)
    rn_si0      =   0.35    !  RGB & 2 bands: shortess depth of extinction
    rn_si1      =   23.0    !  2 bands: longest depth of extinction
@@ -393,9 +393,9 @@ sn_rcv_co2    =       'coupled'              ,    'no'    ,     ''      ,       
 !  ln_rnf_emp   = .false.   !  runoffs included into precipitation field (T) or into a file (F)
    ln_rnf_mouth = .false.   !  specific treatment at rivers mouths
    rn_hrnf      =  1000.e0  !  depth over which enhanced vertical mixing is used
-   rn_avt_rnf   =   1.e-3   !  value of the additional vertical mixing coef. [m2/s]
+   rn_avt_rnf   =   10      !  value of the additional vertical mixing coef. [m2/s]
    rn_rfact     =   1.e0    !  multiplicative factor for runoff
-   ln_rnf_depth = .false.   !  read in depth information for runoff
+   ln_rnf_depth = .true.    !  read in depth information for runoff
    ln_rnf_tem   = .false.   !  read in temperature information for runoff
    ln_rnf_sal   = .false.   !  read in salinity information for runoff
 /
