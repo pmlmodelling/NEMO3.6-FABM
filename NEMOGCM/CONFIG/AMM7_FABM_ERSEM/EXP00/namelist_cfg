@@ -44,6 +44,22 @@
 !-----------------------------------------------------------------------
    rn_atfp     =    0.1    !  asselin time filter parameter
    nn_msh      =    0      !  create (=1) a mesh file or not (=0)
+   ppa0        =    999999.0
+   ppa1        =    999999.0
+   ppa2        =    999999.0
+   ppacr       =    9.0
+   ppacr2      =    999999.0
+   ppdzmin     =    6.0
+   ppe1_deg    =    999999.0
+   ppe1_m      =    999999.0
+   ppe2_deg    =    999999.0
+   ppe2_m      =    999999.0
+   ppglam0     =    999999.0
+   ppgphi0     =    999999. 
+   pphmax      =    5720.0
+   ppkth       =    23.563
+   ppkth2      =    999999.0
+   ppsur       =    999999.0
 /
 !-----------------------------------------------------------------------
 &namsplit      !   time splitting parameters                            ("key_
