@@ -9,7 +9,7 @@ instances:
       a0w: 0.03                                            # absorption coefficient of clear water (1/m), default = 0.036
       b0w: 0.0015                                          # backscatter coefficient of clear water (1/m), default = 0.0016
       pEIR_eow: 0.5                                        # photosynthetically active fraction of shortwave radiation (-), default = 0.5
-      relax: 0.143                                         # relaxation towards satellite gelbstoff absorption (1/m), default=0.033
+      relax: 0.143                                         # relaxation towards satellite gelbstoff absorption (1/d), default=0.033
     initialization:
       ADY: 0.05
   N1:
