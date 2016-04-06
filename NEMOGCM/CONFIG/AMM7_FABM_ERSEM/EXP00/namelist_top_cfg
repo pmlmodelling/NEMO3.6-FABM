@@ -28,7 +28,10 @@
 &namtrc     !   tracers definition
 !-----------------------------------------------------------------------
 !                    sname       lname                unit ,  init    ,  sbc     ,   cbc   ,  obc   ,  save
-   !sn_tracer(1)   = 'TR1     ' , 'Passive Tracer  ',  ' '  , .false.  ,  .false. , .false. , .true. , .true.
+   sn_tracer(2)   = 'N1_p     ' , 'Phosphate  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(3)   = 'N3_n     ' , 'Oxidised Nitrogen  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(5)   = 'N5_s     ' , 'Silicate  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(7)   = 'O3_c     ' , 'Dissolved Inorganic Carbon  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
    ln_trcdta     =  .false.  !  Initialisation from data input file (T) or not (F)
    ln_trcdmp     =  .false.  !  add a damping termn (T) or not (F)
    ln_trcdmp_clo =  .false.  !  damping term (T) or not (F) on closed seas
@@ -113,14 +116,14 @@
    cn_dir_obc        =  './'      !  root directory for the location of OPEN data files
 !          !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
 !          !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
-   sn_trcobc2(1) = 'amm7bdy_trc' ,    -1     , 'phosphate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
-   sn_trcobc2(2) = 'amm7bdy_trc' ,    -1     , 'nitrate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
-   sn_trcobc2(4) = 'amm7bdy_trc' ,    -1     , 'silicate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
-   sn_trcobc2(6) = 'amm7bdy_trc' ,    -1     , 'DIC' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
-   rn_trofac(1) = 1
+   sn_trcobc2(2) = 'amm7bdy_trc' ,    -1     , 'phosphate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(3) = 'amm7bdy_trc' ,    -1     , 'nitrate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(5) = 'amm7bdy_trc' ,    -1     , 'silicate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(7) = 'amm7bdy_trc' ,    -1     , 'DIC' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
    rn_trofac(2) = 1
-   rn_trofac(4) = 1
-   rn_trofac(6) = 1
+   rn_trofac(3) = 1
+   rn_trofac(5) = 1
+   rn_trofac(7) = 1
 /
 !----------------------------------------------------------------------
 ! namtrc_bc       !   data for boundary conditions
@@ -132,14 +135,14 @@
    cn_dir_obc        =  './'      !  root directory for the location of OPEN data files
 !          !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
 !          !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
-   sn_trcobc2(1) = 'amm7skagbdy_trc' ,    -1 , 'phosphate'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
-   sn_trcobc2(2) = 'amm7skagbdy_trc' ,    -1 , 'nitrate'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
-   sn_trcobc2(4) = 'amm7skagbdy_trc' ,    -1 , 'siliate'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
-   sn_trcobc2(6) = 'amm7skagbdy_trc' ,    -1 , 'DIC'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
-   rn_trofac(1) = 1
+   sn_trcobc2(2) = 'amm7skagbdy_trc' ,    -1 , 'phosphate'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(3) = 'amm7skagbdy_trc' ,    -1 , 'nitrate'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(5) = 'amm7skagbdy_trc' ,    -1 , 'silicate'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(7) = 'amm7skagbdy_trc' ,    -1 , 'DIC'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
    rn_trofac(2) = 1
-   rn_trofac(4) = 1
-   rn_trofac(6) = 1
+   rn_trofac(3) = 1
+   rn_trofac(5) = 1
+   rn_trofac(7) = 1
 
 !----------------------------------------------------------------------
 !namtrc_bdy       !   Setup of tracer boundary conditions
