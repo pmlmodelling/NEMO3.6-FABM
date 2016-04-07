@@ -211,8 +211,6 @@ CONTAINS
             if (mbkt(ji,jj)>1) THEN
                k_floor=mbkt(ji,jj)
                ! Linearly interpolate to velocities at the interfaces between layers
-               ! TODO: account for differences in layer heights (now we simply use the unweighted average of centre velocities)
-               !w_if(1:k_floor-1,:) = (w_ct(ji,1:k_floor-1,:)+w_ct(ji,2:k_floor,:))/2
                zwgt_if(1:k_floor-1,:)=spread(&
                    fse3t(ji,jj,2:k_floor)/ (fse3t(ji,jj,1:k_floor-1)+fse3t(ji,jj,2:k_floor))&
                    ,2,jp_fabm)
@@ -333,7 +331,6 @@ CONTAINS
          fabm_st2Db(:,:,:) = (1._wp - 2._wp*atfp) * fabm_st2Dn(:,:,:) + &
              atfp * ( fabm_st2Db(:,:,:) + fabm_st2Da(:,:,:) )
          fabm_st2Dn(:,:,:) = fabm_st2Da(:,:,:)
-         ! TO DO
       ENDIF
 
    END SUBROUTINE st2d_fabm_nxt
