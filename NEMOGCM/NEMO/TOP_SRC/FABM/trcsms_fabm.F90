@@ -66,6 +66,16 @@ MODULE trcsms_fabm
    END TYPE
    TYPE (type_input_variable), POINTER, SAVE :: first_input_variable => NULL()
 
+   TYPE type_river_data
+      INTEGER   :: jp_pos=0 ! position of linked state variable in trc fields
+      TYPE(FLD), ALLOCATABLE, DIMENSION(:) :: sf
+      INTEGER                              :: ntimes
+      TYPE(type_river_data), POINTER   :: next => null()
+      REAL(wp) :: rn_trrnfac=1._wp ! unit conversion factor
+   END TYPE
+
+   TYPE (type_river_data), POINTER, SAVE :: first_river_data => NULL()
+
    TYPE (type_bulk_variable_id),SAVE :: swr_id
 
    TYPE (type_model) :: model
@@ -109,7 +119,9 @@ CONTAINS
       IF( l_trdtrc )  CALL wrk_alloc( jpi, jpj, jpk, ztrfabm )
 
       CALL trc_bc_read  ( kt )       ! tracers: surface and lateral Boundary Conditions
-      IF( l_trdtrc ) THEN      ! Save the trends in the ixed layer
+      CALL trc_rnf_fabm ( kt ) ! River forcings
+
+      IF( l_trdtrc ) THEN      ! Save the trends in the mixed layer
           DO jn = jp_fabm0, jp_fabm1
             ztrfabm(:,:,:) = tra(:,:,:,jn)
             CALL trd_trc( ztrfabm, jn, jptra_sms, kt )   ! save trends
@@ -469,13 +481,17 @@ CONTAINS
    SUBROUTINE initialize_inputs
       TYPE(FLD_N)        :: sn, sn_empty
       CHARACTER(LEN=256) :: name
+      REAL(wp) :: rfac
       NAMELIST /variable/ name,sn
+      NAMELIST /riverdata/ name,sn,rfac
       LOGICAL :: ext
       INTEGER :: num, ierr, nmlunit
       TYPE (type_input_variable),POINTER :: input_variable
+      TYPE (type_river_data),POINTER :: river_data
       INTEGER , PARAMETER :: nbtimes = 365  !: maximum number of times record in a file
 
       REAL(wp), DIMENSION(nbtimes) :: zsteps
+      INTEGER :: jn
 
       ! Check if fabm_input.nml exists - if not, do nothing and return.
       INQUIRE( FILE='fabm_input.nml', EXIST=ext )
@@ -504,7 +520,7 @@ CONTAINS
          ALLOCATE(input_variable%sf(1), STAT=ierr)
          IF( ierr > 0 ) CALL ctl_stop( 'STOP', 'trcsms_fabm:initialize_inputs: unable to allocate sf structure for variable '//TRIM(name) )
          CALL fld_fill(input_variable%sf, (/sn/), '', 'trcsms_fabm:initialize_inputs', 'FABM variable '//TRIM(name), 'variable' )
-                          ALLOCATE( input_variable%sf(1)%fnow(jpi,jpj,1)   )
+         ALLOCATE( input_variable%sf(1)%fnow(jpi,jpj,1)   )
          IF( sn%ln_tint ) ALLOCATE( input_variable%sf(1)%fdta(jpi,jpj,1,2) )
 
          ! Provide FABM with pointer to field that will receive prescribed data.
@@ -521,22 +537,117 @@ CONTAINS
          first_input_variable => input_variable
       END DO
 
-98    CALL ctl_stop('STOP', 'trcsms_fabm:initialize_inputs: unable to read namelist "variable"')
+98    CALL ctl_stop('STOP', 'trcsms_fabm:initialize_inputs: unable to read namelist "riverdata"')
 
-99    RETURN
+99    REWIND(nmlunit)
+
+      ! Read any number of "riverdata" namelists
+      DO
+         ! Initialize namelist variables
+         name = ''
+         sn = sn_empty
+         rfac = 1._wp
+
+         ! Read the namelist
+         READ(nmlunit,nml=riverdata,err=198,end=199)
+
+         ! Transfer namelist settings to new river_data object
+         ALLOCATE(river_data, STAT=ierr)
+         IF( ierr > 0 ) CALL ctl_stop( 'STOP', 'trcsms_fabm:initialize_inputs: unable to allocate river_data object for variable '//TRIM(name) )
+         ! Check if river data name is in FABM states and 
+         ! provide NEMO with position of the respective state variable 
+         ! within tracer field
+         DO jn=1,jp_fabm
+           IF (TRIM(name) == TRIM(model%state_variables(jn)%name)) THEN
+             river_data%jp_pos = jp_fabm_m1+jn
+           END IF
+         END DO
+         IF (river_data%jp_pos == 0) THEN
+           ! This variable was not found among FABM's state variables 
+           ! passed to NEMO!
+           CALL ctl_stop('STOP', 'trcsms_fabm:initialize_inputs: variable "'//TRIM(name)//'" was not found among FABM state variables.')
+         END IF
+
+         ALLOCATE(river_data%sf(1), STAT=ierr)
+         IF( ierr > 0 ) CALL ctl_stop( 'STOP', 'trcsms_fabm:initialize_inputs: unable to allocate sf structure for variable '//TRIM(name) )
+         CALL fld_fill(river_data%sf, (/sn/), '', 'trcsms_fabm:initialize_inputs', 'FABM variable '//TRIM(name), 'variable' )
+         ALLOCATE( river_data%sf(1)%fnow(jpi,jpj,1)   )
+         IF( sn%ln_tint ) ALLOCATE( river_data%sf(1)%fdta(jpi,jpj,1,2) )
+
+         ! Load unit conversion factor:
+         river_data%rn_trrnfac=rfac
+         ! Get number of record in file (if there is only one, we will read data only at the very first time step)
+         CALL iom_open ( TRIM( sn%clname ) , num )
+         CALL iom_gettime( num, zsteps, kntime=river_data%ntimes)
+         CALL iom_close( num )
+
+         ! Prepend new input variable to list.
+         river_data%next => first_river_data
+         first_river_data => river_data
+      END DO
+
+198    CALL ctl_stop('STOP', 'trcsms_fabm:initialize_inputs: unable to read namelist "riverdata"')
+
+199    RETURN
 
    END SUBROUTINE initialize_inputs
 
    SUBROUTINE update_inputs( kt )
       INTEGER, INTENT(IN) :: kt
       TYPE (type_input_variable),POINTER :: input_variable
+      TYPE (type_river_data),POINTER :: river_data
 
       input_variable => first_input_variable
       DO WHILE (ASSOCIATED(input_variable))
          IF( kt == nit000 .OR. ( kt /= nit000 .AND. input_variable%ntimes > 1 ) ) CALL fld_read( kt, 1, input_variable%sf )
          input_variable => input_variable%next
       END DO
+
+      river_data => first_river_data
+      DO WHILE (ASSOCIATED(river_data))
+         IF( kt == nit000 .OR. ( kt /= nit000 .AND. river_data%ntimes > 1 ) ) CALL fld_read( kt, 1, river_data%sf )
+         river_data => river_data%next
+      END DO
+
    END SUBROUTINE update_inputs
+
+   SUBROUTINE trc_rnf_fabm( kt )
+      !!----------------------------------------------------------------------
+      !!                  ***  ROUTINE trc_rnf_fabm  ***
+      !!
+      !! ** Purpose :   Add river loadings of biogeochemistry to states
+      !!
+      !! ** Action  :   tra (sms) updated with loadings at time-step kt
+      !!
+      !! This routines assumes river loadings to be given in
+      !! state variable units * m3 / sec
+      !!--------------------------------------------------------------------
+
+      INTEGER, INTENT(in) ::   kt          ! ocean time step
+      REAL(wp) :: zcoef,zfrac
+      INTEGER :: ji,jj,jk
+      !
+      TYPE (type_river_data),POINTER :: river_data
+
+      river_data => first_river_data
+      DO WHILE (ASSOCIATED(river_data))
+        IF( kt == nit000 .OR. ( kt /= nit000 ) ) THEN
+            DO jj = 1, jpj
+              DO ji = 1, jpi
+                !convert units and divide by surface area
+                zcoef = river_data%rn_trrnfac / e1e2t(ji,jj)
+                DO jk = 1,nk_rnf(ji,jj)
+                  ! vertical fraction of effective river depth
+                  zfrac = fse3t(ji,jj,jk) / h_rnf(ji,jj)
+                  ! Add river loadings
+                  tra(ji,jj,jk,river_data%jp_pos) = tra(ji,jj,jk,river_data%jp_pos) + river_data%sf(1)%fnow(ji,jj,1)*zcoef*zfrac
+                END DO
+              END DO
+            END DO
+        END IF
+      END DO
+
+   END SUBROUTINE trc_rnf_fabm
 
 #else
    !!----------------------------------------------------------------------
