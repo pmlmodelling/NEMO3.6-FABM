@@ -645,6 +645,7 @@ CONTAINS
               END DO
             END DO
         END IF
+        river_data => river_data%next
       END DO
 
    END SUBROUTINE trc_rnf_fabm
