@@ -570,7 +570,7 @@ CONTAINS
 
          ALLOCATE(river_data%sf(1), STAT=ierr)
          IF( ierr > 0 ) CALL ctl_stop( 'STOP', 'trcsms_fabm:initialize_inputs: unable to allocate sf structure for variable '//TRIM(name) )
-         CALL fld_fill(river_data%sf, (/sn/), '', 'trcsms_fabm:initialize_inputs', 'FABM variable '//TRIM(name), 'variable' )
+         CALL fld_fill(river_data%sf, (/sn/), '', 'trcsms_fabm:initialize_inputs', 'FABM variable '//TRIM(name), 'riverdata' )
          ALLOCATE( river_data%sf(1)%fnow(jpi,jpj,1)   )
          IF( sn%ln_tint ) ALLOCATE( river_data%sf(1)%fdta(jpi,jpj,1,2) )
 
@@ -586,9 +586,9 @@ CONTAINS
          first_river_data => river_data
       END DO
 
-198    CALL ctl_stop('STOP', 'trcsms_fabm:initialize_inputs: unable to read namelist "riverdata"')
+198   CALL ctl_stop('STOP', 'trcsms_fabm:initialize_inputs: unable to read namelist "riverdata"')
 
-199    RETURN
+199   RETURN
 
    END SUBROUTINE initialize_inputs
 
