@@ -624,7 +624,7 @@ CONTAINS
       !!--------------------------------------------------------------------
 
       INTEGER, INTENT(in) ::   kt          ! ocean time step
-      REAL(wp) :: zcoef,zfrac
+      REAL(wp) :: zcoef
       INTEGER :: ji,jj,jk
       !
       TYPE (type_river_data),POINTER :: river_data
@@ -634,13 +634,14 @@ CONTAINS
         IF( kt == nit000 .OR. ( kt /= nit000 ) ) THEN
             DO jj = 1, jpj
               DO ji = 1, jpi
-                !convert units and divide by surface area
-                zcoef = river_data%rn_trrnfac / e1e2t(ji,jj)
+                ! convert units and divide by surface area
+                ! loading / cell volume * vertical fraction of riverload
+                ! dtrc / dt (river) = riverload / e1e2t / e3t * e3t * h_rnf
+                !                    = riverload / e1e2t / h_rnf
+                zcoef = river_data%rn_trrnfac / e1e2t(ji,jj) / h_rnf(ji,jj)
                 DO jk = 1,nk_rnf(ji,jj)
-                  ! vertical fraction of effective river depth
-                  zfrac = fse3t(ji,jj,jk) / h_rnf(ji,jj)
                   ! Add river loadings
-                  tra(ji,jj,jk,river_data%jp_pos) = tra(ji,jj,jk,river_data%jp_pos) + river_data%sf(1)%fnow(ji,jj,1)*zcoef*zfrac
+                  tra(ji,jj,jk,river_data%jp_pos) = tra(ji,jj,jk,river_data%jp_pos) + river_data%sf(1)%fnow(ji,jj,1)*zcoef
                 END DO
               END DO
             END DO
