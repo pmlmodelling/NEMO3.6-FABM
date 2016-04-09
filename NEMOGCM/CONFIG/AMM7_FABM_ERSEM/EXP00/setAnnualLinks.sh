@@ -26,6 +26,9 @@ rm -rf "$RUNPATH"/bdy/amm7*_y????m??d??.nc
 
 for y in $yb $yn $ya
 do
+  #Atmospheric deposition of nutrients:
+  ln -sf "$INPUTPATH"/AtmosphericDeposition/AMM7-EMEP-NDeposition."$y".nc "$RUNPATH"/AMM7-EMEP-NDeposition_y"$y".nc
+
   #atmospheric forcings:
   ln -sf "$INPUTPATH"/FLUXES/CUT_ERAI_INCLUDE_MSLP_y"$y"m??d??.nc "$RUNPATH"/fluxes/
 
