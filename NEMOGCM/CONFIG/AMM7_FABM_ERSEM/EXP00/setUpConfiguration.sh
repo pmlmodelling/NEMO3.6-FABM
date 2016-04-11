@@ -25,8 +25,8 @@ rm -rf "$RUNPATH"/bdy/amm7*_y????m??d??.nc
 
 #atmospheric deposition:
 
-ln -sf "$INPUTPATH"/AtmosphericDeposition/AMM7_atn_weights.nc "$RUNPATH"/
-ln -sf "$INPUTPATH"/AtmosphericDeposition/EMEP_atmosnuts_1980_2009.nc "$RUNPATH"/
+#ln -sf "$INPUTPATH"/AtmosphericDeposition/AMM7_atn_weights.nc "$RUNPATH"/
+#ln -sf "$INPUTPATH"/AtmosphericDeposition/EMEP_atmosnuts_1980_2009.nc "$RUNPATH"/
 #
 #grid:
 #ln -sf "$INPUTPATH"/GRID/coordinates.nc "$RUNPATH"/
@@ -45,7 +45,7 @@ ln -sf "$INPUTPATH"/FLUXES/weights_erai_amm7_bilin.nc "$RUNPATH"/fluxes/
 ln -sf "$INPUTPATH"/FLUXES/CUT_ERAI_LSM.nc "$RUNPATH"/fluxes/
 
 #rivers:
-ln -sf "$INPUTPATH"/RIVERS/rivers.365.nc "$RUNPATH"/rivers.nc
+ln -sf "$INPUTPATH"/RIVERS/rivers.ersem.nc "$RUNPATH"/rivers.nc
 
 #lateral boundaries from climatology:
 ln -sf "$INPUTPATH"/BDY/amm7skagbdy_trc.nc "$RUNPATH"/
