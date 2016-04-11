@@ -150,8 +150,8 @@
 &namtrc_bdy
    !cn_trc_dflt     =  'specified','none'   !  OBC applied by default to all tracers
    cn_trc_dflt     =  'neumann','neumann'   !  OBC applied by default to all tracers
-   cn_trc          =  'orlanski','orlanski'   !  Boundary conditions appled to the active tracers (see namtrc)
-   !cn_trc          =  'neumann','neumann'   !  Boundary conditions appled to the active tracers (see namtrc)
+   !cn_trc          =  'orlanski','orlanski'   !  Boundary conditions appled to the active tracers (see namtrc)
+   cn_trc          =  'frs','frs'   !  Boundary conditions appled to the active tracers (see namtrc)
    nn_trcdmp_bdy   = 0,0     !  Use damping timescales defined in nambdy of namelist
                            !  = 0 NO damping of tracers at open boudaries
                            !  = 1 Only for tracers forced with external data
