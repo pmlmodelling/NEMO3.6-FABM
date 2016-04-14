@@ -1,5 +1,6 @@
 <field_definition level="1" prec="4" operation="average" enabled=".TRUE." default_value="1.e20" >
  <field_group id="ptrc_T" grid_ref="grid_T_3D">
+  <field id="light_ADY" long_name="light gelbstoff absorption" unit="1/m" default_value="-.200E+21" />
   <field id="N1_p" long_name="phosphate phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="N3_n" long_name="nitrate nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="N4_n" long_name="ammonium nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
@@ -91,9 +92,8 @@
   <field id="G3_c" long_name="benthic dissolved inorganic carbon carbon" unit="mmol/m^2" default_value="-.200E+21" />
  </field_group>
  <field_group id="diad_T" grid_ref="grid_T_2D">
-  <field id="particulate_organic_absorption_coefficient_calculator_result" long_name="particulate_organic_absorption_coefficient_calculator result" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="particulate_organic_backscatter_coefficient_calculator_result" long_name="particulate_organic_backscatter_coefficient_calculator result" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="adESS_data" long_name="adESS data" unit="" default_value="0.700E-01" grid_ref="grid_T_3D" />
+  <field id="light_ADY_sms" long_name="light gelbstoff absorption sources-sinks" unit="1/m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="light_ADY_w" long_name="light gelbstoff absorption vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="light_EIR" long_name="light shortwave radiation" unit="W/m^2" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="light_parEIR" long_name="light photosynthetically active radiation" unit="W/m^2" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="light_xEPS" long_name="light attenuation coefficient of shortwave flux" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
@@ -508,11 +508,15 @@
   <field id="K5_s_pel_sms" long_name="benthic silicate pelagic silicate sources-sinks" unit="mmol/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="G2_o_pel_sms" long_name="benthic oxygen pelagic oxygen sources-sinks" unit="mmol/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="G3_c_pel_sms" long_name="benthic dissolved inorganic carbon pelagic carbon sources-sinks" unit="mmol/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="N3_flux_target_sms" long_name="N3_flux target variable sources-sinks" unit="UNITS m-3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="N4_flux_target_sms" long_name="N4_flux target variable sources-sinks" unit="UNITS m-3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="custom_extinction_calculator_total" long_name="custom_extinction_calculator total custom light extinction" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="total_phosphorus_calculator_result" long_name="total_phosphorus_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="total_nitrogen_calculator_result" long_name="total_nitrogen_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="total_silicate_calculator_result" long_name="total_silicate_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="total_carbon_calculator_result" long_name="total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="particulate_organic_backscatter_coefficient_calculator_result" long_name="particulate_organic_backscatter_coefficient_calculator result" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="particulate_organic_absorption_coefficient_calculator_result" long_name="particulate_organic_absorption_coefficient_calculator result" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="total_chlorophyll_calculator_result" long_name="total_chlorophyll_calculator result" unit="mg/m^3" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="photosynthesis_rate_calculator_result" long_name="photosynthesis_rate_calculator result" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="phytoplankton_respiration_rate_calculator_result" long_name="phytoplankton_respiration_rate_calculator result" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
@@ -520,6 +524,8 @@
   <field id="attenuation_coefficient_of_photosynthetic_radiative_flux_calculator_result" long_name="attenuation_coefficient_of_photosynthetic_radiative_flux_calculator result" unit="m-1" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="zenithAngle_w_bot" long_name="zenithAngle near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="zenithAngle_zenithA" long_name="zenithAngle zenith_angle" unit="degrees" default_value="0.000E+00" />
+  <field id="light_ADY_sfl" long_name="light gelbstoff absorption surface flux" unit="1/m*m/s" default_value="0.000E+00" />
+  <field id="light_ADY_bfl" long_name="light gelbstoff absorption bottom flux" unit="1/m*m/s" default_value="0.000E+00" />
   <field id="N1_w_bot" long_name="phosphate near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="N1_p_sfl" long_name="phosphate phosphorus surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
   <field id="N1_p_bfl" long_name="phosphate phosphorus bottom flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
@@ -1742,6 +1748,10 @@
   <field id="Y4_Q6_pen_depth_p_sms" long_name="benthic meiofauna POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="Y4_Q6_s_int_sms" long_name="benthic meiofauna POM column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
   <field id="Y4_Q6_pen_depth_s_sms" long_name="benthic meiofauna POM penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="N3_flux_target_sfl" long_name="N3_flux target variable surface flux" unit="UNITS m-3*m/s" default_value="0.000E+00" />
+  <field id="N3_flux_target_bfl" long_name="N3_flux target variable bottom flux" unit="UNITS m-3*m/s" default_value="0.000E+00" />
+  <field id="N4_flux_target_sfl" long_name="N4_flux target variable surface flux" unit="UNITS m-3*m/s" default_value="0.000E+00" />
+  <field id="N4_flux_target_bfl" long_name="N4_flux target variable bottom flux" unit="UNITS m-3*m/s" default_value="0.000E+00" />
   <field id="total_phosphorus_at_interfaces_calculator_result" long_name="total_phosphorus_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
   <field id="total_nitrogen_at_interfaces_calculator_result" long_name="total_nitrogen_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
   <field id="total_silicate_at_interfaces_calculator_result" long_name="total_silicate_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />

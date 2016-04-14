@@ -13,7 +13,6 @@ rm -rf "$RUNPATH"/fluxes/strd_y????.nc
 rm -rf "$RUNPATH"/fluxes/ssrd24_y????.nc
 
 mkdir -p "$RUNPATH"/bdy
-rm -rf "$RUNPATH"/bdy/amm7*_y????m??d??.nc
 
 #namelists:
 #rsync -a "$CONFIGPATH"/EXP00/namelist*_cfg.template $RUNPATH/
@@ -96,6 +95,3 @@ ln -sf "$INPUTPATH"/BDY/amm7_bdytide_S2_grid_V.nc "$RUNPATH"/bdy/
 ln -sf "$INPUTPATH"/BDY/amm7_bdytide_T2_grid_T.nc "$RUNPATH"/bdy/
 ln -sf "$INPUTPATH"/BDY/amm7_bdytide_T2_grid_U.nc "$RUNPATH"/bdy/
 ln -sf "$INPUTPATH"/BDY/amm7_bdytide_T2_grid_V.nc "$RUNPATH"/bdy/
-
-#restart files:
-ln -sf "$INPUTPATH"/RESTARTS/restart.nc restart.nc

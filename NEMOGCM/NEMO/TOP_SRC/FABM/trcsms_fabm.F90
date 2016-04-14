@@ -488,9 +488,6 @@ CONTAINS
       INTEGER :: num, ierr, nmlunit
       TYPE (type_input_variable),POINTER :: input_variable
       TYPE (type_river_data),POINTER :: river_data
-      INTEGER , PARAMETER :: nbtimes = 365  !: maximum number of times record in a file
-
-      REAL(wp), DIMENSION(nbtimes) :: zsteps
       INTEGER :: jn
 
       ! Check if fabm_input.nml exists - if not, do nothing and return.
@@ -526,11 +523,6 @@ CONTAINS
          ! Provide FABM with pointer to field that will receive prescribed data.
          ! NB source=data_source_user guarantees that the prescribed data takes priority over any data FABM may already have for that variable.
          CALL fabm_link_horizontal_data(model,input_variable%horizontal_id,input_variable%sf(1)%fnow(:,:,1),source=data_source_user)
-
-         ! Get number of record in file (if there is only one, we will read data only at the very first time step)
-         CALL iom_open ( TRIM( sn%clname ) , num )
-         CALL iom_gettime( num, zsteps, kntime=input_variable%ntimes)
-         CALL iom_close( num )
 
          ! Prepend new input variable to list.
          input_variable%next => first_input_variable
@@ -576,10 +568,6 @@ CONTAINS
 
          ! Load unit conversion factor:
          river_data%rn_trrnfac=rfac
-         ! Get number of record in file (if there is only one, we will read data only at the very first time step)
-         CALL iom_open ( TRIM( sn%clname ) , num )
-         CALL iom_gettime( num, zsteps, kntime=river_data%ntimes)
-         CALL iom_close( num )
 
          ! Prepend new input variable to list.
          river_data%next => first_river_data

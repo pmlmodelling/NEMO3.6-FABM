@@ -23,7 +23,7 @@
     
     <file_definition type="one_file" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="10d" min_digits="4">
       <file_group id="1ts" output_freq="1ts"  output_level="10" enabled=".TRUE."> <!-- 1 time step files -->
-         <file id="file10" name_suffix="_ptrc_T" description="tracer variables" sync_freq="1d">
+         <file id="file10" name_suffix="_ptrc_T" description="tracer variables" sync_freq="1ts">
           <field field_ref="N1_p" operation="instant" />
           <field field_ref="N3_n" operation="instant" />
           <field field_ref="N4_n" operation="instant" />
