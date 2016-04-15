@@ -882,6 +882,8 @@
           <field field_ref="e3t"      name="e3t"     operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
           <field field_ref="light_ADY" operation="average" />
+        </file>
+
       </file_group>
 
 
