@@ -79,7 +79,7 @@
   <field id="Q17_c" long_name="benthic buried matter carbon" unit="mg C/m^2" default_value="-.200E+21" />
   <field id="Q17_p" long_name="benthic buried matter phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
   <field id="Q17_n" long_name="benthic buried matter nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="bL2_l" long_name="benthic calcite calcite" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="bL2_c" long_name="benthic calcite carbon" unit="mg C/m^2" default_value="-.200E+21" />
   <field id="H1_c" long_name="benthic aerobic bacteria carbon" unit="mg C/m^2" default_value="-.200E+21" />
   <field id="H2_c" long_name="benthic anaerobic bacteria carbon" unit="mg C/m^2" default_value="-.200E+21" />
   <field id="K1_p" long_name="benthic phosphate phosphorus" unit="mmol/m^2" default_value="-.200E+21" />
@@ -200,6 +200,7 @@
   <field id="L2_c_sms" long_name="calcite carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="L2_c_w" long_name="calcite carbon vertical movement" unit="m/s" default_value="-.116E-03" grid_ref="grid_T_3D" />
   <field id="L2_RainR" long_name="calcite rain ratio" unit="1" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="L2_L2O3c" long_name="calcite calcite dissolution rate" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="L2_O3c_sms" long_name="calcite total dissolved inorganic carbon sources-sinks" unit="mmol C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="L2_alkalinity_expressed_as_mole_equivalent_sms" long_name="calcite alkalinity_expressed_as_mole_equivalent sources-sinks" unit="mmol m-3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="L2_alkalinity_expressed_as_mole_equivalent_w" long_name="calcite alkalinity_expressed_as_mole_equivalent vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
@@ -500,7 +501,7 @@
   <field id="Q6_resuspension_target_p_sms" long_name="benthic particulate organic matter pelagic variable taking up resuspended phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="Q6_resuspension_target_n_sms" long_name="benthic particulate organic matter pelagic variable taking up resuspended nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="Q6_resuspension_target_s_sms" long_name="benthic particulate organic matter pelagic variable taking up resuspended silicate sources-sinks" unit="mmol Si/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
-  <field id="bL2_O3c_sms" long_name="benthic calcite dissolved inorganic carbon sources-sinks" unit="umol/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="bL2_O3c_sms" long_name="benthic calcite dissolved inorganic carbon sources-sinks" unit="mmol/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="K1_p_pel_sms" long_name="benthic phosphate pelagic phosphorus sources-sinks" unit="mmol/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="ben_nit_N4n_sms" long_name="benthic nitrogen cycle pelagic ammonium sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="K3_n_pel_sms" long_name="benthic nitrate pelagic nitrogen sources-sinks" unit="mmol/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
@@ -630,33 +631,33 @@
   <field id="ben_col_cmix" long_name="benthic column equilibrium diffusive speed between sediment surface water" unit="d/m" default_value="0.200E+02" />
   <field id="ben_col_layer2_thickness" long_name="benthic column thickness of second layer" unit="m" default_value="-.200E+21" />
   <field id="Q6_surface_content_calculator_c_c" long_name="benthic particulate organic matter surface content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
-  <field id="Q6_surface_content_calculator_n_c" long_name="benthic particulate organic matter surface content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="Q6_surface_content_calculator_p_c" long_name="benthic particulate organic matter surface content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="Q6_surface_content_calculator_s_c" long_name="benthic particulate organic matter surface content_calculator_s mass" unit="mmol Si/m^2" default_value="-.200E+21" />
   <field id="Q7_surface_content_calculator_c_c" long_name="benthic refractory matter surface content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Q6_surface_content_calculator_n_c" long_name="benthic particulate organic matter surface content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
   <field id="Q7_surface_content_calculator_n_c" long_name="benthic refractory matter surface content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="Q6_surface_content_calculator_p_c" long_name="benthic particulate organic matter surface content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
   <field id="Q7_surface_content_calculator_p_c" long_name="benthic refractory matter surface content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="P1_Q1c_sms" long_name="diatoms Q1c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q1n_sms" long_name="diatoms Q1n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q1p_sms" long_name="diatoms Q1p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q6c_sms" long_name="diatoms Q6c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q6n_sms" long_name="diatoms Q6n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q6p_sms" long_name="diatoms Q6p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q6s_sms" long_name="diatoms Q6s sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q7c_sms" long_name="diatoms Q7c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q7n_sms" long_name="diatoms Q7n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q7p_sms" long_name="diatoms Q7p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="Q6_surface_content_calculator_s_c" long_name="benthic particulate organic matter surface content_calculator_s mass" unit="mmol Si/m^2" default_value="-.200E+21" />
   <field id="P1_w_bot" long_name="diatoms near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="P1_c_sfl" long_name="diatoms carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
   <field id="P1_c_bfl" long_name="diatoms carbon bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
+  <field id="P1_deposition_target1c_sms" long_name="diatoms target pool 1 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="P1_deposition_target2c_sms" long_name="diatoms target pool 2 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="P1_deposition_target3c_sms" long_name="diatoms target pool 3 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="P1_n_sfl" long_name="diatoms nitrogen surface flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
   <field id="P1_n_bfl" long_name="diatoms nitrogen bottom flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
+  <field id="P1_deposition_target1n_sms" long_name="diatoms target pool 1 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="P1_deposition_target2n_sms" long_name="diatoms target pool 2 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="P1_deposition_target3n_sms" long_name="diatoms target pool 3 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="P1_p_sfl" long_name="diatoms phosphorus surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
   <field id="P1_p_bfl" long_name="diatoms phosphorus bottom flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
+  <field id="P1_deposition_target1p_sms" long_name="diatoms target pool 1 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="P1_deposition_target2p_sms" long_name="diatoms target pool 2 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="P1_deposition_target3p_sms" long_name="diatoms target pool 3 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="P1_Chl_sfl" long_name="diatoms chlorophyll a surface flux" unit="mg/m^3*m/s" default_value="0.000E+00" />
   <field id="P1_Chl_bfl" long_name="diatoms chlorophyll a bottom flux" unit="mg/m^3*m/s" default_value="0.000E+00" />
   <field id="P1_s_sfl" long_name="diatoms silicate surface flux" unit="mmol Si/m^3*m/s" default_value="0.000E+00" />
   <field id="P1_s_bfl" long_name="diatoms silicate bottom flux" unit="mmol Si/m^3*m/s" default_value="0.000E+00" />
+  <field id="P1_deposition_target1s_sms" long_name="diatoms target pool 1 for silicate deposition sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
   <field id="P1_N1p_sfl" long_name="diatoms phosphate surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
   <field id="P1_N1p_bfl" long_name="diatoms phosphate bottom flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
   <field id="P1_N3n_sfl" long_name="diatoms nitrate surface flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
@@ -687,41 +688,30 @@
   <field id="P1_O3c_bfl" long_name="diatoms carbon dioxide bottom flux" unit="mmol C/m^3*m/s" default_value="0.000E+00" />
   <field id="P1_alkalinity_expressed_as_mole_equivalent_sfl" long_name="diatoms alkalinity_expressed_as_mole_equivalent surface flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
   <field id="P1_alkalinity_expressed_as_mole_equivalent_bfl" long_name="diatoms alkalinity_expressed_as_mole_equivalent bottom flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
-  <field id="P1_Q1_bottom_state1_sms" long_name="diatoms Q1 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q1_bottom_state2_sms" long_name="diatoms Q1 bottom state variable 2 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q1_bottom_state3_sms" long_name="diatoms Q1 bottom state variable 3 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q6_bottom_state1_sms" long_name="diatoms Q6 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q6_bottom_state2_sms" long_name="diatoms Q6 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q6_bottom_state3_sms" long_name="diatoms Q6 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q6_bottom_state4_sms" long_name="diatoms Q6 bottom state variable 4 sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q7_bottom_state1_sms" long_name="diatoms Q7 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q7_bottom_state2_sms" long_name="diatoms Q7 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P1_Q7_bottom_state3_sms" long_name="diatoms Q7 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="L2_w_bot" long_name="calcite near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="L2_c_sfl" long_name="calcite carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
   <field id="L2_c_bfl" long_name="calcite carbon bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
+  <field id="L2_deposition_target1c_sms" long_name="calcite target pool 1 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="L2_O3c_sfl" long_name="calcite total dissolved inorganic carbon surface flux" unit="mmol C/m^3*m/s" default_value="0.000E+00" />
   <field id="L2_O3c_bfl" long_name="calcite total dissolved inorganic carbon bottom flux" unit="mmol C/m^3*m/s" default_value="0.000E+00" />
   <field id="L2_alkalinity_expressed_as_mole_equivalent_sfl" long_name="calcite alkalinity_expressed_as_mole_equivalent surface flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
   <field id="L2_alkalinity_expressed_as_mole_equivalent_bfl" long_name="calcite alkalinity_expressed_as_mole_equivalent bottom flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
-  <field id="L2_bL2c_sms" long_name="calcite benthic calcite sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q1c_sms" long_name="nanophytoplankton Q1c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q1n_sms" long_name="nanophytoplankton Q1n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q1p_sms" long_name="nanophytoplankton Q1p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q6c_sms" long_name="nanophytoplankton Q6c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q6n_sms" long_name="nanophytoplankton Q6n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q6p_sms" long_name="nanophytoplankton Q6p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q6s_sms" long_name="nanophytoplankton Q6s sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q7c_sms" long_name="nanophytoplankton Q7c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q7n_sms" long_name="nanophytoplankton Q7n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q7p_sms" long_name="nanophytoplankton Q7p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="P2_w_bot" long_name="nanophytoplankton near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="P2_c_sfl" long_name="nanophytoplankton carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
   <field id="P2_c_bfl" long_name="nanophytoplankton carbon bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
+  <field id="P2_deposition_target1c_sms" long_name="nanophytoplankton target pool 1 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="P2_deposition_target2c_sms" long_name="nanophytoplankton target pool 2 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="P2_deposition_target3c_sms" long_name="nanophytoplankton target pool 3 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="P2_n_sfl" long_name="nanophytoplankton nitrogen surface flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
   <field id="P2_n_bfl" long_name="nanophytoplankton nitrogen bottom flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
+  <field id="P2_deposition_target1n_sms" long_name="nanophytoplankton target pool 1 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="P2_deposition_target2n_sms" long_name="nanophytoplankton target pool 2 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="P2_deposition_target3n_sms" long_name="nanophytoplankton target pool 3 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="P2_p_sfl" long_name="nanophytoplankton phosphorus surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
   <field id="P2_p_bfl" long_name="nanophytoplankton phosphorus bottom flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
+  <field id="P2_deposition_target1p_sms" long_name="nanophytoplankton target pool 1 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="P2_deposition_target2p_sms" long_name="nanophytoplankton target pool 2 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="P2_deposition_target3p_sms" long_name="nanophytoplankton target pool 3 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="P2_Chl_sfl" long_name="nanophytoplankton chlorophyll a surface flux" unit="mg/m^3*m/s" default_value="0.000E+00" />
   <field id="P2_Chl_bfl" long_name="nanophytoplankton chlorophyll a bottom flux" unit="mg/m^3*m/s" default_value="0.000E+00" />
   <field id="P2_N1p_sfl" long_name="nanophytoplankton phosphate surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
@@ -752,33 +742,22 @@
   <field id="P2_alkalinity_expressed_as_mole_equivalent_bfl" long_name="nanophytoplankton alkalinity_expressed_as_mole_equivalent bottom flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
   <field id="P2_L2c_sfl" long_name="nanophytoplankton free calcite surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
   <field id="P2_L2c_bfl" long_name="nanophytoplankton free calcite bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
-  <field id="P2_Q1_bottom_state1_sms" long_name="nanophytoplankton Q1 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q1_bottom_state2_sms" long_name="nanophytoplankton Q1 bottom state variable 2 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q1_bottom_state3_sms" long_name="nanophytoplankton Q1 bottom state variable 3 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q6_bottom_state1_sms" long_name="nanophytoplankton Q6 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q6_bottom_state2_sms" long_name="nanophytoplankton Q6 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q6_bottom_state3_sms" long_name="nanophytoplankton Q6 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q6_bottom_state4_sms" long_name="nanophytoplankton Q6 bottom state variable 4 sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q7_bottom_state1_sms" long_name="nanophytoplankton Q7 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q7_bottom_state2_sms" long_name="nanophytoplankton Q7 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P2_Q7_bottom_state3_sms" long_name="nanophytoplankton Q7 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q1c_sms" long_name="picophytoplankton Q1c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q1n_sms" long_name="picophytoplankton Q1n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q1p_sms" long_name="picophytoplankton Q1p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q6c_sms" long_name="picophytoplankton Q6c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q6n_sms" long_name="picophytoplankton Q6n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q6p_sms" long_name="picophytoplankton Q6p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q6s_sms" long_name="picophytoplankton Q6s sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q7c_sms" long_name="picophytoplankton Q7c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q7n_sms" long_name="picophytoplankton Q7n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q7p_sms" long_name="picophytoplankton Q7p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="P3_w_bot" long_name="picophytoplankton near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="P3_c_sfl" long_name="picophytoplankton carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
   <field id="P3_c_bfl" long_name="picophytoplankton carbon bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
+  <field id="P3_deposition_target1c_sms" long_name="picophytoplankton target pool 1 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="P3_deposition_target2c_sms" long_name="picophytoplankton target pool 2 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="P3_deposition_target3c_sms" long_name="picophytoplankton target pool 3 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="P3_n_sfl" long_name="picophytoplankton nitrogen surface flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
   <field id="P3_n_bfl" long_name="picophytoplankton nitrogen bottom flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
+  <field id="P3_deposition_target1n_sms" long_name="picophytoplankton target pool 1 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="P3_deposition_target2n_sms" long_name="picophytoplankton target pool 2 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="P3_deposition_target3n_sms" long_name="picophytoplankton target pool 3 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="P3_p_sfl" long_name="picophytoplankton phosphorus surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
   <field id="P3_p_bfl" long_name="picophytoplankton phosphorus bottom flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
+  <field id="P3_deposition_target1p_sms" long_name="picophytoplankton target pool 1 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="P3_deposition_target2p_sms" long_name="picophytoplankton target pool 2 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="P3_deposition_target3p_sms" long_name="picophytoplankton target pool 3 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="P3_Chl_sfl" long_name="picophytoplankton chlorophyll a surface flux" unit="mg/m^3*m/s" default_value="0.000E+00" />
   <field id="P3_Chl_bfl" long_name="picophytoplankton chlorophyll a bottom flux" unit="mg/m^3*m/s" default_value="0.000E+00" />
   <field id="P3_N1p_sfl" long_name="picophytoplankton phosphate surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
@@ -807,33 +786,22 @@
   <field id="P3_O3c_bfl" long_name="picophytoplankton carbon dioxide bottom flux" unit="mmol C/m^3*m/s" default_value="0.000E+00" />
   <field id="P3_alkalinity_expressed_as_mole_equivalent_sfl" long_name="picophytoplankton alkalinity_expressed_as_mole_equivalent surface flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
   <field id="P3_alkalinity_expressed_as_mole_equivalent_bfl" long_name="picophytoplankton alkalinity_expressed_as_mole_equivalent bottom flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
-  <field id="P3_Q1_bottom_state1_sms" long_name="picophytoplankton Q1 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q1_bottom_state2_sms" long_name="picophytoplankton Q1 bottom state variable 2 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q1_bottom_state3_sms" long_name="picophytoplankton Q1 bottom state variable 3 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q6_bottom_state1_sms" long_name="picophytoplankton Q6 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q6_bottom_state2_sms" long_name="picophytoplankton Q6 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q6_bottom_state3_sms" long_name="picophytoplankton Q6 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q6_bottom_state4_sms" long_name="picophytoplankton Q6 bottom state variable 4 sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q7_bottom_state1_sms" long_name="picophytoplankton Q7 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q7_bottom_state2_sms" long_name="picophytoplankton Q7 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P3_Q7_bottom_state3_sms" long_name="picophytoplankton Q7 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q1c_sms" long_name="microphytoplankton Q1c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q1n_sms" long_name="microphytoplankton Q1n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q1p_sms" long_name="microphytoplankton Q1p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q6c_sms" long_name="microphytoplankton Q6c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q6n_sms" long_name="microphytoplankton Q6n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q6p_sms" long_name="microphytoplankton Q6p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q6s_sms" long_name="microphytoplankton Q6s sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q7c_sms" long_name="microphytoplankton Q7c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q7n_sms" long_name="microphytoplankton Q7n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q7p_sms" long_name="microphytoplankton Q7p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="P4_w_bot" long_name="microphytoplankton near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="P4_c_sfl" long_name="microphytoplankton carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
   <field id="P4_c_bfl" long_name="microphytoplankton carbon bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
+  <field id="P4_deposition_target1c_sms" long_name="microphytoplankton target pool 1 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="P4_deposition_target2c_sms" long_name="microphytoplankton target pool 2 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="P4_deposition_target3c_sms" long_name="microphytoplankton target pool 3 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="P4_n_sfl" long_name="microphytoplankton nitrogen surface flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
   <field id="P4_n_bfl" long_name="microphytoplankton nitrogen bottom flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
+  <field id="P4_deposition_target1n_sms" long_name="microphytoplankton target pool 1 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="P4_deposition_target2n_sms" long_name="microphytoplankton target pool 2 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="P4_deposition_target3n_sms" long_name="microphytoplankton target pool 3 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="P4_p_sfl" long_name="microphytoplankton phosphorus surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
   <field id="P4_p_bfl" long_name="microphytoplankton phosphorus bottom flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
+  <field id="P4_deposition_target1p_sms" long_name="microphytoplankton target pool 1 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="P4_deposition_target2p_sms" long_name="microphytoplankton target pool 2 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="P4_deposition_target3p_sms" long_name="microphytoplankton target pool 3 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="P4_Chl_sfl" long_name="microphytoplankton chlorophyll a surface flux" unit="mg/m^3*m/s" default_value="0.000E+00" />
   <field id="P4_Chl_bfl" long_name="microphytoplankton chlorophyll a bottom flux" unit="mg/m^3*m/s" default_value="0.000E+00" />
   <field id="P4_N1p_sfl" long_name="microphytoplankton phosphate surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
@@ -862,16 +830,6 @@
   <field id="P4_O3c_bfl" long_name="microphytoplankton carbon dioxide bottom flux" unit="mmol C/m^3*m/s" default_value="0.000E+00" />
   <field id="P4_alkalinity_expressed_as_mole_equivalent_sfl" long_name="microphytoplankton alkalinity_expressed_as_mole_equivalent surface flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
   <field id="P4_alkalinity_expressed_as_mole_equivalent_bfl" long_name="microphytoplankton alkalinity_expressed_as_mole_equivalent bottom flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
-  <field id="P4_Q1_bottom_state1_sms" long_name="microphytoplankton Q1 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q1_bottom_state2_sms" long_name="microphytoplankton Q1 bottom state variable 2 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q1_bottom_state3_sms" long_name="microphytoplankton Q1 bottom state variable 3 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q6_bottom_state1_sms" long_name="microphytoplankton Q6 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q6_bottom_state2_sms" long_name="microphytoplankton Q6 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q6_bottom_state3_sms" long_name="microphytoplankton Q6 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q6_bottom_state4_sms" long_name="microphytoplankton Q6 bottom state variable 4 sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q7_bottom_state1_sms" long_name="microphytoplankton Q7 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q7_bottom_state2_sms" long_name="microphytoplankton Q7 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="P4_Q7_bottom_state3_sms" long_name="microphytoplankton Q7 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="Z4_integral_of_totprey_wrt_depth_calculator_result" long_name="mesozooplankton integral_of_totprey_wrt_depth_calculator result" unit="" default_value="-.200E+21" />
   <field id="Z4_w_bot" long_name="mesozooplankton near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="Z4_c_sfl" long_name="mesozooplankton carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
@@ -1133,91 +1091,51 @@
   <field id="R3_w_bot" long_name="semi-refractory dissolved organic matter near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="R3_c_sfl" long_name="semi-refractory dissolved organic matter carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
   <field id="R3_c_bfl" long_name="semi-refractory dissolved organic matter carbon bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
-  <field id="R4_Q1c_sms" long_name="small-size pom Q1c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q1n_sms" long_name="small-size pom Q1n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q1p_sms" long_name="small-size pom Q1p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q6c_sms" long_name="small-size pom Q6c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q6n_sms" long_name="small-size pom Q6n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q6p_sms" long_name="small-size pom Q6p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q6s_sms" long_name="small-size pom Q6s sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q7c_sms" long_name="small-size pom Q7c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q7n_sms" long_name="small-size pom Q7n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q7p_sms" long_name="small-size pom Q7p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="R4_w_bot" long_name="small-size pom near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="R4_c_sfl" long_name="small-size pom carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
   <field id="R4_c_bfl" long_name="small-size pom carbon bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
+  <field id="R4_deposition_target1c_sms" long_name="small-size pom target pool 1 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="R4_deposition_target2c_sms" long_name="small-size pom target pool 2 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="R4_n_sfl" long_name="small-size pom nitrogen surface flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
   <field id="R4_n_bfl" long_name="small-size pom nitrogen bottom flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
+  <field id="R4_deposition_target1n_sms" long_name="small-size pom target pool 1 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="R4_deposition_target2n_sms" long_name="small-size pom target pool 2 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="R4_p_sfl" long_name="small-size pom phosphorus surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
   <field id="R4_p_bfl" long_name="small-size pom phosphorus bottom flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
-  <field id="R4_Q1_bottom_state1_sms" long_name="small-size pom Q1 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q1_bottom_state2_sms" long_name="small-size pom Q1 bottom state variable 2 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q1_bottom_state3_sms" long_name="small-size pom Q1 bottom state variable 3 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q6_bottom_state1_sms" long_name="small-size pom Q6 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q6_bottom_state2_sms" long_name="small-size pom Q6 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q6_bottom_state3_sms" long_name="small-size pom Q6 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q6_bottom_state4_sms" long_name="small-size pom Q6 bottom state variable 4 sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q7_bottom_state1_sms" long_name="small-size pom Q7 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q7_bottom_state2_sms" long_name="small-size pom Q7 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R4_Q7_bottom_state3_sms" long_name="small-size pom Q7 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q1c_sms" long_name="medium-size pom Q1c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q1n_sms" long_name="medium-size pom Q1n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q1p_sms" long_name="medium-size pom Q1p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q6c_sms" long_name="medium-size pom Q6c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q6n_sms" long_name="medium-size pom Q6n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q6p_sms" long_name="medium-size pom Q6p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q6s_sms" long_name="medium-size pom Q6s sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q7c_sms" long_name="medium-size pom Q7c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q7n_sms" long_name="medium-size pom Q7n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q7p_sms" long_name="medium-size pom Q7p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="R4_deposition_target1p_sms" long_name="small-size pom target pool 1 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="R4_deposition_target2p_sms" long_name="small-size pom target pool 2 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="R6_w_bot" long_name="medium-size pom near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="R6_c_sfl" long_name="medium-size pom carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
   <field id="R6_c_bfl" long_name="medium-size pom carbon bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
+  <field id="R6_deposition_target1c_sms" long_name="medium-size pom target pool 1 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="R6_deposition_target2c_sms" long_name="medium-size pom target pool 2 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="R6_n_sfl" long_name="medium-size pom nitrogen surface flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
   <field id="R6_n_bfl" long_name="medium-size pom nitrogen bottom flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
+  <field id="R6_deposition_target1n_sms" long_name="medium-size pom target pool 1 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="R6_deposition_target2n_sms" long_name="medium-size pom target pool 2 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="R6_p_sfl" long_name="medium-size pom phosphorus surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
   <field id="R6_p_bfl" long_name="medium-size pom phosphorus bottom flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
+  <field id="R6_deposition_target1p_sms" long_name="medium-size pom target pool 1 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="R6_deposition_target2p_sms" long_name="medium-size pom target pool 2 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="R6_s_sfl" long_name="medium-size pom silicate surface flux" unit="mmol Si/m^3*m/s" default_value="0.000E+00" />
   <field id="R6_s_bfl" long_name="medium-size pom silicate bottom flux" unit="mmol Si/m^3*m/s" default_value="0.000E+00" />
-  <field id="R6_Q1_bottom_state1_sms" long_name="medium-size pom Q1 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q1_bottom_state2_sms" long_name="medium-size pom Q1 bottom state variable 2 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q1_bottom_state3_sms" long_name="medium-size pom Q1 bottom state variable 3 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q6_bottom_state1_sms" long_name="medium-size pom Q6 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q6_bottom_state2_sms" long_name="medium-size pom Q6 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q6_bottom_state3_sms" long_name="medium-size pom Q6 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q6_bottom_state4_sms" long_name="medium-size pom Q6 bottom state variable 4 sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q7_bottom_state1_sms" long_name="medium-size pom Q7 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q7_bottom_state2_sms" long_name="medium-size pom Q7 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R6_Q7_bottom_state3_sms" long_name="medium-size pom Q7 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q1c_sms" long_name="large-size pom Q1c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q1n_sms" long_name="large-size pom Q1n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q1p_sms" long_name="large-size pom Q1p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q6c_sms" long_name="large-size pom Q6c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q6n_sms" long_name="large-size pom Q6n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q6p_sms" long_name="large-size pom Q6p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q6s_sms" long_name="large-size pom Q6s sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q7c_sms" long_name="large-size pom Q7c sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q7n_sms" long_name="large-size pom Q7n sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q7p_sms" long_name="large-size pom Q7p sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="R6_deposition_target1s_sms" long_name="medium-size pom target pool 1 for silicate deposition sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
   <field id="R8_w_bot" long_name="large-size pom near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="R8_c_sfl" long_name="large-size pom carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
   <field id="R8_c_bfl" long_name="large-size pom carbon bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
+  <field id="R8_deposition_target1c_sms" long_name="large-size pom target pool 1 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="R8_deposition_target2c_sms" long_name="large-size pom target pool 2 for carbon deposition sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="R8_n_sfl" long_name="large-size pom nitrogen surface flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
   <field id="R8_n_bfl" long_name="large-size pom nitrogen bottom flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
+  <field id="R8_deposition_target1n_sms" long_name="large-size pom target pool 1 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="R8_deposition_target2n_sms" long_name="large-size pom target pool 2 for nitrogen deposition sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="R8_p_sfl" long_name="large-size pom phosphorus surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
   <field id="R8_p_bfl" long_name="large-size pom phosphorus bottom flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
+  <field id="R8_deposition_target1p_sms" long_name="large-size pom target pool 1 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="R8_deposition_target2p_sms" long_name="large-size pom target pool 2 for phosphorus deposition sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="R8_s_sfl" long_name="large-size pom silicate surface flux" unit="mmol Si/m^3*m/s" default_value="0.000E+00" />
   <field id="R8_s_bfl" long_name="large-size pom silicate bottom flux" unit="mmol Si/m^3*m/s" default_value="0.000E+00" />
-  <field id="R8_Q1_bottom_state1_sms" long_name="large-size pom Q1 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q1_bottom_state2_sms" long_name="large-size pom Q1 bottom state variable 2 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q1_bottom_state3_sms" long_name="large-size pom Q1 bottom state variable 3 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q6_bottom_state1_sms" long_name="large-size pom Q6 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q6_bottom_state2_sms" long_name="large-size pom Q6 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q6_bottom_state3_sms" long_name="large-size pom Q6 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q6_bottom_state4_sms" long_name="large-size pom Q6 bottom state variable 4 sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q7_bottom_state1_sms" long_name="large-size pom Q7 bottom state variable 1 sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q7_bottom_state2_sms" long_name="large-size pom Q7 bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="R8_Q7_bottom_state3_sms" long_name="large-size pom Q7 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="R8_deposition_target1s_sms" long_name="large-size pom target pool 1 for silicate deposition sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
   <field id="Q1_c_sms" long_name="benthic dissolved organic matter carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="Q1_p_sms" long_name="benthic dissolved organic matter phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="Q1_n_sms" long_name="benthic dissolved organic matter nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
@@ -1493,9 +1411,9 @@
   <field id="Q17_c_sms" long_name="benthic buried matter carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="Q17_p_sms" long_name="benthic buried matter phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="Q17_n_sms" long_name="benthic buried matter nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="bL2_l_sms" long_name="benthic calcite calcite sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="bL2_O3c_sfl" long_name="benthic calcite dissolved inorganic carbon surface flux" unit="umol/m^3*m/s" default_value="0.000E+00" />
-  <field id="bL2_O3c_bfl" long_name="benthic calcite dissolved inorganic carbon bottom flux" unit="umol/m^3*m/s" default_value="0.000E+00" />
+  <field id="bL2_c_sms" long_name="benthic calcite carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="bL2_O3c_sfl" long_name="benthic calcite dissolved inorganic carbon surface flux" unit="mmol/m^3*m/s" default_value="0.000E+00" />
+  <field id="bL2_O3c_bfl" long_name="benthic calcite dissolved inorganic carbon bottom flux" unit="mmol/m^3*m/s" default_value="0.000E+00" />
   <field id="K1_per_layer_p1_sms_tot_calculator_result" long_name="benthic phosphate per_layer p1_sms_tot_calculator result" unit="" default_value="-.200E+21" />
   <field id="H1_Q6_content_calculator_c_c" long_name="benthic aerobic bacteria POM content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
   <field id="H1_Q6_content_calculator_n_c" long_name="benthic aerobic bacteria POM content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />

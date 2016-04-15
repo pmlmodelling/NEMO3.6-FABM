@@ -95,7 +95,7 @@
           <field field_ref="R2_c" operation="average" />
           <field field_ref="R3_c" operation="average" />
           <field field_ref="L2_c" operation="average" />
-          <field field_ref="bL2_l"  operation="average" />
+          <field field_ref="bL2_c"  operation="average" />
           <field field_ref="Q1_c" operation="average" />
           <field field_ref="Q6_c" operation="average" />
           <field field_ref="Q7_c" operation="average" />
@@ -153,7 +153,7 @@
           <field field_ref="R2_c" operation="average" />
           <field field_ref="R3_c" operation="average" />
           <field field_ref="L2_c" operation="average" />
-          <field field_ref="bL2_l"  operation="average" />
+          <field field_ref="bL2_c"  operation="average" />
           <field field_ref="Q1_c" operation="average" />
           <field field_ref="Q6_c" operation="average" />
           <field field_ref="Q7_c" operation="average" />
@@ -211,7 +211,7 @@
           <field field_ref="R2_c" operation="average" />
           <field field_ref="R3_c" operation="average" />
           <field field_ref="L2_c" operation="average" />
-          <field field_ref="bL2_l"  operation="average" />
+          <field field_ref="bL2_c"  operation="average" />
           <field field_ref="Q1_c" operation="average" />
           <field field_ref="Q6_c" operation="average" />
           <field field_ref="Q7_c" operation="average" />
@@ -269,7 +269,7 @@
           <field field_ref="R2_c" operation="average" />
           <field field_ref="R3_c" operation="average" />
           <field field_ref="L2_c" operation="average" />
-          <field field_ref="bL2_l"  operation="average" />
+          <field field_ref="bL2_c"  operation="average" />
           <field field_ref="Q1_c" operation="average" />
           <field field_ref="Q6_c" operation="average" />
           <field field_ref="Q7_c" operation="average" />
@@ -327,7 +327,7 @@
           <field field_ref="R2_c" operation="average" />
           <field field_ref="R3_c" operation="average" />
           <field field_ref="L2_c" operation="average" />
-          <field field_ref="bL2_l"  operation="average" />
+          <field field_ref="bL2_c"  operation="average" />
           <field field_ref="Q1_c" operation="average" />
           <field field_ref="Q6_c" operation="average" />
           <field field_ref="Q7_c" operation="average" />
@@ -385,7 +385,7 @@
           <field field_ref="R2_c" operation="average" />
           <field field_ref="R3_c" operation="average" />
           <field field_ref="L2_c" operation="average" />
-          <field field_ref="bL2_l"  operation="average" />
+          <field field_ref="bL2_c"  operation="average" />
           <field field_ref="Q1_c" operation="average" />
           <field field_ref="Q6_c" operation="average" />
           <field field_ref="Q7_c" operation="average" />
@@ -443,7 +443,7 @@
           <field field_ref="R2_c" operation="average" />
           <field field_ref="R3_c" operation="average" />
           <field field_ref="L2_c" operation="average" />
-          <field field_ref="bL2_l"  operation="average" />
+          <field field_ref="bL2_c"  operation="average" />
           <field field_ref="Q1_c" operation="average" />
           <field field_ref="Q6_c" operation="average" />
           <field field_ref="Q7_c" operation="average" />
@@ -501,7 +501,7 @@
           <field field_ref="R2_c" operation="average" />
           <field field_ref="R3_c" operation="average" />
           <field field_ref="L2_c" operation="average" />
-          <field field_ref="bL2_l"  operation="average" />
+          <field field_ref="bL2_c"  operation="average" />
           <field field_ref="Q1_c" operation="average" />
           <field field_ref="Q6_c" operation="average" />
           <field field_ref="Q7_c" operation="average" />
@@ -559,7 +559,7 @@
           <field field_ref="R2_c" operation="average" />
           <field field_ref="R3_c" operation="average" />
           <field field_ref="L2_c" operation="average" />
-          <field field_ref="bL2_l"  operation="average" />
+          <field field_ref="bL2_c"  operation="average" />
           <field field_ref="Q1_c" operation="average" />
           <field field_ref="Q6_c" operation="average" />
           <field field_ref="Q7_c" operation="average" />
@@ -725,7 +725,7 @@
           <field field_ref="R2_c" operation="average" />
           <field field_ref="R3_c" operation="average" />
           <field field_ref="L2_c" operation="average" />
-          <field field_ref="bL2_l"  operation="average" />
+          <field field_ref="bL2_c"  operation="average" />
           <field field_ref="Q1_c" operation="average" />
           <field field_ref="Q6_c" operation="average" />
           <field field_ref="Q7_c" operation="average" />
