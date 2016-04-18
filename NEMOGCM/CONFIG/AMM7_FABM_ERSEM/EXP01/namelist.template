@@ -6,9 +6,9 @@
 !-----------------------------------------------------------------------
    nn_no       =       0   !  job number (no more used...)
    cn_exp      =  "amm7"  !  experience name
-   nn_it000 = 1
-   nn_itend = 105120
-   nn_date0 = 20010101
+   nn_it000 = __N0__
+   nn_itend = __NEND__
+   nn_date0 = __DATE0__
    nn_rstctl = 0 !  restart control = 0 nit000 is not compared to the restart file value
                  !                  = 1 use ndate0 in namelist (not the value in the restart file)
                  !                  = 2 calendar parameters read in the restart file
@@ -18,14 +18,14 @@
    cn_ocerst_out  = "restart"   !  suffix of ocean restart name (output)
    cn_ocerst_indir   = "./"   !  directory of ocean restart name (input)
    cn_ocerst_outdir  = "./"   !  directory of ocean restart name (output)
-   nn_istate   =     0     !  output the initial state (1) or not (0)
+   nn_istate   =     __RST__     !  output the initial state (1) or not (0)
    nn_stock = 105120
    nn_write = 105120
    ln_dimgnnn  = .false.   !  DIMG file format: 1 file for all processors (F) or by processor (T)
    ln_mskland  = .false.   !  mask land points in NetCDF outputs (costly: + ~15%)
    ln_clobber  = .true.    !  clobber (overwrite) an existing file
    nn_chunksz  =       0   !  chunksize (bytes) for NetCDF file (works only with iom_nf90 routines)
-   nn_euler    = 0 !  =0 start with forward time step or not (=1)
+   nn_euler    = __EULER__ !  =0 start with forward time step or not (=1)
 /
 !-----------------------------------------------------------------------
 &namcfg        !   parameters of the configuration
@@ -334,13 +334,13 @@ sn_wndj='CUT_ERAI_INCLUDE_MSLP',3,'V10',.true.,.false.,'daily','weights_erai_amm
 !-----------------------------------------------------------------------
 !              !   file name    ! frequency (hours) !  variable  ! time interpol. !  clim   ! 'yearly'/ ! weights  ! rotation
 !              !                !  (if <0  months)  !    name    !    (logical)   !  (T/F)  ! 'monthly' ! filename ! pairing
-   bn_ssh =     'amm7skag_bt_bdyT'  ,      24     , 'sossheig' ,     .true.     , .false. ,  'daily'  ,    ''    ,   ''   ,  ''
-   bn_u2d =     'amm7skag_bt_bdyU'  ,      24     , 'vobtcrtx' ,     .true.     , .false. ,  'daily'  ,    ''    ,   ''   ,  ''
-   bn_v2d =     'amm7skag_bt_bdyV'  ,      24     , 'vobtcrty' ,     .true.     , .false. ,  'daily'  ,    ''    ,   ''   ,  ''
-   bn_u3d  =    'amm7skag_bdyU'     ,      24     , 'vozocrtx' ,     .true.     , .false. ,  'daily'  ,    ''    ,   ''   ,  ''
-   bn_v3d  =    'amm7skag_bdyV'     ,      24     , 'vomecrty' ,     .true.     , .false. ,  'daily'  ,    ''    ,   ''   ,  ''
-   bn_tem  =    'amm7skag_bdyT'     ,      24     , 'votemper' ,     .true.     , .false. ,  'daily'  ,    ''    ,   ''   ,  ''
-   bn_sal  =    'amm7skag_bdyT'     ,      24     , 'vosaline' ,     .true.     , .false. ,  'daily'  ,    ''    ,   ''   ,  ''
+   bn_ssh =     'amm7skag_bt_bdyT'  ,      24     , 'sossheig' ,     .true.     , __LCLIM__ ,  'daily'  ,    ''    ,   ''   ,  ''
+   bn_u2d =     'amm7skag_bt_bdyU'  ,      24     , 'vobtcrtx' ,     .true.     , __LCLIM__ ,  'daily'  ,    ''    ,   ''   ,  ''
+   bn_v2d =     'amm7skag_bt_bdyV'  ,      24     , 'vobtcrty' ,     .true.     , __LCLIM__ ,  'daily'  ,    ''    ,   ''   ,  ''
+   bn_u3d  =    'amm7skag_bdyU'     ,      24     , 'vozocrtx' ,     .true.     , __LCLIM__ ,  'daily'  ,    ''    ,   ''   ,  ''
+   bn_v3d  =    'amm7skag_bdyV'     ,      24     , 'vomecrty' ,     .true.     , __LCLIM__ ,  'daily'  ,    ''    ,   ''   ,  ''
+   bn_tem  =    'amm7skag_bdyT'     ,      24     , 'votemper' ,     .true.     , __LCLIM__ ,  'daily'  ,    ''    ,   ''   ,  ''
+   bn_sal  =    'amm7skag_bdyT'     ,      24     , 'vosaline' ,     .true.     , __LCLIM__ ,  'daily'  ,    ''    ,   ''   ,  ''
    cn_dir  =    'bdy/'
    ln_full_vel = .false.
 /
@@ -487,6 +487,13 @@ sn_wndj='CUT_ERAI_INCLUDE_MSLP',3,'V10',.true.,.false.,'daily','weights_erai_amm
 !-----------------------------------------------------------------------
 &namnc4        !   netcdf4 chunking and compression settings            ("key_netcdf4")
 !-----------------------------------------------------------------------
+   nn_nchunks_i=   16       !  number of chunks in i-dimension
+   nn_nchunks_j=   16       !  number of chunks in j-dimension
+   nn_nchunks_k=   51      !  number of chunks in k-dimension
+                           !  setting nn_nchunks_k = jpk will give a chunk size of 1 in the vertical which
+                           !  is optimal for postprocessing which works exclusively with horizontal slabs
+   ln_nc4zip   = .true.    !  (T) use netcdf4 chunking and compression
+                           !  (F) ignore chunking information and produce netcdf3-compatible files
 /
 !-----------------------------------------------------------------------
 &namtrd        !   diagnostics on dynamics and/or tracer trends         ("key_trddyn" and/or "key_trdtra")
