@@ -16,7 +16,11 @@ MODULE trcini_fabm
    USE trc
    USE trcsms_fabm
    USE fabm_config,ONLY: fabm_create_model_from_yaml_file
-   USE fabm,ONLY: type_external_variable
+   USE fabm,ONLY: type_external_variable, fabm_initialize_library
+   USE fabm_version,ONLY: fabm_commit_id=>git_commit_id, &
+                          fabm_branch_name=>git_branch_name
+   USE fabm_types,ONLY: type_version,first_module_version
+
 
    IMPLICIT NONE
    PRIVATE
@@ -137,12 +141,24 @@ CONTAINS
       !! ** Method  : - Read the namcfc namelist and check the parameter values
       !!----------------------------------------------------------------------
 
+      TYPE (type_version),POINTER :: version
+
       !                       ! Allocate FABM arrays
       IF( trc_sms_fabm_alloc() /= 0 )   CALL ctl_stop( 'STOP', 'trc_ini_fabm: unable to allocate FABM arrays' )
 
       IF(lwp) WRITE(numout,*)
       IF(lwp) WRITE(numout,*) ' trc_ini_fabm: initialisation of FABM model'
       IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~~~~'
+      IF(lwp) WRITE(numout,*) ' FABM version:   ',fabm_commit_id,' (',fabm_branch_name,' branch)'
+
+      call fabm_initialize_library()
+      version => first_module_version
+      
+      do while (associated(version))
+         IF(lwp) WRITE(numout,*)  trim(version%module_name)//' version:   ',trim(version%version_string)
+         version => version%next
+      end do
+
       
    END SUBROUTINE trc_ini_fabm
 
