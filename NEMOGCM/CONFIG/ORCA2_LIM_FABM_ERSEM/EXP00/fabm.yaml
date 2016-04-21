@@ -92,35 +92,29 @@ instances:
     parameters:
       composition: cnpf                                    # elemental composition
       rm: 1.0                                              # sinking velocity (m/d), default = 0.0
-      sedimentation: true                                  # enable sedimentation, default = false
-      qQ1c: 0.0                                            # fraction of sedimented matter decomposing into DOM (-)
-      qQ7c: 0.1                                            # fraction of sedimented matter decomposing into refractory matter (-)
-      xR1n: 1.0                                            # transfer of sedimented nitrogen to DOM, relative to POM (-)
-      xR1p: 1.2                                            # transfer of sedimented phosphorus to DOM, relative to POM (-)
-      xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
-      xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
+      ndeposition: 2                                           # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.1
+      qxn2: 0.1
+      qxp2: 0.06
       c0: 0.0033                                           # background carbon concentration (mg C/m^3), default = 0.0
     initialization:
       c: 0.1
       n: 0.00126
       p: 7.86e-05
     coupling:
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
+      deposition_target1: Q6
+      deposition_target2: Q7
   R6:
     long_name: medium-size pom
     model: ersem/pelagic_base
     parameters:
       composition: cnpsf                                   # elemental composition
       rm: 5.0                                              # sinking velocity (m/d), default = 0.0
-      sedimentation: true                                  # enable sedimentation, default = false
-      qQ1c: 0.0                                            # fraction of sedimented matter decomposing into DOM (-)
-      qQ7c: 0.1                                            # fraction of sedimented matter decomposing into refractory matter (-)
-      xR1n: 1.0                                            # transfer of sedimented nitrogen to DOM, relative to POM (-)
-      xR1p: 1.2                                            # transfer of sedimented phosphorus to DOM, relative to POM (-)
-      xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
-      xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
+      ndeposition: 2                                           # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.1
+      qxn2: 0.1
+      qxp2: 0.06
+      qxs2: 0.0
       c0: 0.0033                                           # background carbon concentration (mg C/m^3), default = 0.0
     initialization:
       c: 0.1
@@ -128,22 +122,19 @@ instances:
       p: 7.86e-05
       s: 0.001
     coupling:
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
+      deposition_target1: Q6
+      deposition_target2: Q7
   R8:
     long_name: large-size pom
     model: ersem/pelagic_base
     parameters:
       composition: cnps                                    # elemental composition
       rm: 10.0                                             # sinking velocity (m/d), default = 0.0
-      sedimentation: true                                  # enable sedimentation, default = false
-      qQ1c: 0.0                                            # fraction of sedimented matter decomposing into DOM (-)
-      qQ7c: 0.1                                            # fraction of sedimented matter decomposing into refractory matter (-)
-      xR1n: 1.0                                            # transfer of sedimented nitrogen to DOM, relative to POM (-)
-      xR1p: 1.2                                            # transfer of sedimented phosphorus to DOM, relative to POM (-)
-      xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
-      xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
+      ndeposition: 2                                       # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.1
+      qxn2: 0.1
+      qxp2: 0.06
+      qxs2: 0.0
       c0: 0.0033                                           # background carbon concentration (mg C/m^3), default = 0.0
     initialization:
       c: 0.1
@@ -151,9 +142,8 @@ instances:
       p: 7.86e-05
       s: 0.001
     coupling:
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
+      deposition_target1: Q6
+      deposition_target2: Q7
   Q1:
     long_name: benthic dissolved organic matter
     model: ersem/benthic_base
@@ -301,13 +291,15 @@ instances:
       resm: 5.0                                            # maximum nutrient-limitation-induced sinking velocity (m/d), default = 0.0
       esni: 0.7                                            # level of nutrient limitation below which sinking commences (-)
       cenh: false                                          # enable atmospheric CO2 influence on photosynthesis, default = false
-      sedimentation: true                                  # enable sedimentation, default = true
-      qQ1c: 0.2                                            # fraction of sedimented matter decomposing into DOM (-)
-      qQ7c: 0.005                                          # fraction of sedimented matter decomposing into refractory matter (-)
-      xR1n: 1.0                                            # transfer of sedimented nitrogen to DOM, relative to POM (-)
-      xR1p: 1.2                                            # transfer of sedimented phosphorus to DOM, relative to POM (-)
-      xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
-      xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
+      ndeposition: 3                                           # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.2
+      qxc3: 0.005
+      qxn2: 0.2
+      qxp2: 0.24
+      qxn3: 0.005
+      qxp3: 0.003
+      qxs2: 0.0
+      qxs3: 0.0
     initialization:
       c: 0.5
       n: 0.0063
@@ -316,9 +308,6 @@ instances:
       Chl: 0.025
     coupling:
       RP: R6
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
       N1p: N1/p                                            # phosphate (mmol P/m^3)
       N3n: N3/n                                            # nitrate (mmol N/m^3)
       N4n: N4/n                                            # ammonium (mmol N/m^3)
@@ -329,6 +318,9 @@ instances:
       R2c: R2/c                                            # semi-labile dissolved organic carbon (mg C/m^3)
       O2o: O2/o                                            # oxygen (mmol O_2/m^3)
       O3c: O3/c                                            # carbon dioxide (mmol C/m^3)
+      deposition_target1: Q6
+      deposition_target2: Q1
+      deposition_target3: Q7
   P2:
     long_name: nanophytoplankton
     model: ersem/primary_producer
@@ -364,13 +356,13 @@ instances:
       resm: 0.0                                            # maximum nutrient-limitation-induced sinking velocity (m/d), default = 0.0
       esni: 0.7                                            # level of nutrient limitation below which sinking commences (-)
       cenh: false                                          # enable atmospheric CO2 influence on photosynthesis, default = false
-      sedimentation: true                                  # enable sedimentation, default = true
-      qQ1c: 0.5                                            # fraction of sedimented matter decomposing into DOM (-)
-      qQ7c: 0.05                                           # fraction of sedimented matter decomposing into refractory matter (-)
-      xR1n: 1.0                                            # transfer of sedimented nitrogen to DOM, relative to POM (-)
-      xR1p: 1.2                                            # transfer of sedimented phosphorus to DOM, relative to POM (-)
-      xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
-      xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
+      ndeposition: 3                                           # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.5
+      qxc3: 0.05
+      qxn2: 0.5
+      qxp2: 0.6
+      qxn3: 0.05
+      qxp3: 0.03
     initialization:
       c: 0.5
       n: 0.0063
@@ -378,9 +370,6 @@ instances:
       Chl: 0.025
     coupling:
       RP: R4
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
       N1p: N1/p                                            # phosphate (mmol P/m^3)
       N3n: N3/n                                            # nitrate (mmol N/m^3)
       N4n: N4/n                                            # ammonium (mmol N/m^3)
@@ -392,6 +381,9 @@ instances:
       O3c: O3/c                                            # carbon dioxide (mmol C/m^3)
       RainR: L2/RainR                                      # rain ratio (PIC : POC) (-)
       L2c: L2/c                                            # free calcite (mg C/m^3)
+      deposition_target1: Q6
+      deposition_target2: Q1
+      deposition_target3: Q7
   P3:
     long_name: picophytoplankton
     model: ersem/primary_producer
@@ -426,13 +418,13 @@ instances:
       resm: 0.0                                            # maximum nutrient-limitation-induced sinking velocity (m/d), default = 0.0
       esni: 0.7                                            # level of nutrient limitation below which sinking commences (-)
       cenh: false                                          # enable atmospheric CO2 influence on photosynthesis, default = false
-      sedimentation: true                                  # enable sedimentation, default = true
-      qQ1c: 0.5                                            # fraction of sedimented matter decomposing into DOM (-)
-      qQ7c: 0.05                                           # fraction of sedimented matter decomposing into refractory matter (-)
-      xR1n: 1.0                                            # transfer of sedimented nitrogen to DOM, relative to POM (-)
-      xR1p: 1.2                                            # transfer of sedimented phosphorus to DOM, relative to POM (-)
-      xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
-      xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
+      ndeposition: 3                                           # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.5
+      qxc3: 0.05
+      qxn2: 0.5
+      qxp2: 0.6
+      qxn3: 0.05
+      qxp3: 0.03
     initialization:
       c: 0.5
       n: 0.0063
@@ -440,9 +432,6 @@ instances:
       Chl: 0.025
     coupling:
       RP: R4
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
       N1p: N1/p                                            # phosphate (mmol P/m^3)
       N3n: N3/n                                            # nitrate (mmol N/m^3)
       N4n: N4/n                                            # ammonium (mmol N/m^3)
@@ -452,6 +441,9 @@ instances:
       R2c: R2/c                                            # semi-labile dissolved organic carbon (mg C/m^3)
       O2o: O2/o                                            # oxygen (mmol O_2/m^3)
       O3c: O3/c                                            # carbon dioxide (mmol C/m^3)
+      deposition_target1: Q6
+      deposition_target2: Q1
+      deposition_target3: Q7
   P4:
     long_name: microphytoplankton
     model: ersem/primary_producer
@@ -486,13 +478,13 @@ instances:
       resm: 5.0                                            # maximum nutrient-limitation-induced sinking velocity (m/d), default = 0.0
       esni: 0.7                                            # level of nutrient limitation below which sinking commences (-)
       cenh: false                                          # enable atmospheric CO2 influence on photosynthesis, default = false
-      sedimentation: true                                  # enable sedimentation, default = true
-      qQ1c: 0.5                                            # fraction of sedimented matter decomposing into DOM (-)
-      qQ7c: 0.05                                           # fraction of sedimented matter decomposing into refractory matter (-)
-      xR1n: 1.0                                            # transfer of sedimented nitrogen to DOM, relative to POM (-)
-      xR1p: 1.2                                            # transfer of sedimented phosphorus to DOM, relative to POM (-)
-      xR7n: 1.0                                            # transfer of sedimented nitrogen to refractory matter, relative to POM (-)
-      xR7p: 0.6                                            # transfer of sedimented phosphorus to refractory matter, relative to POM (-)
+      ndeposition: 3                                           # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.5
+      qxc3: 0.05
+      qxn2: 0.5
+      qxp2: 0.6
+      qxn3: 0.05
+      qxp3: 0.03
     initialization:
       c: 0.5
       n: 0.0063
@@ -500,9 +492,6 @@ instances:
       Chl: 0.025
     coupling:
       RP: R6
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
       N1p: N1/p                                            # phosphate (mmol P/m^3)
       N3n: N3/n                                            # nitrate (mmol N/m^3)
       N4n: N4/n                                            # ammonium (mmol N/m^3)
@@ -512,6 +501,9 @@ instances:
       R2c: R2/c                                            # semi-labile dissolved organic carbon (mg C/m^3)
       O2o: O2/o                                            # oxygen (mmol O_2/m^3)
       O3c: O3/c                                            # carbon dioxide (mmol C/m^3)
+      deposition_target1: Q6
+      deposition_target2: Q1
+      deposition_target3: Q7
   Z4:
     long_name: mesozooplankton
     model: ersem/mesozooplankton
@@ -693,15 +685,15 @@ instances:
     coupling:
       om_cal: O3/Om_cal                                    # calcite saturation (-)
       O3c: O3/c                                            # total dissolved inorganic carbon (mmol C/m^3)
-      bL2c: bL2/l                                          # benthic calcite (mg C/m^2)
+      deposition_target1: bL2                              # benthic calcite (mg C/m^2)
   bL2:
     long_name: benthic calcite
     model: ersem/benthic_base
     parameters:
-      composition: l                                       # elemental composition
+      composition: c                                       # elemental composition
       remin: 0.05                                          # remineralisation rate (1/d), default = 0.0
     initialization:
-      l: 0.01
+      c: 0.01
     coupling:
       O3c: O3/c                                            # dissolved inorganic carbon (umol/m^3)
   pco2a:  
