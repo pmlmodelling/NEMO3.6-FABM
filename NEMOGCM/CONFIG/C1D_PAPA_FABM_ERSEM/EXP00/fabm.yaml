@@ -89,13 +89,10 @@ instances:
       iopABS: 1.0e-05
       iopBBS: 1.6e-05
       rm: 1.0
-      sedimentation: true
-      qQ1c: 0.0
-      qQ7c: 0.1
-      xR1n: 1.0
-      xR1p: 1.2
-      xR7n: 1.0
-      xR7p: 0.6
+      ndeposition: 2                                           # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.1
+      qxn2: 0.1
+      qxp2: 0.06
       c0: 0.0033
     initialization:
       c: 7.2
@@ -113,13 +110,11 @@ instances:
       iopABS: 1.0e-05
       iopBBS: 1.6e-05
       rm: 5.0
-      sedimentation: true
-      qQ1c: 0.0
-      qQ7c: 0.1
-      xR1n: 1.0
-      xR1p: 1.2
-      xR7n: 1.0
-      xR7p: 0.6
+      ndeposition: 2                                           # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.1
+      qxn2: 0.1
+      qxp2: 0.06
+      qxs2: 0.0
       c0: 0.0033
     initialization:
       c: 17.0
@@ -127,9 +122,8 @@ instances:
       p: 0.02
       s: 0.1
     coupling:
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
+      deposition_target1: Q6
+      deposition_target2: Q7
   R8:
     long_name: large-size pom
     model: ersem/pelagic_base
@@ -138,13 +132,11 @@ instances:
       iopABS: 1.0e-05
       iopBBS: 1.6e-05
       rm: 10.0
-      sedimentation: true
-      qQ1c: 0.0
-      qQ7c: 0.1
-      xR1n: 1.0
-      xR1p: 1.2
-      xR7n: 1.0
-      xR7p: 0.6
+      ndeposition: 2                                       # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.1
+      qxn2: 0.1
+      qxp2: 0.06
+      qxs2: 0.0
       c0: 0.0033
     initialization:
       c: 0.17
@@ -152,25 +144,17 @@ instances:
       p: 0.0002
       s: 0.001
     coupling:
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
+      deposition_target1: Q6
+      deposition_target2: Q7
   Q1:
     long_name: benthic dissolved organic matter
     model: ersem/benthic_base
     parameters:
-      composition: cnp
-      remin: 0.1
-      pN3: 0.9
+      composition: cnp                                     # elemental composition
     initialization:
-      c: 18.9
-      n: 0.6
-      p: 0.0035
-    coupling:
-      O3c: O3/c
-      N1p: N1/p
-      N3n: N3/n
-      N4n: N4/n
+      c: 18.9                                              # carbon (mg C/m^2)
+      n: 0.6                                               # nitrogen (mmol N/m^2)
+      p: 0.0035                                            # phosphorus (mmol P/m^2)
   Q6:
     long_name: benthic particulate organic matter
     model: ersem/benthic_base
@@ -301,13 +285,15 @@ instances:
       resm: 5.0
       esni: 0.7
       cenh: false
-      sedimentation: true
-      qQ1c: 0.2
-      qQ7c: 0.005
-      xR1n: 1.0
-      xR1p: 1.2
-      xR7n: 1.0
-      xR7p: 0.6
+      ndeposition: 3                                           # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.2
+      qxc3: 0.005
+      qxn2: 0.2
+      qxp2: 0.24
+      qxn3: 0.005
+      qxp3: 0.003
+      qxs2: 0.0
+      qxs3: 0.0
       docdyn: true
     initialization:
       c: 8.0
@@ -327,9 +313,9 @@ instances:
       RP: R6
       O2o: O2/o                                       # oxygen (mmol O_2/m^3)
       O3c: O3/c                                       # carbon dioxide (mmol C/m^3)
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
+     deposition_target1: Q6
+     deposition_target2: Q1
+     deposition_target3: Q7
   P2:
     long_name: nanophytoplankton
     model: ersem/primary_producer
@@ -364,14 +350,13 @@ instances:
       resm: 0.0
       esni: 0.7
       cenh: false
-      sedimentation: true
-      qQ1c: 0.5
-      qQ7c: 0.05
-      xR1n: 1.0
-      xR1p: 1.2
-      xR7n: 1.0
-      xR7p: 0.6
-      docdyn: true
+      ndeposition: 3                                           # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.5
+      qxc3: 0.05
+      qxn2: 0.5
+      qxp2: 0.6
+      qxn3: 0.05
+      qxp3: 0.03
     initialization:
       c: 5.9
       n: 0.0926
@@ -388,9 +373,9 @@ instances:
       RP: R4
       O2o: O2/o                                       # oxygen (mmol O_2/m^3)
       O3c: O3/c                                       # carbon dioxide (mmol C/m^3)
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
+      deposition_target1: Q6
+      deposition_target2: Q1
+      deposition_target3: Q7
       L2c: L2/c                                       # free calcite (mg C/m^3)
       RainR: L2/RainR                                 # rain ratio (PIC : POC) (-)
   P3:
@@ -426,14 +411,13 @@ instances:
       resm: 0.0
       esni: 0.7
       cenh: false
-      sedimentation: true
-      qQ1c: 0.5
-      qQ7c: 0.05
-      xR1n: 1.0
-      xR1p: 1.2
-      xR7n: 1.0
-      xR7p: 0.6
-      docdyn: true
+      ndeposition: 3                                           # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.5
+      qxc3: 0.05
+      qxn2: 0.5
+      qxp2: 0.6
+      qxn3: 0.05
+      qxp3: 0.03
     initialization:
       c: 5.9
       n: 0.0926
@@ -450,9 +434,9 @@ instances:
       RP: R4
       O2o: O2/o                                       # oxygen (mmol O_2/m^3)
       O3c: O3/c                                       # carbon dioxide (mmol C/m^3)
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
+      deposition_target1: Q6
+      deposition_target2: Q1
+      deposition_target3: Q7
   P4:
     long_name: microphytoplankton
     model: ersem/primary_producer
@@ -486,14 +470,13 @@ instances:
       resm: 5.0
       esni: 0.7
       cenh: false
-      sedimentation: true
-      qQ1c: 0.5
-      qQ7c: 0.05
-      xR1n: 1.0
-      xR1p: 1.2
-      xR7n: 1.0
-      xR7p: 0.6
-      docdyn: true
+      ndeposition: 3                                           # number of target pools where the sedimentation flux goes (-)
+      qxc2: 0.5
+      qxc3: 0.05
+      qxn2: 0.5
+      qxp2: 0.6
+      qxn3: 0.05
+      qxp3: 0.03
     initialization:
       c: 5.9
       n: 0.0926
@@ -510,9 +493,9 @@ instances:
       RP: R6
       O2o: O2/o                                       # oxygen (mmol O_2/m^3)
       O3c: O3/c                                       # carbon dioxide (mmol C/m^3)
-      Q1: Q1
-      Q6: Q6
-      Q7: Q7
+      deposition_target1: Q6
+      deposition_target2: Q1
+      deposition_target3: Q7
   Z4:
     long_name: mesozooplankton
     model: ersem/mesozooplankton

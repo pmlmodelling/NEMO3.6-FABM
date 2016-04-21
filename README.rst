@@ -36,7 +36,7 @@ FABM needs to be compiled separately before the compilation of NEMO with ERSEM e
 Usually, the following suffices to achieve this::
 
    mkdir -p ~/build/nemo && cd ~/build/nemo
-   cmake <FABMDIR>/src/ -DFABM_HOST=nemo -DFABM_ERSEM_BASE=<ERSEMDIR>
+   cmake <FABMDIR>/src/ -DFABM_HOST=nemo -DFABM_ERSEM_BASE=<ERSEMDIR> -DFABM_EMBED_VERSION=ON
    make install
 
 In the above, replace `<FABMDIR>` with the directory with the FABM source code, e.g., `~/fabm-git` and `<ERSEMMDIR>` with the directory with the ERSEM_ source code, e.g., `~/ersem-git`.

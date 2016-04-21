@@ -1,0 +1,134 @@
+#!/bin/bash --login
+#PBS -N AMM7-hind
+#PBS -o AMM7-hind
+#PBS -l select=25
+##PBS -l select=8
+#PBS -l walltime=02:00:00
+##PBS -l walltime=00:20:00
+##PBS -q short
+#PBS -A n01-Shelf
+
+# NOTE:
+# the simulation year and month must be passed to this pbs script at runtime
+# by defning externally the variable y0 [assing it to the pbs script,
+# e.g.:
+# "qsub -v y0=1980 -v m0=1 hindcast.pbs"
+#
+
+
+ystart=1981
+yend=1981
+
+#Compute previous and next month:
+mp=$(( m0 + 1 ))
+if [ $mp -eq 12 ]
+then
+   mp=01
+   yp=$(( y0 + 1 ))
+else
+   yp=$y0
+fi
+mm=$(( m0 - 1 ))
+if [ $mm -eq 0 ]
+then
+   mm=12
+   ym=$(( y0 - 1 ))
+else
+   ym=$y0
+fi
+
+#force double digit months string:
+if [ ${#m0} -eq 1 ]; then m0=0$m0; fi # force double digit month
+if [ ${#mp} -eq 1 ]; then mp=0$mp; fi # force double digit month
+if [ ${#mm} -eq 1 ]; then mm=0$mm; fi # force double digit month
+
+echo "Launching" $y0 $m0 "..."
+echo "Previous month" $yp $mp "..."
+echo "Next month" $ym $mm "..."
+
+RUNDIR=/work/n01/n01/momme/AMM7
+INPUTS=/work/n01/n01/momme/AMM7-INPUTS
+ARCHIVEDIR=$RUNDIR/$y0/$m0
+cd $RUNDIR
+
+#cleanup:
+./clean.sh
+
+
+#link annual forcing files:
+./setAnnualLinks.sh $y0
+
+#restarts:
+if [ $y0 -eq $ystart ]
+then
+  ln -sf $INPUTS/RESTARTS/restart.nc restart.nc
+  ln -sf $INPUTS/RESTARTS/restart_trc.full.nc restart_trc.nc
+  rst=0
+  euler=0
+else
+  ln -sf $RUNDIR/$ym/$mm/restart_????.nc .
+  ln -sf $RUNDIR/$ym/$mm/restart_trc_????.nc .
+  rst=2
+  euler=0
+fi
+
+#compute run-time:
+case $m0 in
+   04|06|09|11) nit=8640 ;;
+   02) if [ `expr $y0 % 4` -ne 0 -o `expr $y0 % 100` -eq 0 -a `expr $y0 % 400` -ne 0 ]; then nit=8064; else nit=8352; fi ;;
+   *) nit=8928 ;;
+esac
+
+#compute start iteration and end iteration:
+dt=300 #time step
+nsstart=$(date -d $ystart-01-01 +%s) #seconds since EPOCH for total simulation start
+ns0=$(date -d $y0-$m0-01 +%s) #seconds since EPOCH for this chunk
+n0=$(( ns0 - nsstart ))
+n0=$(( n0 / dt ))
+nend=$(( n0 + nit ))
+d0=$y0${m0}01
+if [ $y0 -lt 1990 ]
+then
+   lclim=.true.
+else
+   lclim=.false.
+fi
+cat namelist.template \
+                | sed "s,__DATE0__,$d0,g" \
+                | sed "s,__RST__,$rst,g" \
+                | sed "s,__N0__,$n0,g" \
+                | sed "s,__NEND__,$nend,g" \
+                | sed "s,__LCLIM__,$lclim,g" \
+                | sed "s,__EULER__,$euler,g" \
+                > namelist_cfg
+
+aprun -b -n 1 -N 1 -S 1 ./xios_server.exe : -n 576 -N 24 ./nemo.exe
+#aprun -n 192 -N 24 ./nemo.exe
+
+#prepare archive directory
+mkdir -p $ARCHIVEDIR
+#prepare restart files:
+for file in amm7_*${nend}_restart_????.nc
+do
+  fn=${file: -7:4} #file number
+  mv $file $ARCHIVEDIR/restart_$fn.nc
+done
+for file in amm7_*${nend}_restart_trc_????.nc
+do
+  fn=${file: -7:4} #file number
+  mv $file $ARCHIVEDIR/restart_trc_$fn.nc
+done
+
+#move outputs:
+mv amm7_1d_${d0}_[1-2]???????_*.nc $ARCHIVEDIR
+mv amm7_1m_${d0}_[1-2]???????_ptrc_T.nc $ARCHIVEDIR
+mv amm7_1m_${d0}_[1-2]???????_grid_?.nc $ARCHIVEDIR
+
+#resubmit:
+if [ $yp -le $yend ]
+then
+   qsub -v y0=$yp,m0=$mp MonthlyChainHindcast.pbs
+   echo "Done."
+else
+   echo "All done."
+fi

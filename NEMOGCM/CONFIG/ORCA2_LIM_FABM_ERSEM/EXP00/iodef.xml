@@ -55,12 +55,13 @@
             <field field_ref="R2_c"      operation="average" />
             <field field_ref="R3_c"      operation="average" />
             <field field_ref="L2_c"      operation="average" />
-            <field field_ref="bL2_l"      operation="average" />
+            <field field_ref="bL2_c"      operation="average" />
             <field field_ref="Q1_c"      operation="average" />
             <field field_ref="Q6_c"      operation="average" />
             <field field_ref="Q7_c"      operation="average" />
             <field field_ref="total_chlorophyll_calculator_result"      name="Chl-a"     long_name="Chlorophyll-a" operation="average" />
             <field field_ref="light_EIR"      operation="average" />
+            <field field_ref="light_ADY"      operation="average" />
             <field field_ref="toce"      operation="average" />
             <field field_ref="soce"      operation="average" />
             </field_group>
@@ -152,12 +153,13 @@
           <field field_ref="R2_c"      operation="average" />
           <field field_ref="R3_c"      operation="average" />
           <field field_ref="L2_c"      operation="average" />
-          <field field_ref="bL2_l"      operation="average" />
+          <field field_ref="bL2_c"      operation="average" />
           <field field_ref="Q1_c"      operation="average" />
           <field field_ref="Q6_c"      operation="average" />
           <field field_ref="Q7_c"      operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl-a"     long_name="Chlorophyll-a" operation="average" />
 	  <field field_ref="light_EIR"      operation="average" />
+          <field field_ref="light_ADY"      operation="average" />
           <field field_ref="toce"      operation="average" />
           <field field_ref="soce"      operation="average" />
 	</file>
@@ -376,12 +378,13 @@
             <field field_ref="R2_c"      operation="average" />
             <field field_ref="R3_c"      operation="average" />
             <field field_ref="L2_c"      operation="average" />
-            <field field_ref="bL2_l"      operation="average" />
+            <field field_ref="bL2_c"      operation="average" />
             <field field_ref="Q1_c"      operation="average" />
             <field field_ref="Q6_c"      operation="average" />
             <field field_ref="Q7_c"      operation="average" />
             <field field_ref="total_chlorophyll_calculator_result"      name="Chl-a"     long_name="Chlorophyll-a" operation="average" />
 	    <field field_ref="light_EIR"      operation="average" />
+	    <field field_ref="light_ADY"      operation="average" />
           <!-- <field field_ref="DEPTH"    name="DEPTH"   long_name="cell depth" operation="average" />
           <field field_ref="AREA"     name="AREA"    long_name="cell area" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" /> -->

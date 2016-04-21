@@ -1,0 +1,18 @@
+#!/bin/bash --login
+#PBS -N AMM7-dbgtest
+#PBS -o AMM7-dbgtest
+#PBS -l select=25
+##PBS -l select=8
+#PBS -l walltime=01:30:00
+##PBS -l walltime=00:20:00
+##PBS -q short
+#PBS -A n01-Shelf
+
+RUNDIR=/work/n01/n01/momme/AMM7
+cd $RUNDIR
+rm -f AMM7-dbgtest.e*
+rm -f amm7_*_restart_[0,1]???.nc
+rm -f amm7_*_restart_trc_[0,1]???.nc
+rm -rf amm7_5d_*_ptrc_T.nc
+#aprun -n 192 -N 24 ./nemo.exe
+aprun -b -n 1 -N 1 -S 1 ./xios_server.exe : -n 576 -N 24 ./nemo.exe
