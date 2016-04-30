@@ -17,11 +17,11 @@
 
 
 ystart=1981
-yend=1981
+yend=2010
 
 #Compute previous and next month:
 mp=$(( m0 + 1 ))
-if [ $mp -eq 12 ]
+if [ $mp -eq 13 ]
 then
    mp=01
    yp=$(( y0 + 1 ))
@@ -42,9 +42,9 @@ if [ ${#m0} -eq 1 ]; then m0=0$m0; fi # force double digit month
 if [ ${#mp} -eq 1 ]; then mp=0$mp; fi # force double digit month
 if [ ${#mm} -eq 1 ]; then mm=0$mm; fi # force double digit month
 
+echo "Previous month" $ym $mm "..."
 echo "Launching" $y0 $m0 "..."
-echo "Previous month" $yp $mp "..."
-echo "Next month" $ym $mm "..."
+echo "Next month" $yp $mp "..."
 
 RUNDIR=/work/n01/n01/yuti/AMM7-v1-hindcast
 INPUTS=/work/n01/n01/momme/AMM7-INPUTS
@@ -59,7 +59,8 @@ cd $RUNDIR
 ./setAnnualLinks.sh $y0
 
 #restarts:
-if [ $y0 -eq $ystart ]
+rm -rf restart.nc restart_trc.nc restart_[0-9]???.nc restart_trc_[0-9]???.nc
+if [ $y0 -eq $ystart ] && [ $m0 -eq 01 ]
 then
   ln -sf $INPUTS/RESTARTS/restart.nc restart.nc
   ln -sf $INPUTS/RESTARTS/restart_trc.v1.nc restart_trc.nc
@@ -101,7 +102,6 @@ cat namelist.template \
                 | sed "s,__LCLIM__,$lclim,g" \
                 | sed "s,__EULER__,$euler,g" \
                 > namelist_cfg
-
 aprun -b -n 1 -N 1 -S 1 ./xios_server.exe : -n 576 -N 24 ./nemo.exe
 #aprun -n 192 -N 24 ./nemo.exe
 
@@ -123,10 +123,12 @@ done
 mv amm7_1d_${d0}_[1-2]???????_*.nc $ARCHIVEDIR
 mv amm7_1m_${d0}_[1-2]???????_ptrc_T.nc $ARCHIVEDIR
 mv amm7_1m_${d0}_[1-2]???????_grid_?.nc $ARCHIVEDIR
+bzip2 ocean.output && mv -f ocean.output.bz2 $ARCHIVEDIR
 
 #resubmit:
 if [ $yp -le $yend ]
 then
+   echo "Submitting" $mp $yp '...'
    qsub -v y0=$yp,m0=$mp MonthlyChainHindcast.pbs
    echo "Done."
 else

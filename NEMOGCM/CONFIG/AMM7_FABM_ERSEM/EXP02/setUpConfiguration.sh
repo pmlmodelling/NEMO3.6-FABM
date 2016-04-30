@@ -1,7 +1,7 @@
 #!/bin/bash
 
 INPUTPATH="/work/n01/n01/momme/AMM7-INPUTS"
-RUNPATH="/work/n01/n01/momme/AMM7"
+RUNPATH="/work/n01/n01/yuti/AMM7-v1-hindcast"
 CONFIGPATH="$HOME"/git/NEMO-shelf/NEMOGCM/CONFIG/AMM7_FABM_ERSEM
 
 #prepare folders for annual atmospheric and lateral forcings:
