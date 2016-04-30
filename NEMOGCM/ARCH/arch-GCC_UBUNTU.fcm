@@ -32,7 +32,7 @@
 %HDF5_HOME           $HDF5_DIR
 # set your XIOS_HOME environment variable or replace with appropriate path:
 %XIOS_HOME           $XIOS_HOME
-%FABM_HOME           $HOME/local/fabm/nemo
+%FABM_HOME           $FABM_HOME
 #OASIS_HOME          
 
 %NCDF_INC            -I/usr/include
