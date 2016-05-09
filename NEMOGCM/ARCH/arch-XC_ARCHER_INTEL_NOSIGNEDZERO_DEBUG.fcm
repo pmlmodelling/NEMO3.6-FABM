@@ -33,7 +33,7 @@
 #%XIOS_HOME           /work/n01/n01/acc/XIOS_r484
 # set your XIOS_HOME environment variable or replace with appropriate path:
 %XIOS_HOME           $XIOS_HOME
-%FABM_HOME           $HOME/local/fabm/nemo-debug
+%FABM_HOME           $FABM_HOME
 #OASIS_HOME          
 
 %NCDF_INC            -I%NCDF_HOME/include -I%HDF5_HOME/include
@@ -50,7 +50,7 @@
 %FC                  ftn
 %FCFLAGS             -integer-size 32 -real-size 64 -g -O0 -traceback -fp-model source -zero -fpp -warn all
 %FFLAGS              -integer-size 32 -real-size 64 -g -O0 -traceback -fp-model source -zero -fpp -warn all
-%LD                  %FC
+%LD                  CC -Wl,"--allow-multiple-definition"
 # F2003 compliant compilers require key_nosignedzero:
 %FPPFLAGS            -P -C -traditional -Dkey_nosignedzero
 %LDFLAGS

@@ -6,7 +6,7 @@ module unload cray-netcdf
 module load cray-netcdf-hdf5parallel
 
 NEMO_BUILD_DIR=$HOME/git/NEMO-shelf/NEMOGCM/CONFIG
-RUNDIR=/work/n01/n01/momme/AMM7
+RUNDIR=/work/n01/n01/yuti/AMM7-v1
 export XIOS_HOME=$HOME/local/xios-intel
 export FABM_HOME=$HOME/local/fabm/nemo
 

@@ -4,7 +4,7 @@
 #
 
 INPUTPATH="/work/n01/n01/momme/AMM7-INPUTS"
-RUNPATH="/work/n01/n01/momme/AMM7"
+RUNPATH="/work/n01/n01/yuti/AMM7-v1-hindcast"
 y0=1995
 
 yn=$1
