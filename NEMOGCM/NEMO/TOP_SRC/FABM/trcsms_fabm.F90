@@ -369,6 +369,7 @@ CONTAINS
 
       ! Work array to hold extinction coefficients
       ALLOCATE(ext(jpi))
+      ext=0._wp
 
       ! Allocate work arrays for vertical movement
       ALLOCATE(w_ct(jpi,jpk,jp_fabm))
