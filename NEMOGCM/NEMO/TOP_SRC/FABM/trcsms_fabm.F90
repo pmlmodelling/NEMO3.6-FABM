@@ -484,15 +484,15 @@ CONTAINS
       REAL(wp) :: rfac
       NAMELIST /variable/ name,sn
       NAMELIST /riverdata/ name,sn,rfac
-      LOGICAL :: ext
+      LOGICAL :: l_ext
       INTEGER :: num, ierr, nmlunit
       TYPE (type_input_variable),POINTER :: input_variable
       TYPE (type_river_data),POINTER :: river_data
       INTEGER :: jn
 
       ! Check if fabm_input.nml exists - if not, do nothing and return.
-      INQUIRE( FILE='fabm_input.nml', EXIST=ext )
-      IF (.NOT.ext) return
+      INQUIRE( FILE='fabm_input.nml', EXIST=l_ext )
+      IF (.NOT.l_ext) return
 
       ! Open fabm_input.nml
       CALL ctl_opn( nmlunit, 'fabm_input.nml', 'OLD', 'FORMATTED', 'SEQUENTIAL', -1, num, .FALSE. )
