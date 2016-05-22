@@ -164,7 +164,8 @@ echo "Buffer cores blocked for XIOS:" $XIOSBLOCKEDCORES
 #wait
 
 echo "Launching NEMO..."
-srun -n 361 --multi-prog ./xios.conf
+srun -n $(( COMPUTECORES + XIOSCORES )) --multi-prog ./xios.conf
+#srun -n $CORES ./nemo.exe
 
 #prepare archive directory
 echo "Archiving to" $ARCHIVEDIR "..."
@@ -198,4 +199,4 @@ else
 fi
 
 #archive:
-ssh ceto2 "cd $RUNDIR ; ./archiveFolder.sh $y0/$m0 >& ./archive.$y0.$m0.log &"
+./archiveFolder.sh $y0/$m0 >& ./archive.$y0.$m0.log &
