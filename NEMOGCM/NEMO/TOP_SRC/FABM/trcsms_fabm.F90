@@ -434,6 +434,7 @@ CONTAINS
 
       ! Obtain user-specified input variables (read from NetCDF file)
       call initialize_inputs
+      call update_inputs(nit000)
 
       ! Check whether FABM has all required data
       call fabm_check_ready(model)
