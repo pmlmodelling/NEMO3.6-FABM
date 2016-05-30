@@ -476,6 +476,8 @@ CONTAINS
       fabm_st2Db = fabm_st2Dn
 
       ! Ensure that all FABM diagnostics have a valid value.
+      wndm=0._wp !uninitiased field at this point
+      qsr=0._wp !uninitiased field at this point
       CALL compute_rates
 
    END FUNCTION trc_sms_fabm_alloc
