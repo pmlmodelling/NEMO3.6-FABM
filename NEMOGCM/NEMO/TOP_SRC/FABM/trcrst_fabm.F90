@@ -16,6 +16,7 @@ MODULE trcrst_fabm
    USE trc             ! TOP variables
    USE iom
 
+   USE par_fabm
    USE trcsms_fabm
    USE st2D_fabm
 

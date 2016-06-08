@@ -15,7 +15,9 @@ MODULE trcnam_fabm
    USE par_trc         ! TOP parameters
    USE trc             ! TOP variables
 
+   USE par_fabm
    USE trcsms_fabm
+
 
    IMPLICIT NONE
    PRIVATE

@@ -14,6 +14,7 @@ MODULE trcini_fabm
    USE par_trc         ! TOP parameters
    USE oce_trc
    USE trc
+   USE par_fabm
    USE trcsms_fabm
    USE fabm_config,ONLY: fabm_create_model_from_yaml_file
    USE fabm,ONLY: type_external_variable, fabm_initialize_library
