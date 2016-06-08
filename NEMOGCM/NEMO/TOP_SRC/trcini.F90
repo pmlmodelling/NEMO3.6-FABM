@@ -24,6 +24,7 @@ MODULE trcini
    USE trcini_c14b     ! C14 bomb initialisation
    USE trcini_my_trc   ! MY_TRC   initialisation
    ! +++>>> FABM
+   USE trcsms_fabm     ! FABM initialisation
    USE trcini_fabm     ! FABM initialisation
    ! FABM <<<FABM
    USE trcdta          ! initialisation from files
@@ -151,12 +152,16 @@ CONTAINS
             CALL wrk_dealloc( jpi, jpj, jpk, ztrcdta )
         ENDIF
       ENDIF
-! Initialisation of tracers Boundary Conditions  - here so that you can use initial condition as boundary
       ! --->>> FABM
+! Initialisation of tracers Boundary Conditions  - here so that you can use initial condition as boundary
       !IF( lk_my_trc )     CALL trc_bc_init(jptra)
       ! FABM <<<---
       ! FABM +++>>>
-      IF( lk_fabm )     CALL trc_bc_init(jptra)
+! Initialisation of FABM diagnostics and tracer boundary conditions (so that you can use initial condition as boundary)
+      IF( lk_fabm )     THEN
+          CALL compute_fabm
+          CALL trc_bc_init(jptra)
+      ENDIF
       ! FABM <<<+++
  
       tra(:,:,:,:) = 0._wp

@@ -13,7 +13,7 @@ MODULE trcwri_fabm
    !!----------------------------------------------------------------------
    USE trc         ! passive tracers common variables 
    USE iom         ! I/O manager
-   USE trcsms_fabm, only: model, trc_sms_fabm_check_mass
+   USE trcsms_fabm, only: trc_sms_fabm_check_mass
    USE par_fabm
    USE st2d_fabm
    USE fabm, only: fabm_get_bulk_diagnostic_data, fabm_get_horizontal_diagnostic_data

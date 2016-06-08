@@ -39,8 +39,8 @@ MODULE trcsms_fabm
    PUBLIC   trc_sms_fabm       ! called by trcsms.F90 module
    PUBLIC   trc_sms_fabm_alloc ! called by trcini_fabm.F90 module
    PUBLIC   trc_sms_fabm_check_mass
-   PUBLIC   model
    PUBLIC   st2d_fabm_nxt ! 2D state intergration
+   PUBLIC   compute_fabm ! Compute FABM sources, sinks and diagnostics
 
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) :: flux    ! Cross-interface flux of pelagic variables (# m-2 s-1)
 
@@ -91,7 +91,7 @@ CONTAINS
 
       CALL update_inputs( kt )
 
-      CALL compute_rates
+      CALL compute_fabm
 
       CALL compute_vertical_movement
 
@@ -114,7 +114,7 @@ CONTAINS
 
    END SUBROUTINE trc_sms_fabm
 
-   SUBROUTINE compute_rates()
+   SUBROUTINE compute_fabm()
       INTEGER :: ji,jj,jk,jn
       LOGICAL :: valid_state
       REAL(wp) :: zalfg
@@ -187,7 +187,7 @@ CONTAINS
               CALL fabm_do(model,1,jpi,jj,jk,tra(:,jj,jk,jp_fabm0:jp_fabm1))
           END DO
       END DO
-   END SUBROUTINE compute_rates
+   END SUBROUTINE compute_fabm
 
    SUBROUTINE compute_vertical_movement()
       INTEGER :: ji,jj,jk,jn,k_floor
@@ -459,7 +459,7 @@ CONTAINS
       ! Ensure that all FABM diagnostics have a valid value.
       wndm=0._wp !uninitiased field at this point
       qsr=0._wp !uninitiased field at this point
-      CALL compute_rates
+      CALL compute_fabm
 
    END FUNCTION trc_sms_fabm_alloc
 
