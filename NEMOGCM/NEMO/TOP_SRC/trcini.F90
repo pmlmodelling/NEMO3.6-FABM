@@ -159,7 +159,9 @@ CONTAINS
       ! FABM +++>>>
 ! Initialisation of FABM diagnostics and tracer boundary conditions (so that you can use initial condition as boundary)
       IF( lk_fabm )     THEN
-          CALL compute_fabm
+          wndm=0._wp !uninitiased field at this point
+          qsr=0._wp !uninitiased field at this point
+          CALL compute_fabm ! only needed to set-up diagnostics
           CALL trc_bc_init(jptra)
       ENDIF
       ! FABM <<<+++

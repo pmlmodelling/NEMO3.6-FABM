@@ -456,11 +456,6 @@ CONTAINS
       ! NB NEMO does this itself for pelagic state variables (trb) in TOP_SRC/trcini.F90.
       fabm_st2Db = fabm_st2Dn
 
-      ! Ensure that all FABM diagnostics have a valid value.
-      wndm=0._wp !uninitiased field at this point
-      qsr=0._wp !uninitiased field at this point
-      CALL compute_fabm
-
    END FUNCTION trc_sms_fabm_alloc
 
 #else
