@@ -143,6 +143,7 @@ CONTAINS
       !!----------------------------------------------------------------------
 
       TYPE (type_version),POINTER :: version
+      INTEGER :: jn
 
       !                       ! Allocate FABM arrays
       IF( trc_sms_fabm_alloc() /= 0 )   CALL ctl_stop( 'STOP', 'trc_ini_fabm: unable to allocate FABM arrays' )
@@ -156,10 +157,31 @@ CONTAINS
       version => first_module_version
       
       do while (associated(version))
-         IF(lwp) WRITE(numout,*)  trim(version%module_name)//' version:   ',trim(version%version_string)
+         IF(lwp) WRITE(numout,*)  ' '//trim(version%module_name)//' version:   ',trim(version%version_string)
          version => version%next
       end do
-
+      
+      ! Log mapping of FABM states:
+      IF (lwp) THEN
+         IF (jp_fabm.gt.0) WRITE(numout,*) " FABM tracers:"
+         DO jn=1,jp_fabm
+            WRITE(numout,*) "   State",jn,":",trim(model%state_variables(jn)%name), &
+               " (",trim(model%state_variables(jn)%long_name), &
+               ") [",trim(model%state_variables(jn)%units),"]"
+         ENDDO
+         IF (jp_fabm_surface.gt.0) WRITE(numout,*) "FABM seasurface states:"
+         DO jn=1,jp_fabm_surface
+            WRITE(numout,*) "   State",jn,":",trim(model%surface_state_variables(jn)%name), &
+               " (",trim(model%surface_state_variables(jn)%long_name), &
+               ") [",trim(model%surface_state_variables(jn)%units),"]"
+         ENDDO
+         IF (jp_fabm_bottom.gt.0) WRITE(numout,*) "FABM seafloor states:"
+         DO jn=1,jp_fabm_bottom
+            WRITE(numout,*) "   State",jn,":",trim(model%bottom_state_variables(jn)%name), &
+               " (",trim(model%bottom_state_variables(jn)%long_name), &
+               ") [",trim(model%bottom_state_variables(jn)%units),"]"
+         ENDDO
+      ENDIF
       
    END SUBROUTINE trc_ini_fabm
 
