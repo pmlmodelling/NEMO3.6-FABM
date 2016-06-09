@@ -1,16 +1,13 @@
 #!/bin/bash 
 
-module unload PrgEnv-cray PrgEnv-gnu
-module load PrgEnv-intel
-module unload cray-netcdf
-module load cray-netcdf-hdf5parallel
+module load intel intel-mpi netcdf-intelmpi hdf5-intelmpi
 
 NEMO_BUILD_DIR=$HOME/git/NEMO-shelf/NEMOGCM/CONFIG
-RUNDIR=/work/n01/n01/momme/AMM7
-export XIOS_HOME=$HOME/local/xios-intel-debug
-export FABM_HOME=$HOME/local/fabm/nemo-debug
+RUNDIR=~/build/NEMO-shelf
+export XIOS_HOME=$HOME/local/xios-intel
+export FABM_HOME=$HOME/local/fabm/nemo
 
-ARCH=XC_ARCHER_INTEL_NOSIGNEDZERO_DEBUG
+ARCH=CETO_INTEL_NOSIGNEDZERO_DEBUG
 
 cd $NEMO_BUILD_DIR
 echo "Cleaning old build ..."

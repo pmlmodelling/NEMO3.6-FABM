@@ -11,8 +11,8 @@ ARCH=CETO_INTEL_NOSIGNEDZERO
 
 cd $NEMO_BUILD_DIR
 echo "Cleaning old build..."
-rm -f $RUNDIR/nemo.exe
+rm -f $RUNDIR/nemo.exe $NEMO_BUILD_DIR/AMM7_BLD_SCRATCH/BLD/bin/nemo.exe
 ./makenemo -m $ARCH -n AMM7_BLD_SCRATCH clean_config
 
 echo "Building NEMO-FABM..."
-./makenemo -m $ARCH -r AMM7_FABM_ERSEM -n AMM7_BLD_SCRATCH > $RUNDIR/compile.log && rsync -a $NEMO_BUILD_DIR/AMM7_BLD_SCRATCH/BLD/bin/nemo.exe $RUNDIR/ && echo "Done."
+./makenemo -m $ARCH -r AMM7_FABM_ERSEM -n AMM7_BLD_SCRATCH > $RUNDIR/compile.log && mv $NEMO_BUILD_DIR/AMM7_BLD_SCRATCH/BLD/bin/nemo.exe $RUNDIR/ && echo "Done."
