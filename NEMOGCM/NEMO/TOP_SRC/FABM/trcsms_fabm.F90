@@ -240,9 +240,9 @@ CONTAINS
                END DO
 
                ! Combine interfacial mass fluxes (top + bottom) into total fluxes per layer
-               flux_ct(1,              :) = flux_if(1,              :)
-               flux_ct(2:k_floor-1,:) = flux_if(2:k_floor-1,:) - flux_if(1:k_floor-2,:)
-               flux_ct(k_floor,    :) =                            - flux_if(k_floor-1,  :)                              
+               flux_ct(1,              :) = flux_if(2,              :)
+               flux_ct(2:k_floor-1,:) = flux_if(3:k_floor,:) - flux_if(2:k_floor-1,:)
+               flux_ct(k_floor,    :) =                            - flux_if(k_floor,  :)                              
 
                ! Convert mass fluxes (m-2) into source terms (m-3) by dividing by layer height
                DO jn=1,jp_fabm
