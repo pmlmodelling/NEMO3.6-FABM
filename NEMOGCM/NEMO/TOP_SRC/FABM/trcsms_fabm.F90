@@ -228,7 +228,7 @@ CONTAINS
                ! Convert velocities in m s-1 to mass fluxes (e.g., mol m-2 s-1) - both at interfaces between layers.
                DO jn=1,jp_fabm
                   DO jk=2,k_floor
-                     IF (w_if(jk,jn)<0) THEN
+                     IF (w_if(jk,jn).lt.0._wp) THEN
                         ! Downward - use concentration from level above (velocity is defined on upper interface)
                         flux_if(jk,jn) = max(w_if(jk,jn),-fse3t(ji,jj,jk)/z2dt) &
                            *trn(ji,jj,jk-1,jp_fabm_m1+jn)
