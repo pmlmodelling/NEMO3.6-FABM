@@ -190,7 +190,15 @@ CONTAINS
    END SUBROUTINE compute_fabm
 
    SUBROUTINE compute_vertical_movement()
-      INTEGER :: ji,jj,jk,jn,k_floor
+      INTEGER :: ji,jj,jk,jn,kt,k_floor
+      REAL(wp) :: z2dt
+!!----------------------------------------------------------------------
+      !
+      IF( neuler == 0 .AND. kt == nittrc000 ) THEN
+          z2dt = rdt                  ! set time step size (Euler)
+      ELSE
+          z2dt = 2._wp * rdt          ! set time step size (Leapfrog)
+      ENDIF
 
       ! Compute interior vertical velocities and include them in source array.
       DO jj=1,jpj
@@ -204,21 +212,28 @@ CONTAINS
             if (mbkt(ji,jj)>1) THEN
                k_floor=mbkt(ji,jj)
                ! Linearly interpolate to velocities at the interfaces between layers
-               zwgt_if(1:k_floor-1,:)=spread(&
+               ! Note:
+               !    - interface k sits between cell centre k and k-1,
+               !    - k [1,jpk] increases downwards
+               !    - upward velocity is positive, downward velocity is negative
+               zwgt_if(1,:)=0._wp ! surface
+               w_if(1,:)=0._wp ! surface
+               zwgt_if(2:k_floor,:)=spread(&
                    fse3t(ji,jj,2:k_floor)/ (fse3t(ji,jj,1:k_floor-1)+fse3t(ji,jj,2:k_floor))&
                    ,2,jp_fabm)
-               w_if(1:k_floor-1,:) = zwgt_if(1:k_floor-1,:)*w_ct(ji,1:k_floor-1,:)&
+               w_if(2:k_floor,:) = zwgt_if(2:k_floor,:)*w_ct(ji,1:k_floor-1,:)&
                   +(1._wp-zwgt_if(1:k_floor-1,:))*w_ct(ji,2:k_floor,:)
 
                ! Convert velocities in m s-1 to mass fluxes (e.g., mol m-2 s-1) - both at interfaces between layers.
                DO jn=1,jp_fabm
-                  DO jk=1,k_floor-1
+                  DO jk=2,k_floor
                      IF (w_if(jk,jn)<0) THEN
-                        ! Downward - use concentration from same level (velocity is defined on bottom interface)
-                        flux_if(jk,jn) = w_if(jk,jn)*trn(ji,jj,jk,jp_fabm_m1+jn)
+                        ! Downward - use concentration from level above (velocity is defined on upper interface)
+                        flux_if(jk,jn) = max(w_if(jk,jn),-fse3t(ji,jj,jk)/z2dt) &
+                           *trn(ji,jj,jk-1,jp_fabm_m1+jn)
                      ELSE
-                        ! Upward - use concentration from level below (velocity is defined on bottom interface)
-                        flux_if(jk,jn) = w_if(jk,jn)*trn(ji,jj,jk+1,jp_fabm_m1+jn)
+                        ! Upward - use concentration from same level (velocity is defined on upper interface)
+                        flux_if(jk,jn) = min(w_if(jk,jn),fse3t(ji,jj,jk)/z2dt) &                           *trn(ji,jj,jk,jp_fabm_m1+jn)
                      END IF
                   END DO
                END DO
