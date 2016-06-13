@@ -93,7 +93,7 @@ CONTAINS
 
       CALL compute_fabm
 
-      CALL compute_vertical_movement
+      CALL compute_vertical_movement( kt )
 
       CALL st2d_fabm_nxt( kt )
 
@@ -189,8 +189,9 @@ CONTAINS
       END DO
    END SUBROUTINE compute_fabm
 
-   SUBROUTINE compute_vertical_movement()
-      INTEGER :: ji,jj,jk,jn,kt,k_floor
+   SUBROUTINE compute_vertical_movement( kt )
+      INTEGER, INTENT(in) ::   kt   ! ocean time-step index
+      INTEGER :: ji,jj,jk,jn,k_floor
       REAL(wp) :: z2dt
 !!----------------------------------------------------------------------
       !
