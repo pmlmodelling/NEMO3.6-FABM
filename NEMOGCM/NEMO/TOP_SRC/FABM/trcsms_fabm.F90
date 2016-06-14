@@ -25,6 +25,7 @@ MODULE trcsms_fabm
 
    USE st2D_fabm
    USE inputs_fabm
+   USE vertical_movement_fabm
 
    !USE fldread         !  time interpolation
 
@@ -46,13 +47,9 @@ MODULE trcsms_fabm
 
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:)   :: ext     ! Light extinction coefficient (m-1)
 
-   ! Work arrays for vertical advection (residual movement/sinking/floating)
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:,:) :: w_ct
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)   :: w_if
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)   :: zwgt_if
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)   :: flux_if
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)   :: flux_ct
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)   :: current_total
+   ! Work array for mass aggregation
+   REAL(wp), ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)   :: current_total
+
 
    ! Arrays for environmental variables
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:,:) :: prn,rho
@@ -189,71 +186,6 @@ CONTAINS
       END DO
    END SUBROUTINE compute_fabm
 
-   SUBROUTINE compute_vertical_movement( kt )
-      INTEGER, INTENT(in) ::   kt   ! ocean time-step index
-      INTEGER :: ji,jj,jk,jn,k_floor
-      REAL(wp) :: z2dt
-!!----------------------------------------------------------------------
-      !
-      IF( neuler == 0 .AND. kt == nittrc000 ) THEN
-          z2dt = rdt                  ! set time step size (Euler)
-      ELSE
-          z2dt = 2._wp * rdt          ! set time step size (Leapfrog)
-      ENDIF
-
-      ! Compute interior vertical velocities and include them in source array.
-      DO jj=1,jpj
-         ! Get vertical velocities at layer centres (entire 1:jpi,1:jpk slice).
-         DO jk=1,jpk
-            CALL fabm_get_vertical_movement(model,1,jpi,jj,jk,w_ct(:,jk,:))
-         END DO
-
-         DO ji=1,jpi
-            ! Only process this horizontal point (ji,jj) if number of layers exceeds 1
-            if (mbkt(ji,jj)>1) THEN
-               k_floor=mbkt(ji,jj)
-               ! Linearly interpolate to velocities at the interfaces between layers
-               ! Note:
-               !    - interface k sits between cell centre k and k-1,
-               !    - k [1,jpk] increases downwards
-               !    - upward velocity is positive, downward velocity is negative
-               zwgt_if(1,:)=0._wp ! surface
-               w_if(1,:)=0._wp ! surface
-               zwgt_if(2:k_floor,:)=spread(&
-                   fse3t(ji,jj,2:k_floor)/ (fse3t(ji,jj,1:k_floor-1)+fse3t(ji,jj,2:k_floor))&
-                   ,2,jp_fabm)
-               w_if(2:k_floor,:) = zwgt_if(2:k_floor,:)*w_ct(ji,1:k_floor-1,:)&
-                  +(1._wp-zwgt_if(1:k_floor-1,:))*w_ct(ji,2:k_floor,:)
-
-               ! Convert velocities in m s-1 to mass fluxes (e.g., mol m-2 s-1) - both at interfaces between layers.
-               DO jn=1,jp_fabm
-                  DO jk=2,k_floor
-                     IF (w_if(jk,jn).lt.0._wp) THEN
-                        ! Downward - use concentration from level above (velocity is defined on upper interface)
-                        flux_if(jk,jn) = max(w_if(jk,jn),-fse3t(ji,jj,jk)/z2dt) &
-                           *trn(ji,jj,jk-1,jp_fabm_m1+jn)
-                     ELSE
-                        ! Upward - use concentration from same level (velocity is defined on upper interface)
-                        flux_if(jk,jn) = min(w_if(jk,jn),fse3t(ji,jj,jk)/z2dt) &                           *trn(ji,jj,jk,jp_fabm_m1+jn)
-                     END IF
-                  END DO
-               END DO
-
-               ! Combine interfacial mass fluxes (top + bottom) into total fluxes per layer
-               flux_ct(1,              :) = flux_if(2,              :)
-               flux_ct(2:k_floor-1,:) = flux_if(3:k_floor,:) - flux_if(2:k_floor-1,:)
-               flux_ct(k_floor,    :) =                            - flux_if(k_floor,  :)                              
-
-               ! Convert mass fluxes (m-2) into source terms (m-3) by dividing by layer height
-               DO jn=1,jp_fabm
-                  tra(ji,jj,1:k_floor,jp_fabm_m1+jn) = tra(ji,jj,1:k_floor,jp_fabm_m1+jn) + flux_ct(1:k_floor,jn)/fse3t(ji,jj,1:k_floor)
-               END DO
-            END IF
-         END DO
-      END DO
-
-   END SUBROUTINE compute_vertical_movement
-
    FUNCTION check_state(repair) RESULT(valid)
       LOGICAL, INTENT(IN) :: repair
       LOGICAL             :: valid
@@ -370,10 +302,9 @@ CONTAINS
 
       ! Allocate work arrays for vertical movement
       ALLOCATE(w_ct(jpi,jpk,jp_fabm))
-      ALLOCATE(w_if(jpk-1,jp_fabm))
-      ALLOCATE(zwgt_if(jpk-1,jp_fabm))
-      ALLOCATE(flux_if(jpk-1,jp_fabm))
-      ALLOCATE(flux_ct(jpk,jp_fabm))
+      ALLOCATE(w_if(jpk,jp_fabm))
+      ALLOCATE(zwgt_if(jpk,jp_fabm))
+      ALLOCATE(flux_if(jpk,jp_fabm))
       ALLOCATE(current_total(jpi,SIZE(model%conserved_quantities)))
 
       trc_sms_fabm_alloc = 0      ! set to zero if no array to be allocated
