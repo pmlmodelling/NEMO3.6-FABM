@@ -30,7 +30,6 @@
           <field field_ref="N5_s" operation="instant" />
           <field field_ref="O3_c" operation="instant" />
           <field field_ref="O3_TA" operation="instant" />
-          <!-- <field field_ref="O3_bioalk" operation="instant" /> -->
           <field field_ref="O2_o" operation="instant" />
           <field field_ref="P1_c" operation="instant" />
           <field field_ref="P1_n" operation="instant" />
@@ -109,6 +108,15 @@
           <field field_ref="ben_nit_G4n" operation="instant" />
           <field field_ref="e3t"      name="e3t"     operation="instant" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="instant" />
+          <field field_ref="light_EIR" operation="instant" />
+          <field field_ref="light_ADY" operation="instant" />
+          <field field_ref="light_xEPS" operation="instant" />
+          <field field_ref="P1_netPI" operation="instant" />
+          <field field_ref="P2_netPI" operation="instant" />
+          <field field_ref="P3_netPI" operation="instant" />
+          <field field_ref="P4_netPI" operation="instant" />
+          <field field_ref="toce" operation="instant" />
+          <field field_ref="soce" operation="instant" />
           <!-- <field field_ref="TR1_pool" name="TR1_pool" long_name="passive tracer pool" operation="instant" />
           <field field_ref="DEPTH"    name="DEPTH"   long_name="cell depth" operation="instant" />
           <field field_ref="AREA"     name="AREA"    long_name="cell area" operation="instant" />

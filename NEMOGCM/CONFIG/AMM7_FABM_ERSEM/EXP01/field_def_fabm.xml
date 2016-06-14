@@ -54,8 +54,6 @@
   <field id="R8_s" long_name="large-size pom silicate" unit="mmol Si/m^3" default_value="-.200E+21" />
  </field_group>
  <field_group id="sf_T" grid_ref="grid_T_2D">
-  <field id="ben_col_D1m" long_name="benthic column depth of bottom interface of oxygenated layer" unit="m" default_value="-.200E+21" />
-  <field id="ben_col_D2m" long_name="benthic column depth of bottom interface of oxidized layer" unit="m" default_value="-.200E+21" />
   <field id="Q1_c" long_name="benthic dissolved organic matter carbon" unit="mg C/m^2" default_value="-.200E+21" />
   <field id="Q1_p" long_name="benthic dissolved organic matter phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
   <field id="Q1_n" long_name="benthic dissolved organic matter nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
@@ -80,6 +78,8 @@
   <field id="Q17_p" long_name="benthic buried matter phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
   <field id="Q17_n" long_name="benthic buried matter nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
   <field id="bL2_c" long_name="benthic calcite carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="ben_col_D1m" long_name="benthic column depth of bottom interface of oxygenated layer" unit="m" default_value="-.200E+21" />
+  <field id="ben_col_D2m" long_name="benthic column depth of bottom interface of oxidized layer" unit="m" default_value="-.200E+21" />
   <field id="H1_c" long_name="benthic aerobic bacteria carbon" unit="mg C/m^2" default_value="-.200E+21" />
   <field id="H2_c" long_name="benthic anaerobic bacteria carbon" unit="mg C/m^2" default_value="-.200E+21" />
   <field id="K1_p" long_name="benthic phosphate phosphorus" unit="mmol/m^2" default_value="-.200E+21" />
@@ -92,6 +92,8 @@
   <field id="G3_c" long_name="benthic dissolved inorganic carbon carbon" unit="mmol/m^2" default_value="-.200E+21" />
  </field_group>
  <field_group id="diad_T" grid_ref="grid_T_2D">
+  <field id="particulate_organic_absorption_coefficient_calculator_result" long_name="particulate_organic_absorption_coefficient_calculator result" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="particulate_organic_backscatter_coefficient_calculator_result" long_name="particulate_organic_backscatter_coefficient_calculator result" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="light_ADY_sms" long_name="light gelbstoff absorption sources-sinks" unit="1/m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="light_ADY_w" long_name="light gelbstoff absorption vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="light_EIR" long_name="light shortwave radiation" unit="W/m^2" default_value="-.200E+21" grid_ref="grid_T_3D" />
@@ -516,8 +518,6 @@
   <field id="total_nitrogen_calculator_result" long_name="total_nitrogen_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="total_silicate_calculator_result" long_name="total_silicate_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="total_carbon_calculator_result" long_name="total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="particulate_organic_backscatter_coefficient_calculator_result" long_name="particulate_organic_backscatter_coefficient_calculator result" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="particulate_organic_absorption_coefficient_calculator_result" long_name="particulate_organic_absorption_coefficient_calculator result" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="total_chlorophyll_calculator_result" long_name="total_chlorophyll_calculator result" unit="mg/m^3" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="photosynthesis_rate_calculator_result" long_name="photosynthesis_rate_calculator result" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="phytoplankton_respiration_rate_calculator_result" long_name="phytoplankton_respiration_rate_calculator result" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
@@ -541,7 +541,6 @@
   <field id="N5_s_bfl" long_name="silicate silicate bottom flux" unit="mmol Si/m^3*m/s" default_value="0.000E+00" />
   <field id="O2_o_sfl" long_name="oxygen oxygen surface flux" unit="mmol O_2/m^3*m/s" default_value="0.000E+00" />
   <field id="O2_o_bfl" long_name="oxygen oxygen bottom flux" unit="mmol O_2/m^3*m/s" default_value="0.000E+00" />
-  <field id="pco2a_data" long_name="pco2a data" unit="" default_value="0.385E+03" />
   <field id="O3_c_sfl" long_name="carbonate total dissolved inorganic carbon surface flux" unit="mmol C/m^3*m/s" default_value="0.000E+00" />
   <field id="O3_c_bfl" long_name="carbonate total dissolved inorganic carbon bottom flux" unit="mmol C/m^3*m/s" default_value="0.000E+00" />
   <field id="O3_bioalk_sfl" long_name="carbonate bioalkalinity surface flux" unit="umol/kg*m/s" default_value="0.000E+00" />
@@ -623,13 +622,6 @@
   <field id="pel_nit_O2o_bfl" long_name="pelagic nitrification oxygen bottom flux" unit="mmol O_2/m^3*m/s" default_value="0.000E+00" />
   <field id="pel_nit_alkalinity_expressed_as_mole_equivalent_sfl" long_name="pelagic nitrification alkalinity_expressed_as_mole_equivalent surface flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
   <field id="pel_nit_alkalinity_expressed_as_mole_equivalent_bfl" long_name="pelagic nitrification alkalinity_expressed_as_mole_equivalent bottom flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
-  <field id="tauB_data" long_name="tauB data" unit="" default_value="0.000E+00" />
-  <field id="ben_col_D1m_sms" long_name="benthic column depth of bottom interface of oxygenated layer sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="ben_col_D2m_sms" long_name="benthic column depth of bottom interface of oxidized layer sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="ben_col_poro" long_name="benthic column porosity" unit="-" default_value="0.400E+00" />
-  <field id="ben_col_Dtot" long_name="benthic column depth of sediment column" unit="m" default_value="0.300E+00" />
-  <field id="ben_col_cmix" long_name="benthic column equilibrium diffusive speed between sediment surface water" unit="d/m" default_value="0.200E+02" />
-  <field id="ben_col_layer2_thickness" long_name="benthic column thickness of second layer" unit="m" default_value="-.200E+21" />
   <field id="Q6_surface_content_calculator_c_c" long_name="benthic particulate organic matter surface content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
   <field id="Q7_surface_content_calculator_c_c" long_name="benthic refractory matter surface content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
   <field id="Q6_surface_content_calculator_n_c" long_name="benthic particulate organic matter surface content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
@@ -1414,6 +1406,12 @@
   <field id="bL2_c_sms" long_name="benthic calcite carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="bL2_O3c_sfl" long_name="benthic calcite dissolved inorganic carbon surface flux" unit="mmol/m^3*m/s" default_value="0.000E+00" />
   <field id="bL2_O3c_bfl" long_name="benthic calcite dissolved inorganic carbon bottom flux" unit="mmol/m^3*m/s" default_value="0.000E+00" />
+  <field id="ben_col_D1m_sms" long_name="benthic column depth of bottom interface of oxygenated layer sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="ben_col_D2m_sms" long_name="benthic column depth of bottom interface of oxidized layer sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="ben_col_poro" long_name="benthic column porosity" unit="-" default_value="0.400E+00" />
+  <field id="ben_col_Dtot" long_name="benthic column depth of sediment column" unit="m" default_value="0.300E+00" />
+  <field id="ben_col_cmix" long_name="benthic column equilibrium diffusive speed between sediment surface water" unit="d/m" default_value="0.200E+02" />
+  <field id="ben_col_layer2_thickness" long_name="benthic column thickness of second layer" unit="m" default_value="-.200E+21" />
   <field id="K1_per_layer_p1_sms_tot_calculator_result" long_name="benthic phosphate per_layer p1_sms_tot_calculator result" unit="" default_value="-.200E+21" />
   <field id="H1_Q6_content_calculator_c_c" long_name="benthic aerobic bacteria POM content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
   <field id="H1_Q6_content_calculator_n_c" long_name="benthic aerobic bacteria POM content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
@@ -1500,9 +1498,9 @@
   <field id="K3_per_layer_n3" long_name="benthic nitrate per_layer total nitrogen in layer 3 (absorbed + dissolved)" unit="mmol/m^2" default_value="-.200E+21" />
   <field id="K3_per_layer_n3_pw" long_name="benthic nitrate per_layer total nitrogen in pore water of layer 3" unit="mmol/m^2" default_value="-.200E+21" />
   <field id="ben_nit_nrate" long_name="benthic nitrogen cycle benthic nitrification rate" unit="mmol N/m^2/day" default_value="-.200E+21" />
-  <field id="ben_nit_K3n_sms" long_name="benthic nitrogen cycle nitrate sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="ben_nit_K4n_sms" long_name="benthic nitrogen cycle ammonium sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="ben_nit_G2o_sms" long_name="benthic nitrogen cycle oxygen sources-sinks" unit="mmol O_2/m^2/s" default_value="0.000E+00" />
+  <field id="ben_nit_K3n_sms" long_name="benthic nitrogen cycle benthic nitrate in 1st layer sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="ben_nit_K4n_sms" long_name="benthic nitrogen cycle benthic ammonium in 1st layer sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="ben_nit_G2o_sms" long_name="benthic nitrogen cycle benthic oxygen in 1st layer sources-sinks" unit="mmol O_2/m^2/s" default_value="0.000E+00" />
   <field id="ben_nit_N4n_sfl" long_name="benthic nitrogen cycle pelagic ammonium surface flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
   <field id="ben_nit_N4n_bfl" long_name="benthic nitrogen cycle pelagic ammonium bottom flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
   <field id="ben_nit_benTA_sms" long_name="benthic nitrogen cycle benthic alkalinity in aerobic layer sources-sinks" unit="mEq/m^2/s" default_value="0.000E+00" />
@@ -1666,6 +1664,8 @@
   <field id="Y4_Q6_pen_depth_p_sms" long_name="benthic meiofauna POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="Y4_Q6_s_int_sms" long_name="benthic meiofauna POM column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
   <field id="Y4_Q6_pen_depth_s_sms" long_name="benthic meiofauna POM penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="pco2a_data" long_name="pco2a data" unit="" default_value="0.385E+03" />
+  <field id="tauB_data" long_name="tauB data" unit="" default_value="0.000E+00" />
   <field id="N3_flux_target_sfl" long_name="N3_flux target variable surface flux" unit="UNITS m-3*m/s" default_value="0.000E+00" />
   <field id="N3_flux_target_bfl" long_name="N3_flux target variable bottom flux" unit="UNITS m-3*m/s" default_value="0.000E+00" />
   <field id="N4_flux_target_sfl" long_name="N4_flux target variable surface flux" unit="UNITS m-3*m/s" default_value="0.000E+00" />

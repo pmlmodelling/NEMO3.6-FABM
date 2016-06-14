@@ -163,9 +163,12 @@ echo "Buffer cores blocked for XIOS:" $XIOSBLOCKEDCORES
 #srun -n 1 ./xios_server.exe &
 #wait
 
-echo "Launching NEMO..."
+echo "Launching NEMO at $(date +%s) seconds since 1970-01-01 00:00:00"
+
 srun -n $(( COMPUTECORES + XIOSCORES )) --multi-prog ./xios.conf
 #srun -n $CORES ./nemo.exe
+
+echo "Finished NEMO at $(date +%s) seconds since 1970-01-01 00:00:00"
 
 #prepare archive directory
 echo "Archiving to" $ARCHIVEDIR "..."

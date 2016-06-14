@@ -123,6 +123,9 @@
           <field field_ref="ben_nit_G4n" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
+          <field field_ref="light_ADY" operation="average" />
+          <field field_ref="light_EIR" operation="average" />
+          <field field_ref="light_xEPS" operation="average" />
 	  <field field_ref="toce"         long_name="sea_water_potential_temperature"                    operation="average" />
 	  <field field_ref="soce"         long_name="sea_water_salinity"                                 operation="average" />
           </field_group>
@@ -180,6 +183,9 @@
           <field field_ref="ben_nit_G4n" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
+          <field field_ref="light_ADY" operation="average" />
+          <field field_ref="light_EIR" operation="average" />
+          <field field_ref="light_xEPS" operation="average" />
 	  <field field_ref="toce"         long_name="sea_water_potential_temperature"                    operation="average" freq_op="1d" />
 	  <field field_ref="soce"         long_name="sea_water_salinity"                                 operation="average" freq_op="1d" />
           </field_group>
@@ -237,6 +243,9 @@
           <field field_ref="ben_nit_G4n" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
+          <field field_ref="light_ADY" operation="average" />
+          <field field_ref="light_EIR" operation="average" />
+          <field field_ref="light_xEPS" operation="average" />
 	  <field field_ref="toce"         long_name="sea_water_potential_temperature"                    operation="average" freq_op="1d" />
 	  <field field_ref="soce"         long_name="sea_water_salinity"                                 operation="average" freq_op="1d" />
           </field_group>
@@ -294,6 +303,9 @@
           <field field_ref="ben_nit_G4n" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
+          <field field_ref="light_ADY" operation="average" />
+          <field field_ref="light_EIR" operation="average" />
+          <field field_ref="light_xEPS" operation="average" />
 	  <field field_ref="toce"         long_name="sea_water_potential_temperature"                    operation="average" freq_op="1d" />
 	  <field field_ref="soce"         long_name="sea_water_salinity"                                 operation="average" freq_op="1d" />
           </field_group>
@@ -351,6 +363,9 @@
           <field field_ref="ben_nit_G4n" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
+          <field field_ref="light_ADY" operation="average" />
+          <field field_ref="light_EIR" operation="average" />
+          <field field_ref="light_xEPS" operation="average" />
 	  <field field_ref="toce"         long_name="sea_water_potential_temperature"                    operation="average" freq_op="1d" />
 	  <field field_ref="soce"         long_name="sea_water_salinity"                                 operation="average" freq_op="1d" />
           </field_group>
@@ -408,6 +423,9 @@
           <field field_ref="ben_nit_G4n" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
+          <field field_ref="light_ADY" operation="average" />
+          <field field_ref="light_EIR" operation="average" />
+          <field field_ref="light_xEPS" operation="average" />
 	  <field field_ref="toce"         long_name="sea_water_potential_temperature"                    operation="average" freq_op="1d" />
 	  <field field_ref="soce"         long_name="sea_water_salinity"                                 operation="average" freq_op="1d" />
           </field_group>
@@ -465,6 +483,9 @@
           <field field_ref="ben_nit_G4n" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
+          <field field_ref="light_ADY" operation="average" />
+          <field field_ref="light_EIR" operation="average" />
+          <field field_ref="light_xEPS" operation="average" />
 	  <field field_ref="toce"         long_name="sea_water_potential_temperature"                    operation="average" freq_op="1d" />
 	  <field field_ref="soce"         long_name="sea_water_salinity"                                 operation="average" freq_op="1d" />
           </field_group>
@@ -522,6 +543,9 @@
           <field field_ref="ben_nit_G4n" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
+          <field field_ref="light_ADY" operation="average" />
+          <field field_ref="light_EIR" operation="average" />
+          <field field_ref="light_xEPS" operation="average" />
 	  <field field_ref="toce"         long_name="sea_water_potential_temperature"                    operation="average" />
 	  <field field_ref="soce"         long_name="sea_water_salinity"                                 operation="average" />
           </field_group>
@@ -579,6 +603,9 @@
           <field field_ref="ben_nit_G4n" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
+          <field field_ref="light_ADY" operation="average" />
+          <field field_ref="light_EIR" operation="average" />
+          <field field_ref="light_xEPS" operation="average" />
 	  <field field_ref="toce"         long_name="sea_water_potential_temperature"                    operation="average" />
 	  <field field_ref="soce"         long_name="sea_water_salinity"                                 operation="average" />
           </field_group>
@@ -655,13 +682,15 @@
           <field field_ref="O1y_v"        name="O1y_v"    long_name="O1 current barotropic along j-axis harmonic imaginary part "  />
         </file> -->
 
-       <!--<file id="file52" name_suffix="_diad_T" description="tracer variables" >
+        <file id="file59" name_suffix="_diad_T" description="tracer variables"  sync_freq="1d">
+          <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
           <field field_ref="light_EIR"      name="light_EIR"     long_name="Phosphate" operation="instant" />
-          <field field_ref="total_carbon" operation="instant" />
+	  <field field_ref="qsr"          name="rsntds"   long_name="surface_net_downward_shortwave_flux"           />
+          <!-- <field field_ref="total_carbon" operation="instant" />
           <field field_ref="total_nitrogen" operation="instant" />
           <field field_ref="total_phosphorus" operation="instant" />
-          <field field_ref="total_silicate" operation="instant" />
-        </file> -->
+          <field field_ref="total_silicate" operation="instant" /> -->
+        </file>
 
       </file_group>
 
@@ -882,6 +911,8 @@
           <field field_ref="e3t"      name="e3t"     operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
           <field field_ref="light_ADY" operation="average" />
+          <field field_ref="light_EIR" operation="average" />
+          <field field_ref="light_xEPS" operation="average" />
         </file>
 
       </file_group>
