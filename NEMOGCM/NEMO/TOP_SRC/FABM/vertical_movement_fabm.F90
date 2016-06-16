@@ -41,7 +41,7 @@ MODULE vertical_movement_fabm
       !!
       !! ** Method  : Sets additional vertical velocity field and computes
       !!              resulting advection using a conservative 3rd upwind 
-      !!              scheme with Superbee TVD limiter, based on GOTM
+      !!              scheme with QUICKEST TVD limiter, based on GOTM
       !!              module adv_center.F90 (www.gotm.net). Currently assuming
       !!              zero flux at sea surface and sea floor.
       !!----------------------------------------------------------------------
@@ -51,6 +51,7 @@ MODULE vertical_movement_fabm
       INTEGER,PARAMETER :: n_itermax=100
       REAL(wp) :: cmax_no,z2dt
       REAL(wp),DIMENSION(jpk) :: tr_it,tr_u,tr_d,tr_c,tr_slope,c_no,flux_lim
+      REAL(wp),DIMENSION(jpk) :: phi_lim,x_fac
 
       IF( neuler == 0 .AND. kt == nittrc000 ) THEN
           z2dt = rdt                  ! set time step size (Euler)
@@ -155,10 +156,13 @@ MODULE vertical_movement_fabm
                               (tr_c(2:k_floor)-tr_u(2:k_floor))*1.e10_wp
                      ENDWHERE
                      
-                     ! Superbee flux limiter:
-                     flux_lim(2:k_floor)=max(0._wp, &
-                        min(1._wp,2._wp*tr_slope(2:k_floor)), &
-                        min(tr_slope(2:k_floor),2._wp))
+                     !QUICKEST flux limiter:
+                     x_fac(2:k_floor)=(1._wp-2._wp*c_no(2:k_floor))/6._wp
+                     phi_lim(2:k_floor)=(0.5_wp+x_fac(2:k_floor)) + &
+                        (0.5_wp-x_Fac(2:k_floor))*tr_slope(2:k_floor)
+                     flux_lim(2:k_floor)=max( 0._wp, &
+                       min( phi_lim(2:k_floor),2._wp/(1._wp-c_no(2:k_floor)), &
+                         2._wp*tr_slope(2:k_floor)/(c_no(2:k_floor)+1.e-10_wp)) )
 
                      ! Compute limited flux:
                      flux_if(2:k_floor,jn) = w_if(2:k_floor,jn)* &
