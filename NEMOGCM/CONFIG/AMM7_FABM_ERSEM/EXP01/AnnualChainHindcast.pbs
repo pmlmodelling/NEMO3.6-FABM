@@ -1,12 +1,13 @@
 #!/bin/bash --login
 #PBS -N AMM7-hind
 #PBS -o AMM7-hind
-#PBS -l select=25
+#PBS -l select=49
 ##PBS -l select=8
-#PBS -l walltime=02:30:00
+#PBS -l walltime=36:00:00
 ##PBS -l walltime=00:20:00
 ##PBS -q short
-#PBS -A n01-Shelf
+#PBS -q long
+#PBS -A n01-SSB
 
 # NOTE:
 # the simulation year and month must be passed to this pbs script at runtime
@@ -15,18 +16,34 @@
 # "qsub -v y0=1980 -v m0=1 hindcast.pbs"
 #
 
+echo "Submitting year" $y0 "..."
 
 ystart=1981
 yend=2010
+
+RUNDIR=/work/n01/n01/momme/AMM7
+INPUTS=/work/n01/n01/momme/AMM7-INPUTS
+
+cd $RUNDIR
+
+#cleanup:
+./clean.sh
+
+#link annual forcing files:
+./setAnnualLinks.sh $y0
+
+#general time setting:
+dt=300 #time step
+nsstart=$(date -d $ystart-01-01 +%s) #seconds since EPOCH for total simulation start
+
+for m0 in {1..12} #Month loop
+do
 
 #Compute previous and next month:
 mp=$(( ${m0#0} + 1 ))
 if [ $mp -eq 13 ]
 then
    mp=01
-   yp=$(( y0 + 1 ))
-else
-   yp=$y0
 fi
 mm=$(( ${m0#0} - 1 ))
 if [ $mm -eq 0 ]
@@ -42,21 +59,10 @@ if [ ${#m0} -eq 1 ]; then m0=0$m0; fi # force double digit month
 if [ ${#mp} -eq 1 ]; then mp=0$mp; fi # force double digit month
 if [ ${#mm} -eq 1 ]; then mm=0$mm; fi # force double digit month
 
-echo "Previous month" $ym $mm "..."
 echo "Launching" $y0 $m0 "..."
-echo "Next month" $yp $mp "..."
 
-RUNDIR=/work/n01/n01/momme/AMM7
-INPUTS=/work/n01/n01/momme/AMM7-INPUTS
 ARCHIVEDIR=$RUNDIR/$y0/$m0
-cd $RUNDIR
 
-#cleanup:
-./clean.sh
-
-
-#link annual forcing files:
-./setAnnualLinks.sh $y0
 
 #restarts:
 rm -rf restart.nc restart_trc.nc restart_[0-9]???.nc restart_trc_[0-9]???.nc
@@ -81,8 +87,6 @@ case $m0 in
 esac
 
 #compute start iteration and end iteration:
-dt=300 #time step
-nsstart=$(date -d $ystart-01-01 +%s) #seconds since EPOCH for total simulation start
 ns0=$(date -d $y0-$m0-01 +%s) #seconds since EPOCH for this chunk
 n0=$(( ns0 - nsstart ))
 n0=$(( n0 / dt ))
@@ -102,7 +106,7 @@ cat namelist.template \
                 | sed "s,__LCLIM__,$lclim,g" \
                 | sed "s,__EULER__,$euler,g" \
                 > namelist_cfg
-aprun -b -n 1 -N 1 -S 1 ./xios_server.exe : -n 576 -N 24 ./nemo.exe
+aprun -b -n 1 -N 1 -S 1 ./xios_server.exe : -n 1152 -N 24 ./nemo.exe
 #aprun -n 192 -N 24 ./nemo.exe
 
 #prepare archive directory
@@ -126,12 +130,18 @@ mv amm7_1m_${d0}_[1-2]???????_grid_?.nc $ARCHIVEDIR
 bzip2 ocean.output && mv -f ocean.output.bz2 $ARCHIVEDIR
 mv -f time.step $ARCHIVEDIR
 
+#archive:
+qsub -v year=$y0 archiveFolder.pbs
+
+done #end of month loop
+
+yp=$(( y0 + 1 ))
+
 #resubmit:
-if [ $yp -le $yend ]
+if [ $yp -le $yend ]                                                                        
 then
-   echo "Submitting" $mp $yp '...'
-   qsub -v y0=$yp,m0=$mp MonthlyChainHindcast.pbs
-   qsub -v year=$y0 archiveFolder.pbs
+   echo 'Submitting' $yp '...'
+   qsub -v year=$yp AnnualChainHindcast.pbs
    echo "Done."
 else
    echo "All done."
