@@ -106,8 +106,13 @@ cat namelist.template \
                 | sed "s,__LCLIM__,$lclim,g" \
                 | sed "s,__EULER__,$euler,g" \
                 > namelist_cfg
+
+echo "Launching $y0 $m0 at $(date +%s) seconds since 1970-01-01 00:00:00"
+
 aprun -b -n 1 -N 1 -S 1 ./xios_server.exe : -n 1152 -N 24 ./nemo.exe
 #aprun -n 192 -N 24 ./nemo.exe
+
+echo "Finished $y0 $m0 at $(date +%s) seconds since 1970-01-01 00:00:00"
 
 #prepare archive directory
 mkdir -p $ARCHIVEDIR
@@ -131,7 +136,9 @@ bzip2 ocean.output && mv -f ocean.output.bz2 $ARCHIVEDIR
 mv -f time.step $ARCHIVEDIR
 
 #archive:
-qsub -v year=$y0 archiveFolder.pbs
+fname=$y0/$(printf %02d $m0)
+echo "Archiving in $fname ..."
+qsub -v folder=$fname archiveFolder.pbs
 
 done #end of month loop
 
