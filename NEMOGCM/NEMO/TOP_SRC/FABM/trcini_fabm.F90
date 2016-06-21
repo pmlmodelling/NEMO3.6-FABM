@@ -18,14 +18,22 @@ MODULE trcini_fabm
    USE trcsms_fabm
    USE fabm_config,ONLY: fabm_create_model_from_yaml_file
    USE fabm,ONLY: type_external_variable, fabm_initialize_library
+#if defined key_git_version
    USE fabm_version,ONLY: fabm_commit_id=>git_commit_id, &
                           fabm_branch_name=>git_branch_name
    USE fabm_types,ONLY: type_version,first_module_version
+#endif
 
 
    IMPLICIT NONE
    PRIVATE
 
+#if defined key_git_version
+#include "gitversion.h90"   
+   CHARACTER(len=*),parameter :: git_commit_id = _NEMO_COMMIT_ID_
+   CHARACTER(len=*),parameter :: git_branch_name = _NEMO_BRANCH_
+#endif
+   
    PUBLIC   trc_ini_fabm   ! called by trcini.F90 module
    PUBLIC   nemo_fabm_init
 
@@ -141,8 +149,9 @@ CONTAINS
       !!
       !! ** Method  : - Read the namcfc namelist and check the parameter values
       !!----------------------------------------------------------------------
-
+#if defined key_git_version
       TYPE (type_version),POINTER :: version
+#endif
       INTEGER :: jn
 
       !                       ! Allocate FABM arrays
@@ -151,15 +160,20 @@ CONTAINS
       IF(lwp) WRITE(numout,*)
       IF(lwp) WRITE(numout,*) ' trc_ini_fabm: initialisation of FABM model'
       IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~~~~'
+#if defined key_git_version
+      IF(lwp) WRITE(numout,*) ' NEMO version:   ',git_commit_id,' (',git_branch_name,' branch)'
       IF(lwp) WRITE(numout,*) ' FABM version:   ',fabm_commit_id,' (',fabm_branch_name,' branch)'
+#endif
 
       call fabm_initialize_library()
+#if defined key_git_version
       version => first_module_version
       
       do while (associated(version))
          IF(lwp) WRITE(numout,*)  ' '//trim(version%module_name)//' version:   ',trim(version%version_string)
          version => version%next
       end do
+#endif
       
       ! Log mapping of FABM states:
       IF (lwp) THEN
