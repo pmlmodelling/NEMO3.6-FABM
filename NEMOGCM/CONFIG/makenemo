@@ -370,14 +370,14 @@ if [ "${NBR_PRC}" -gt 0 ]; then
        echo "Unable to extract git commit info!"
        NEMOCOMMIT="NOT AVAILABLE"
     fi
-    echo "#define _NEMO_COMMIT_ID_ ${NEMOCOMMIT}" > ${GITVERSIONHEADER}
+    echo "#define _NEMO_COMMIT_ID_ '${NEMOCOMMIT}'" > ${GITVERSIONHEADER}
     NEMOBRANCH=$( git name-rev --name-only HEAD )
     if [ $? -ne 0 ]
     then
        echo "Unable to extract git branch info!"
        NEMOBRANCH="UNKNOWN"
     fi
-    echo "#define _NEMO_BRANCH_ ${NEMOBRANCH}" >> ${GITVERSIONHEADER}
+    echo "#define _NEMO_BRANCH_ '${NEMOBRANCH}'" >> ${GITVERSIONHEADER}
 
 #if AGRIF we do a first preprocessing
     if [ ${#x_c} -eq 0 ]; then

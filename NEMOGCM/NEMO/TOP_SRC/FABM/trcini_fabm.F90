@@ -29,9 +29,9 @@ MODULE trcini_fabm
    PRIVATE
 
 #if defined key_git_version
-#  include "gitversion.h90"   
-   CHARACTER(len=*),parameter :: git_commit_id = "_NEMO_COMMIT_ID_"
-   CHARACTER(len=*),parameter :: git_branch_name = "_NEMO_BRANCH_"
+#include "gitversion.h90"   
+   CHARACTER(len=*),parameter :: git_commit_id = _NEMO_COMMIT_ID_
+   CHARACTER(len=*),parameter :: git_branch_name = _NEMO_BRANCH_
 #endif
    
    PUBLIC   trc_ini_fabm   ! called by trcini.F90 module
