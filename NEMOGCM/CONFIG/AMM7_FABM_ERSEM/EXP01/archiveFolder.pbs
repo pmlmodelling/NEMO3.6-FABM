@@ -11,4 +11,4 @@
 RUNDIR=/work/n01/n01/momme/AMM7
 
 cd $RUNDIR
-./archiveFolder.sh __YEAR__
+./archiveFolder.sh $folder 

@@ -20,5 +20,6 @@ then
   done
   $MERGETOOL -f restart_0000.nc && nccopy -k 4 -d 9 restart.nc $ARCHIVEDIR/$folder/restart.nc && rm restart_????.nc && echo "   restart.nc" || echo '   restart.nc failed!!!'
   $MERGETOOL -f restart_trc_0000.nc && nccopy -k 4 -d 9 restart_trc.nc $ARCHIVEDIR/$folder/restart_trc.nc && rm restart_trc_????.nc && echo "   restart_trc.nc" || echo '   restart_trc.nc failed!!!' 
+  mv -f ocean.output.bz2 $ARCHIVEDIR/$folder  
 fi
 echo "Done."

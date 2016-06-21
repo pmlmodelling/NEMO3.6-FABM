@@ -131,7 +131,7 @@ if [ $yp -le $yend ]
 then
    echo "Submitting" $mp $yp '...'
    qsub -v y0=$yp,m0=$mp MonthlyChainHindcast.pbs
-   qsub -v year=$y0 archiveFolder.pbs
+   qsub -v folder=$y0/$m0 archiveFolder.pbs
    echo "Done."
 else
    echo "All done."
