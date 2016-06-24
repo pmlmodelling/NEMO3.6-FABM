@@ -417,7 +417,6 @@ CONTAINS
 #endif
       call fabm_link_horizontal_data(model,standard_variables%latitude,gphit)
       call fabm_link_horizontal_data(model,standard_variables%longitude,glamt)
-      !call fabm_link_horizontal_data(model,standard_variables%bottom_stress,?) for now ignored.
       call fabm_link_scalar_data(model,standard_variables%number_of_days_since_start_of_the_year,daynumber_in_year)
       call fabm_link_horizontal_data(model,standard_variables%wind_speed,wndm(:,:))
       call fabm_link_horizontal_data(model,standard_variables%surface_downwelling_shortwave_flux,qsr(:,:))
