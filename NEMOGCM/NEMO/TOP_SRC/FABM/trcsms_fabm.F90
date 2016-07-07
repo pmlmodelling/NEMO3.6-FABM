@@ -20,6 +20,7 @@ MODULE trcsms_fabm
    USE trdtrc
 
    USE oce, only: tsn  ! Needed?
+   USE sbc_oce, only: lk_oasis
    USE dom_oce
    !USE iom
 
@@ -53,6 +54,15 @@ MODULE trcsms_fabm
 
    ! Arrays for environmental variables
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:,:) :: prn,rho
+
+   ! repair counters
+   INTEGER :: repair_interior_count,repair_surface_count,repair_bottom_count
+
+   ! state check type
+   TYPE type_state
+      LOGICAL             :: valid
+      LOGICAL             :: repaired
+   END TYPE
 
    REAL(wp), PUBLIC :: daynumber_in_year
 
@@ -113,11 +123,29 @@ CONTAINS
 
    SUBROUTINE compute_fabm()
       INTEGER :: ji,jj,jk,jn
-      LOGICAL :: valid_state
+      TYPE(type_state) :: valid_state
       REAL(wp) :: zalfg
 
       ! Validate current model state (setting argument to .TRUE. enables repair=clipping)
-      valid_state = check_state(.FALSE.)
+      valid_state = check_state(.TRUE.)
+      IF (.NOT.valid_state%valid) THEN
+         WRITE(numout,*) "Invalid value in FABM encountered in area ",narea,"!!!"
+#if defined key_iomput
+         CALL xios_finalize                ! end mpp communications with xios
+         IF( lk_oasis ) CALL cpl_finalize    ! end coupling and mpp communications with OASIS
+#else
+         IF( lk_oasis ) THEN
+            CALL cpl_finalize              ! end coupling and mpp communications with OASIS
+         ELSE
+            IF( lk_mpp )   CALL mppstop    ! end mpp communications
+         ENDIF
+#endif
+      END IF
+      IF (valid_state%repaired) THEN
+         WRITE(numout,*) "Total interior repairs up to now on process",narea,":",repair_interior_count
+         WRITE(numout,*) "Total surface repairs up to now on process",narea,":",repair_surface_count
+         WRITE(numout,*) "Total bottom repairs up to now on process",narea,":",repair_bottom_count
+      ENDIF
 
       ! Compute the now hydrostatic pressure
       ! copied from istate.F90
@@ -186,24 +214,38 @@ CONTAINS
       END DO
    END SUBROUTINE compute_fabm
 
-   FUNCTION check_state(repair) RESULT(valid)
+   FUNCTION check_state(repair) RESULT(exit_state)
       LOGICAL, INTENT(IN) :: repair
-      LOGICAL             :: valid
+      TYPE(type_state) :: exit_state
 
       INTEGER             :: jj,jk
       LOGICAL             :: valid_int,valid_sf,valid_bt
 
-      valid = .TRUE.
+      exit_state%valid = .TRUE.
+      exit_state%repaired =.FALSE.
       DO jk=1,jpk
          DO jj=1,jpj
             CALL fabm_check_state(model,1,jpi,jj,jk,repair,valid_int)
-            IF (.NOT.(valid_int.OR.repair)) valid = .FALSE.
+            IF (repair.AND..NOT.valid_int) THEN
+               repair_interior_count = repair_interior_count + 1
+               exit_state%repaired = .TRUE.
+            END IF
+            IF (.NOT.(valid_int.OR.repair)) exit_state%valid = .FALSE.
          END DO
       END DO
       DO jj=1,jpj
          CALL fabm_check_surface_state(model,1,jpi,jj,repair,valid_sf)
+         IF (repair.AND..NOT.valid_sf) THEN
+            repair_surface_count = repair_surface_count + 1
+            exit_state%repaired = .TRUE.
+         END IF
+         IF (.NOT.(valid_sf.AND.valid_bt).AND..NOT.repair) exit_state%valid = .FALSE.
          CALL fabm_check_bottom_state(model,1,jpi,jj,repair,valid_bt)
-         IF (.NOT.(valid_sf.AND.valid_bt).AND..NOT.repair) valid = .FALSE.
+         IF (repair.AND..NOT.valid_sf) THEN
+            repair_bottom_count = repair_bottom_count + 1
+            exit_state%repaired = .TRUE.
+         END IF
+         IF (.NOT.(valid_sf.AND.valid_bt).AND..NOT.repair) exit_state%valid = .FALSE.
       END DO
    END FUNCTION
 
@@ -402,6 +444,11 @@ CONTAINS
       ! Copy initial condition for interface-attached state variables to "previous" state field
       ! NB NEMO does this itself for pelagic state variables (trb) in TOP_SRC/trcini.F90.
       fabm_st2Db = fabm_st2Dn
+
+      ! Initialise repair counters
+      repair_interior_count = 0
+      repair_surface_count = 0
+      repair_bottom_count = 0
 
    END FUNCTION trc_sms_fabm_alloc
 
