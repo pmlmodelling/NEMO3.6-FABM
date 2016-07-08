@@ -188,7 +188,7 @@ CONTAINS
                       &  + bfrua(ji-1,jj) * un(ji-1,jj,mbku(ji-1,jj))  )      
                zztmpy = (  bfrva(ji,  jj) * vn(ji,jj  ,mbkv(ji,jj  ))  &
                       &  + bfrva(ji,jj-1) * vn(ji,jj-1,mbkv(ji,jj-1))  ) 
-               z2d(ji,jj) = rau0 * SQRT( zztmpx * zztmpx + zztmpy * zztmpy ) * tmask(ji,jj,1) 
+               z2d(ji,jj) = 0.5_wp * rau0 * SQRT( zztmpx * zztmpx + zztmpy * zztmpy ) * tmask(ji,jj,1) 
                !
             ENDDO
          ENDDO
