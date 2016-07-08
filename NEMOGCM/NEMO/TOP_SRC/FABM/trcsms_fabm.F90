@@ -127,13 +127,8 @@ CONTAINS
 
    SUBROUTINE compute_fabm()
       INTEGER :: ji,jj,jk,jn
-<<<<<<< HEAD
       TYPE(type_state) :: valid_state
-      REAL(wp) :: zalfg
-=======
-      LOGICAL :: valid_state
       REAL(wp) :: zalfg,zztmpx,zztmpy
->>>>>>> Added bedstress to linked environment variables.
 
       ! Validate current model state (setting argument to .TRUE. enables repair=clipping)
       valid_state = check_state(.TRUE.)
@@ -182,7 +177,7 @@ CONTAINS
                       &  + bfrua(ji-1,jj) * un(ji-1,jj,mbku(ji-1,jj))  )
                zztmpy = (  bfrva(ji,  jj) * vn(ji,jj  ,mbkv(ji,jj  ))  &
                       &  + bfrva(ji,jj-1) * vn(ji,jj-1,mbkv(ji,jj-1))  )
-               taubot(ji,jj) = rau0 * SQRT( zztmpx * zztmpx + zztmpy * zztmpy ) * tmask(ji,jj,1)
+               taubot(ji,jj) = 0.5_wp * rau0 * SQRT( zztmpx * zztmpx + zztmpy * zztmpy ) * tmask(ji,jj,1)
                !
          ENDDO
       ENDDO
