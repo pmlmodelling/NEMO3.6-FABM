@@ -242,7 +242,7 @@ CONTAINS
          END IF
          IF (.NOT.(valid_sf.AND.valid_bt).AND..NOT.repair) exit_state%valid = .FALSE.
          CALL fabm_check_bottom_state(model,1,jpi,jj,repair,valid_bt)
-         IF (repair.AND..NOT.valid_sf) THEN
+         IF (repair.AND..NOT.valid_bt) THEN
             repair_bottom_count = repair_bottom_count + 1
             exit_state%repaired = .TRUE.
          END IF
