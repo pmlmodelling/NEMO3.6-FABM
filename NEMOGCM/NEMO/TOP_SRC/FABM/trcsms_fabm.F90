@@ -23,7 +23,8 @@ MODULE trcsms_fabm
    USE sbc_oce, only: lk_oasis
    USE dom_oce
    !USE iom
-
+   USE xios
+   USE cpl_oasis3
    USE st2D_fabm
    USE inputs_fabm
    USE vertical_movement_fabm
