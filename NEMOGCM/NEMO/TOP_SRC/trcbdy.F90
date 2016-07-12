@@ -191,6 +191,16 @@ CONTAINS
                    &              tra(ii  ,ij+1,ik,jn) * tmask(ii  ,ij+1,ik)
                  tra(ii,ij,ik,jn) = ( tra(ii,ij,ik,jn) / zcoef ) * tmask(ii,ij,ik)
                ENDIF
+            ELSEIF ( zcoef1+zcoef2 == 2) THEN
+               ! oblique corner
+               zcoef = tmask(ii-1,ij,ik)*bdytmask(ii-1,ij  ) + tmask(ii+1,ij,ik)*bdytmask(ii+1,ij  ) + &
+                  &  tmask(ii,ij-1,ik)*bdytmask(ii,ij -1 ) +  tmask(ii,ij+1,ik)*bdytmask(ii,ij+1  )
+               tra(ii,ij,ik,jn) = tra(ii-1,ij  ,ik,jn) * tmask(ii-1,ij  ,ik)*bdytmask(ii-1,ij  ) + &
+                  &              tra(ii+1,ij  ,ik,jn) * tmask(ii+1,ij  ,ik)*bdytmask(ii+1,ij  )  + &
+                  &              tra(ii  ,ij-1,ik,jn) * tmask(ii  ,ij-1,ik)*bdytmask(ii,ij -1 ) + &
+                  &              tra(ii  ,ij+1,ik,jn) * tmask(ii  ,ij+1,ik)*bdytmask(ii,ij+1  )
+ 
+               tra(ii,ij,ik,jn) = ( tra(ii,ij,ik,jn) / MAX(1._wp, zcoef) ) * tmask(ii,ij,ik)
             ELSE
                ip = bdytmask(ii+1,ij  )*tmask(ii+1,ij,ik) - bdytmask(ii-1,ij  )*tmask(ii-1,ij,ik)
                jp = bdytmask(ii  ,ij+1)*tmask(ii,ij+1,ik) - bdytmask(ii  ,ij-1)*tmask(ii,ij-1,ik)
