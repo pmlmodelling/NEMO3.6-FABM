@@ -224,6 +224,10 @@ CONTAINS
              IF(lwp) WRITE(numout,*) '      Orlanski (NPO) radiation condition with adaptive nudging'
              dta_bdy(ib_bdy)%ll_u3d = .true.
              dta_bdy(ib_bdy)%ll_v3d = .true.
+          CASE('neumann')
+             IF(lwp) WRITE(numout,*) '      Neumann condition'
+             dta_bdy(ib_bdy)%ll_u3d = .true.
+             dta_bdy(ib_bdy)%ll_v3d = .true.
           CASE DEFAULT   ;   CALL ctl_stop( 'unrecognised value for cn_dyn3d' )
         END SELECT
         IF( cn_dyn3d(ib_bdy) /= 'none' ) THEN

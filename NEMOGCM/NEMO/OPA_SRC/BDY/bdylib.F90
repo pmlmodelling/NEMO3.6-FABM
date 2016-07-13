@@ -377,7 +377,7 @@ CONTAINS
       SELECT CASE(igrd)
          CASE(1)
             pmask => tmask(:,:,:)
-            bdypmask => bdytmask(:,:,:)
+            bdypmask => bdytmask(:,:)
          CASE(2)
             pmask => umask(:,:,:)
             bdypmask => bdyumask(:,:)
@@ -396,27 +396,27 @@ CONTAINS
             IF ( zcoef1+zcoef2 == 0) THEN
                ! corner
                zcoef = pmask(ii-1,ij,ik) + pmask(ii+1,ij,ik) +  pmask(ii,ij-1,ik) +  pmask(ii,ij+1,ik)
-               IF (zcoef > .5_wp) THEN ! Only set not isolated points.
-                 phia(ii,ij,ik,jn) = phia(ii-1,ij  ,ik,jn) * pmask(ii-1,ij  ,ik) + &
-                   &              phia(ii+1,ij  ,ik,jn) * pmask(ii+1,ij  ,ik) + &
-                   &              phia(ii  ,ij-1,ik,jn) * pmask(ii  ,ij-1,ik) + &
-                   &              phia(ii  ,ij+1,ik,jn) * pmask(ii  ,ij+1,ik)
-                 phia(ii,ij,ik,jn) = ( phia(ii,ij,ik,jn) / zcoef ) * pmask(ii,ij,ik)
+               IF (zcoef > 0) THEN ! Only set not isolated points.
+                 phia(ii,ij,ik) = phia(ii-1,ij  ,ik) * pmask(ii-1,ij  ,ik) + &
+                   &              phia(ii+1,ij  ,ik) * pmask(ii+1,ij  ,ik) + &
+                   &              phia(ii  ,ij-1,ik) * pmask(ii  ,ij-1,ik) + &
+                   &              phia(ii  ,ij+1,ik) * pmask(ii  ,ij+1,ik)
+                 phia(ii,ij,ik) = ( phia(ii,ij,ik) / zcoef ) * pmask(ii,ij,ik)
                ENDIF
             ELSEIF ( zcoef1+zcoef2 == 2) THEN
                ! oblique corner
                zcoef = pmask(ii-1,ij,ik)*bdypmask(ii-1,ij  ) + pmask(ii+1,ij,ik)*bdypmask(ii+1,ij  ) + &
                   &  pmask(ii,ij-1,ik)*bdypmask(ii,ij -1 ) +  pmask(ii,ij+1,ik)*bdypmask(ii,ij+1  )
-               phia(ii,ij,ik,jn) = phia(ii-1,ij  ,ik,jn) * pmask(ii-1,ij  ,ik)*bdypmask(ii-1,ij  ) + &
-                  &              phia(ii+1,ij  ,ik,jn) * pmask(ii+1,ij  ,ik)*bdypmask(ii+1,ij  )  + &
-                  &              phia(ii  ,ij-1,ik,jn) * pmask(ii  ,ij-1,ik)*bdypmask(ii,ij -1 ) + &
-                  &              phia(ii  ,ij+1,ik,jn) * pmask(ii  ,ij+1,ik)*bdypmask(ii,ij+1  )
+               phia(ii,ij,ik) = phia(ii-1,ij  ,ik) * pmask(ii-1,ij  ,ik)*bdypmask(ii-1,ij  ) + &
+                  &              phia(ii+1,ij  ,ik) * pmask(ii+1,ij  ,ik)*bdypmask(ii+1,ij  )  + &
+                  &              phia(ii  ,ij-1,ik) * pmask(ii  ,ij-1,ik)*bdypmask(ii,ij -1 ) + &
+                  &              phia(ii  ,ij+1,ik) * pmask(ii  ,ij+1,ik)*bdypmask(ii,ij+1  )
  
-               phia(ii,ij,ik,jn) = ( phia(ii,ij,ik,jn) / MAX(1._wp, zcoef) ) * pmask(ii,ij,ik)
+               phia(ii,ij,ik) = ( phia(ii,ij,ik) / MAX(1, zcoef) ) * pmask(ii,ij,ik)
             ELSE
                ip = bdypmask(ii+1,ij  )*pmask(ii+1,ij,ik) - bdypmask(ii-1,ij  )*pmask(ii-1,ij,ik)
                jp = bdypmask(ii  ,ij+1)*pmask(ii,ij+1,ik) - bdypmask(ii  ,ij-1)*pmask(ii,ij-1,ik)
-               phia(ii,ij,ik,jn) = phia(ii+ip,ij+jp,ik,jn) * pmask(ii+ip,ij+jp,ik)
+               phia(ii,ij,ik) = phia(ii+ip,ij+jp,ik) * pmask(ii+ip,ij+jp,ik)
             ENDIF
          END DO
       END DO
