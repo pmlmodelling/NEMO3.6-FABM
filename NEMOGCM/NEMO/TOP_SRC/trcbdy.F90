@@ -184,7 +184,7 @@ CONTAINS
             IF ( zcoef1+zcoef2 == 0) THEN
                ! corner
                zcoef = tmask(ii-1,ij,ik) + tmask(ii+1,ij,ik) +  tmask(ii,ij-1,ik) +  tmask(ii,ij+1,ik)
-               IF (zcoef > .5_wp) THEN ! Only set not isolated points.
+               IF (zcoef > 0) THEN ! Only set not isolated points.
                  tra(ii,ij,ik,jn) = tra(ii-1,ij  ,ik,jn) * tmask(ii-1,ij  ,ik) + &
                    &              tra(ii+1,ij  ,ik,jn) * tmask(ii+1,ij  ,ik) + &
                    &              tra(ii  ,ij-1,ik,jn) * tmask(ii  ,ij-1,ik) + &
@@ -200,7 +200,7 @@ CONTAINS
                   &              tra(ii  ,ij-1,ik,jn) * tmask(ii  ,ij-1,ik)*bdytmask(ii,ij -1 ) + &
                   &              tra(ii  ,ij+1,ik,jn) * tmask(ii  ,ij+1,ik)*bdytmask(ii,ij+1  )
  
-               tra(ii,ij,ik,jn) = ( tra(ii,ij,ik,jn) / MAX(1._wp, zcoef) ) * tmask(ii,ij,ik)
+               tra(ii,ij,ik,jn) = ( tra(ii,ij,ik,jn) / MAX(1, zcoef) ) * tmask(ii,ij,ik)
             ELSE
                ip = bdytmask(ii+1,ij  )*tmask(ii+1,ij,ik) - bdytmask(ii-1,ij  )*tmask(ii-1,ij,ik)
                jp = bdytmask(ii  ,ij+1)*tmask(ii,ij+1,ik) - bdytmask(ii  ,ij-1)*tmask(ii,ij-1,ik)
