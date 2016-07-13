@@ -166,9 +166,9 @@ CONTAINS
       TYPE(OBC_INDEX), INTENT(in) ::   idx  ! OBC indices
       TYPE(OBC_DATA),  INTENT(in) ::   dta  ! OBC external data
       !! 
-      REAL(wp) ::   zwgt           ! boundary weight
+      REAL(wp) ::   zcoef, zcoef1, zcoef2           ! boundary weight
       INTEGER  ::   ib, ik, igrd   ! dummy loop indices
-      INTEGER  ::   ii, ij, zcoef, zcoef1, zcoef2, ip, jp   ! 2D addresses
+      INTEGER  ::   ii, ij, ip, jp   ! 2D addresses
       !!----------------------------------------------------------------------
       !
       IF( nn_timing == 1 ) CALL timing_start('bdy_trc_nmn')
@@ -181,17 +181,17 @@ CONTAINS
             ! search the sense of the gradient
             zcoef1 = bdytmask(ii-1,ij  )*tmask(ii-1,ij,ik) +  bdytmask(ii+1,ij  )*tmask(ii+1,ij,ik)
             zcoef2 = bdytmask(ii  ,ij-1)*tmask(ii,ij-1,ik) +  bdytmask(ii  ,ij+1)*tmask(ii,ij+1,ik)
-            IF ( zcoef1+zcoef2 == 0) THEN
+            IF ( nint(zcoef1+zcoef2) == 0) THEN
                ! corner
                zcoef = tmask(ii-1,ij,ik) + tmask(ii+1,ij,ik) +  tmask(ii,ij-1,ik) +  tmask(ii,ij+1,ik)
-               IF (zcoef > 0) THEN ! Only set not isolated points.
+               IF (zcoef > .5_wp) THEN ! Only set not isolated points.
                  tra(ii,ij,ik,jn) = tra(ii-1,ij  ,ik,jn) * tmask(ii-1,ij  ,ik) + &
                    &              tra(ii+1,ij  ,ik,jn) * tmask(ii+1,ij  ,ik) + &
                    &              tra(ii  ,ij-1,ik,jn) * tmask(ii  ,ij-1,ik) + &
                    &              tra(ii  ,ij+1,ik,jn) * tmask(ii  ,ij+1,ik)
                  tra(ii,ij,ik,jn) = ( tra(ii,ij,ik,jn) / zcoef ) * tmask(ii,ij,ik)
                ENDIF
-            ELSEIF ( zcoef1+zcoef2 == 2) THEN
+            ELSEIF ( nint(zcoef1+zcoef2) == 2) THEN
                ! oblique corner
                zcoef = tmask(ii-1,ij,ik)*bdytmask(ii-1,ij  ) + tmask(ii+1,ij,ik)*bdytmask(ii+1,ij  ) + &
                   &  tmask(ii,ij-1,ik)*bdytmask(ii,ij -1 ) +  tmask(ii,ij+1,ik)*bdytmask(ii,ij+1  )
@@ -200,10 +200,10 @@ CONTAINS
                   &              tra(ii  ,ij-1,ik,jn) * tmask(ii  ,ij-1,ik)*bdytmask(ii,ij -1 ) + &
                   &              tra(ii  ,ij+1,ik,jn) * tmask(ii  ,ij+1,ik)*bdytmask(ii,ij+1  )
  
-               tra(ii,ij,ik,jn) = ( tra(ii,ij,ik,jn) / MAX(1, zcoef) ) * tmask(ii,ij,ik)
+               tra(ii,ij,ik,jn) = ( tra(ii,ij,ik,jn) / MAX(1._wp, zcoef) ) * tmask(ii,ij,ik)
             ELSE
-               ip = bdytmask(ii+1,ij  )*tmask(ii+1,ij,ik) - bdytmask(ii-1,ij  )*tmask(ii-1,ij,ik)
-               jp = bdytmask(ii  ,ij+1)*tmask(ii,ij+1,ik) - bdytmask(ii  ,ij-1)*tmask(ii,ij-1,ik)
+               ip = nint(bdytmask(ii+1,ij  )*tmask(ii+1,ij,ik) - bdytmask(ii-1,ij  )*tmask(ii-1,ij,ik))
+               jp = nint(bdytmask(ii  ,ij+1)*tmask(ii,ij+1,ik) - bdytmask(ii  ,ij-1)*tmask(ii,ij-1,ik))
                tra(ii,ij,ik,jn) = tra(ii+ip,ij+jp,ik,jn) * tmask(ii+ip,ij+jp,ik)
             ENDIF
          END DO

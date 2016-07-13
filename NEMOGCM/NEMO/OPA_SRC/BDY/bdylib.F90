@@ -365,11 +365,11 @@ CONTAINS
       REAL(wp), DIMENSION(:,:,:), INTENT(inout)  ::   phia     ! model after 3D field (to be updated)
       TYPE(OBC_INDEX), INTENT(in) ::   idx  ! OBC indices
       !! 
-      REAL(wp) ::   zwgt           ! boundary weight
+      REAL(wp) ::   zcoef, zcoef1, zcoef2
       REAL(wp), POINTER, DIMENSION(:,:,:)        :: pmask      ! land/sea mask for field
       REAL(wp), POINTER, DIMENSION(:,:)        :: bdypmask      ! land/sea mask for field
       INTEGER  ::   ib, ik   ! dummy loop indices
-      INTEGER  ::   ii, ij, zcoef, zcoef1, zcoef2, ip, jp   ! 2D addresses
+      INTEGER  ::   ii, ij, ip, jp   ! 2D addresses
       !!----------------------------------------------------------------------
       !
       IF( nn_timing == 1 ) CALL timing_start('bdy_trc_nmn')
@@ -393,17 +393,17 @@ CONTAINS
             ! search the sense of the gradient
             zcoef1 = bdypmask(ii-1,ij  )*pmask(ii-1,ij,ik) +  bdypmask(ii+1,ij  )*pmask(ii+1,ij,ik)
             zcoef2 = bdypmask(ii  ,ij-1)*pmask(ii,ij-1,ik) +  bdypmask(ii  ,ij+1)*pmask(ii,ij+1,ik)
-            IF ( zcoef1+zcoef2 == 0) THEN
+            IF ( nint(zcoef1+zcoef2) == 0) THEN
                ! corner
                zcoef = pmask(ii-1,ij,ik) + pmask(ii+1,ij,ik) +  pmask(ii,ij-1,ik) +  pmask(ii,ij+1,ik)
-               IF (zcoef > 0) THEN ! Only set not isolated points.
+               IF (zcoef > .5_wp) THEN ! Only set not isolated points.
                  phia(ii,ij,ik) = phia(ii-1,ij  ,ik) * pmask(ii-1,ij  ,ik) + &
                    &              phia(ii+1,ij  ,ik) * pmask(ii+1,ij  ,ik) + &
                    &              phia(ii  ,ij-1,ik) * pmask(ii  ,ij-1,ik) + &
                    &              phia(ii  ,ij+1,ik) * pmask(ii  ,ij+1,ik)
                  phia(ii,ij,ik) = ( phia(ii,ij,ik) / zcoef ) * pmask(ii,ij,ik)
                ENDIF
-            ELSEIF ( zcoef1+zcoef2 == 2) THEN
+            ELSEIF ( nint(zcoef1+zcoef2) == 2) THEN
                ! oblique corner
                zcoef = pmask(ii-1,ij,ik)*bdypmask(ii-1,ij  ) + pmask(ii+1,ij,ik)*bdypmask(ii+1,ij  ) + &
                   &  pmask(ii,ij-1,ik)*bdypmask(ii,ij -1 ) +  pmask(ii,ij+1,ik)*bdypmask(ii,ij+1  )
@@ -412,10 +412,10 @@ CONTAINS
                   &              phia(ii  ,ij-1,ik) * pmask(ii  ,ij-1,ik)*bdypmask(ii,ij -1 ) + &
                   &              phia(ii  ,ij+1,ik) * pmask(ii  ,ij+1,ik)*bdypmask(ii,ij+1  )
  
-               phia(ii,ij,ik) = ( phia(ii,ij,ik) / MAX(1, zcoef) ) * pmask(ii,ij,ik)
+               phia(ii,ij,ik) = ( phia(ii,ij,ik) / MAX(1._wp, zcoef) ) * pmask(ii,ij,ik)
             ELSE
-               ip = bdypmask(ii+1,ij  )*pmask(ii+1,ij,ik) - bdypmask(ii-1,ij  )*pmask(ii-1,ij,ik)
-               jp = bdypmask(ii  ,ij+1)*pmask(ii,ij+1,ik) - bdypmask(ii  ,ij-1)*pmask(ii,ij-1,ik)
+               ip = nint(bdypmask(ii+1,ij  )*pmask(ii+1,ij,ik) - bdypmask(ii-1,ij  )*pmask(ii-1,ij,ik))
+               jp = nint(bdypmask(ii  ,ij+1)*pmask(ii,ij+1,ik) - bdypmask(ii  ,ij-1)*pmask(ii,ij-1,ik))
                phia(ii,ij,ik) = phia(ii+ip,ij+jp,ik) * pmask(ii+ip,ij+jp,ik)
             ENDIF
          END DO
