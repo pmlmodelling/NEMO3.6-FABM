@@ -64,6 +64,8 @@ CONTAINS
             CALL bdy_dyn3d_orlanski( idx_bdy(ib_bdy), dta_bdy(ib_bdy), ib_bdy, ll_npo=.false. )
          CASE('orlanski_npo')
             CALL bdy_dyn3d_orlanski( idx_bdy(ib_bdy), dta_bdy(ib_bdy), ib_bdy, ll_npo=.true. )
+         CASE('neumann')
+            CALL bdy_dyn3d_nmn( idx_bdy(ib_bdy), ib_bdy )
          CASE DEFAULT
             CALL ctl_stop( 'bdy_dyn3d : unrecognised option for open boundaries for baroclinic velocities' )
          END SELECT
@@ -301,6 +303,40 @@ CONTAINS
       IF( nn_timing == 1 ) CALL timing_stop('bdy_dyn3d_dmp')
 
    END SUBROUTINE bdy_dyn3d_dmp
+
+   SUBROUTINE bdy_dyn3d_orlanski( idx, dta, ib_bdy, ll_npo )
+      !!----------------------------------------------------------------------
+      !!                 ***  SUBROUTINE bdy_dyn3d_orlanski  ***
+      !!             
+      !!              - Apply Neumann condition to baroclinic velocities. 
+      !!              - Wrapper routine for bdy_nmn
+      !! 
+      !!
+      !!----------------------------------------------------------------------
+      TYPE(OBC_INDEX),              INTENT(in) ::   idx  ! OBC indices
+      INTEGER,                      INTENT(in) ::   ib_bdy  ! BDY set index
+
+      INTEGER  ::   jb, igrd                               ! dummy loop indices
+      !!----------------------------------------------------------------------
+
+      IF( nn_timing == 1 ) CALL timing_start('bdy_dyn3d_orlanski')
+      !
+      !! Note that at this stage the ub and ua arrays contain the baroclinic velocities. 
+      !
+      igrd = 2      ! Neumann bc on u-velocity; 
+      !            
+      CALL bdy_nmn( idx, igrd, ua )
+
+      igrd = 3      ! Neumann bc on v-velocity
+      !  
+      CALL bdy_nmn( idx, igrd, va )
+      !
+      CALL lbc_bdy_lnk( ua, 'U', -1., ib_bdy )    ! Boundary points should be updated
+      CALL lbc_bdy_lnk( va, 'V', -1., ib_bdy )   
+      !
+      IF( nn_timing == 1 ) CALL timing_stop('bdy_dyn3d_orlanski')
+      !
+   END SUBROUTINE bdy_dyn3d_orlanski
 
 #else
    !!----------------------------------------------------------------------

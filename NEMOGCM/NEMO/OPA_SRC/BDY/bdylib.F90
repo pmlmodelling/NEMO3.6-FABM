@@ -25,6 +25,7 @@ MODULE bdylib
 
    PUBLIC   bdy_orlanski_2d     ! routine called where?
    PUBLIC   bdy_orlanski_3d     ! routine called where?
+   PUBLIC   bdy_nmn     ! routine called where?
 
    !!----------------------------------------------------------------------
    !! NEMO/OPA 3.3 , NEMO Consortium (2010)
@@ -353,6 +354,76 @@ CONTAINS
 
    END SUBROUTINE bdy_orlanski_3d
 
+   SUBROUTINE bdy_nmn( idx, igrd, phia )
+      !!----------------------------------------------------------------------
+      !!                 ***  SUBROUTINE bdy_trc_nmn  ***
+      !!                    
+      !! ** Purpose : Duplicate the value for tracers at open boundaries.
+      !! 
+      !!----------------------------------------------------------------------
+      INTEGER,                    INTENT(in)     ::   igrd     ! grid index
+      REAL(wp), DIMENSION(:,:,:), INTENT(inout)  ::   phia     ! model after 3D field (to be updated)
+      TYPE(OBC_INDEX), INTENT(in) ::   idx  ! OBC indices
+      !! 
+      REAL(wp) ::   zwgt           ! boundary weight
+      REAL(wp), POINTER, DIMENSION(:,:,:)        :: pmask      ! land/sea mask for field
+      REAL(wp), POINTER, DIMENSION(:,:)        :: bdypmask      ! land/sea mask for field
+      INTEGER  ::   ib, ik   ! dummy loop indices
+      INTEGER  ::   ii, ij, zcoef, zcoef1, zcoef2, ip, jp   ! 2D addresses
+      !!----------------------------------------------------------------------
+      !
+      IF( nn_timing == 1 ) CALL timing_start('bdy_trc_nmn')
+      !
+      SELECT CASE(igrd)
+         CASE(1)
+            pmask => tmask(:,:,:)
+            bdypmask => bdytmask(:,:,:)
+         CASE(2)
+            pmask => umask(:,:,:)
+            bdypmask => bdyumask(:,:)
+         CASE(3)
+            pmask => vmask(:,:,:)
+            bdypmask => bdyvmask(:,:)
+         CASE DEFAULT ;   CALL ctl_stop( 'unrecognised value for igrd in bdy_orlanksi_2d' )
+      END SELECT
+      DO ib = 1, idx%nblenrim(igrd)
+         ii = idx%nbi(ib,igrd)
+         ij = idx%nbj(ib,igrd)
+         DO ik = 1, jpkm1
+            ! search the sense of the gradient
+            zcoef1 = bdypmask(ii-1,ij  )*pmask(ii-1,ij,ik) +  bdypmask(ii+1,ij  )*pmask(ii+1,ij,ik)
+            zcoef2 = bdypmask(ii  ,ij-1)*pmask(ii,ij-1,ik) +  bdypmask(ii  ,ij+1)*pmask(ii,ij+1,ik)
+            IF ( zcoef1+zcoef2 == 0) THEN
+               ! corner
+               zcoef = pmask(ii-1,ij,ik) + pmask(ii+1,ij,ik) +  pmask(ii,ij-1,ik) +  pmask(ii,ij+1,ik)
+               IF (zcoef > .5_wp) THEN ! Only set not isolated points.
+                 phia(ii,ij,ik,jn) = phia(ii-1,ij  ,ik,jn) * pmask(ii-1,ij  ,ik) + &
+                   &              phia(ii+1,ij  ,ik,jn) * pmask(ii+1,ij  ,ik) + &
+                   &              phia(ii  ,ij-1,ik,jn) * pmask(ii  ,ij-1,ik) + &
+                   &              phia(ii  ,ij+1,ik,jn) * pmask(ii  ,ij+1,ik)
+                 phia(ii,ij,ik,jn) = ( phia(ii,ij,ik,jn) / zcoef ) * pmask(ii,ij,ik)
+               ENDIF
+            ELSEIF ( zcoef1+zcoef2 == 2) THEN
+               ! oblique corner
+               zcoef = pmask(ii-1,ij,ik)*bdypmask(ii-1,ij  ) + pmask(ii+1,ij,ik)*bdypmask(ii+1,ij  ) + &
+                  &  pmask(ii,ij-1,ik)*bdypmask(ii,ij -1 ) +  pmask(ii,ij+1,ik)*bdypmask(ii,ij+1  )
+               phia(ii,ij,ik,jn) = phia(ii-1,ij  ,ik,jn) * pmask(ii-1,ij  ,ik)*bdypmask(ii-1,ij  ) + &
+                  &              phia(ii+1,ij  ,ik,jn) * pmask(ii+1,ij  ,ik)*bdypmask(ii+1,ij  )  + &
+                  &              phia(ii  ,ij-1,ik,jn) * pmask(ii  ,ij-1,ik)*bdypmask(ii,ij -1 ) + &
+                  &              phia(ii  ,ij+1,ik,jn) * pmask(ii  ,ij+1,ik)*bdypmask(ii,ij+1  )
+ 
+               phia(ii,ij,ik,jn) = ( phia(ii,ij,ik,jn) / MAX(1._wp, zcoef) ) * pmask(ii,ij,ik)
+            ELSE
+               ip = bdypmask(ii+1,ij  )*pmask(ii+1,ij,ik) - bdypmask(ii-1,ij  )*pmask(ii-1,ij,ik)
+               jp = bdypmask(ii  ,ij+1)*pmask(ii,ij+1,ik) - bdypmask(ii  ,ij-1)*pmask(ii,ij-1,ik)
+               phia(ii,ij,ik,jn) = phia(ii+ip,ij+jp,ik,jn) * pmask(ii+ip,ij+jp,ik)
+            ENDIF
+         END DO
+      END DO
+      !
+      IF( nn_timing == 1 ) CALL timing_stop('bdy_nmn')
+      !
+   END SUBROUTINE bdy_nmn
 
 #else
    !!----------------------------------------------------------------------
@@ -365,6 +436,9 @@ CONTAINS
    SUBROUTINE bdy_orlanski_3d( idx, igrd, phib, phia, phi_ext  )      ! Empty routine
       WRITE(*,*) 'bdy_orlanski_3d: You should not have seen this print! error?', kt
    END SUBROUTINE bdy_orlanski_3d
+   SUBROUTINE bdy_nmn( idx, igrd, phia )
+      WRITE(*,*) 'bdy_nmn: You should not have seen this print! error?', kt
+   END SUBROUTINE bdy_nmn
 #endif
 
    !!======================================================================
