@@ -304,7 +304,7 @@ CONTAINS
 
    END SUBROUTINE bdy_dyn3d_dmp
 
-   SUBROUTINE bdy_dyn3d_orlanski( idx, dta, ib_bdy, ll_npo )
+   SUBROUTINE bdy_dyn3d_nmn( idx, ib_bdy )
       !!----------------------------------------------------------------------
       !!                 ***  SUBROUTINE bdy_dyn3d_orlanski  ***
       !!             
@@ -334,9 +334,9 @@ CONTAINS
       CALL lbc_bdy_lnk( ua, 'U', -1., ib_bdy )    ! Boundary points should be updated
       CALL lbc_bdy_lnk( va, 'V', -1., ib_bdy )   
       !
-      IF( nn_timing == 1 ) CALL timing_stop('bdy_dyn3d_orlanski')
+      IF( nn_timing == 1 ) CALL timing_stop('bdy_dyn3d_nmn')
       !
-   END SUBROUTINE bdy_dyn3d_orlanski
+   END SUBROUTINE bdy_dyn3d_nmn
 
 #else
    !!----------------------------------------------------------------------
