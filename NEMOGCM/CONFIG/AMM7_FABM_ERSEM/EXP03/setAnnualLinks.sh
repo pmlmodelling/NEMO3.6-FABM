@@ -11,11 +11,12 @@ yn=$1
 yb=$(( $yn-1 ))
 ya=$(( $yn+1 ))
 
-#restarts:
-rm -rf "$RUNPATH"/restart.nc
-if [ $yn -eq $y0 ]
+#rivers:
+if [ $(( yn % 4)) -ne 0 -o $(( yn % 100)) -eq 0 -a $(( yn % 400)) -ne 0 ]
 then
-    ln -sf "$INPUTPATH"/RESTART/temp_ic_noriver.nc "$RUNPATH"/restart.nc
+    ln -sf "$INPUTPATH"/RIVERS/rivers.ersem.nc "$RUNPATH"/rivers.nc
+else
+    ln -sf "$INPUTPATH"/RIVERS/rivers.ersem.leap.nc "$RUNPATH"/rivers.nc
 fi
 
 #prepare folders for annual atmospheric and lateral forcings:
