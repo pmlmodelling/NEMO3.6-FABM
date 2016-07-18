@@ -5,7 +5,6 @@
 
 INPUTPATH="$HOME/AMM7-INPUTS"
 RUNPATH="$HOME/run/AMM7"
-y0=1995
 
 yn=$1
 yb=$(( $yn-1 ))

@@ -5,7 +5,6 @@
 
 INPUTPATH="/work/n01/n01/momme/AMM7-INPUTS"
 RUNPATH="/work/n01/n01/momme/AMM7"
-y0=1995
 
 yn=$1
 yb=$(( $yn-1 ))
