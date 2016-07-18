@@ -43,9 +43,6 @@ ln -sf "$INPUTPATH"/FLUXES/weights_erai_amm7_bicubic.nc "$RUNPATH"/fluxes/
 ln -sf "$INPUTPATH"/FLUXES/weights_erai_amm7_bilin.nc "$RUNPATH"/fluxes/
 ln -sf "$INPUTPATH"/FLUXES/CUT_ERAI_LSM.nc "$RUNPATH"/fluxes/
 
-#rivers:
-ln -sf "$INPUTPATH"/RIVERS/rivers.ersem.nc "$RUNPATH"/rivers.nc
-
 #lateral boundaries from climatology:
 ln -sf "$INPUTPATH"/BDY/amm7skagbdy_trc.nc "$RUNPATH"/
 #ln -sf "$INPUTPATH"/BDY/amm7bdy_trc.nc "$RUNPATH"/
