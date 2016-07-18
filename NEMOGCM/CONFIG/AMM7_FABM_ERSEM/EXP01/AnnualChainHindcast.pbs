@@ -39,7 +39,6 @@ nsstart=$(date -d $ystart-01-01 +%s) #seconds since EPOCH for total simulation s
 for m0 in {1..12} #Month loop
 do
    ./monthlyclean.sh
-
    #Compute previous and next month:
    mp=$(( $m0 + 1 ))
    if [ $mp -eq 13 ]
