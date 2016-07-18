@@ -293,7 +293,7 @@ sn_wndj='CUT_ERAI_INCLUDE_MSLP',3,'V10',.true.,.false.,'daily','weights_erai_amm
                                           !  = 1, bdy data are read in 'bdydata   .nc' files
                                           !  = 2, use tidal harmonic forcing data from files
                                           !  = 3, use external data AND tidal harmonic forcing
-    cn_dyn3d      =  'none','none'        !  
+    cn_dyn3d      =  'neumann','neumann'        !  
     nn_dyn3d_dta  =  0,0                  !  = 0, bdy data are equal to the initial state
                                           !  = 1, bdy data are read in 'bdydata   .nc' files
     cn_tra        =  'frs','frs'         ! 
@@ -311,7 +311,7 @@ sn_wndj='CUT_ERAI_INCLUDE_MSLP',3,'V10',.true.,.false.,'daily','weights_erai_amm
     rn_time_dmp   =  8.,8.                   ! Damping time scale in days 
     rn_time_dmp_out =  64.,64.                 ! Outflow damping time scale
     nn_rimwidth   = 10,10                 !  width of the relaxation zone
-    ln_vol        = .true.                !  total volume correction (see nn_volctl parameter)
+    ln_vol        = .false.                !  total volume correction (see nn_volctl parameter)
     nn_volctl     = 1                     !  = 0, the total water flux across open boundaries is zero
 /
 !-----------------------------------------------------------------------
