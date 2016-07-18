@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --time=04:00:00
-#SBATCH --threads-per-core=1
 #SBATCH --nodes=19
 #SBATCH --ntasks-per-node=20
 #SBATCH --threads-per-core=1
@@ -28,7 +27,7 @@ export I_MPI_EXTRA_FILESYSTEM=on
 export I_MPI_EXTRA_FILESYSTEM_LIST=gpfs
 export OMP_NUM_THREADS=1
 ulimit -s 10240
-
+#ulimit -s unlimited
 set -u #break on unset variables
 
 ystart=1981
@@ -37,7 +36,7 @@ y0=$1
 m0=$2
 
 #Compute previous and next month:
-mp=$(( ${m0#0} + 1 ))
+mp=$(( $m0 + 1 ))
 if [ $mp -eq 13 ]
 then
    mp=01
@@ -45,7 +44,7 @@ then
 else
    yp=$y0
 fi
-mm=$(( ${m0#0} - 1 ))
+mm=$(( $m0 - 1 ))
 if [ $mm -eq 0 ]
 then
    mm=12
@@ -54,10 +53,9 @@ else
    ym=$y0
 fi
 
-#force double digit months string:
-if [ ${#m0} -eq 1 ]; then m0=0$m0; fi # force double digit month
-if [ ${#mp} -eq 1 ]; then mp=0$mp; fi # force double digit month
-if [ ${#mm} -eq 1 ]; then mm=0$mm; fi # force double digit month
+m0str=$(printf %02d $m0)
+mpstr=$(printf %02d $mp)
+mmstr=$(printf %02d $mm)
 
 echo "Previous month" $ym $mm "..."
 echo "Launching" $y0 $m0 "..."
@@ -65,7 +63,7 @@ echo "Next month" $yp $mp "..."
 
 RUNDIR=$HOME/run/AMM7
 INPUTS=$HOME/AMM7-INPUTS
-ARCHIVEDIR=$RUNDIR/$y0/$m0
+ARCHIVEDIR=$RUNDIR/$y0/$m0str
 
 cd $RUNDIR
 
@@ -77,26 +75,26 @@ cd $RUNDIR
 
 #restarts:
 rm -rf restart.nc restart_trc.nc restart_[0-9]???.nc restart_trc_[0-9]???.nc
-if [ $y0 -eq $ystart ] && [ ${m0#0} -eq 1 ]
+if [ $y0 -eq $ystart ] && [ $m0 -eq 1 ]
 then
   ln -sf $INPUTS/RESTARTS/restart.nc restart.nc
   ln -sf $INPUTS/RESTARTS/restart_trc.full.nc restart_trc.nc
   rst=0
   euler=0
 else
-  if [ -s $RUNDIR/$ym/$mm/restart_0000.nc ]
+  if [ -s $RUNDIR/$ym/$mmstr/restart_0000.nc ]
   then 
-     ln -sf $RUNDIR/$ym/$mm/restart_????.nc .
-  elif [ -s $RUNDIR/$ym/$mm/restart.nc ]
+     ln -sf $RUNDIR/$ym/$mmstr/restart_????.nc .
+  elif [ -s $RUNDIR/$ym/$mmstr/restart.nc ]
   then
-     ln -sf $RUNDIR/$ym/$mm/restart.nc .
+     ln -sf $RUNDIR/$ym/$mmstr/restart.nc .
   fi
-  if [ -s $RUNDIR/$ym/$mm/restart_trc_0000.nc ]
+  if [ -s $RUNDIR/$ym/$mmstr/restart_trc_0000.nc ]
   then 
-     ln -sf $RUNDIR/$ym/$mm/restart_trc_????.nc .
-  elif [ -s $RUNDIR/$ym/$mm/restart_trc.nc ]
+     ln -sf $RUNDIR/$ym/$mmstr/restart_trc_????.nc .
+  elif [ -s $RUNDIR/$ym/$mmstr/restart_trc.nc ]
   then
-     ln -sf $RUNDIR/$ym/$mm/restart_trc.nc .
+     ln -sf $RUNDIR/$ym/$mmstr/restart_trc.nc .
   fi
   rst=2
   euler=0
@@ -104,19 +102,19 @@ fi
 
 #compute run-time:
 case $m0 in
-   04|06|09|11) nit=8640 ;;
-   02) if [ `expr $y0 % 4` -ne 0 -o `expr $y0 % 100` -eq 0 -a `expr $y0 % 400` -ne 0 ]; then nit=8064; else nit=8352; fi ;;
+   4|6|9|11) nit=8640 ;;
+   2) if [ $(( y0 % 4 )) -ne 0 -o $(( y0 % 100)) -eq 0 -a $(( $y0 % 400 )) -ne 0 ]; then nit=8064; else nit=8352; fi ;;
    *) nit=8928 ;;
 esac
 
 #compute start iteration and end iteration:
 dt=300 #time step
 nsstart=$(date -d $ystart-01-01 +%s) #seconds since EPOCH for total simulation start
-ns0=$(date -d $y0-$m0-01 +%s) #seconds since EPOCH for this chunk
+ns0=$(date -d $y0-${m0str}-01 +%s) #seconds since EPOCH for this chunk
 n0=$(( ns0 - nsstart ))
-n0=$(( n0 / dt ))
-nend=$(( n0 + nit ))
-d0=$y0${m0}01
+n0=$(( n0 / dt + 1 ))
+nend=$(( n0 + nit -1 ))
+d0=$y0${m0str}01
 if [ $y0 -lt 1990 ]
 then
    lclim=.true.
@@ -133,8 +131,8 @@ cat namelist.template \
                 > namelist_cfg
 
 XIOSCORES=1
-XIOSBLOCKEDCORES=$(( SLURM_NTASKS - 1 ))
-CORES=$(( SLURM_NNODES * SLURM_NTASKS ))
+XIOSBLOCKEDCORES=19
+CORES=$(( SLURM_NTASKS ))
 COMPUTECORES=$(( CORES - XIOSCORES - XIOSBLOCKEDCORES ))
 COMPUTETAG=0-$(( COMPUTECORES - 1 ))
 if [ $XIOSCORES = 1 ]
@@ -202,4 +200,4 @@ else
 fi
 
 #archive:
-./archiveFolder.sh $y0/$m0 >& ./archive.$y0.$m0.log &
+./archiveFolder.sh $y0/$m0str >& ./archive.$y0.$m0str.log &
