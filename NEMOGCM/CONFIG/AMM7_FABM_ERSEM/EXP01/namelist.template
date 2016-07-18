@@ -9,7 +9,7 @@
    nn_it000 = __N0__
    nn_itend = __NEND__
    nn_date0 = __DATE0__
-   nn_rstctl = 0 !  restart control = 0 nit000 is not compared to the restart file value
+   nn_rstctl = __RST__ !  restart control = 0 nit000 is not compared to the restart file value
                  !                  = 1 use ndate0 in namelist (not the value in the restart file)
                  !                  = 2 calendar parameters read in the restart file
    nn_leapy    =       1   !  Leap year calendar (1) or not (0)
@@ -18,7 +18,7 @@
    cn_ocerst_out  = "restart"   !  suffix of ocean restart name (output)
    cn_ocerst_indir   = "./"   !  directory of ocean restart name (input)
    cn_ocerst_outdir  = "./"   !  directory of ocean restart name (output)
-   nn_istate   =     __RST__     !  output the initial state (1) or not (0)
+   nn_istate   =     0     !  output the initial state (1) or not (0)
    nn_stock = 105120
    nn_write = 105120
    ln_dimgnnn  = .false.   !  DIMG file format: 1 file for all processors (F) or by processor (T)
