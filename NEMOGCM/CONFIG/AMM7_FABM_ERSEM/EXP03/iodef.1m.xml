@@ -683,13 +683,62 @@
         </file> -->
 
         <file id="file59" name_suffix="_diad_T" description="tracer variables"  sync_freq="1d">
+          <field field_ref="N1_p" operation="average" />
+          <field field_ref="N3_n" operation="average" />
+          <field field_ref="N4_n" operation="average" />
+          <field field_ref="N5_s" operation="average" />
+          <field field_ref="O3_c" operation="average" />
+          <field field_ref="O3_TA" operation="average" />
+          <field field_ref="O3_bioalk" operation="average" />
+          <field field_ref="O2_o" operation="average" />
+          <field field_ref="P1_c" operation="average" />
+          <field field_ref="P2_c" operation="average" />
+          <field field_ref="P3_c" operation="average" />
+          <field field_ref="P4_c" operation="average" />
+          <field field_ref="B1_c" operation="average" />
+          <field field_ref="Z4_c" operation="average" />
+          <field field_ref="Z5_c" operation="average" />
+          <field field_ref="Z6_c" operation="average" />
+          <field field_ref="R4_c" operation="average" />
+          <field field_ref="R6_c" operation="average" />
+          <field field_ref="R8_c" operation="average" />
+          <field field_ref="R1_c" operation="average" />
+          <field field_ref="R2_c" operation="average" />
+          <field field_ref="R3_c" operation="average" />
+          <field field_ref="L2_c" operation="average" />
+          <field field_ref="bL2_c"  operation="average" />
+          <field field_ref="Q1_c" operation="average" />
+          <field field_ref="Q6_c" operation="average" />
+          <field field_ref="Q7_c" operation="average" />
+          <field field_ref="Q17_c"  operation="average" />
+          <field field_ref="H1_c" operation="average" />
+          <field field_ref="H2_c" operation="average" />
+          <field field_ref="Y2_c" operation="average" />
+          <field field_ref="Y3_c" operation="average" />
+          <field field_ref="Y4_c" operation="average" />
+          <field field_ref="ben_col_D1m" operation="average" />
+          <field field_ref="ben_col_D2m" operation="average" />
+          <field field_ref="Q6_pen_depth_c" operation="average" />
+          <field field_ref="Q6_pen_depth_n" operation="average" />
+          <field field_ref="Q6_pen_depth_p" operation="average" />
+          <field field_ref="Q6_pen_depth_s" operation="average" />
+          <field field_ref="Q7_pen_depth_c" operation="average" />
+          <field field_ref="Q7_pen_depth_n" operation="average" />
+          <field field_ref="Q7_pen_depth_p" operation="average" />
+          <field field_ref="K1_p" operation="average" />
+          <field field_ref="K3_n" operation="average" />
+          <field field_ref="K4_n" operation="average" />
+          <field field_ref="K5_s" operation="average" />
+          <field field_ref="G2_o" operation="average" />
+          <field field_ref="G2_o_deep" operation="average" />
+          <field field_ref="G3_c" operation="average" />
+          <field field_ref="ben_nit_G4n" operation="average" />
+          <field field_ref="e3t"      name="e3t"     operation="average" />
           <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
-          <field field_ref="light_EIR"      name="light_EIR"     long_name="Phosphate" operation="instant" />
-	  <field field_ref="qsr"          name="rsntds"   long_name="surface_net_downward_shortwave_flux"           />
-          <!-- <field field_ref="total_carbon" operation="instant" />
-          <field field_ref="total_nitrogen" operation="instant" />
-          <field field_ref="total_phosphorus" operation="instant" />
-          <field field_ref="total_silicate" operation="instant" /> -->
+          <field field_ref="light_ADY" operation="average" />
+          <field field_ref="light_EIR" operation="average" />
+          <field field_ref="light_xEPS" operation="average" />
+          <field field_ref="woce" operation="average" />
         </file>
 
       </file_group>
@@ -830,7 +879,10 @@
       <file_group id="1m" output_freq="1mo" output_level="10" enabled=".TRUE." > <!-- real monthly files -->
         <file id="file21" name_suffix="_grid_T" description="ocean T grid variables" >
           <field field_ref="e3t"  />
+          <field field_ref="taubot" name="avtaubot" operation="average" />
+          <field field_ref="taubot" name="maxtaubot" operation="maximum" />
           <field field_ref="toce"         name="thetao"   long_name="sea_water_potential_temperature"          operation="instant" freq_op="1d" > @toce_e3t / @e3t </field>
+          <field field_ref="rhop"         name="rho"   long_name="sea_water_potential_density"          operation="average" />
           <field field_ref="soce"         name="so"       long_name="sea_water_salinity"             operation="instant" freq_op="1d" > @soce_e3t / @e3t </field>
           <field field_ref="sst"          name="tos"      long_name="sea_surface_temperature"             />
           <field field_ref="sss"          name="sos"      long_name="sea_surface_salinity"                />
@@ -853,8 +905,8 @@
 
         <file id="file25" name_suffix="_grid_W" description="ocean W grid variables" >
           <field field_ref="e3w"  />
-          <field field_ref="woce"         name="wo"      long_name="ocean vertical velocity" />
-          <field field_ref="avt"          name="difvho"  long_name="ocean_vertical_heat_diffusivity" />
+          <field field_ref="woce"         name="wo"      operation="average" long_name="ocean vertical velocity" />
+          <field field_ref="avt"          name="difvho"  operation="maximum" long_name="ocean_vertical_heat_diffusivity" />
         </file>
 
         <file id="file26" name_suffix="_ptrc_T" description="ocean tracers" >
