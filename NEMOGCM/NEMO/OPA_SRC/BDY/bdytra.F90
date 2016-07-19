@@ -159,8 +159,9 @@ CONTAINS
       TYPE(OBC_DATA),  INTENT(in) ::   dta  ! OBC external data
       !! 
       REAL(wp) ::   zwgt           ! boundary weight
+      REAL(wp) ::   zcoef, zcoef1,zcoef2
       INTEGER  ::   ib, ik, igrd   ! dummy loop indices
-      INTEGER  ::   ii, ij,zcoef, zcoef1,zcoef2, ip, jp   ! 2D addresses
+      INTEGER  ::   ii, ij, ip, jp   ! 2D addresses
       !!----------------------------------------------------------------------
       !
       IF( nn_timing == 1 ) CALL timing_start('bdy_tra_nmn')
@@ -173,22 +174,22 @@ CONTAINS
             ! search the sense of the gradient
             zcoef1 = bdytmask(ii-1,ij  ) +  bdytmask(ii+1,ij  )
             zcoef2 = bdytmask(ii  ,ij-1) +  bdytmask(ii  ,ij+1)
-            IF ( zcoef1+zcoef2 == 0) THEN
+            IF ( NINT(zcoef1+zcoef2) == 0) THEN
                ! corner
                zcoef = tmask(ii-1,ij,ik) + tmask(ii+1,ij,ik) +  tmask(ii,ij-1,ik) +  tmask(ii,ij+1,ik)
                tsa(ii,ij,ik,jp_tem) = tsa(ii-1,ij  ,ik,jp_tem) * tmask(ii-1,ij  ,ik) + &
                  &                    tsa(ii+1,ij  ,ik,jp_tem) * tmask(ii+1,ij  ,ik) + &
                  &                    tsa(ii  ,ij-1,ik,jp_tem) * tmask(ii  ,ij-1,ik) + &
                  &                    tsa(ii  ,ij+1,ik,jp_tem) * tmask(ii  ,ij+1,ik)
-               tsa(ii,ij,ik,jp_tem) = ( tsa(ii,ij,ik,jp_tem) / MAX( 1, zcoef) ) * tmask(ii,ij,ik)
+               tsa(ii,ij,ik,jp_tem) = ( tsa(ii,ij,ik,jp_tem) / MAX( 1._wp, zcoef) ) * tmask(ii,ij,ik)
                tsa(ii,ij,ik,jp_sal) = tsa(ii-1,ij  ,ik,jp_sal) * tmask(ii-1,ij  ,ik) + &
                  &                    tsa(ii+1,ij  ,ik,jp_sal) * tmask(ii+1,ij  ,ik) + &
                  &                    tsa(ii  ,ij-1,ik,jp_sal) * tmask(ii  ,ij-1,ik) + &
                  &                    tsa(ii  ,ij+1,ik,jp_sal) * tmask(ii  ,ij+1,ik)
-               tsa(ii,ij,ik,jp_sal) = ( tsa(ii,ij,ik,jp_sal) / MAX( 1, zcoef) ) * tmask(ii,ij,ik)
+               tsa(ii,ij,ik,jp_sal) = ( tsa(ii,ij,ik,jp_sal) / MAX( 1._wp, zcoef) ) * tmask(ii,ij,ik)
             ELSE
-               ip = bdytmask(ii+1,ij  ) - bdytmask(ii-1,ij  )
-               jp = bdytmask(ii  ,ij+1) - bdytmask(ii  ,ij-1)
+               ip = NINT(bdytmask(ii+1,ij  ) - bdytmask(ii-1,ij  ))
+               jp = NINT(bdytmask(ii  ,ij+1) - bdytmask(ii  ,ij-1))
                tsa(ii,ij,ik,jp_tem) = tsa(ii+ip,ij+jp,ik,jp_tem) * tmask(ii+ip,ij+jp,ik)
                tsa(ii,ij,ik,jp_sal) = tsa(ii+ip,ij+jp,ik,jp_sal) * tmask(ii+ip,ij+jp,ik)
             ENDIF

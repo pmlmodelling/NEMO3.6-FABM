@@ -77,6 +77,11 @@ CONTAINS
       REAL(wp) ::   zu, zv       ! temporary scalars
       REAL(wp), POINTER, DIMENSION(:,:,:) :: zhke
       REAL(wp), POINTER, DIMENSION(:,:,:) :: ztrdu, ztrdv 
+#if defined key_bdy
+      INTEGER  ::   jb                 ! dummy loop indices
+      INTEGER  ::   ii, ij, igrd, ib_bdy   ! local integers
+      INTEGER  ::   fu, fv
+#endif
       !!----------------------------------------------------------------------
       !
       IF( nn_timing == 1 )   CALL timing_start('dyn_keg')
@@ -97,6 +102,33 @@ CONTAINS
       
       zhke(:,:,jpk) = 0._wp
       
+#if defined key_bdy
+      ! Maria Luneva & Fred Wobus: July-2016
+      ! compensate for lack of turbulent kinetic energy on liquid bdy points
+      DO ib_bdy = 1, nb_bdy
+         IF( cn_dyn3d(ib_bdy) /= 'none' ) THEN
+            igrd = 2           ! Copying normal velocity into points outside bdy
+            DO jb = 1, idx_bdy(ib_bdy)%nblenrim(igrd)
+               DO jk = 1, jpkm1
+                  ii   = idx_bdy(ib_bdy)%nbi(jb,igrd)
+                  ij   = idx_bdy(ib_bdy)%nbj(jb,igrd)
+                  fu   = NINT( idx_bdy(ib_bdy)%flagu(jb,igrd) )
+                  un(ii-fu,ij,jk) = un(ii,ij,jk) * umask(ii,ij,jk)
+               END DO
+            END DO
+            !
+            igrd = 3           ! Copying normal velocity into points outside bdy
+            DO jb = 1, idx_bdy(ib_bdy)%nblenrim(igrd)
+               DO jk = 1, jpkm1
+                  ii   = idx_bdy(ib_bdy)%nbi(jb,igrd)
+                  ij   = idx_bdy(ib_bdy)%nbj(jb,igrd)
+                  fv   = NINT( idx_bdy(ib_bdy)%flagv(jb,igrd) )
+                  vn(ii,ij-fv,jk) = vn(ii,ij,jk) * vmask(ii,ij,jk)
+               END DO
+            END DO
+         ENDIF
+      ENDDO  
+#endif 
       SELECT CASE ( kscheme )             !== Horizontal kinetic energy at T-point  ==!
       !
       CASE ( nkeg_C2 )                          !--  Standard scheme  --!
@@ -133,6 +165,13 @@ CONTAINS
          !
       END SELECT
       !
+
+#if defined key_bdy
+      ! restore velocity masks at points outside boundary
+      un(:,:,:) = un(:,:,:) * umask(:,:,:)
+      vn(:,:,:) = vn(:,:,:) * vmask(:,:,:)
+#endif      
+
       DO jk = 1, jpkm1                    !==  grad( KE ) added to the general momentum trends  ==!
          DO jj = 2, jpjm1
             DO ji = fs_2, fs_jpim1   ! vector opt.

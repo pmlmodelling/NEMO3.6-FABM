@@ -356,9 +356,9 @@ CONTAINS
 
    SUBROUTINE bdy_nmn( idx, igrd, phia )
       !!----------------------------------------------------------------------
-      !!                 ***  SUBROUTINE bdy_trc_nmn  ***
+      !!                 ***  SUBROUTINE bdy_nmn  ***
       !!                    
-      !! ** Purpose : Duplicate the value for tracers at open boundaries.
+      !! ** Purpose : Duplicate the value at open boundaries, zero gradient.
       !! 
       !!----------------------------------------------------------------------
       INTEGER,                    INTENT(in)     ::   igrd     ! grid index
@@ -372,7 +372,7 @@ CONTAINS
       INTEGER  ::   ii, ij, ip, jp   ! 2D addresses
       !!----------------------------------------------------------------------
       !
-      IF( nn_timing == 1 ) CALL timing_start('bdy_trc_nmn')
+      IF( nn_timing == 1 ) CALL timing_start('bdy_nmn')
       !
       SELECT CASE(igrd)
          CASE(1)
@@ -384,7 +384,7 @@ CONTAINS
          CASE(3)
             pmask => vmask(:,:,:)
             bdypmask => bdyvmask(:,:)
-         CASE DEFAULT ;   CALL ctl_stop( 'unrecognised value for igrd in bdy_orlanksi_2d' )
+         CASE DEFAULT ;   CALL ctl_stop( 'unrecognised value for igrd in bdy_nmn' )
       END SELECT
       DO ib = 1, idx%nblenrim(igrd)
          ii = idx%nbi(ib,igrd)
@@ -394,23 +394,25 @@ CONTAINS
             zcoef1 = bdypmask(ii-1,ij  )*pmask(ii-1,ij,ik) +  bdypmask(ii+1,ij  )*pmask(ii+1,ij,ik)
             zcoef2 = bdypmask(ii  ,ij-1)*pmask(ii,ij-1,ik) +  bdypmask(ii  ,ij+1)*pmask(ii,ij+1,ik)
             IF ( nint(zcoef1+zcoef2) == 0) THEN
-               ! corner
+               ! corner **** we probably only want to set the tangentail component for the dynamics here
                zcoef = pmask(ii-1,ij,ik) + pmask(ii+1,ij,ik) +  pmask(ii,ij-1,ik) +  pmask(ii,ij+1,ik)
-               IF (zcoef > .5_wp) THEN ! Only set not isolated points.
+               IF (zcoef > .5_wp) THEN ! Only set none isolated points.
                  phia(ii,ij,ik) = phia(ii-1,ij  ,ik) * pmask(ii-1,ij  ,ik) + &
                    &              phia(ii+1,ij  ,ik) * pmask(ii+1,ij  ,ik) + &
                    &              phia(ii  ,ij-1,ik) * pmask(ii  ,ij-1,ik) + &
                    &              phia(ii  ,ij+1,ik) * pmask(ii  ,ij+1,ik)
                  phia(ii,ij,ik) = ( phia(ii,ij,ik) / zcoef ) * pmask(ii,ij,ik)
+               ELSE
+                 phia(ii,ij,ik) = phia(ii,ij  ,ik) * pmask(ii,ij  ,ik)
                ENDIF
             ELSEIF ( nint(zcoef1+zcoef2) == 2) THEN
-               ! oblique corner
+               ! oblique corner **** we probably only want to set the normal component for the dynamics here
                zcoef = pmask(ii-1,ij,ik)*bdypmask(ii-1,ij  ) + pmask(ii+1,ij,ik)*bdypmask(ii+1,ij  ) + &
-                  &  pmask(ii,ij-1,ik)*bdypmask(ii,ij -1 ) +  pmask(ii,ij+1,ik)*bdypmask(ii,ij+1  )
+                   &   pmask(ii,ij-1,ik)*bdypmask(ii,ij -1 ) +  pmask(ii,ij+1,ik)*bdypmask(ii,ij+1  )
                phia(ii,ij,ik) = phia(ii-1,ij  ,ik) * pmask(ii-1,ij  ,ik)*bdypmask(ii-1,ij  ) + &
-                  &              phia(ii+1,ij  ,ik) * pmask(ii+1,ij  ,ik)*bdypmask(ii+1,ij  )  + &
-                  &              phia(ii  ,ij-1,ik) * pmask(ii  ,ij-1,ik)*bdypmask(ii,ij -1 ) + &
-                  &              phia(ii  ,ij+1,ik) * pmask(ii  ,ij+1,ik)*bdypmask(ii,ij+1  )
+                   &            phia(ii+1,ij  ,ik) * pmask(ii+1,ij  ,ik)*bdypmask(ii+1,ij  )  + &
+                   &            phia(ii  ,ij-1,ik) * pmask(ii  ,ij-1,ik)*bdypmask(ii,ij -1 ) + &
+                   &            phia(ii  ,ij+1,ik) * pmask(ii  ,ij+1,ik)*bdypmask(ii,ij+1  )
  
                phia(ii,ij,ik) = ( phia(ii,ij,ik) / MAX(1._wp, zcoef) ) * pmask(ii,ij,ik)
             ELSE
@@ -436,7 +438,7 @@ CONTAINS
    SUBROUTINE bdy_orlanski_3d( idx, igrd, phib, phia, phi_ext  )      ! Empty routine
       WRITE(*,*) 'bdy_orlanski_3d: You should not have seen this print! error?', kt
    END SUBROUTINE bdy_orlanski_3d
-   SUBROUTINE bdy_nmn( idx, igrd, phia )
+   SUBROUTINE bdy_nmn( idx, igrd, phia )      ! Empty routine
       WRITE(*,*) 'bdy_nmn: You should not have seen this print! error?', kt
    END SUBROUTINE bdy_nmn
 #endif

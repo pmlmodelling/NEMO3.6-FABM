@@ -58,14 +58,16 @@ CONTAINS
             CALL bdy_dyn3d_frs( idx_bdy(ib_bdy), dta_bdy(ib_bdy), kt, ib_bdy )
          CASE('specified')
             CALL bdy_dyn3d_spe( idx_bdy(ib_bdy), dta_bdy(ib_bdy), kt, ib_bdy )
+         CASE('zerograd') 
+            CALL bdy_dyn3d_zgrad( idx_bdy(ib_bdy), dta_bdy(ib_bdy), kt, ib_bdy )
          CASE('zero')
             CALL bdy_dyn3d_zro( idx_bdy(ib_bdy), dta_bdy(ib_bdy), kt, ib_bdy )
+         CASE('neumann')
+            CALL bdy_dyn3d_nmn( idx_bdy(ib_bdy), ib_bdy )
          CASE('orlanski')
             CALL bdy_dyn3d_orlanski( idx_bdy(ib_bdy), dta_bdy(ib_bdy), ib_bdy, ll_npo=.false. )
          CASE('orlanski_npo')
             CALL bdy_dyn3d_orlanski( idx_bdy(ib_bdy), dta_bdy(ib_bdy), ib_bdy, ll_npo=.true. )
-         CASE('neumann')
-            CALL bdy_dyn3d_nmn( idx_bdy(ib_bdy), ib_bdy )
          CASE DEFAULT
             CALL ctl_stop( 'bdy_dyn3d : unrecognised option for open boundaries for baroclinic velocities' )
          END SELECT
@@ -118,6 +120,56 @@ CONTAINS
       IF( nn_timing == 1 ) CALL timing_stop('bdy_dyn3d_spe')
 
    END SUBROUTINE bdy_dyn3d_spe
+
+   SUBROUTINE bdy_dyn3d_zgrad( idx, dta, kt , ib_bdy )
+      !!----------------------------------------------------------------------
+      !!                  ***  SUBROUTINE bdy_dyn3d_zgrad  ***
+      !!
+      !! ** Purpose : - Enforce a zero gradient of normal velocity
+      !!
+      !!----------------------------------------------------------------------
+      INTEGER                     ::   kt
+      TYPE(OBC_INDEX), INTENT(in) ::   idx  ! OBC indices
+      TYPE(OBC_DATA),  INTENT(in) ::   dta  ! OBC external data
+      INTEGER,         INTENT(in) ::   ib_bdy  ! BDY set index
+      !!
+      INTEGER  ::   jb, jk         ! dummy loop indices
+      INTEGER  ::   ii, ij, igrd   ! local integers
+      REAL(wp) ::   zwgt           ! boundary weight
+      INTEGER  ::   fu, fv
+      !!----------------------------------------------------------------------
+      !
+      IF( nn_timing == 1 ) CALL timing_start('bdy_dyn3d_zgrad')
+      !
+      igrd = 2                      ! Copying tangential velocity into bdy points
+      DO jb = 1, idx%nblenrim(igrd)
+         DO jk = 1, jpkm1
+            ii   = idx%nbi(jb,igrd)
+            ij   = idx%nbj(jb,igrd)
+            fu   = ABS( ABS (NINT( idx%flagu(jb,igrd) ) ) - 1 )
+            ua(ii,ij,jk) = ua(ii,ij,jk) * REAL( 1 - fu) + ( ua(ii,ij+fu,jk) * umask(ii,ij+fu,jk) &
+                        &+ ua(ii,ij-fu,jk) * umask(ii,ij-fu,jk) ) * umask(ii,ij,jk) * REAL( fu )
+         END DO
+      END DO
+      !
+      igrd = 3                      ! Copying tangential velocity into bdy points
+      DO jb = 1, idx%nblenrim(igrd)
+         DO jk = 1, jpkm1
+            ii   = idx%nbi(jb,igrd)
+            ij   = idx%nbj(jb,igrd)
+            fv   = ABS( ABS (NINT( idx%flagv(jb,igrd) ) ) - 1 )
+            va(ii,ij,jk) = va(ii,ij,jk) * REAL( 1 - fv ) + ( va(ii+fv,ij,jk) * vmask(ii+fv,ij,jk) &
+                        &+ va(ii-fv,ij,jk) * vmask(ii-fv,ij,jk) ) * vmask(ii,ij,jk) * REAL( fv )
+         END DO
+      END DO
+      CALL lbc_bdy_lnk( ua, 'U', -1., ib_bdy )   ! Boundary points should be updated  
+      CALL lbc_bdy_lnk( va, 'V', -1., ib_bdy )   
+      !
+      IF( kt .eq. nit000 ) CLOSE( unit = 102 )
+
+      IF( nn_timing == 1 ) CALL timing_stop('bdy_dyn3d_zgrad')
+
+   END SUBROUTINE bdy_dyn3d_zgrad
 
    SUBROUTINE bdy_dyn3d_zro( idx, dta, kt, ib_bdy )
       !!----------------------------------------------------------------------
@@ -306,7 +358,7 @@ CONTAINS
 
    SUBROUTINE bdy_dyn3d_nmn( idx, ib_bdy )
       !!----------------------------------------------------------------------
-      !!                 ***  SUBROUTINE bdy_dyn3d_orlanski  ***
+      !!                 ***  SUBROUTINE bdy_dyn3d_nmn  ***
       !!             
       !!              - Apply Neumann condition to baroclinic velocities. 
       !!              - Wrapper routine for bdy_nmn
@@ -319,7 +371,7 @@ CONTAINS
       INTEGER  ::   jb, igrd                               ! dummy loop indices
       !!----------------------------------------------------------------------
 
-      IF( nn_timing == 1 ) CALL timing_start('bdy_dyn3d_orlanski')
+      IF( nn_timing == 1 ) CALL timing_start('bdy_dyn3d_nmn')
       !
       !! Note that at this stage the ub and ua arrays contain the baroclinic velocities. 
       !
@@ -332,12 +384,11 @@ CONTAINS
       CALL bdy_nmn( idx, igrd, va )
       !
       CALL lbc_bdy_lnk( ua, 'U', -1., ib_bdy )    ! Boundary points should be updated
-      CALL lbc_bdy_lnk( va, 'V', -1., ib_bdy )   
+      CALL lbc_bdy_lnk( va, 'V', -1., ib_bdy )
       !
       IF( nn_timing == 1 ) CALL timing_stop('bdy_dyn3d_nmn')
       !
    END SUBROUTINE bdy_dyn3d_nmn
-
 #else
    !!----------------------------------------------------------------------
    !!   Dummy module                   NO Unstruct Open Boundary Conditions
