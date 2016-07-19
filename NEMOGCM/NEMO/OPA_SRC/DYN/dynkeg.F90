@@ -23,6 +23,9 @@ MODULE dynkeg
    USE prtctl          ! Print control
    USE wrk_nemo        ! Memory Allocation
    USE timing          ! Timing
+#if defined key_bdy
+   USE bdy_oce         ! ocean open boundary conditions
+#endif
 
    IMPLICIT NONE
    PRIVATE
