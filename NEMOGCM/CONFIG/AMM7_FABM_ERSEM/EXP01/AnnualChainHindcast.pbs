@@ -34,6 +34,8 @@ cd $RUNDIR
 #link annual forcing files:
 ./setAnnualLinks.sh $y0
 
+stopflag=0
+
 #general time setting:
 dt=300 #time step
 nsstart=$(date -d "$ystart-01-01 00:00:00 GMT" +%s) #seconds since EPOCH for total simulation start
@@ -83,6 +85,8 @@ do
       elif [ -s $RUNDIR/$ym/$mmstr/restart.nc ]
       then
          ln -sf $RUNDIR/$ym/$mmstr/restart.nc .
+      else
+         $stopflag=1
       fi
       if [ -s $RUNDIR/$ym/$mmstr/restart_trc_0000.nc ]
       then 
@@ -90,6 +94,8 @@ do
       elif [ -s $RUNDIR/$ym/$mmstr/restart_trc.nc ]
       then
          ln -sf $RUNDIR/$ym/$mmstr/restart_trc.nc .
+      else
+         $stopflag=1
       fi
       rst=2
       euler=0
@@ -127,6 +133,12 @@ do
                 > namelist_top_cfg
 
    echo "Launching $y0 $m0 at $(date +%s) seconds since 1970-01-01 00:00:00"
+
+   if [ $stopflag -ne 0 ]
+   then
+      echo "Not ready to launch. Forced exit."
+      exit
+   fi
 
    aprun -b -n 1 -N 1 -S 1 ./xios_server.exe : -n 1152 -N 24 ./nemo.exe
    #aprun -n 192 -N 24 ./nemo.exe

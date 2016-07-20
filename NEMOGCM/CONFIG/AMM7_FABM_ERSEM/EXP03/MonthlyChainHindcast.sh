@@ -74,6 +74,8 @@ cd $RUNDIR
 #link annual forcing files:
 ./setAnnualLinks.sh $y0
 
+stopflag=0
+
 #restarts:
 rm -rf restart.nc restart_trc.nc restart_[0-9]???.nc restart_trc_[0-9]???.nc
 if [ $y0 -eq $ystart ] && [ $m0 -eq 1 ]
@@ -89,6 +91,8 @@ else
   elif [ -s $RUNDIR/$ym/$mmstr/restart.nc ]
   then
      ln -sf $RUNDIR/$ym/$mmstr/restart.nc .
+  else
+     stopflag=1
   fi
   if [ -s $RUNDIR/$ym/$mmstr/restart_trc_0000.nc ]
   then 
@@ -96,6 +100,8 @@ else
   elif [ -s $RUNDIR/$ym/$mmstr/restart_trc.nc ]
   then
      ln -sf $RUNDIR/$ym/$mmstr/restart_trc.nc .
+  else
+     $stopflag=1
   fi
   rst=2
   euler=0
@@ -164,6 +170,12 @@ echo "Buffer cores blocked for XIOS:" $XIOSBLOCKEDCORES
 #srun -n $COMPUTECORES ./nemo.exe &
 #srun -n 1 ./xios_server.exe &
 #wait
+
+if [ $stopflag -ne 0 ]
+then
+   echo "Not ready to launch. Forced exit."
+   exit
+fi
 
 echo "Launching NEMO at $(date +%s) seconds since 1970-01-01 00:00:00"
 
