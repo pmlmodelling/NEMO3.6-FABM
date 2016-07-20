@@ -27,7 +27,7 @@ INPUTS=/work/n01/n01/momme/AMM7-INPUTS
 cd $RUNDIR
 
 #cleanup:
-./clean.sh
+./annualclean.sh
 
 #link annual forcing files:
 ./setAnnualLinks.sh $y0
@@ -38,83 +38,83 @@ nsstart=$(date -d $ystart-01-01 +%s) #seconds since EPOCH for total simulation s
 
 for m0 in {1..12} #Month loop
 do
+   ./monthlyclean.sh
+   #Compute previous and next month:
+   mp=$(( $m0 + 1 ))
+   if [ $mp -eq 13 ]
+   then
+      mp=01
+      yp=$(( y0 + 1 ))
+   else
+      yp=$y0
+   fi
+   mm=$(( $m0 - 1 ))
+   if [ $mm -eq 0 ]
+   then
+      mm=12
+      ym=$(( y0 - 1 ))
+   else
+      ym=$y0
+   fi
 
-#Compute previous and next month:
-mp=$(( $m0 + 1 ))
-if [ $mp -eq 13 ]
-then
-   mp=01
-   yp=$(( y0 + 1 ))
-else
-   yp=$y0
-fi
-mm=$(( $m0 - 1 ))
-if [ $mm -eq 0 ]
-then
-   mm=12
-   ym=$(( y0 - 1 ))
-else
-   ym=$y0
-fi
+   m0str=$(printf %02d $m0)
+   mpstr=$(printf %02d $mp)
+   mmstr=$(printf %02d $mm)
 
-m0str=$(printf %02d $m0)
-mpstr=$(printf %02d $mp)
-mmstr=$(printf %02d $mm)
+   echo "Launching" $y0 $m0 "..."
 
-echo "Launching" $y0 $m0 "..."
-
-ARCHIVEDIR=$RUNDIR/$y0/$m0
+   ARCHIVEDIR=$RUNDIR/$y0/$m0
 
 
-#restarts:
-rm -rf restart.nc restart_trc.nc restart_[0-9]???.nc restart_trc_[0-9]???.nc
-if [ $y0 -eq $ystart ] && [ $m0 -eq 1 ]
-then
-  ln -sf $INPUTS/RESTARTS/restart.nc restart.nc
-  ln -sf $INPUTS/RESTARTS/restart_trc.full.nc restart_trc.nc
-  rst=0
-  euler=0
-else
-  if [ -s $RUNDIR/$ym/$mmstr/restart_0000.nc ]
-  then 
-     ln -sf $RUNDIR/$ym/$mmstr/restart_????.nc .
-  elif [ -s $RUNDIR/$ym/$mmstr/restart.nc ]
-  then
-     ln -sf $RUNDIR/$ym/$mmstr/restart.nc .
-  fi
-  if [ -s $RUNDIR/$ym/$mmstr/restart_trc_0000.nc ]
-  then 
-     ln -sf $RUNDIR/$ym/$mmstr/restart_trc_????.nc .
-  elif [ -s $RUNDIR/$ym/$mmstr/restart_trc.nc ]
-  then
-     ln -sf $RUNDIR/$ym/$mmstr/restart_trc.nc .
-  fi
-  rst=2
-  euler=0
-fi
+   #restarts:
+   rm -rf restart.nc restart_trc.nc restart_[0-9]???.nc restart_trc_[0-9]???.nc
+   if [ $y0 -eq $ystart ] && [ $m0 -eq 1 ]
+   then
+      ln -sf $INPUTS/RESTARTS/restart.nc restart.nc
+      ln -sf $INPUTS/RESTARTS/restart_trc.full.nc restart_trc.nc
+      rst=0
+      euler=0
+   else
+      if [ -s $RUNDIR/$ym/$mmstr/restart_0000.nc ]
+      then 
+         ln -sf $RUNDIR/$ym/$mmstr/restart_????.nc .
+      elif [ -s $RUNDIR/$ym/$mmstr/restart.nc ]
+      then
+         ln -sf $RUNDIR/$ym/$mmstr/restart.nc .
+      fi
+      if [ -s $RUNDIR/$ym/$mmstr/restart_trc_0000.nc ]
+      then 
+         ln -sf $RUNDIR/$ym/$mmstr/restart_trc_????.nc .
+      elif [ -s $RUNDIR/$ym/$mmstr/restart_trc.nc ]
+      then
+         ln -sf $RUNDIR/$ym/$mmstr/restart_trc.nc .
+      fi
+      rst=2
+      euler=0
+   fi
 
-#compute run-time:
-case $m0 in
-   4|6|9|11) nit=8640 ;;
-   2) if [ $(( y0 % 4 )) -ne 0 -o $(( y0 % 100)) -eq 0 -a $(( $y0 % 400 )) -ne 0 ]; then nit=8064; else nit=8352; fi ;;
-   *) nit=8928 ;;
-esac
+   #compute run-time:
+   case $m0 in
+      4|6|9|11) nit=8640 ;;
+      2) if [ $(( y0 % 4 )) -ne 0 -o $(( y0 % 100)) -eq 0 -a $(( $y0 % 400 )) -ne 0 ]; then nit=8064; else nit=8352; fi ;;
+      *) nit=8928 ;;
+   esac
 
-#compute start iteration and end iteration:
-dt=300 #time step
-nsstart=$(date -d $ystart-01-01 +%s) #seconds since EPOCH for total simulation start
-ns0=$(date -d $y0-${m0str}-01 +%s) #seconds since EPOCH for this chunk
-n0=$(( ns0 - nsstart ))
-n0=$(( n0 / dt + 1 ))
-nend=$(( n0 + nit -1 ))
-d0=$y0${m0str}01
-if [ $y0 -lt 1990 ]
-then
-   lclim=.true.
-else
-   lclim=.false.
-fi
-cat namelist.template \
+   #compute start iteration and end iteration:
+   dt=300 #time step
+   nsstart=$(date -d $ystart-01-01 +%s) #seconds since EPOCH for total simulation start
+   ns0=$(date -d $y0-${m0str}-01 +%s) #seconds since EPOCH for this chunk
+   n0=$(( ns0 - nsstart ))
+   n0=$(( n0 / dt + 1 ))
+   nend=$(( n0 + nit -1 ))
+   d0=$y0${m0str}01
+   if [ $y0 -lt 1990 ]
+   then
+      lclim=.true.
+   else
+      lclim=.false.
+   fi
+   cat namelist.template \
                 | sed "s,__DATE0__,$d0,g" \
                 | sed "s,__RST__,$rst,g" \
                 | sed "s,__N0__,$n0,g" \
@@ -122,42 +122,42 @@ cat namelist.template \
                 | sed "s,__LCLIM__,$lclim,g" \
                 | sed "s,__EULER__,$euler,g" \
                 > namelist_cfg
-cat namelist_top.template \
+   cat namelist_top.template \
                 | sed "s,__RST__,$rst,g" \
                 > namelist_top_cfg
 
-echo "Launching $y0 $m0 at $(date +%s) seconds since 1970-01-01 00:00:00"
+   echo "Launching $y0 $m0 at $(date +%s) seconds since 1970-01-01 00:00:00"
 
-aprun -b -n 1 -N 1 -S 1 ./xios_server.exe : -n 1152 -N 24 ./nemo.exe
-#aprun -n 192 -N 24 ./nemo.exe
+   aprun -b -n 1 -N 1 -S 1 ./xios_server.exe : -n 1152 -N 24 ./nemo.exe
+   #aprun -n 192 -N 24 ./nemo.exe
 
-echo "Finished $y0 $m0 at $(date +%s) seconds since 1970-01-01 00:00:00"
+   echo "Finished $y0 $m0 at $(date +%s) seconds since 1970-01-01 00:00:00"
 
-#prepare archive directory
-mkdir -p $ARCHIVEDIR
-#prepare restart files:
-for file in amm7_*${nend}_restart_????.nc
-do
-  fn=${file: -7:4} #file number
-  mv $file $ARCHIVEDIR/restart_$fn.nc
-done
-for file in amm7_*${nend}_restart_trc_????.nc
-do
-  fn=${file: -7:4} #file number
-  mv $file $ARCHIVEDIR/restart_trc_$fn.nc
-done
+   #prepare archive directory
+   mkdir -p $ARCHIVEDIR
+   #prepare restart files:
+   for file in amm7_*${nend}_restart_????.nc
+   do
+      fn=${file: -7:4} #file number
+      mv $file $ARCHIVEDIR/restart_$fn.nc
+   done
+   for file in amm7_*${nend}_restart_trc_????.nc
+   do
+      fn=${file: -7:4} #file number
+      mv $file $ARCHIVEDIR/restart_trc_$fn.nc
+   done
 
-#move outputs:
-mv amm7_1d_${d0}_[1-2]???????_*.nc $ARCHIVEDIR
-mv amm7_1m_${d0}_[1-2]???????_ptrc_T.nc $ARCHIVEDIR
-mv amm7_1m_${d0}_[1-2]???????_grid_?.nc $ARCHIVEDIR
-bzip2 ocean.output && mv -f ocean.output.bz2 $ARCHIVEDIR
-mv -f time.step $ARCHIVEDIR
+   #move outputs:
+   mv amm7_1d_${d0}_[1-2]???????_*.nc $ARCHIVEDIR
+   mv amm7_1m_${d0}_[1-2]???????_ptrc_T.nc $ARCHIVEDIR
+   mv amm7_1m_${d0}_[1-2]???????_grid_?.nc $ARCHIVEDIR
+   bzip2 ocean.output && mv -f ocean.output.bz2 $ARCHIVEDIR
+   mv -f time.step $ARCHIVEDIR
 
-#archive:
-fname=$y0/$m0str
-echo "Archiving in $fname ..."
-qsub -v folder=$fname archiveFolder.pbs
+   #archive:
+   fname=$y0/$m0str
+   echo "Archiving in $fname ..."
+   qsub -v folder=$fname archiveFolder.pbs
 
 done #end of month loop
 
