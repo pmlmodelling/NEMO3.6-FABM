@@ -28,6 +28,7 @@ export I_MPI_EXTRA_FILESYSTEM_LIST=gpfs
 export OMP_NUM_THREADS=1
 ulimit -s 10240
 #ulimit -s unlimited
+
 set -u #break on unset variables
 
 ystart=1981
@@ -61,7 +62,7 @@ echo "Previous month" $ym $mm "..."
 echo "Launching" $y0 $m0 "..."
 echo "Next month" $yp $mp "..."
 
-RUNDIR=$HOME/run/AMM7
+RUNDIR=/work/momm/AMM7
 INPUTS=$HOME/AMM7-INPUTS
 ARCHIVEDIR=$RUNDIR/$y0/$m0str
 
@@ -101,16 +102,16 @@ else
 fi
 
 #compute run-time:
+dt=300 #time step
 case $m0 in
-   4|6|9|11) nit=8640 ;;
-   2) if [ $(( y0 % 4 )) -ne 0 -o $(( y0 % 100)) -eq 0 -a $(( $y0 % 400 )) -ne 0 ]; then nit=8064; else nit=8352; fi ;;
-   *) nit=8928 ;;
+   4|6|9|11) nit=$(( 86400*30/dt )) ;;
+   2) if [ $(( y0 % 4 )) -ne 0 -o $(( y0 % 100)) -eq 0 -a $(( $y0 % 400 )) -ne 0 ]; then nit=$(( 86400*28/dt )); else nit=$(( 86400*29/dt )); fi ;;
+   *) nit=$(( 86400*31/dt )) ;;
 esac
 
 #compute start iteration and end iteration:
-dt=300 #time step
-nsstart=$(date -d $ystart-01-01 +%s) #seconds since EPOCH for total simulation start
-ns0=$(date -d $y0-${m0str}-01 +%s) #seconds since EPOCH for this chunk
+nsstart=$(date -d "$ystart-01-01 00:00:00 GMT" +%s) #seconds since EPOCH for total simulation start
+ns0=$(date -d "$y0-${m0str}-01 00:00:00 GMT" +%s) #seconds since EPOCH for this chunk
 n0=$(( ns0 - nsstart ))
 n0=$(( n0 / dt + 1 ))
 nend=$(( n0 + nit -1 ))
