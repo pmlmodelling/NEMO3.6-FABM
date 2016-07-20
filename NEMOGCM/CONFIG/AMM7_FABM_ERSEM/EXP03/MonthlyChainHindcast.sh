@@ -129,6 +129,9 @@ cat namelist.template \
                 | sed "s,__LCLIM__,$lclim,g" \
                 | sed "s,__EULER__,$euler,g" \
                 > namelist_cfg
+cat namelist_top.template \
+                | sed "s,__RST__,$rst,g" \
+                > namelist_top_cfg
 
 XIOSCORES=1
 XIOSBLOCKEDCORES=19

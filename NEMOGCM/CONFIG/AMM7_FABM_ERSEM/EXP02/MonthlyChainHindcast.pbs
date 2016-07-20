@@ -58,7 +58,7 @@ cd $RUNDIR
 
 #restarts:
 rm -rf restart.nc restart_trc.nc restart_[0-9]???.nc restart_trc_[0-9]???.nc
-if [ $y0 -eq $ystart ] && [ ${m0#0} -eq 1 ]
+if [ $y0 -eq $ystart ] && [ $m0 -eq 1 ]
 then
   ln -sf $INPUTS/RESTARTS/restart.nc restart.nc
   ln -sf $INPUTS/RESTARTS/restart_trc.v1.nc restart_trc.nc
@@ -112,6 +112,10 @@ cat namelist.template \
                 | sed "s,__LCLIM__,$lclim,g" \
                 | sed "s,__EULER__,$euler,g" \
                 > namelist_cfg
+cat namelist_top.template \
+                | sed "s,__RST__,$rst,g" \
+                > namelist_top_cfg
+
 aprun -b -n 1 -N 1 -S 1 ./xios_server.exe : -n 576 -N 24 ./nemo.exe
 #aprun -n 192 -N 24 ./nemo.exe
 
