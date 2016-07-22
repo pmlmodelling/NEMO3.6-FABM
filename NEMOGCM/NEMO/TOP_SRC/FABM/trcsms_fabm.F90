@@ -22,6 +22,7 @@ MODULE trcsms_fabm
    USE oce, only: tsn  ! Needed?
    USE sbc_oce, only: lk_oasis
    USE dom_oce
+   USE zdf_oce
    !USE iom
    USE xios
    USE cpl_oasis3
@@ -36,6 +37,7 @@ MODULE trcsms_fabm
    IMPLICIT NONE
 
 #  include "domzgr_substitute.h90"
+#  include "vectopt_loop_substitute.h90"
 
    PRIVATE
 
@@ -55,6 +57,7 @@ MODULE trcsms_fabm
 
    ! Arrays for environmental variables
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:,:) :: prn,rho
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:) :: taubot
 
    ! repair counters
    INTEGER :: repair_interior_count,repair_surface_count,repair_bottom_count
@@ -125,7 +128,7 @@ CONTAINS
    SUBROUTINE compute_fabm()
       INTEGER :: ji,jj,jk,jn
       TYPE(type_state) :: valid_state
-      REAL(wp) :: zalfg
+      REAL(wp) :: zalfg,zztmpx,zztmpy
 
       ! Validate current model state (setting argument to .TRUE. enables repair=clipping)
       valid_state = check_state(.TRUE.)
@@ -166,6 +169,18 @@ CONTAINS
                      + fse3t(:,:,jk) * rho(:,:,jk) )
       END DO  
 
+      ! Bottom stress
+      taubot(:,:) = 0._wp
+      DO jj = 2, jpjm1
+         DO ji = fs_2, fs_jpim1   ! vector opt.
+               zztmpx = (  bfrua(ji  ,jj) * un(ji  ,jj,mbku(ji  ,jj))  &
+                      &  + bfrua(ji-1,jj) * un(ji-1,jj,mbku(ji-1,jj))  )
+               zztmpy = (  bfrva(ji,  jj) * vn(ji,jj  ,mbkv(ji,jj  ))  &
+                      &  + bfrva(ji,jj-1) * vn(ji,jj-1,mbkv(ji,jj-1))  )
+               taubot(ji,jj) = 0.5_wp * rau0 * SQRT( zztmpx * zztmpx + zztmpy * zztmpy ) * tmask(ji,jj,1)
+               !
+         ENDDO
+      ENDDO
       ! Compute light extinction
       DO jk=1,jpk
           DO jj=1,jpj
@@ -329,6 +344,7 @@ CONTAINS
       ALLOCATE( lk_rad_fabm(jp_fabm))
       ALLOCATE( prn(jpi, jpj, jpk))
       ALLOCATE( rho(jpi, jpj, jpk))
+      ALLOCATE( taubot(jpi, jpj))
       ! ALLOCATE( tab(...) , STAT=trc_sms_fabm_alloc )
 
       ! Allocate arrays to hold state for surface-attached and bottom-attached state variables
@@ -387,6 +403,7 @@ CONTAINS
       call fabm_link_bulk_data(model,standard_variables%practical_salinity,tsn(:,:,:,jp_sal))
       call fabm_link_bulk_data(model,standard_variables%density,rho(:,:,:))
       call fabm_link_bulk_data(model,standard_variables%pressure,prn)
+      call fabm_link_horizontal_data(model,standard_variables%bottom_stress,taubot(:,:))
       ! correct target for cell thickness depends on NEMO configuration:
 #ifdef key_vvl
       call fabm_link_bulk_data(model,standard_variables%cell_thickness,e3t_n)
@@ -395,7 +412,6 @@ CONTAINS
 #endif
       call fabm_link_horizontal_data(model,standard_variables%latitude,gphit)
       call fabm_link_horizontal_data(model,standard_variables%longitude,glamt)
-      !call fabm_link_horizontal_data(model,standard_variables%bottom_stress,?) for now ignored.
       call fabm_link_scalar_data(model,standard_variables%number_of_days_since_start_of_the_year,daynumber_in_year)
       call fabm_link_horizontal_data(model,standard_variables%wind_speed,wndm(:,:))
       call fabm_link_horizontal_data(model,standard_variables%surface_downwelling_shortwave_flux,qsr(:,:))
