@@ -47,7 +47,7 @@ do
    mp=$(( $m0 + 1 ))
    if [ $mp -eq 13 ]
    then
-      mp=01
+      mp=1
       yp=$(( y0 + 1 ))
    else
       yp=$y0
@@ -67,8 +67,7 @@ do
 
    echo "Launching" $y0 $m0 "..."
 
-   ARCHIVEDIR=$RUNDIR/$y0/$m0
-
+   ARCHIVEDIR=$RUNDIR/$y0/$m0str
 
    #restarts:
    rm -rf restart.nc restart_trc.nc restart_[0-9]???.nc restart_trc_[0-9]???.nc
@@ -86,7 +85,7 @@ do
       then
          ln -sf $RUNDIR/$ym/$mmstr/restart.nc .
       else
-         $stopflag=1
+         stopflag=1
       fi
       if [ -s $RUNDIR/$ym/$mmstr/restart_trc_0000.nc ]
       then 
@@ -95,7 +94,7 @@ do
       then
          ln -sf $RUNDIR/$ym/$mmstr/restart_trc.nc .
       else
-         $stopflag=1
+         stopflag=1
       fi
       rst=2
       euler=0

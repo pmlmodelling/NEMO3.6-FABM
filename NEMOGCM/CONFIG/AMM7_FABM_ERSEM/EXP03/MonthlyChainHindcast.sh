@@ -40,7 +40,7 @@ m0=$2
 mp=$(( $m0 + 1 ))
 if [ $mp -eq 13 ]
 then
-   mp=01
+   mp=1
    yp=$(( y0 + 1 ))
 else
    yp=$y0
