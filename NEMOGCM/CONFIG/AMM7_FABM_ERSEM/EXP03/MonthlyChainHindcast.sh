@@ -101,7 +101,7 @@ else
   then
      ln -sf $RUNDIR/$ym/$mmstr/restart_trc.nc .
   else
-     $stopflag=1
+     stopflag=1
   fi
   rst=2
   euler=0
