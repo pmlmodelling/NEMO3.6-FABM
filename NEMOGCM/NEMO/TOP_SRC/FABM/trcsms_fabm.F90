@@ -310,6 +310,8 @@ CONTAINS
       !
       INTEGER, INTENT(in) ::   kt   ! ocean time-step index
       REAL(wp) :: z2dt
+      INTEGER :: jn
+
 !!----------------------------------------------------------------------
       !
       IF( neuler == 0 .AND. kt == nittrc000 ) THEN
@@ -319,7 +321,9 @@ CONTAINS
       ENDIF
 
       ! Forward Euler time step to compute "now"
-      fabm_st2Da(:,:,:) = fabm_st2db(:,:,:) + z2dt * fabm_st2da(:,:,:)
+      DO jn=1,jp_fabm_surface+jp_fabm_bottom
+         fabm_st2Da(:,:,jn) = (fabm_st2db(:,:,jn) + z2dt * fabm_st2da(:,:,jn)) * tmask(:,:,1)
+      ENDDO
 
       IF( neuler == 0 .AND. kt == nittrc000 ) THEN        ! Euler time-stepping at first time-step
          !                                                ! (only swap)
