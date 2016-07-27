@@ -167,8 +167,8 @@ echo "Buffer cores blocked for XIOS:" $XIOSBLOCKEDCORES
 #360    ./xios_server.exe
 #EOL
 
-#srun -n $COMPUTECORES ./nemo.exe &
-#srun -n 1 ./xios_server.exe &
+#srun -K1 -n $COMPUTECORES ./nemo.exe &
+#srun -K1 -n 1 ./xios_server.exe &
 #wait
 
 if [ $stopflag -ne 0 ]
@@ -179,8 +179,8 @@ fi
 
 echo "Launching NEMO at $(date +%s) seconds since 1970-01-01 00:00:00"
 
-srun -n $(( COMPUTECORES + XIOSCORES )) --multi-prog ./xios.conf
-#srun -n $CORES ./nemo.exe
+srun -K1 -n $(( COMPUTECORES + XIOSCORES )) -m plane=20 --multi-prog ./xios.conf
+#srun -K1 -n $CORES ./nemo.exe
 
 echo "Finished NEMO at $(date +%s) seconds since 1970-01-01 00:00:00"
 
