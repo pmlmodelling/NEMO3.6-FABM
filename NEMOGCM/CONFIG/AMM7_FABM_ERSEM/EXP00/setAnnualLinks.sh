@@ -40,7 +40,7 @@ do
   ln -sf "$INPUTPATH"/BDY/amm7_bt_bdyT_y"$y"m??d??.nc "$RUNPATH"/bdy/
   ln -sf "$INPUTPATH"/BDY/amm7_bt_bdyU_y"$y"m??d??.nc "$RUNPATH"/bdy/
   ln -sf "$INPUTPATH"/BDY/amm7_bt_bdyV_y"$y"m??d??.nc "$RUNPATH"/bdy/
-  if [ $y -lt 1990 ]
+  if [ $y -lt 1990 -o $y -gt 2009 ]
   then
      ln -sf "$INPUTPATH"/BDY/amm7skag_bdyT_m??d??.nc "$RUNPATH"/bdy
      #ln -sf "$INPUTPATH"/BDY/amm7skag_bdyU_m??d??.nc "$RUNPATH"/bdy #only needed if full baroclinic velocity fields are required

@@ -113,7 +113,7 @@ do
    n0=$(( n0 / dt + 1 ))
    nend=$(( n0 + nit -1 ))
    d0=$y0${m0str}01
-   if [ $y0 -lt 1990 ]
+   if [ $y0 -lt 1990 -o $y0 -gt 2009 ]
    then
       lclim=.true.
    else
