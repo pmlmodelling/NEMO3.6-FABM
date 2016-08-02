@@ -204,7 +204,7 @@ CONTAINS
             ELSE
                ip = nint(bdytmask(ii+1,ij  )*tmask(ii+1,ij,ik) - bdytmask(ii-1,ij  )*tmask(ii-1,ij,ik))
                jp = nint(bdytmask(ii  ,ij+1)*tmask(ii,ij+1,ik) - bdytmask(ii  ,ij-1)*tmask(ii,ij-1,ik))
-               tra(ii,ij,ik,jn) = tra(ii+ip,ij+jp,ik,jn) * tmask(ii+ip,ij+jp,ik)
+               tra(ii,ij,ik,jn) = tra(ii+ip,ij+jp,ik,jn) * tmask(ii+ip,ij+jp,ik) * tmask(ii,ij,ik)
             ENDIF
          END DO
       END DO

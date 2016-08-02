@@ -190,8 +190,8 @@ CONTAINS
             ELSE
                ip = NINT(bdytmask(ii+1,ij  ) - bdytmask(ii-1,ij  ))
                jp = NINT(bdytmask(ii  ,ij+1) - bdytmask(ii  ,ij-1))
-               tsa(ii,ij,ik,jp_tem) = tsa(ii+ip,ij+jp,ik,jp_tem) * tmask(ii+ip,ij+jp,ik)
-               tsa(ii,ij,ik,jp_sal) = tsa(ii+ip,ij+jp,ik,jp_sal) * tmask(ii+ip,ij+jp,ik)
+               tsa(ii,ij,ik,jp_tem) = tsa(ii+ip,ij+jp,ik,jp_tem) * tmask(ii+ip,ij+jp,ik) * tmask(ii,ij,ik)
+               tsa(ii,ij,ik,jp_sal) = tsa(ii+ip,ij+jp,ik,jp_sal) * tmask(ii+ip,ij+jp,ik) * tmask(ii,ij,ik)
             ENDIF
          END DO
       END DO

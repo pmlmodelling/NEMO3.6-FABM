@@ -418,7 +418,7 @@ CONTAINS
             ELSE
                ip = nint(bdypmask(ii+1,ij  )*pmask(ii+1,ij,ik) - bdypmask(ii-1,ij  )*pmask(ii-1,ij,ik))
                jp = nint(bdypmask(ii  ,ij+1)*pmask(ii,ij+1,ik) - bdypmask(ii  ,ij-1)*pmask(ii,ij-1,ik))
-               phia(ii,ij,ik) = phia(ii+ip,ij+jp,ik) * pmask(ii+ip,ij+jp,ik)
+               phia(ii,ij,ik) = phia(ii+ip,ij+jp,ik) * pmask(ii+ip,ij+jp,ik) * pmask(ii,ij,ik)
             ENDIF
          END DO
       END DO
