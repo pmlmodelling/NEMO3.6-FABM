@@ -3,7 +3,7 @@ MODULE trcrst_fabm
    !!                      ***  MODULE trcrst_fabm  ***
    !! Read and write additional restart fields used by FABM
    !!======================================================================
-   !! History :   
+   !! History :
    !!----------------------------------------------------------------------
 #if defined key_fabm
    !!----------------------------------------------------------------------
@@ -28,7 +28,7 @@ MODULE trcrst_fabm
 
    !!----------------------------------------------------------------------
    !! NEMO/TOP 3.3 , NEMO Consortium (2010)
-   !! $Id$ 
+   !! $Id$
    !! Software governed by the CeCILL licence (NEMOGCM/NEMO_CeCILL.txt)
    !!----------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ CONTAINS
          CALL iom_get( numrtr, jpdom_autoglo, 'fabm_st2Db'//TRIM(model%surface_state_variables(jn)%name), fabm_st2Db(:,:,jn) )
       END DO
       DO jn=1,jp_fabm_bottom
-         CALL iom_get( numrtr, jpdom_autoglo, 'fabm_st2Db'//TRIM(model%bottom_state_variables(jn)%name), fabm_st2Db(:,:,jp_fabm_bottom+jn) )
+         CALL iom_get( numrtr, jpdom_autoglo, 'fabm_st2Db'//TRIM(model%bottom_state_variables(jn)%name), fabm_st2Db(:,:,jp_fabm_surface+jn) )
       END DO
 
       DO jn=1,jp_fabm_surface
@@ -72,7 +72,7 @@ CONTAINS
       END DO
 
    END SUBROUTINE trc_rst_wri_fabm
-   
+
 #else
    !!----------------------------------------------------------------------
    !!  Dummy module :                                             No FABM
@@ -84,7 +84,7 @@ CONTAINS
    SUBROUTINE trc_rst_wri_fabm(kt)
       INTEGER, INTENT( in ) ::   kt    ! ocean time-step index
    END SUBROUTINE trc_rst_wri_fabm
-#endif  
+#endif
 
    !!======================================================================
 END MODULE trcrst_fabm
