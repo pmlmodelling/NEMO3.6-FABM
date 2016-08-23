@@ -50,9 +50,9 @@ ln -sf "$INPUTPATH"/FLUXES/weights_erai_amm7_bilin.nc "$RUNPATH"/fluxes/
 ln -sf "$INPUTPATH"/FLUXES/CUT_ERAI_LSM.nc "$RUNPATH"/fluxes/
 
 #lateral boundaries from climatology:
-ln -sf "$INPUTPATH"/BDY/amm7skagbdy_trc.nc "$RUNPATH"/
+ln -sf "$INPUTPATH"/BDY/amm7skagbdy_trc.lowP.nc "$RUNPATH"/amm7skagbdy_trc.nc
 #ln -sf "$INPUTPATH"/BDY/amm7bdy_trc.nc "$RUNPATH"/
-ln -sf "$INPUTPATH"/BDY/amm7bdy_trc.fixed.nc "$RUNPATH"/amm7bdy_trc.nc
+ln -sf "$INPUTPATH"/BDY/amm7bdy_trc.lowP.nc "$RUNPATH"/amm7bdy_trc.nc
 ln -sf "$INPUTPATH"/BDY/amm7_bdytide_K1_grid_T.nc "$RUNPATH"/bdy/
 ln -sf "$INPUTPATH"/BDY/amm7_bdytide_K1_grid_U.nc "$RUNPATH"/bdy/
 ln -sf "$INPUTPATH"/BDY/amm7_bdytide_K1_grid_V.nc "$RUNPATH"/bdy/
