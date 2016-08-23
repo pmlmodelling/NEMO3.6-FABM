@@ -1163,11 +1163,6 @@ instances:
     parameters:
       value: 385
       standard_name: mole_fraction_of_carbon_dioxide_in_air
-  tauB:  
-    model: horizontal_constant
-    parameters:
-      value: 0.0
-      standard_name: bottom_stress
   N3_flux:  
     model: external_surface_flux
     coupling:
@@ -1176,3 +1171,10 @@ instances:
     model: external_surface_flux
     coupling:
       target: N4/n
+  erosion:
+    model: ersem/benthic_erosion
+  #tauB:  
+  #  model: horizontal_constant
+  #  parameters:
+  #    value: 0.0
+  #    standard_name: bottom_stress
