@@ -33,9 +33,9 @@
 # set your XIOS_HOME environment variable or replace with appropriate path:
 %XIOS_HOME           $XIOS_HOME
 %FABM_HOME           $FABM_HOME
-#OASIS_HOME          
+#OASIS_HOME
 
-%NCDF_INC            -I/gpfs1/apps/netcdf/intelmpi/include 
+%NCDF_INC            -I/gpfs1/apps/netcdf/intelmpi/include
 %NCDF_LIB            -L/gpfs1/apps/netcdf/intelmpi/lib -L/gpfs1/apps/hdf5/intelmpi/lib -lnetcdff -lnetcdf -lhdf5_hl -lhdf5 -lz
 %XIOS_INC            -I%XIOS_HOME/inc
 %XIOS_LIB            -L%XIOS_HOME/lib -lxios
@@ -49,13 +49,13 @@
 %CPP	             cpp
 %FC                  mpiifort
 #%FCFLAGS             -fdefault-real-8 -O3 -funroll-all-loops -fcray-pointer -ffree-line-length-none
-%FCFLAGS             -O3 -r8 -i4 -funroll-loops -safe-cray-ptr -free -xHost
+%FCFLAGS             -O3 -r8 -i4 -funroll-loops -safe-cray-ptr -free -xHost -fp-model source -zero -traceback
 %FFLAGS              %FCFLAGS
 %LD                  %FC
 # F2003 compliant compilers require key_nosignedzero:
 %FPPFLAGS            -P -C -nostdinc -Dkey_nosignedzero
 %LDFLAGS	     -lstdc++
-%AR                  ar 
+%AR                  ar
 %ARFLAGS             -rs
 %MK                  make
 %USER_INC            %XIOS_INC %NCDF_INC %FABM_INC
