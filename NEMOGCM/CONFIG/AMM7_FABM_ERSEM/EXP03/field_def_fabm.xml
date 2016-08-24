@@ -499,10 +499,10 @@
   <field id="Y3_food4_loss_source_state3_sms" long_name="benthic suspension feeder food4_loss_source state variable 3 sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="Y3_food4_loss_source_state4_sms" long_name="benthic suspension feeder food4_loss_source state variable 4 sources-sinks" unit="mmol Si/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="Y2_O2o_sms" long_name="benthic deposit feeder pelagic oxygen sources-sinks" unit="mmol O_2/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
-  <field id="Q6_resuspension_target_c_sms" long_name="benthic particulate organic matter pelagic variable taking up resuspended carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
-  <field id="Q6_resuspension_target_p_sms" long_name="benthic particulate organic matter pelagic variable taking up resuspended phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
-  <field id="Q6_resuspension_target_n_sms" long_name="benthic particulate organic matter pelagic variable taking up resuspended nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
-  <field id="Q6_resuspension_target_s_sms" long_name="benthic particulate organic matter pelagic variable taking up resuspended silicate sources-sinks" unit="mmol Si/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Q6_resuspended_c_sms" long_name="benthic particulate organic matter pelagic variable taking up resuspended carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Q6_resuspended_p_sms" long_name="benthic particulate organic matter pelagic variable taking up resuspended phosphorus sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Q6_resuspended_n_sms" long_name="benthic particulate organic matter pelagic variable taking up resuspended nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
+  <field id="Q6_resuspended_s_sms" long_name="benthic particulate organic matter pelagic variable taking up resuspended silicate sources-sinks" unit="mmol Si/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="bL2_O3c_sms" long_name="benthic calcite dissolved inorganic carbon sources-sinks" unit="mmol/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="K1_p_pel_sms" long_name="benthic phosphate pelagic phosphorus sources-sinks" unit="mmol/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="ben_nit_N4n_sms" long_name="benthic nitrogen cycle pelagic ammonium sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
@@ -622,13 +622,13 @@
   <field id="pel_nit_O2o_bfl" long_name="pelagic nitrification oxygen bottom flux" unit="mmol O_2/m^3*m/s" default_value="0.000E+00" />
   <field id="pel_nit_alkalinity_expressed_as_mole_equivalent_sfl" long_name="pelagic nitrification alkalinity_expressed_as_mole_equivalent surface flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
   <field id="pel_nit_alkalinity_expressed_as_mole_equivalent_bfl" long_name="pelagic nitrification alkalinity_expressed_as_mole_equivalent bottom flux" unit="mmol m-3*m/s" default_value="0.000E+00" />
-  <field id="Q6_surface_content_calculator_c_c" long_name="benthic particulate organic matter surface content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
-  <field id="Q7_surface_content_calculator_c_c" long_name="benthic refractory matter surface content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
-  <field id="Q6_surface_content_calculator_n_c" long_name="benthic particulate organic matter surface content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="Q7_surface_content_calculator_n_c" long_name="benthic refractory matter surface content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="Q6_surface_content_calculator_p_c" long_name="benthic particulate organic matter surface content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="Q7_surface_content_calculator_p_c" long_name="benthic refractory matter surface content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="Q6_surface_content_calculator_s_c" long_name="benthic particulate organic matter surface content_calculator_s mass" unit="mmol Si/m^2" default_value="-.200E+21" />
+  <field id="Q6_surface_c" long_name="benthic particulate organic matter surface carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Q6_surface_n" long_name="benthic particulate organic matter surface nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="Q6_surface_p" long_name="benthic particulate organic matter surface phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
+  <field id="Q6_surface_s" long_name="benthic particulate organic matter surface silicate" unit="mmol Si/m^2" default_value="-.200E+21" />
+  <field id="Q7_surface_c" long_name="benthic refractory matter surface carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Q7_surface_n" long_name="benthic refractory matter surface nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="Q7_surface_p" long_name="benthic refractory matter surface phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
   <field id="P1_w_bot" long_name="diatoms near-bed vertical velocity" unit="m/s" default_value="-.200E+21" />
   <field id="P1_c_sfl" long_name="diatoms carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
   <field id="P1_c_bfl" long_name="diatoms carbon bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
@@ -1158,10 +1158,10 @@
   <field id="K4_per_layer_n3" long_name="benthic ammonium per_layer total nitrogen in layer 3 (absorbed + dissolved)" unit="mmol/m^2" default_value="-.200E+21" />
   <field id="K4_per_layer_n3_pw" long_name="benthic ammonium per_layer total nitrogen in pore water of layer 3" unit="mmol/m^2" default_value="-.200E+21" />
   <field id="K4_per_layer_n_conc" long_name="benthic ammonium per_layer depth-averaged pore water concentration of nitrogen" unit="mmol/m^2/m" default_value="-.200E+21" />
-  <field id="Y4_Q6_content_calculator_c_c" long_name="benthic meiofauna POM content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
-  <field id="Y4_Q6_content_calculator_n_c" long_name="benthic meiofauna POM content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="Y4_Q6_content_calculator_p_c" long_name="benthic meiofauna POM content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="Y4_Q6_content_calculator_s_c" long_name="benthic meiofauna POM content_calculator_s mass" unit="mmol Si/m^2" default_value="-.200E+21" />
+  <field id="Y4_Q6_c" long_name="benthic meiofauna POM carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Y4_Q6_n" long_name="benthic meiofauna POM nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="Y4_Q6_p" long_name="benthic meiofauna POM phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
+  <field id="Y4_Q6_s" long_name="benthic meiofauna POM silicate" unit="mmol Si/m^2" default_value="-.200E+21" />
   <field id="H1_total_carbon_at_interfaces_calculator_result" long_name="benthic aerobic bacteria total_carbon_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
   <field id="H1_total_nitrogen_at_interfaces_calculator_result" long_name="benthic aerobic bacteria total_nitrogen_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
   <field id="H1_total_phosphorus_at_interfaces_calculator_result" long_name="benthic aerobic bacteria total_phosphorus_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
@@ -1204,10 +1204,10 @@
   <field id="Y4_food4_loss_source_bottom_state2_sms" long_name="benthic meiofauna food4_loss_source bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="Y4_food4_loss_source_bottom_state3_sms" long_name="benthic meiofauna food4_loss_source bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="Y4_food4_loss_source_bottom_state4_sms" long_name="benthic meiofauna food4_loss_source bottom state variable 4 sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="Y3_Q6_content_calculator_c_c" long_name="benthic suspension feeder POM content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
-  <field id="Y3_Q6_content_calculator_n_c" long_name="benthic suspension feeder POM content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="Y3_Q6_content_calculator_p_c" long_name="benthic suspension feeder POM content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="Y3_Q6_content_calculator_s_c" long_name="benthic suspension feeder POM content_calculator_s mass" unit="mmol Si/m^2" default_value="-.200E+21" />
+  <field id="Y3_Q6_c" long_name="benthic suspension feeder POM carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Y3_Q6_n" long_name="benthic suspension feeder POM nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="Y3_Q6_p" long_name="benthic suspension feeder POM phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
+  <field id="Y3_Q6_s" long_name="benthic suspension feeder POM silicate" unit="mmol Si/m^2" default_value="-.200E+21" />
   <field id="Y3_Q6_total_carbon_at_interfaces_calculator_result" long_name="benthic suspension feeder POM total_carbon_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
   <field id="Y3_c_sms" long_name="benthic suspension feeder carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="Y3_O2o_sfl" long_name="benthic suspension feeder pelagic oxygen surface flux" unit="mmol O_2/m^3*m/s" default_value="0.000E+00" />
@@ -1305,16 +1305,19 @@
   <field id="Y3_food6_loss_source_bottom_state2_sms" long_name="benthic suspension feeder food6_loss_source bottom state variable 2 sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="Y3_food6_loss_source_bottom_state3_sms" long_name="benthic suspension feeder food6_loss_source bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="Y3_food6_loss_source_bottom_state4_sms" long_name="benthic suspension feeder food6_loss_source bottom state variable 4 sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_sink_content_calculator_c_c" long_name="benthic deposit feeder POM sink content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
-  <field id="Y2_Q6_sink_content_calculator_n_c" long_name="benthic deposit feeder POM sink content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="Y2_Q6_sink_content_calculator_p_c" long_name="benthic deposit feeder POM sink content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="Y2_Q6_sink_content_calculator_s_c" long_name="benthic deposit feeder POM sink content_calculator_s mass" unit="mmol Si/m^2" default_value="-.200E+21" />
-  <field id="Y2_Q6_source_content_calculator_c_c" long_name="benthic deposit feeder total POM content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Y2_Q6_sink_c" long_name="benthic deposit feeder POM sink carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Y2_Q6_sink_n" long_name="benthic deposit feeder POM sink nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="Y2_Q6_sink_p" long_name="benthic deposit feeder POM sink phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
+  <field id="Y2_Q6_sink_s" long_name="benthic deposit feeder POM sink silicate" unit="mmol Si/m^2" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_c" long_name="benthic deposit feeder total POM carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_n" long_name="benthic deposit feeder total POM nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_p" long_name="benthic deposit feeder total POM phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_s" long_name="benthic deposit feeder total POM silicate" unit="mmol Si/m^2" default_value="-.200E+21" />
   <field id="Y2_Q6_source_total_carbon_at_interfaces_calculator_result" long_name="benthic deposit feeder total POM total_carbon_at_interfaces_calculator result" unit="mmol m-3*m" default_value="-.200E+21" />
-  <field id="Y2_Q6_source_content_calculator_n_c" long_name="benthic deposit feeder total POM content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="Y2_Q6_source_content_calculator_p_c" long_name="benthic deposit feeder total POM content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="Y2_Q6_source_content_calculator_s_c" long_name="benthic deposit feeder total POM content_calculator_s mass" unit="mmol Si/m^2" default_value="-.200E+21" />
-  <field id="Y2_Q6_source_anaerobic_content_calculator_c_c" long_name="benthic deposit feeder anaerobic POM content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_anaerobic_c" long_name="benthic deposit feeder anaerobic POM carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_anaerobic_n" long_name="benthic deposit feeder anaerobic POM nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_anaerobic_p" long_name="benthic deposit feeder anaerobic POM phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_anaerobic_s" long_name="benthic deposit feeder anaerobic POM silicate" unit="mmol Si/m^2" default_value="-.200E+21" />
   <field id="Y2_c_sms" long_name="benthic deposit feeder carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="Y2_O2o_sfl" long_name="benthic deposit feeder pelagic oxygen surface flux" unit="mmol O_2/m^3*m/s" default_value="0.000E+00" />
   <field id="Y2_O2o_bfl" long_name="benthic deposit feeder pelagic oxygen bottom flux" unit="mmol O_2/m^3*m/s" default_value="0.000E+00" />
@@ -1354,34 +1357,43 @@
   <field id="ben_col_bioturbation_diff3" long_name="benthic column bioturbation diffusivity in anoxic layer" unit="m^2/d" default_value="-.200E+21" />
   <field id="ben_col_bioturbation_diff_pom" long_name="benthic column bioturbation particulate diffusivity representing bioturbation" unit="m^2/d" default_value="-.200E+21" />
   <field id="ben_col_bioturbation_Dtur" long_name="benthic column bioturbation bioturbation depth" unit="m" default_value="0.200E-01" />
+  <field id="erosion_v_er" long_name="erosion erosion rate" unit="m/d" default_value="-.200E+21" />
   <field id="Q6_c_sms" long_name="benthic particulate organic matter carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="Q6_resuspension_target_c_sfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
-  <field id="Q6_resuspension_target_c_bfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended carbon bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspended_c_sfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended carbon surface flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspended_c_bfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended carbon bottom flux" unit="mg C/m^3*m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspension_flux_c" long_name="benthic particulate organic matter carbon resuspension" unit="mg C/m^2" default_value="-.200E+21" />
   <field id="Q6_p_sms" long_name="benthic particulate organic matter phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="Q6_resuspension_target_p_sfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended phosphorus surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
-  <field id="Q6_resuspension_target_p_bfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended phosphorus bottom flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspended_p_sfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended phosphorus surface flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspended_p_bfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended phosphorus bottom flux" unit="mmol P/m^3*m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspension_flux_p" long_name="benthic particulate organic matter phosphorus resuspension" unit="mmol P/m^2" default_value="-.200E+21" />
   <field id="Q6_n_sms" long_name="benthic particulate organic matter nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="Q6_resuspension_target_n_sfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended nitrogen surface flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
-  <field id="Q6_resuspension_target_n_bfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended nitrogen bottom flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspended_n_sfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended nitrogen surface flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspended_n_bfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended nitrogen bottom flux" unit="mmol N/m^3*m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspension_flux_n" long_name="benthic particulate organic matter nitrogen resuspension" unit="mmol N/m^2" default_value="-.200E+21" />
   <field id="Q6_s_sms" long_name="benthic particulate organic matter silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="Q6_resuspension_target_s_sfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended silicate surface flux" unit="mmol Si/m^3*m/s" default_value="0.000E+00" />
-  <field id="Q6_resuspension_target_s_bfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended silicate bottom flux" unit="mmol Si/m^3*m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspended_s_sfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended silicate surface flux" unit="mmol Si/m^3*m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspended_s_bfl" long_name="benthic particulate organic matter pelagic variable taking up resuspended silicate bottom flux" unit="mmol Si/m^3*m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspension_flux_s" long_name="benthic particulate organic matter silicate resuspension" unit="mmol Si/m^2" default_value="-.200E+21" />
   <field id="Q6_pen_depth_c_sms" long_name="benthic particulate organic matter penetration depth of carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="Q6_pen_depth_n_sms" long_name="benthic particulate organic matter penetration depth of nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="Q6_pen_depth_p_sms" long_name="benthic particulate organic matter penetration depth of phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="Q6_pen_depth_s_sms" long_name="benthic particulate organic matter penetration depth of silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Q6_surface_content_calculator_c_c_sms_tot_calculator_result" long_name="benthic particulate organic matter surface content_calculator_c c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Q6_surface_content_calculator_n_c_sms_tot_calculator_result" long_name="benthic particulate organic matter surface content_calculator_n c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Q6_surface_content_calculator_p_c_sms_tot_calculator_result" long_name="benthic particulate organic matter surface content_calculator_p c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Q6_surface_content_calculator_s_c_sms_tot_calculator_result" long_name="benthic particulate organic matter surface content_calculator_s c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Q6_surface_c_int_sms" long_name="benthic particulate organic matter surface column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="Q6_surface_pen_depth_c_sms" long_name="benthic particulate organic matter surface penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Q6_surface_n_int_sms" long_name="benthic particulate organic matter surface column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="Q6_surface_pen_depth_n_sms" long_name="benthic particulate organic matter surface penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Q6_surface_p_int_sms" long_name="benthic particulate organic matter surface column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="Q6_surface_pen_depth_p_sms" long_name="benthic particulate organic matter surface penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Q6_surface_s_int_sms" long_name="benthic particulate organic matter surface column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="Q6_surface_pen_depth_s_sms" long_name="benthic particulate organic matter surface penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Q6_resuspendable_c_sms" long_name="benthic particulate organic matter source of resuspended carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="Q6_resuspendable_p_sms" long_name="benthic particulate organic matter source of resuspended phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="Q6_resuspendable_n_sms" long_name="benthic particulate organic matter source of resuspended nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="Q6_resuspendable_s_sms" long_name="benthic particulate organic matter source of resuspended silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="Q6_surface_c_sms_tot_calculator_result" long_name="benthic particulate organic matter surface c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Q6_surface_change_in_c_processor_c_int_sms" long_name="benthic particulate organic matter surface change_in_c_processor column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="Q6_surface_change_in_c_processor_pen_depth_c_sms" long_name="benthic particulate organic matter surface change_in_c_processor penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Q6_surface_n_sms_tot_calculator_result" long_name="benthic particulate organic matter surface n_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Q6_surface_change_in_n_processor_n_int_sms" long_name="benthic particulate organic matter surface change_in_n_processor column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="Q6_surface_change_in_n_processor_pen_depth_n_sms" long_name="benthic particulate organic matter surface change_in_n_processor penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Q6_surface_p_sms_tot_calculator_result" long_name="benthic particulate organic matter surface p_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Q6_surface_change_in_p_processor_p_int_sms" long_name="benthic particulate organic matter surface change_in_p_processor column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="Q6_surface_change_in_p_processor_pen_depth_p_sms" long_name="benthic particulate organic matter surface change_in_p_processor penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Q6_surface_s_sms_tot_calculator_result" long_name="benthic particulate organic matter surface s_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Q6_surface_change_in_s_processor_s_int_sms" long_name="benthic particulate organic matter surface change_in_s_processor column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="Q6_surface_change_in_s_processor_pen_depth_s_sms" long_name="benthic particulate organic matter surface change_in_s_processor penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="Q7_c_sms" long_name="benthic refractory matter carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="Q7_p_sms" long_name="benthic refractory matter phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="Q7_n_sms" long_name="benthic refractory matter nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
@@ -1391,15 +1403,15 @@
   <field id="Q7_buried_c_sms" long_name="benthic refractory matter buried carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="Q7_buried_p_sms" long_name="benthic refractory matter buried phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="Q7_buried_n_sms" long_name="benthic refractory matter buried nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="Q7_surface_content_calculator_c_c_sms_tot_calculator_result" long_name="benthic refractory matter surface content_calculator_c c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Q7_surface_content_calculator_n_c_sms_tot_calculator_result" long_name="benthic refractory matter surface content_calculator_n c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Q7_surface_content_calculator_p_c_sms_tot_calculator_result" long_name="benthic refractory matter surface content_calculator_p c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Q7_surface_c_int_sms" long_name="benthic refractory matter surface column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="Q7_surface_pen_depth_c_sms" long_name="benthic refractory matter surface penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Q7_surface_n_int_sms" long_name="benthic refractory matter surface column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="Q7_surface_pen_depth_n_sms" long_name="benthic refractory matter surface penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Q7_surface_p_int_sms" long_name="benthic refractory matter surface column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="Q7_surface_pen_depth_p_sms" long_name="benthic refractory matter surface penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Q7_surface_c_sms_tot_calculator_result" long_name="benthic refractory matter surface c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Q7_surface_change_in_c_processor_c_int_sms" long_name="benthic refractory matter surface change_in_c_processor column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="Q7_surface_change_in_c_processor_pen_depth_c_sms" long_name="benthic refractory matter surface change_in_c_processor penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Q7_surface_n_sms_tot_calculator_result" long_name="benthic refractory matter surface n_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Q7_surface_change_in_n_processor_n_int_sms" long_name="benthic refractory matter surface change_in_n_processor column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="Q7_surface_change_in_n_processor_pen_depth_n_sms" long_name="benthic refractory matter surface change_in_n_processor penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Q7_surface_p_sms_tot_calculator_result" long_name="benthic refractory matter surface p_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Q7_surface_change_in_p_processor_p_int_sms" long_name="benthic refractory matter surface change_in_p_processor column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="Q7_surface_change_in_p_processor_pen_depth_p_sms" long_name="benthic refractory matter surface change_in_p_processor penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="Q17_c_sms" long_name="benthic buried matter carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="Q17_p_sms" long_name="benthic buried matter phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="Q17_n_sms" long_name="benthic buried matter nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
@@ -1413,13 +1425,13 @@
   <field id="ben_col_cmix" long_name="benthic column equilibrium diffusive speed between sediment surface water" unit="d/m" default_value="0.200E+02" />
   <field id="ben_col_layer2_thickness" long_name="benthic column thickness of second layer" unit="m" default_value="-.200E+21" />
   <field id="K1_per_layer_p1_sms_tot_calculator_result" long_name="benthic phosphate per_layer p1_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H1_Q6_content_calculator_c_c" long_name="benthic aerobic bacteria POM content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
-  <field id="H1_Q6_content_calculator_n_c" long_name="benthic aerobic bacteria POM content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="H1_Q6_content_calculator_p_c" long_name="benthic aerobic bacteria POM content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="H1_Q7_content_calculator_c_c" long_name="benthic aerobic bacteria refractory POM content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
-  <field id="H1_Q7_content_calculator_n_c" long_name="benthic aerobic bacteria refractory POM content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="H1_Q7_content_calculator_p_c" long_name="benthic aerobic bacteria refractory POM content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="H1_Q6_content_calculator_s_c" long_name="benthic aerobic bacteria POM content_calculator_s mass" unit="mmol Si/m^2" default_value="-.200E+21" />
+  <field id="H1_Q6_c" long_name="benthic aerobic bacteria POM carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="H1_Q6_n" long_name="benthic aerobic bacteria POM nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="H1_Q6_p" long_name="benthic aerobic bacteria POM phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
+  <field id="H1_Q6_s" long_name="benthic aerobic bacteria POM silicate" unit="mmol Si/m^2" default_value="-.200E+21" />
+  <field id="H1_Q7_c" long_name="benthic aerobic bacteria refractory POM carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="H1_Q7_n" long_name="benthic aerobic bacteria refractory POM nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="H1_Q7_p" long_name="benthic aerobic bacteria refractory POM phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
   <field id="H1_c_sms" long_name="benthic aerobic bacteria carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="H1_K4n_sms" long_name="benthic aerobic bacteria ammonium sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="H1_K1p_sms" long_name="benthic aerobic bacteria phosphate sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
@@ -1448,13 +1460,13 @@
   <field id="H1_Q7_bottom_state3_sms" long_name="benthic aerobic bacteria Q7 bottom state variable 3 sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
   <field id="K1_per_layer_p2_sms_tot_calculator_result" long_name="benthic phosphate per_layer p2_sms_tot_calculator result" unit="" default_value="-.200E+21" />
   <field id="ben_nit_K6_calculator_K6" long_name="benthic nitrogen cycle K6_calculator oxygen debt due to anaerobic respiration" unit="mmol O_2/m^2" default_value="-.200E+21" />
-  <field id="H2_Q6_content_calculator_c_c" long_name="benthic anaerobic bacteria POM content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
-  <field id="H2_Q6_content_calculator_n_c" long_name="benthic anaerobic bacteria POM content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="H2_Q6_content_calculator_p_c" long_name="benthic anaerobic bacteria POM content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="H2_Q7_content_calculator_c_c" long_name="benthic anaerobic bacteria refractory POM content_calculator_c mass" unit="mg C/m^2" default_value="-.200E+21" />
-  <field id="H2_Q7_content_calculator_n_c" long_name="benthic anaerobic bacteria refractory POM content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="H2_Q7_content_calculator_p_c" long_name="benthic anaerobic bacteria refractory POM content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="H2_Q6_content_calculator_s_c" long_name="benthic anaerobic bacteria POM content_calculator_s mass" unit="mmol Si/m^2" default_value="-.200E+21" />
+  <field id="H2_Q6_c" long_name="benthic anaerobic bacteria POM carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="H2_Q6_n" long_name="benthic anaerobic bacteria POM nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="H2_Q6_p" long_name="benthic anaerobic bacteria POM phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
+  <field id="H2_Q6_s" long_name="benthic anaerobic bacteria POM silicate" unit="mmol Si/m^2" default_value="-.200E+21" />
+  <field id="H2_Q7_c" long_name="benthic anaerobic bacteria refractory POM carbon" unit="mg C/m^2" default_value="-.200E+21" />
+  <field id="H2_Q7_n" long_name="benthic anaerobic bacteria refractory POM nitrogen" unit="mmol N/m^2" default_value="-.200E+21" />
+  <field id="H2_Q7_p" long_name="benthic anaerobic bacteria refractory POM phosphorus" unit="mmol P/m^2" default_value="-.200E+21" />
   <field id="H2_c_sms" long_name="benthic anaerobic bacteria carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
   <field id="H2_K4n_sms" long_name="benthic anaerobic bacteria ammonium sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
   <field id="H2_K1p_sms" long_name="benthic anaerobic bacteria phosphate sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
@@ -1526,7 +1538,7 @@
   <field id="K4_n2_conc" long_name="benthic ammonium pore water concentration of nitrogen in layer 2" unit="mmol/m^3" default_value="-.200E+21" />
   <field id="K4_n3_eq_conc" long_name="benthic ammonium equilibrium pore water concentration of nitrogen in layer 3" unit="mmol/m^3" default_value="-.200E+21" />
   <field id="K4_n3_conc" long_name="benthic ammonium pore water concentration of nitrogen in layer 3" unit="mmol/m^3" default_value="-.200E+21" />
-  <field id="Q6s_aerobic_content_calculator_s_c" long_name="aerobic particulate silicate content_calculator_s mass" unit="mmol Si/m^2" default_value="-.200E+21" />
+  <field id="Q6s_aerobic_s" long_name="aerobic particulate silicate silicate" unit="mmol Si/m^2" default_value="-.200E+21" />
   <field id="K5_per_layer_s1" long_name="benthic silicate per_layer total silicate in layer 1 (absorbed + dissolved)" unit="mmol/m^2" default_value="-.200E+21" />
   <field id="K5_per_layer_s1_pw" long_name="benthic silicate per_layer total silicate in pore water of layer 1" unit="mmol/m^2" default_value="-.200E+21" />
   <field id="K5_per_layer_s2" long_name="benthic silicate per_layer total silicate in layer 2 (absorbed + dissolved)" unit="mmol/m^2" default_value="-.200E+21" />
@@ -1534,13 +1546,13 @@
   <field id="K5_per_layer_s3" long_name="benthic silicate per_layer total silicate in layer 3 (absorbed + dissolved)" unit="mmol/m^2" default_value="-.200E+21" />
   <field id="K5_per_layer_s3_pw" long_name="benthic silicate per_layer total silicate in pore water of layer 3" unit="mmol/m^2" default_value="-.200E+21" />
   <field id="K5_per_layer_s_conc" long_name="benthic silicate per_layer depth-averaged pore water concentration of silicate" unit="mmol/m^2/m" default_value="-.200E+21" />
-  <field id="Q6s_aerobic_s_int_sms" long_name="aerobic particulate silicate column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="Q6s_aerobic_pen_depth_s_sms" long_name="aerobic particulate silicate penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Q6s_aerobic_s_remin_target_sms" long_name="aerobic particulate silicate sink for remineralized silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="Q6s_anaerobic_content_calculator_s_c" long_name="anaerobic particulate silicate content_calculator_s mass" unit="mmol Si/m^2" default_value="-.200E+21" />
-  <field id="Q6s_anaerobic_s_int_sms" long_name="anaerobic particulate silicate column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="Q6s_anaerobic_pen_depth_s_sms" long_name="anaerobic particulate silicate penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Q6s_anaerobic_s_remin_target_sms" long_name="anaerobic particulate silicate sink for remineralized silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="Q6s_aerobic_change_in_s_processor_s_int_sms" long_name="aerobic particulate silicate change_in_s_processor column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="Q6s_aerobic_change_in_s_processor_pen_depth_s_sms" long_name="aerobic particulate silicate change_in_s_processor penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Q6s_aerobic_change_in_s_processor_s_remin_target_sms" long_name="aerobic particulate silicate change_in_s_processor sink for remineralized silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="Q6s_anaerobic_s" long_name="anaerobic particulate silicate silicate" unit="mmol Si/m^2" default_value="-.200E+21" />
+  <field id="Q6s_anaerobic_change_in_s_processor_s_int_sms" long_name="anaerobic particulate silicate change_in_s_processor column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="Q6s_anaerobic_change_in_s_processor_pen_depth_s_sms" long_name="anaerobic particulate silicate change_in_s_processor penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Q6s_anaerobic_change_in_s_processor_s_remin_target_sms" long_name="anaerobic particulate silicate change_in_s_processor sink for remineralized silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
   <field id="K5_s_sms" long_name="benthic silicate silicate sources-sinks" unit="mmol/m^2/s" default_value="0.000E+00" />
   <field id="K5_s_pel_sfl" long_name="benthic silicate pelagic silicate surface flux" unit="mmol/m^3*m/s" default_value="0.000E+00" />
   <field id="K5_s_pel_bfl" long_name="benthic silicate pelagic silicate bottom flux" unit="mmol/m^3*m/s" default_value="0.000E+00" />
@@ -1569,103 +1581,99 @@
   <field id="G3_c2_conc" long_name="benthic dissolved inorganic carbon pore water concentration of carbon in layer 2" unit="mmol/m^3" default_value="-.200E+21" />
   <field id="G3_c3_eq_conc" long_name="benthic dissolved inorganic carbon equilibrium pore water concentration of carbon in layer 3" unit="mmol/m^3" default_value="-.200E+21" />
   <field id="G3_c3_conc" long_name="benthic dissolved inorganic carbon pore water concentration of carbon in layer 3" unit="mmol/m^3" default_value="-.200E+21" />
-  <field id="H1_Q6_content_calculator_c_c_sms_tot_calculator_result" long_name="benthic aerobic bacteria POM content_calculator_c c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H1_Q6_content_calculator_n_c_sms_tot_calculator_result" long_name="benthic aerobic bacteria POM content_calculator_n c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H1_Q6_content_calculator_p_c_sms_tot_calculator_result" long_name="benthic aerobic bacteria POM content_calculator_p c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H1_Q6_c_int_sms" long_name="benthic aerobic bacteria POM column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="H1_Q6_pen_depth_c_sms" long_name="benthic aerobic bacteria POM penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H1_Q6_n_int_sms" long_name="benthic aerobic bacteria POM column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="H1_Q6_pen_depth_n_sms" long_name="benthic aerobic bacteria POM penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H1_Q6_p_int_sms" long_name="benthic aerobic bacteria POM column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="H1_Q6_pen_depth_p_sms" long_name="benthic aerobic bacteria POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H1_Q6_s_int_sms" long_name="benthic aerobic bacteria POM column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="H1_Q6_pen_depth_s_sms" long_name="benthic aerobic bacteria POM penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H1_Q7_content_calculator_c_c_sms_tot_calculator_result" long_name="benthic aerobic bacteria refractory POM content_calculator_c c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H1_Q7_content_calculator_n_c_sms_tot_calculator_result" long_name="benthic aerobic bacteria refractory POM content_calculator_n c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H1_Q7_content_calculator_p_c_sms_tot_calculator_result" long_name="benthic aerobic bacteria refractory POM content_calculator_p c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H1_Q7_c_int_sms" long_name="benthic aerobic bacteria refractory POM column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="H1_Q7_pen_depth_c_sms" long_name="benthic aerobic bacteria refractory POM penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H1_Q7_n_int_sms" long_name="benthic aerobic bacteria refractory POM column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="H1_Q7_pen_depth_n_sms" long_name="benthic aerobic bacteria refractory POM penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H1_Q7_p_int_sms" long_name="benthic aerobic bacteria refractory POM column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="H1_Q7_pen_depth_p_sms" long_name="benthic aerobic bacteria refractory POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H2_Q6_content_calculator_c_c_sms_tot_calculator_result" long_name="benthic anaerobic bacteria POM content_calculator_c c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H2_Q6_content_calculator_n_c_sms_tot_calculator_result" long_name="benthic anaerobic bacteria POM content_calculator_n c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H2_Q6_content_calculator_p_c_sms_tot_calculator_result" long_name="benthic anaerobic bacteria POM content_calculator_p c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H2_Q6_c_int_sms" long_name="benthic anaerobic bacteria POM column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="H2_Q6_pen_depth_c_sms" long_name="benthic anaerobic bacteria POM penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H2_Q6_n_int_sms" long_name="benthic anaerobic bacteria POM column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="H2_Q6_pen_depth_n_sms" long_name="benthic anaerobic bacteria POM penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H2_Q6_p_int_sms" long_name="benthic anaerobic bacteria POM column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="H2_Q6_pen_depth_p_sms" long_name="benthic anaerobic bacteria POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H2_Q6_s_int_sms" long_name="benthic anaerobic bacteria POM column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="H2_Q6_pen_depth_s_sms" long_name="benthic anaerobic bacteria POM penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H2_Q7_content_calculator_c_c_sms_tot_calculator_result" long_name="benthic anaerobic bacteria refractory POM content_calculator_c c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H2_Q7_content_calculator_n_c_sms_tot_calculator_result" long_name="benthic anaerobic bacteria refractory POM content_calculator_n c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H2_Q7_content_calculator_p_c_sms_tot_calculator_result" long_name="benthic anaerobic bacteria refractory POM content_calculator_p c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="H2_Q7_c_int_sms" long_name="benthic anaerobic bacteria refractory POM column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="H2_Q7_pen_depth_c_sms" long_name="benthic anaerobic bacteria refractory POM penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H2_Q7_n_int_sms" long_name="benthic anaerobic bacteria refractory POM column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="H2_Q7_pen_depth_n_sms" long_name="benthic anaerobic bacteria refractory POM penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="H2_Q7_p_int_sms" long_name="benthic anaerobic bacteria refractory POM column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="H2_Q7_pen_depth_p_sms" long_name="benthic anaerobic bacteria refractory POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_content_calculator_c_c_sms_tot_calculator_result" long_name="benthic deposit feeder total POM content_calculator_c c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y2_Q6_source_content_calculator_n_c_sms_tot_calculator_result" long_name="benthic deposit feeder total POM content_calculator_n c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y2_Q6_source_content_calculator_p_c_sms_tot_calculator_result" long_name="benthic deposit feeder total POM content_calculator_p c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y2_Q6_source_content_calculator_s_c_sms_tot_calculator_result" long_name="benthic deposit feeder total POM content_calculator_s c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y2_Q6_source_c_int_sms" long_name="benthic deposit feeder total POM column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_pen_depth_c_sms" long_name="benthic deposit feeder total POM penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_n_int_sms" long_name="benthic deposit feeder total POM column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_pen_depth_n_sms" long_name="benthic deposit feeder total POM penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_p_int_sms" long_name="benthic deposit feeder total POM column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_pen_depth_p_sms" long_name="benthic deposit feeder total POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_s_int_sms" long_name="benthic deposit feeder total POM column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_pen_depth_s_sms" long_name="benthic deposit feeder total POM penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_anaerobic_content_calculator_n_c" long_name="benthic deposit feeder anaerobic POM content_calculator_n mass" unit="mmol N/m^2" default_value="-.200E+21" />
-  <field id="Y2_Q6_source_anaerobic_content_calculator_p_c" long_name="benthic deposit feeder anaerobic POM content_calculator_p mass" unit="mmol P/m^2" default_value="-.200E+21" />
-  <field id="Y2_Q6_source_anaerobic_content_calculator_s_c" long_name="benthic deposit feeder anaerobic POM content_calculator_s mass" unit="mmol Si/m^2" default_value="-.200E+21" />
-  <field id="Y2_Q6_source_anaerobic_c_int_sms" long_name="benthic deposit feeder anaerobic POM column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_anaerobic_pen_depth_c_sms" long_name="benthic deposit feeder anaerobic POM penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_anaerobic_n_int_sms" long_name="benthic deposit feeder anaerobic POM column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_anaerobic_pen_depth_n_sms" long_name="benthic deposit feeder anaerobic POM penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_anaerobic_p_int_sms" long_name="benthic deposit feeder anaerobic POM column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_anaerobic_pen_depth_p_sms" long_name="benthic deposit feeder anaerobic POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_anaerobic_s_int_sms" long_name="benthic deposit feeder anaerobic POM column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_source_anaerobic_pen_depth_s_sms" long_name="benthic deposit feeder anaerobic POM penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_sink_c_int_sms" long_name="benthic deposit feeder POM sink column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_sink_pen_depth_c_sms" long_name="benthic deposit feeder POM sink penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_sink_n_int_sms" long_name="benthic deposit feeder POM sink column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_sink_pen_depth_n_sms" long_name="benthic deposit feeder POM sink penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_sink_p_int_sms" long_name="benthic deposit feeder POM sink column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_sink_pen_depth_p_sms" long_name="benthic deposit feeder POM sink penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_sink_s_int_sms" long_name="benthic deposit feeder POM sink column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="Y2_Q6_sink_pen_depth_s_sms" long_name="benthic deposit feeder POM sink penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y3_Q6_content_calculator_c_c_sms_tot_calculator_result" long_name="benthic suspension feeder POM content_calculator_c c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y3_Q6_content_calculator_n_c_sms_tot_calculator_result" long_name="benthic suspension feeder POM content_calculator_n c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y3_Q6_content_calculator_p_c_sms_tot_calculator_result" long_name="benthic suspension feeder POM content_calculator_p c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y3_Q6_content_calculator_s_c_sms_tot_calculator_result" long_name="benthic suspension feeder POM content_calculator_s c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y3_Q6_c_int_sms" long_name="benthic suspension feeder POM column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="Y3_Q6_pen_depth_c_sms" long_name="benthic suspension feeder POM penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y3_Q6_n_int_sms" long_name="benthic suspension feeder POM column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="Y3_Q6_pen_depth_n_sms" long_name="benthic suspension feeder POM penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y3_Q6_p_int_sms" long_name="benthic suspension feeder POM column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="Y3_Q6_pen_depth_p_sms" long_name="benthic suspension feeder POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y3_Q6_s_int_sms" long_name="benthic suspension feeder POM column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="Y3_Q6_pen_depth_s_sms" long_name="benthic suspension feeder POM penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y4_Q6_content_calculator_c_c_sms_tot_calculator_result" long_name="benthic meiofauna POM content_calculator_c c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y4_Q6_content_calculator_n_c_sms_tot_calculator_result" long_name="benthic meiofauna POM content_calculator_n c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y4_Q6_content_calculator_p_c_sms_tot_calculator_result" long_name="benthic meiofauna POM content_calculator_p c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y4_Q6_content_calculator_s_c_sms_tot_calculator_result" long_name="benthic meiofauna POM content_calculator_s c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
-  <field id="Y4_Q6_c_int_sms" long_name="benthic meiofauna POM column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
-  <field id="Y4_Q6_pen_depth_c_sms" long_name="benthic meiofauna POM penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y4_Q6_n_int_sms" long_name="benthic meiofauna POM column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
-  <field id="Y4_Q6_pen_depth_n_sms" long_name="benthic meiofauna POM penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y4_Q6_p_int_sms" long_name="benthic meiofauna POM column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
-  <field id="Y4_Q6_pen_depth_p_sms" long_name="benthic meiofauna POM penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
-  <field id="Y4_Q6_s_int_sms" long_name="benthic meiofauna POM column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
-  <field id="Y4_Q6_pen_depth_s_sms" long_name="benthic meiofauna POM penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H1_Q6_c_sms_tot_calculator_result" long_name="benthic aerobic bacteria POM c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="H1_Q6_change_in_c_processor_c_int_sms" long_name="benthic aerobic bacteria POM change_in_c_processor column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="H1_Q6_change_in_c_processor_pen_depth_c_sms" long_name="benthic aerobic bacteria POM change_in_c_processor penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H1_Q6_n_sms_tot_calculator_result" long_name="benthic aerobic bacteria POM n_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="H1_Q6_change_in_n_processor_n_int_sms" long_name="benthic aerobic bacteria POM change_in_n_processor column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="H1_Q6_change_in_n_processor_pen_depth_n_sms" long_name="benthic aerobic bacteria POM change_in_n_processor penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H1_Q6_p_sms_tot_calculator_result" long_name="benthic aerobic bacteria POM p_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="H1_Q6_change_in_p_processor_p_int_sms" long_name="benthic aerobic bacteria POM change_in_p_processor column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="H1_Q6_change_in_p_processor_pen_depth_p_sms" long_name="benthic aerobic bacteria POM change_in_p_processor penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H1_Q6_change_in_s_processor_s_int_sms" long_name="benthic aerobic bacteria POM change_in_s_processor column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="H1_Q6_change_in_s_processor_pen_depth_s_sms" long_name="benthic aerobic bacteria POM change_in_s_processor penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H1_Q7_c_sms_tot_calculator_result" long_name="benthic aerobic bacteria refractory POM c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="H1_Q7_change_in_c_processor_c_int_sms" long_name="benthic aerobic bacteria refractory POM change_in_c_processor column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="H1_Q7_change_in_c_processor_pen_depth_c_sms" long_name="benthic aerobic bacteria refractory POM change_in_c_processor penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H1_Q7_n_sms_tot_calculator_result" long_name="benthic aerobic bacteria refractory POM n_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="H1_Q7_change_in_n_processor_n_int_sms" long_name="benthic aerobic bacteria refractory POM change_in_n_processor column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="H1_Q7_change_in_n_processor_pen_depth_n_sms" long_name="benthic aerobic bacteria refractory POM change_in_n_processor penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H1_Q7_p_sms_tot_calculator_result" long_name="benthic aerobic bacteria refractory POM p_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="H1_Q7_change_in_p_processor_p_int_sms" long_name="benthic aerobic bacteria refractory POM change_in_p_processor column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="H1_Q7_change_in_p_processor_pen_depth_p_sms" long_name="benthic aerobic bacteria refractory POM change_in_p_processor penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H2_Q6_c_sms_tot_calculator_result" long_name="benthic anaerobic bacteria POM c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="H2_Q6_change_in_c_processor_c_int_sms" long_name="benthic anaerobic bacteria POM change_in_c_processor column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="H2_Q6_change_in_c_processor_pen_depth_c_sms" long_name="benthic anaerobic bacteria POM change_in_c_processor penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H2_Q6_n_sms_tot_calculator_result" long_name="benthic anaerobic bacteria POM n_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="H2_Q6_change_in_n_processor_n_int_sms" long_name="benthic anaerobic bacteria POM change_in_n_processor column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="H2_Q6_change_in_n_processor_pen_depth_n_sms" long_name="benthic anaerobic bacteria POM change_in_n_processor penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H2_Q6_p_sms_tot_calculator_result" long_name="benthic anaerobic bacteria POM p_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="H2_Q6_change_in_p_processor_p_int_sms" long_name="benthic anaerobic bacteria POM change_in_p_processor column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="H2_Q6_change_in_p_processor_pen_depth_p_sms" long_name="benthic anaerobic bacteria POM change_in_p_processor penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H2_Q6_change_in_s_processor_s_int_sms" long_name="benthic anaerobic bacteria POM change_in_s_processor column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="H2_Q6_change_in_s_processor_pen_depth_s_sms" long_name="benthic anaerobic bacteria POM change_in_s_processor penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H2_Q7_c_sms_tot_calculator_result" long_name="benthic anaerobic bacteria refractory POM c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="H2_Q7_change_in_c_processor_c_int_sms" long_name="benthic anaerobic bacteria refractory POM change_in_c_processor column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="H2_Q7_change_in_c_processor_pen_depth_c_sms" long_name="benthic anaerobic bacteria refractory POM change_in_c_processor penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H2_Q7_n_sms_tot_calculator_result" long_name="benthic anaerobic bacteria refractory POM n_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="H2_Q7_change_in_n_processor_n_int_sms" long_name="benthic anaerobic bacteria refractory POM change_in_n_processor column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="H2_Q7_change_in_n_processor_pen_depth_n_sms" long_name="benthic anaerobic bacteria refractory POM change_in_n_processor penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="H2_Q7_p_sms_tot_calculator_result" long_name="benthic anaerobic bacteria refractory POM p_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="H2_Q7_change_in_p_processor_p_int_sms" long_name="benthic anaerobic bacteria refractory POM change_in_p_processor column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="H2_Q7_change_in_p_processor_pen_depth_p_sms" long_name="benthic anaerobic bacteria refractory POM change_in_p_processor penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_c_sms_tot_calculator_result" long_name="benthic deposit feeder total POM c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_change_in_c_processor_c_int_sms" long_name="benthic deposit feeder total POM change_in_c_processor column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_change_in_c_processor_pen_depth_c_sms" long_name="benthic deposit feeder total POM change_in_c_processor penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_n_sms_tot_calculator_result" long_name="benthic deposit feeder total POM n_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_change_in_n_processor_n_int_sms" long_name="benthic deposit feeder total POM change_in_n_processor column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_change_in_n_processor_pen_depth_n_sms" long_name="benthic deposit feeder total POM change_in_n_processor penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_p_sms_tot_calculator_result" long_name="benthic deposit feeder total POM p_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_change_in_p_processor_p_int_sms" long_name="benthic deposit feeder total POM change_in_p_processor column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_change_in_p_processor_pen_depth_p_sms" long_name="benthic deposit feeder total POM change_in_p_processor penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_s_sms_tot_calculator_result" long_name="benthic deposit feeder total POM s_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y2_Q6_source_change_in_s_processor_s_int_sms" long_name="benthic deposit feeder total POM change_in_s_processor column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_change_in_s_processor_pen_depth_s_sms" long_name="benthic deposit feeder total POM change_in_s_processor penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_anaerobic_change_in_c_processor_c_int_sms" long_name="benthic deposit feeder anaerobic POM change_in_c_processor column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_anaerobic_change_in_c_processor_pen_depth_c_sms" long_name="benthic deposit feeder anaerobic POM change_in_c_processor penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_anaerobic_change_in_n_processor_n_int_sms" long_name="benthic deposit feeder anaerobic POM change_in_n_processor column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_anaerobic_change_in_n_processor_pen_depth_n_sms" long_name="benthic deposit feeder anaerobic POM change_in_n_processor penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_anaerobic_change_in_p_processor_p_int_sms" long_name="benthic deposit feeder anaerobic POM change_in_p_processor column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_anaerobic_change_in_p_processor_pen_depth_p_sms" long_name="benthic deposit feeder anaerobic POM change_in_p_processor penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_anaerobic_change_in_s_processor_s_int_sms" long_name="benthic deposit feeder anaerobic POM change_in_s_processor column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_source_anaerobic_change_in_s_processor_pen_depth_s_sms" long_name="benthic deposit feeder anaerobic POM change_in_s_processor penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_sink_change_in_c_processor_c_int_sms" long_name="benthic deposit feeder POM sink change_in_c_processor column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_sink_change_in_c_processor_pen_depth_c_sms" long_name="benthic deposit feeder POM sink change_in_c_processor penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_sink_change_in_n_processor_n_int_sms" long_name="benthic deposit feeder POM sink change_in_n_processor column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_sink_change_in_n_processor_pen_depth_n_sms" long_name="benthic deposit feeder POM sink change_in_n_processor penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_sink_change_in_p_processor_p_int_sms" long_name="benthic deposit feeder POM sink change_in_p_processor column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_sink_change_in_p_processor_pen_depth_p_sms" long_name="benthic deposit feeder POM sink change_in_p_processor penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_sink_change_in_s_processor_s_int_sms" long_name="benthic deposit feeder POM sink change_in_s_processor column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="Y2_Q6_sink_change_in_s_processor_pen_depth_s_sms" long_name="benthic deposit feeder POM sink change_in_s_processor penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y3_Q6_c_sms_tot_calculator_result" long_name="benthic suspension feeder POM c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y3_Q6_change_in_c_processor_c_int_sms" long_name="benthic suspension feeder POM change_in_c_processor column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="Y3_Q6_change_in_c_processor_pen_depth_c_sms" long_name="benthic suspension feeder POM change_in_c_processor penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y3_Q6_n_sms_tot_calculator_result" long_name="benthic suspension feeder POM n_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y3_Q6_change_in_n_processor_n_int_sms" long_name="benthic suspension feeder POM change_in_n_processor column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="Y3_Q6_change_in_n_processor_pen_depth_n_sms" long_name="benthic suspension feeder POM change_in_n_processor penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y3_Q6_p_sms_tot_calculator_result" long_name="benthic suspension feeder POM p_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y3_Q6_change_in_p_processor_p_int_sms" long_name="benthic suspension feeder POM change_in_p_processor column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="Y3_Q6_change_in_p_processor_pen_depth_p_sms" long_name="benthic suspension feeder POM change_in_p_processor penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y3_Q6_s_sms_tot_calculator_result" long_name="benthic suspension feeder POM s_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y3_Q6_change_in_s_processor_s_int_sms" long_name="benthic suspension feeder POM change_in_s_processor column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="Y3_Q6_change_in_s_processor_pen_depth_s_sms" long_name="benthic suspension feeder POM change_in_s_processor penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y4_Q6_c_sms_tot_calculator_result" long_name="benthic meiofauna POM c_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y4_Q6_change_in_c_processor_c_int_sms" long_name="benthic meiofauna POM change_in_c_processor column-integrated carbon sources-sinks" unit="mg C/m^2/s" default_value="0.000E+00" />
+  <field id="Y4_Q6_change_in_c_processor_pen_depth_c_sms" long_name="benthic meiofauna POM change_in_c_processor penetration depth for carbon sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y4_Q6_n_sms_tot_calculator_result" long_name="benthic meiofauna POM n_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y4_Q6_change_in_n_processor_n_int_sms" long_name="benthic meiofauna POM change_in_n_processor column-integrated nitrogen sources-sinks" unit="mmol N/m^2/s" default_value="0.000E+00" />
+  <field id="Y4_Q6_change_in_n_processor_pen_depth_n_sms" long_name="benthic meiofauna POM change_in_n_processor penetration depth for nitrogen sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y4_Q6_p_sms_tot_calculator_result" long_name="benthic meiofauna POM p_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y4_Q6_change_in_p_processor_p_int_sms" long_name="benthic meiofauna POM change_in_p_processor column-integrated phosphorus sources-sinks" unit="mmol P/m^2/s" default_value="0.000E+00" />
+  <field id="Y4_Q6_change_in_p_processor_pen_depth_p_sms" long_name="benthic meiofauna POM change_in_p_processor penetration depth for phosphorus sources-sinks" unit="m/s" default_value="0.000E+00" />
+  <field id="Y4_Q6_s_sms_tot_calculator_result" long_name="benthic meiofauna POM s_sms_tot_calculator result" unit="" default_value="-.200E+21" />
+  <field id="Y4_Q6_change_in_s_processor_s_int_sms" long_name="benthic meiofauna POM change_in_s_processor column-integrated silicate sources-sinks" unit="mmol Si/m^2/s" default_value="0.000E+00" />
+  <field id="Y4_Q6_change_in_s_processor_pen_depth_s_sms" long_name="benthic meiofauna POM change_in_s_processor penetration depth for silicate sources-sinks" unit="m/s" default_value="0.000E+00" />
   <field id="pco2a_data" long_name="pco2a data" unit="" default_value="0.385E+03" />
-  <field id="tauB_data" long_name="tauB data" unit="" default_value="0.000E+00" />
   <field id="N3_flux_target_sfl" long_name="N3_flux target variable surface flux" unit="UNITS m-3*m/s" default_value="0.000E+00" />
   <field id="N3_flux_target_bfl" long_name="N3_flux target variable bottom flux" unit="UNITS m-3*m/s" default_value="0.000E+00" />
   <field id="N4_flux_target_sfl" long_name="N4_flux target variable surface flux" unit="UNITS m-3*m/s" default_value="0.000E+00" />
