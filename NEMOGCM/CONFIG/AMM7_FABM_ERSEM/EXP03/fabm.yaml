@@ -1489,3 +1489,83 @@ instances:
       term2: Z4/calcification
       term3: Z5/calcification
       term4: Z6/calcification
+  benthic_denitrification_ammonification:
+    model: horizontal_weighted_sum
+    parameters:
+      n: 2
+    coupling:
+      term1: ben_nit/jM3G4n
+      term2: ben_nit/jM3M4n
+  Y3_fphytoc:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 3
+   coupling:
+      term1: Y3/fprey1c
+      term2: Y3/fprey2c
+      term3: Y3/fprey3c
+  Y3_fphyton:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 3
+   coupling:
+      term1: Y3/fprey1n
+      term2: Y3/fprey2n
+      term3: Y3/fprey3n
+  Y3_fphytop:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 3
+   coupling:
+      term1: Y3/fprey1p
+      term2: Y3/fprey2p
+      term3: Y3/fprey3p
+  Ymacro_fYG3c:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Y2/fYG3c
+      term2: Y3/fYG3c
+  Ymacro_fYQPc:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Y2/fYQPc
+      term2: Y3/fYQPc
+  Ymacro_fYQPn:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Y2/fYQPn
+      term2: Y3/fYQPn
+  Ymacro_fYQPp:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Y2/fYQPp
+      term2: Y3/fYQPp
+  Ymacro_fYKIn:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Y2/fYKIn
+      term2: Y3/fYKIn
+  Ymacro_fYK1p:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Y2/fYK1p
+      term2: Y3/fYK1p
+  Q6_remins:
+    model: horizontal_weighted_sum
+    parameters:
+      n: 1
+      weight1: 0.007
+    coupling:
+      term1: Q6/s

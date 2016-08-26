@@ -780,6 +780,83 @@
           <field field_ref="Z6_fprey4c" name="Z6_fzooc_result" operation="average" />
           <field field_ref="Z6_fprey4n" name="Z6_fzoon_result" operation="average" />
           <field field_ref="Z6_fprey4p" name="Z6_fzoop_result" operation="average" />
+          <field field_ref="pel_nit_rate" operation="average" />
+          <field field_ref="ben_nit_nrate" operation="average" />
+          <field field_ref="benthic_denitrification_ammonification_result" operation="average" />
+          <field field_ref="Y2_fprey1c" name="Y2_faerbacc_result" operation="average" />
+          <field field_ref="Y2_fprey1n" name="Y2_faerbacn_result" operation="average" />
+          <field field_ref="Y2_fprey1p" name="Y2_faerbacp_result" operation="average" />
+          <field field_ref="Y2_fprey2c" name="Y2_fanaerbacc_result" operation="average" />
+          <field field_ref="Y2_fprey2n" name="Y2_fanaerbacn_result" operation="average" />
+          <field field_ref="Y2_fprey2p" name="Y2_fanaerbacp_result" operation="average" />
+          <field field_ref="Y2_fprey3c" name="Y2_fdetrc_result" operation="average" />
+          <field field_ref="Y2_fprey3n" name="Y2_fdetrn_result" operation="average" />
+          <field field_ref="Y2_fprey3p" name="Y2_fdetrp_result" operation="average" />
+          <field field_ref="Y2_fprey4c" name="Y2_fmeioc_result" operation="average" />
+          <field field_ref="Y2_fprey4n" name="Y2_fmeion_result" operation="average" />
+          <field field_ref="Y2_fprey4p" name="Y2_fmeiop_result" operation="average" />
+          <field field_ref="Y3_fphytoc_result" operation="average" />
+          <field field_ref="Y3_fphyton_result" operation="average" />
+          <field field_ref="Y3_fphytop_result" operation="average" />
+          <field field_ref="Y3_fprey1s" name="Y3_fphytos_result" operation="average" />
+          <field field_ref="Y3_fprey4c" name="Y3_fpeldetrc_result" operation="average" />
+          <field field_ref="Y3_fprey4n" name="Y3_fpeldetrn_result" operation="average" />
+          <field field_ref="Y3_fprey4p" name="Y3_fpeldetrp_result" operation="average" />
+          <field field_ref="Y3_fprey4s" name="Y3_fpeldetrs_result" operation="average" />
+          <field field_ref="Y3_fprey5c" name="Y3_faerbacc_result" operation="average" />
+          <field field_ref="Y3_fprey5n" name="Y3_faerbacn_result" operation="average" />
+          <field field_ref="Y3_fprey5p" name="Y3_faerbacp_result" operation="average" />
+          <field field_ref="Y3_fprey6c" name="Y3_fbendetrc_result" operation="average" />
+          <field field_ref="Y3_fprey6n" name="Y3_fbendetrn_result" operation="average" />
+          <field field_ref="Y3_fprey6p" name="Y3_fbendetrp_result" operation="average" />
+          <field field_ref="Ymacro_fYG3c_result" operation="average" />
+          <field field_ref="Ymacro_fYQPc_result" operation="average" />
+          <field field_ref="Ymacro_fYQPn_result" operation="average" />
+          <field field_ref="Ymacro_fYQPp_result" operation="average" />
+          <field field_ref="Ymacro_fYKIn_result" operation="average" />
+          <field field_ref="Ymacro_fYK1p_result" operation="average" />          <field field_ref="Y4_fprey1c" name="Y4_faerbacc_result" operation="average" />
+          <field field_ref="Y4_fprey1n" name="Y4_faerbacn_result" operation="average" />
+          <field field_ref="Y4_fprey1p" name="Y4_faerbacp_result" operation="average" />
+          <field field_ref="Y4_fprey2c" name="Y4_fanaerbacc_result" operation="average" />
+          <field field_ref="Y4_fprey2n" name="Y4_fanaerbacn_result" operation="average" />
+          <field field_ref="Y4_fprey2p" name="Y4_fanaerbacp_result" operation="average" />
+          <field field_ref="Y4_fprey3c" name="Y4_fmeioc_result" operation="average" />
+          <field field_ref="Y4_fprey3n" name="Y4_fmeion_result" operation="average" />
+          <field field_ref="Y4_fprey3p" name="Y4_fmeiop_result" operation="average" />
+          <field field_ref="Y4_fprey4c" name="Y4_fdetrc_result" operation="average" />
+          <field field_ref="Y4_fprey4n" name="Y4_fdetrn_result" operation="average" />
+          <field field_ref="Y4_fprey4p" name="Y4_fdetrp_result" operation="average" />
+          <field field_ref="Y4_fYG3c" operation="average" />
+          <field field_ref="Y4_fYQPc" operation="average" />
+          <field field_ref="Y4_fYQPn" operation="average" />
+          <field field_ref="Y4_fYQPp" operation="average" />
+          <field field_ref="Y4_fYKIn" operation="average" />
+          <field field_ref="Y4_fYK1p" operation="average" />
+          <field field_ref="H1_fQ1Hc" operation="average" />
+          <field field_ref="H1_fQ1Hn" operation="average" />
+          <field field_ref="H1_fQ1Hp" operation="average" />
+          <field field_ref="H1_fHG3c" operation="average" />
+          <field field_ref="H1_fHQ1c" operation="average" />
+          <field field_ref="H1_fHQ1n" operation="average" />
+          <field field_ref="H1_fHQ1p" operation="average" />
+          <field field_ref="H1_fHQPc" operation="average" />
+          <field field_ref="H1_fHQPn" operation="average" />
+          <field field_ref="H1_fHQPp" operation="average" />
+          <field field_ref="H1_fHKIn" operation="average" />
+          <field field_ref="H1_fHK1p" operation="average" />
+          <field field_ref="H2_fQPHc" operation="average" />
+          <field field_ref="H2_fQ1Hn" operation="average" />
+          <field field_ref="H2_fQ1Hp" operation="average" />
+          <field field_ref="H2_fHG3c" operation="average" />
+          <field field_ref="H2_fHQ1c" operation="average" />
+          <field field_ref="H2_fHQ1n" operation="average" />
+          <field field_ref="H2_fHQ1p" operation="average" />
+          <field field_ref="H2_fHQPc" operation="average" />
+          <field field_ref="H2_fHQPn" operation="average" />
+          <field field_ref="H2_fHQPp" operation="average" />
+          <field field_ref="H2_fHKIn" operation="average" />
+          <field field_ref="H2_fHK1p" operation="average" />
+          <field field_ref="Q6_remins_result" operation="average" />
         </file>
 
       </file_group>
