@@ -48,8 +48,8 @@
 
 %CPP	             cpp
 %FC                  ftn
-%FCFLAGS             -integer-size 32 -real-size 64 -O2 -fp-model source -zero -fpp -warn all
-%FFLAGS              -integer-size 32 -real-size 64 -O2 -fp-model source -zero -fpp -warn all
+%FCFLAGS             -integer-size 32 -real-size 64 -O3 -zero -fpp -warn all -traceback
+%FFLAGS              -integer-size 32 -real-size 64 -O3 -zero -fpp -warn all -funroll-loops -safe-cray-ptr -free -xHost -fp-model source -traceback
 %LD                  CC -Wl,"--allow-multiple-definition"
 # F2003 compliant compilers require key_nosignedzero:
 %FPPFLAGS            -P -C -traditional -Dkey_nosignedzero
