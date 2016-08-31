@@ -1175,6 +1175,48 @@ instances:
   erosion:
     model: ersem/benthic_erosion
   #Diagnostics:
+  PON:
+   model: weighted_sum
+   parameters:
+      n: 11
+      weight5: 0.0126
+   coupling:
+      term1: P1/n
+      term2: P2/n
+      term3: P3/n
+      term4: P4/n
+      term5: Z4/c
+      term6: Z5/n
+      term7: Z6/n
+      term8: B1/n
+      term9: R4/n
+      term10: R6/n
+      term11: R8/n
+  POP:
+   model: weighted_sum
+   parameters:
+      n: 11
+      weight5: 0.000786
+   coupling:
+      term1: P1/p
+      term2: P2/p
+      term3: P3/p
+      term4: P4/p
+      term5: Z4/c
+      term6: Z5/p
+      term7: Z6/p
+      term8: B1/p
+      term9: R4/p
+      term10: R6/p
+      term11: R8/p
+  POSi:
+   model: weighted_sum
+   parameters:
+      n: 3
+   coupling:
+      term1: P1/s
+      term2: R6/s
+      term3: R8/s
   P1_fPIRIc:
     model: weighted_sum
     parameters:
@@ -1489,6 +1531,20 @@ instances:
       term2: Z4/calcification
       term3: Z5/calcification
       term4: Z6/calcification
+  ben_PON:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Q6/n
+      term2: Q7/n
+  ben_POP:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Q6/p
+      term2: Q7/p
   benthic_denitrification_ammonification:
     model: horizontal_weighted_sum
     parameters:

@@ -659,7 +659,8 @@
           <!-- <field field_ref="light_ADY" operation="average" />
           <field field_ref="light_EIR" operation="average" /> -->
           <field field_ref="light_xEPS" operation="average" />
-          <field field_ref="O3_fairmg" operation="average" />
+          <field field_ref="O3_wind" operation="average" />
+          <field field_ref="O3_fair" operation="average" />
         </file>
 
         <file id="file60" name_suffix="_grid_T" description="tracer variables"  sync_freq="1d">
@@ -706,12 +707,17 @@
         <file id="file26" name_suffix="_ptrc_T" description="ocean tracers" >
           <field field_ref="R1_n" operation="average" />
           <field field_ref="R1_p" operation="average" />
+          <field field_ref="PON_result" operation="average" />
+          <field field_ref="POP_result" operation="average" />
+          <field field_ref="POSi_result" operation="average" />
           <field field_ref="O3_Om_cal" operation="average" />
           <field field_ref="Q1_n" operation="average" />
           <field field_ref="Q1_p" operation="average" />
           <field field_ref="Q6_s" operation="average" />
           <field field_ref="Q17_n" operation="average" />
           <field field_ref="Q17_p" operation="average" />
+          <field field_ref="ben_PON_result" operation="average" />
+          <field field_ref="ben_POP_result" operation="average" />
           <field field_ref="erosion_v_er" operation="average" />
           <field field_ref="erosion_v_er" name="max_erosion_v_er" operation="maximum" />
           <field field_ref="phytoplankton_uptake_oxN_result" operation="average" />
