@@ -828,7 +828,8 @@
           <field field_ref="Ymacro_fYQPn_result" operation="average" />
           <field field_ref="Ymacro_fYQPp_result" operation="average" />
           <field field_ref="Ymacro_fYKIn_result" operation="average" />
-          <field field_ref="Ymacro_fYK1p_result" operation="average" />          <field field_ref="Y4_fprey1c" name="Y4_faerbacc_result" operation="average" />
+          <field field_ref="Ymacro_fYK1p_result" operation="average" />
+          <field field_ref="Y4_fprey1c" name="Y4_faerbacc_result" operation="average" />
           <field field_ref="Y4_fprey1n" name="Y4_faerbacn_result" operation="average" />
           <field field_ref="Y4_fprey1p" name="Y4_faerbacp_result" operation="average" />
           <field field_ref="Y4_fprey2c" name="Y4_fanaerbacc_result" operation="average" />
