@@ -1569,3 +1569,84 @@ instances:
       weight1: 0.007
     coupling:
       term1: Q6/s
+  net_PelBen_POC:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 17
+      weight17: -1.
+   coupling:
+      term1: R4/dep1c
+      term2: R4/dep2c
+      term3: R6/dep1c
+      term4: R6/dep2c
+      term5: R8/dep1c
+      term6: R8/dep2c
+      term7: P1/dep1c
+      term8: P1/dep2c
+      term9: P1/dep3c
+      term10: P4/dep1c
+      term11: P4/dep2c
+      term12: P4/dep3c
+      term13: Y3/fprey1c
+      term14: Y3/fprey2c
+      term15: Y3/fprey3c
+      term16: Y3/fprey4c
+      term17: Q6/resuspension_flux_c
+  net_PelBen_PON:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 17
+      weight17: -1.
+   coupling:
+      term1: R4/dep1n
+      term2: R4/dep2n
+      term3: R6/dep1n
+      term4: R6/dep2n
+      term5: R8/dep1n
+      term6: R8/dep2n
+      term7: P1/dep1n
+      term8: P1/dep2n
+      term9: P1/dep3n
+      term10: P4/dep1n
+      term11: P4/dep2n
+      term12: P4/dep3n
+      term13: Y3/fprey1n
+      term14: Y3/fprey2n
+      term15: Y3/fprey3n
+      term16: Y3/fprey4n
+      term17: Q6/resuspension_flux_n
+  net_PelBen_POP:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 17
+      weight17: -1.
+   coupling:
+      term1: R4/dep1p
+      term2: R4/dep2p
+      term3: R6/dep1p
+      term4: R6/dep2p
+      term5: R8/dep1p
+      term6: R8/dep2p
+      term7: P1/dep1p
+      term8: P1/dep2p
+      term9: P1/dep3p
+      term10: P4/dep1p
+      term11: P4/dep2p
+      term12: P4/dep3p
+      term13: Y3/fprey1p
+      term14: Y3/fprey2p
+      term15: Y3/fprey3p
+      term16: Y3/fprey4p
+      term17: Q6/resuspension_flux_p
+  net_PelBen_POS:
+   model: horizontal_weighted_sum
+   parameters:
+      n: 6
+      weight6: -1.
+   coupling:
+      term1: R6/dep1s
+      term2: R8/dep1s
+      term3: P1/dep1s
+      term4: Y3/fprey1s
+      term5: Y3/fprey4s
+      term6: Q6/resuspension_flux_s

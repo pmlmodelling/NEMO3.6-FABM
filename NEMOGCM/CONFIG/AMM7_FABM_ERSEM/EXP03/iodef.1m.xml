@@ -647,6 +647,13 @@
           <!-- <field field_ref="G2_o_deep" operation="average" /> -->
           <field field_ref="G3_c" operation="average" />
           <!-- <field field_ref="ben_nit_G4n" operation="average" /> -->
+          <field field_ref="G3_c_pb_flux" operation="average" />
+          <field field_ref="K3_n_pb_flux" operation="average" />
+          <field field_ref="K4_n_pb_flux" operation="average" />
+          <field field_ref="K5_s_pb_flux" operation="average" />
+          <field field_ref="G2_o_pb_flux" operation="average" />
+          <field field_ref="bL2_bremin" operation="average" />
+          <field field_ref="net_PelBen_POC_result" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" />
           <!-- <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" /> -->
           <!-- <field field_ref="light_ADY" operation="average" />
@@ -781,6 +788,7 @@
           <field field_ref="Z6_fprey4n" name="Z6_fzoon_result" operation="average" />
           <field field_ref="Z6_fprey4p" name="Z6_fzoop_result" operation="average" />
           <field field_ref="pel_nit_rate" operation="average" />
+          <field field_ref="O2_fair" operation="average" />
           <field field_ref="ben_nit_nrate" operation="average" />
           <field field_ref="benthic_denitrification_ammonification_result" operation="average" />
           <field field_ref="Y2_fprey1c" name="Y2_faerbacc_result" operation="average" />
@@ -857,6 +865,9 @@
           <field field_ref="H2_fHKIn" operation="average" />
           <field field_ref="H2_fHK1p" operation="average" />
           <field field_ref="Q6_remins_result" operation="average" />
+          <field field_ref="net_PelBen_PON_result" operation="average" />
+          <field field_ref="net_PelBen_POP_result" operation="average" />
+          <field field_ref="net_PelBen_POS_result" operation="average" />
         </file>
 
       </file_group>
