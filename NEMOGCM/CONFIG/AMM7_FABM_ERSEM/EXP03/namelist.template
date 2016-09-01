@@ -55,7 +55,7 @@
    ppe2_deg    =    999999.0
    ppe2_m      =    999999.0
    ppglam0     =    999999.0
-   ppgphi0     =    999999. 
+   ppgphi0     =    999999.
    pphmax      =    5720.0
    ppkth       =    23.563
    ppkth2      =    999999.0
@@ -77,7 +77,7 @@
 !          !           !  (if <0  months)     !   name   !  (logical)   ! (T/F) ! 'monthly'  ! filename ! pairing  !
    sn_tem  = 'inits.nc', -1,'tb',  .true.  , .true., 'yearly'   , ' '      , ' '
    sn_sal  = 'inits.nc', -1,'sb',  .true.  , .true., 'yearly'   , ''       , ' '
-!   
+!
    cn_dir        = './'     !  root directory for the location of the runoff files
    ln_tsd_init   = .false.  !  Initialisation of ocean T & S with T &S input data (T) or not (F)
    ln_tsd_tradmp = .false.   !  damping of ocean T & S toward T &S input data (T) or not (F)
@@ -93,17 +93,17 @@
    ln_blk_core = .true.    !  CORE bulk formulation                     (T => fill namsbc_core)
    ln_blk_mfs  = .false.   !  MFS bulk formulation                      (T => fill namsbc_mfs )
 !  ln_cpl      = .false.   !  Coupled formulation                       (T => fill namsbc_cpl )
-   ln_apr_dyn  = .true.    !  Patm gradient added in ocean & ice Eqs.   (T => fill namsbc_apr ) 
-   nn_ice      = 0         !  =0 no ice boundary condition   , 
+   ln_apr_dyn  = .true.    !  Patm gradient added in ocean & ice Eqs.   (T => fill namsbc_apr )
+   nn_ice      = 0         !  =0 no ice boundary condition   ,
                            !  =1 use observed ice-cover      ,
                            !  =2 ice-model used                         ("key_lim3" or "key_lim2)
 !  nn_ice_embd = 1         !  =0 levitating ice (no mass exchange, concentration/dilution effect)
                            !  =1 levitating ice with mass and salt exchange but no presure effect
                            !  =2 embedded sea-ice (full salt and mass exchanges and pressure)
-   ln_dm2dc    = .false.   !  daily mean to diurnal cycle on short wave  
+   ln_dm2dc    = .false.   !  daily mean to diurnal cycle on short wave
    ln_rnf      = .true.     !  runoffs                                   (T => fill namsbc_rnf)
-   ln_ssr      = .false.    !  Sea Surface Restoring on T and/or S       (T => fill namsbc_ssr)  
-   nn_fwb      = 0         !  FreshWater Budget: =0 unchecked  
+   ln_ssr      = .false.    !  Sea Surface Restoring on T and/or S       (T => fill namsbc_ssr)
+   nn_fwb      = 0         !  FreshWater Budget: =0 unchecked
                            !     =1 global mean of e-p-r set to zero at each time step
                            !     =2 annual global mean of e-p-r set to zero
                            !     =3 global emp set to zero and spread out over erp area
@@ -161,12 +161,12 @@ sn_wndj='CUT_ERAI_INCLUDE_MSLP',3,'V10',.true.,.false.,'daily','weights_erai_amm
 !  sn_prec     = 'flx'             ,       3          , 'TP'      ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
 !  sn_snow     = 'flx'             ,       3          , 'SF'      ,   .true.     , .false. , 'yearly'  ,'ERA_INT_AMM7_bilin', ''  , ' '
    cn_dir      = './fluxes/'      !  root directory for the location of the bulk files
-   ln_taudif   = .false.   !  HF tau contribution: use "mean of stress module - module of the mean stress" data 
+   ln_taudif   = .false.   !  HF tau contribution: use "mean of stress module - module of the mean stress" data
    rn_zqt      = 2.        !  Air temperature and humidity reference height (m) (ln_bulk2z)
    rn_zu       = 10.        !  Wind vector reference height (m)                  (ln_bulk2z)
    rn_pfac     = 1.        !  multiplicative factor for precipitation (total & snow)
    rn_efac     = 1.        !  multiplicative factor for evaporation (0. or 1.)
-   rn_vfac     = 0.        !  multiplicative factor for ocean/ice velocity 
+   rn_vfac     = 0.        !  multiplicative factor for ocean/ice velocity
                            !  in the calculation of the wind stress (0.=absolute winds or 1.=relative winds)
 /
 !-----------------------------------------------------------------------
@@ -204,7 +204,7 @@ sn_wndj='CUT_ERAI_INCLUDE_MSLP',3,'V10',.true.,.false.,'daily','weights_erai_amm
    sn_apr='CUT_ERAI_INCLUDE_MSLP',3,'MSL',.true.,.false.,'daily','weights_erai_amm7_bicubic.nc','','CUT_ERAI_LSM.nc'
    cn_dir     = 'fluxes/'         !  root directory for the location of the bulk files
    ln_ref_apr = .false.           !  ref. pressure: global mean Patm (T) or a constant (F)
-   ln_apr_obc = .true.  	  !  inverse barometer added to OBC ssh data 
+   ln_apr_obc = .true.  	  !  inverse barometer added to OBC ssh data
 /
 !-----------------------------------------------------------------------
 &namsbc_ssr    !   surface boundary condition : sea surface restoring
@@ -293,13 +293,13 @@ sn_wndj='CUT_ERAI_INCLUDE_MSLP',3,'V10',.true.,.false.,'daily','weights_erai_amm
                                           !  = 1, bdy data are read in 'bdydata   .nc' files
                                           !  = 2, use tidal harmonic forcing data from files
                                           !  = 3, use external data AND tidal harmonic forcing
-    cn_dyn3d      =  'zerograd','zerograd'        !  
+    cn_dyn3d      =  'zerograd','zerograd'        !
     nn_dyn3d_dta  =  0,0                  !  = 0, bdy data are equal to the initial state
                                           !  = 1, bdy data are read in 'bdydata   .nc' files
-    cn_tra        =  'frs','frs'         ! 
+    cn_tra        =  'frs','frs'         !
     nn_tra_dta    =  1,1                  !  = 0, bdy data are equal to the initial state
                                           !  = 1, bdy data are read in 'bdydata   .nc' files
-    cn_ice_lim      =  'none','none'      !  
+    cn_ice_lim      =  'none','none'      !
     nn_ice_lim_dta  =  0,0                !  = 0, bdy data are equal to the initial state
                                           !  = 1, bdy data are read in 'bdydata   .nc' files
     rn_ice_tem      = 270.                !  lim3 only: arbitrary temperature of incoming sea ice
@@ -308,7 +308,7 @@ sn_wndj='CUT_ERAI_INCLUDE_MSLP',3,'V10',.true.,.false.,'daily','weights_erai_amm
 
     ln_tra_dmp    =.false.                !  open boudaries conditions for tracers
     ln_dyn3d_dmp  =.false.                !  open boundary condition for baroclinic velocities
-    rn_time_dmp   =  8.,8.                   ! Damping time scale in days 
+    rn_time_dmp   =  8.,8.                   ! Damping time scale in days
     rn_time_dmp_out =  64.,64.                 ! Outflow damping time scale
     nn_rimwidth   = 10,10                 !  width of the relaxation zone
     ln_vol        = .false.                !  total volume correction (see nn_volctl parameter)
@@ -418,9 +418,9 @@ sn_wndj='CUT_ERAI_INCLUDE_MSLP',3,'V10',.true.,.false.,'daily','weights_erai_amm
    rn_avt0     =  0.1e-6   !  vertical eddy diffusivity [m2/s]          (background Kz if not "key_zdfcst")
    nn_avb      =    0      !  profile for background avt & avm (=1) or not (=0)
    nn_havtb    =    0      !  horizontal shape for avtb (=1) or not (=0)
-   ln_zdfevd   = .false.   !  enhanced vertical diffusion (evd) (T) or not (F) 
+   ln_zdfevd   = .false.   !  enhanced vertical diffusion (evd) (T) or not (F)
    nn_evdm     =    1      !  evd apply on tracer (=0) or on tracer and momentum (=1)
-   rn_avevd    =  100.     !  evd mixing coefficient [m2/s] 
+   rn_avevd    =  100.     !  evd mixing coefficient [m2/s]
    ln_zdfnpc   = .false.   !  Non-Penetrative Convective algorithm (T) or not (F)
    nn_npc      =    1            !  frequency of application of npc
    nn_npcp     =  365            !  npc control print frequency
@@ -532,7 +532,6 @@ sn_wndj='CUT_ERAI_INCLUDE_MSLP',3,'V10',.true.,.false.,'daily','weights_erai_amm
 !-----------------------------------------------------------------------
 /
 !-----------------------------------------------------------------------
-&nam_vvl  !   
+&nam_vvl  !
 !-----------------------------------------------------------------------
 /
-

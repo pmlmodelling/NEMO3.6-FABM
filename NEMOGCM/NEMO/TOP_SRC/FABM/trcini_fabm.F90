@@ -29,17 +29,17 @@ MODULE trcini_fabm
    PRIVATE
 
 #if defined key_git_version
-#include "gitversion.h90"   
+#include "gitversion.h90"
    CHARACTER(len=*),parameter :: git_commit_id = _NEMO_COMMIT_ID_
    CHARACTER(len=*),parameter :: git_branch_name = _NEMO_BRANCH_
 #endif
-   
+
    PUBLIC   trc_ini_fabm   ! called by trcini.F90 module
    PUBLIC   nemo_fabm_init
 
    !!----------------------------------------------------------------------
    !! NEMO/TOP 3.3 , NEMO Consortium (2010)
-   !! $Id$ 
+   !! $Id$
    !! Software governed by the CeCILL licence     (NEMOGCM/NEMO_CeCILL.txt)
    !!----------------------------------------------------------------------
 CONTAINS
@@ -61,7 +61,7 @@ CONTAINS
       jpdia2d = jpdia2d + size(model%horizontal_diagnostic_variables)
       jpdia3d = jpdia3d + size(model%diagnostic_variables)
       jpdiabio = jpdiabio + jp_fabm
-      
+
       IF (lwp) THEN
          ! write field_def_fabm.xml on lead process
          OPEN(UNIT=xml_unit,FILE='field_def_fabm.xml',ACTION='WRITE',STATUS='REPLACE')
@@ -71,9 +71,12 @@ CONTAINS
          WRITE (xml_unit,1000) ' <field_group id="ptrc_T" grid_ref="grid_T_3D">'
          DO jn=1,jp_fabm
             CALL write_variable_xml(xml_unit,model%state_variables(jn))
+#if defined key_trdtrc
+            CALL write_trends_xml(xml_unit,model%state_variables(jn))
+#endif
          END DO
          WRITE (xml_unit,1000) ' </field_group>'
-      
+
          WRITE (xml_unit,1000) ' <field_group id="sf_T" grid_ref="grid_T_2D">'
          DO jn=1,jp_fabm_surface
             CALL write_variable_xml(xml_unit,model%surface_state_variables(jn))
@@ -138,12 +141,48 @@ CONTAINS
       CASE default
          IF(lwp) WRITE(numout,*) ' trc_ini_fabm: Failing to initialise output of variable '//TRIM(variable%name)//': Output of '//TRIM(ADJUSTL(string_dimensions))//'-dimensional variables not supported!!!'
       END SELECT
-          
+
    END SUBROUTINE write_variable_xml
+
+   SUBROUTINE write_trends_xml(xml_unit,variable,flag_grid_ref)
+      INTEGER,INTENT(IN) :: xml_unit
+      INTEGER,INTENT(IN),OPTIONAL :: flag_grid_ref
+      CLASS (type_external_variable),INTENT(IN) :: variable
+
+      INTEGER :: number_dimensions,i
+      CHARACTER(LEN=20) :: missing_value,string_dimensions
+      CHARACTER(LEN=3),DIMENSION(12),PARAMETER :: trd_tags = (/ &
+        'XAD','YAD','ZAD','LDF','BBL','FOR','ZDF','DMP','SMS','ATF', &
+        'RDB','RDN' /)
+
+      ! Check variable dimension for grid_ref specificaiton.
+      ! Default is to not specify the grid_ref in the field definition.
+      IF (present(flag_grid_ref)) THEN
+          number_dimensions=flag_grid_ref
+      ELSE
+          number_dimensions=-1 !default, don't specify grid_ref
+      ENDIF
+
+      WRITE (missing_value,'(E9.3)') 0.0E0
+      WRITE (string_dimensions,'(I1)') number_dimensions
+      SELECT CASE (number_dimensions)
+      CASE (3)
+        DO i=1,12
+         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_tags(i))//'_'//TRIM(variable%name)//'" long_name="'//TRIM(variable%long_name)//' '//TRIM(trd_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
+        END DO
+      CASE (-1)
+        DO i=1,12
+         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_tags(i))//'_'//TRIM(variable%name)//'" long_name="'//TRIM(variable%long_name)//' '//TRIM(trd_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
+        END DO
+      CASE default
+         IF(lwp) WRITE(numout,*) ' trc_ini_fabm: Failing to initialise trends of variable '//TRIM(variable%name)//': Output of '//TRIM(ADJUSTL(string_dimensions))//'-dimensional trends not supported!!!'
+      END SELECT
+
+   END SUBROUTINE write_trends_xml
 
    SUBROUTINE trc_ini_fabm
       !!----------------------------------------------------------------------
-      !!                     ***  trc_ini_fabm  ***  
+      !!                     ***  trc_ini_fabm  ***
       !!
       !! ** Purpose :   initialization for FABM model
       !!
@@ -168,13 +207,13 @@ CONTAINS
       call fabm_initialize_library()
 #if defined key_git_version
       version => first_module_version
-      
+
       do while (associated(version))
          IF(lwp) WRITE(numout,*)  ' '//trim(version%module_name)//' version:   ',trim(version%version_string)
          version => version%next
       end do
 #endif
-      
+
       ! Log mapping of FABM states:
       IF (lwp) THEN
          IF (jp_fabm.gt.0) WRITE(numout,*) " FABM tracers:"
@@ -196,7 +235,7 @@ CONTAINS
                ") [",trim(model%bottom_state_variables(jn)%units),"]"
          ENDDO
       ENDIF
-      
+
    END SUBROUTINE trc_ini_fabm
 
 #else

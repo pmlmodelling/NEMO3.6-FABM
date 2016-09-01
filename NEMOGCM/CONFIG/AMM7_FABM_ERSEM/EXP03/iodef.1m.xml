@@ -13,6 +13,7 @@
     -->
     <field_definition src="./field_def.xml"/>
     <field_definition src="./field_def_fabm.xml"/>
+    <field_definition src="./field_def_custom.xml"/>
     <!--
 ============================================================================================================
 =                                           output files definition                                        =
@@ -670,6 +671,44 @@
           <field field_ref="mldr10_1"     operation="average"/>
           <field field_ref="qsr"    operation="average"      long_name="surface_net_downward_shortwave_flux"           />
       	  <field field_ref="qt"     operation="average"      long_name="surface_net_downward_total_heat_flux"          />
+          <field field_ref="XAD_O3_c" operation="average" />
+          <field field_ref="XAD_N3_n" operation="average" />
+          <field field_ref="XAD_N4_n" operation="average" />
+          <field field_ref="XAD_N1_p" operation="average" />
+          <field field_ref="XAD_N5_s" operation="average" />
+          <field field_ref="XAD_Phyto_c" operation="average" />
+          <field field_ref="XAD_Phyto_n" operation="average" />
+          <field field_ref="XAD_Phyto_p" operation="average" />
+          <field field_ref="XAD_P1_s" operation="average" />
+          <field field_ref="XAD_Heterotrophs_c" operation="average" />
+          <field field_ref="XAD_Heterotrophs_n" operation="average" />
+          <field field_ref="XAD_Heterotrophs_p" operation="average" />
+          <field field_ref="XAD_DO_c" operation="average" />
+          <field field_ref="XAD_R1_n" operation="average" />
+          <field field_ref="XAD_R1_p" operation="average" />
+          <field field_ref="XAD_PO_c" operation="average" />
+          <field field_ref="XAD_PO_n" operation="average" />
+          <field field_ref="XAD_PO_p" operation="average" />
+          <field field_ref="XAD_PO_s" operation="average" />
+          <field field_ref="YAD_O3_c" operation="average" />
+          <field field_ref="YAD_N3_n" operation="average" />
+          <field field_ref="YAD_N4_n" operation="average" />
+          <field field_ref="YAD_N1_p" operation="average" />
+          <field field_ref="YAD_N5_s" operation="average" />
+          <field field_ref="YAD_Phyto_c" operation="average" />
+          <field field_ref="YAD_Phyto_n" operation="average" />
+          <field field_ref="YAD_Phyto_p" operation="average" />
+          <field field_ref="YAD_P1_s" operation="average" />
+          <field field_ref="YAD_Heterotrophs_c" operation="average" />
+          <field field_ref="YAD_Heterotrophs_n" operation="average" />
+          <field field_ref="YAD_Heterotrophs_p" operation="average" />
+          <field field_ref="YAD_DO_c" operation="average" />
+          <field field_ref="YAD_R1_n" operation="average" />
+          <field field_ref="YAD_R1_p" operation="average" />
+          <field field_ref="YAD_PO_c" operation="average" />
+          <field field_ref="YAD_PO_n" operation="average" />
+          <field field_ref="YAD_PO_p" operation="average" />
+          <field field_ref="YAD_PO_s" operation="average" />
         </file>
 
         <file id="file61" name_suffix="_grid_U" description="tracer variables"  sync_freq="1d">
