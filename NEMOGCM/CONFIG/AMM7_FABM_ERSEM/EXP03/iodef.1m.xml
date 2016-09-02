@@ -709,6 +709,8 @@
           <field field_ref="YAD_PO_n" operation="average" />
           <field field_ref="YAD_PO_p" operation="average" />
           <field field_ref="YAD_PO_s" operation="average" />
+          <field field_ref="VMV_PO_c" operation="average" />
+          <field field_ref="VMV_L2_c" operation="average" />
         </file>
 
         <file id="file61" name_suffix="_grid_U" description="tracer variables"  sync_freq="1d">

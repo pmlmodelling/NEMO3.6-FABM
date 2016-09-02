@@ -151,9 +151,9 @@ CONTAINS
 
       INTEGER :: number_dimensions,i
       CHARACTER(LEN=20) :: missing_value,string_dimensions
-      CHARACTER(LEN=3),DIMENSION(12),PARAMETER :: trd_tags = (/ &
+      CHARACTER(LEN=3),DIMENSION(13),PARAMETER :: trd_tags = (/ &
         'XAD','YAD','ZAD','LDF','BBL','FOR','ZDF','DMP','SMS','ATF', &
-        'RDB','RDN' /)
+        'RDB','RDN','VMV' /)
 
       ! Check variable dimension for grid_ref specificaiton.
       ! Default is to not specify the grid_ref in the field definition.
@@ -165,13 +165,14 @@ CONTAINS
 
       WRITE (missing_value,'(E9.3)') 0.0E0
       WRITE (string_dimensions,'(I1)') number_dimensions
+      IF(lwp) WRITE(numout,*) "Size of trd_tags:",size(trd_tags)
       SELECT CASE (number_dimensions)
       CASE (3)
-        DO i=1,12
+        DO i=1,size(trd_tags)
          WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_tags(i))//'_'//TRIM(variable%name)//'" long_name="'//TRIM(variable%long_name)//' '//TRIM(trd_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
         END DO
       CASE (-1)
-        DO i=1,12
+        DO i=1,size(trd_tags)
          WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_tags(i))//'_'//TRIM(variable%name)//'" long_name="'//TRIM(variable%long_name)//' '//TRIM(trd_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
         END DO
       CASE default

@@ -18,6 +18,9 @@ MODULE trcsms_fabm
    USE trcbc
    USE trd_oce
    USE trdtrc
+   #if defined key_trdtrc && defined key_iomput
+      USE trdtrc_oce
+   #endif
 
    USE oce, only: tsn  ! Needed?
    USE sbc_oce, only: lk_oasis
@@ -156,7 +159,7 @@ CONTAINS
       ! ------------------------------------
 
       zalfg = 0.5e-4 * grav ! FABM wants dbar, convert from Pa
-      
+
       rho = rau0 * ( 1. + rhd )
 
       prn(:,:,1) = 10.1325 + zalfg * fse3t(:,:,1) * rho(:,:,1)
@@ -167,7 +170,7 @@ CONTAINS
          prn(:,:,jk) = prn(:,:,jk-1) + zalfg * ( &
                      fse3t(:,:,jk-1) * rho(:,:,jk-1)  &
                      + fse3t(:,:,jk) * rho(:,:,jk) )
-      END DO  
+      END DO
 
       ! Bottom stress
       taubot(:,:) = 0._wp
@@ -328,7 +331,7 @@ CONTAINS
       IF( neuler == 0 .AND. kt == nittrc000 ) THEN        ! Euler time-stepping at first time-step
          !                                                ! (only swap)
          fabm_st2Dn(:,:,:) = fabm_st2Da(:,:,:)
-         !                                              
+         !
       ELSE
          ! Update now state + Asselin filter time stepping
          fabm_st2Db(:,:,:) = (1._wp - 2._wp*atfp) * fabm_st2Dn(:,:,:) + &
@@ -369,6 +372,9 @@ CONTAINS
       ALLOCATE(zwgt_if(jpk,jp_fabm))
       ALLOCATE(flux_if(jpk,jp_fabm))
       ALLOCATE(current_total(jpi,SIZE(model%conserved_quantities)))
+#if defined key_trdtrc && defined key_iomput
+      IF( lk_trdtrc ) ALLOCATE(tr_vmv(jpi,jpj,jpk,jp_fabm))
+#endif
 
       trc_sms_fabm_alloc = 0      ! set to zero if no array to be allocated
       !
@@ -429,7 +435,7 @@ CONTAINS
 
       ! Check whether FABM has all required data
       call fabm_check_ready(model)
-      
+
       ! Initialize state
       DO jj=1,jpj
          CALL fabm_initialize_surface_state(model,1,jpi,jj)
@@ -445,11 +451,11 @@ CONTAINS
       DO jn=1,jp_fabm
         IF (model%state_variables(jn)%minimum.ge.0) THEN
           lk_rad_fabm(jn)=.TRUE.
-          IF(lwp) WRITE(numout,*) 'FABM clipping for '//TRIM(model%state_variables(jn)%name)//' activated.'   
+          IF(lwp) WRITE(numout,*) 'FABM clipping for '//TRIM(model%state_variables(jn)%name)//' activated.'
         END IF
       END DO
 
-      ! Mask land points in states with zeros, not nice, but coherent 
+      ! Mask land points in states with zeros, not nice, but coherent
       ! with NEMO "convention":
       DO jn=jp_fabm0,jp_fabm1
         WHERE (tmask==0._wp)

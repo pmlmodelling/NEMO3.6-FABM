@@ -22,5 +22,7 @@
   <field id="YAD_PO_p" long_name="Particulate organic phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" > YAD_R4_p + YAD_R6_p + YAD_R8_p </field>
   <field id="YAD_PO_s" long_name="Particulate organic silicate YAD trend" unit="mmol Si/m^3/s" default_value="0.000E+00" > YAD_R6_s + YAD_R8_s </field>
   <field id="YAD_DO_c" long_name="Phytoplankton carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" > YAD_R1_c + YAD_R2_c + YAD_R3_c </field>
+  <field id="VMV_PO_c" long_name="Particulate organic carbon sinking trend" unit="mg C/m^3/s" default_value="0.000E+00" > VMV_R4_c + VMV_R6_c + VMV_R8_c + VMV_P1_c + VMV_P4_c </field>
+
  </field_group>
 </field_definition>

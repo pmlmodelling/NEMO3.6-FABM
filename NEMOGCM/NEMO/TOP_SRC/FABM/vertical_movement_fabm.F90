@@ -16,6 +16,10 @@ MODULE vertical_movement_fabm
    USE par_fabm
    USE fabm
    USE dom_oce
+#if defined key_trdtrc && defined key_iomput
+   USE iom
+   USE trdtrc_oce
+#endif
 
    IMPLICIT NONE
 
@@ -30,6 +34,9 @@ MODULE vertical_movement_fabm
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)   :: w_if
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)   :: zwgt_if
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)   :: flux_if
+#if defined key_trdtrc && defined key_iomput
+   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:,:,:) :: tr_vmv
+#endif
 
    CONTAINS
 
@@ -40,7 +47,7 @@ MODULE vertical_movement_fabm
       !! ** Purpose :   compute vertical movement of FABM tracers
       !!
       !! ** Method  : Sets additional vertical velocity field and computes
-      !!              resulting advection using a conservative 3rd upwind 
+      !!              resulting advection using a conservative 3rd upwind
       !!              scheme with QUICKEST TVD limiter, based on GOTM
       !!              module adv_center.F90 (www.gotm.net). Currently assuming
       !!              zero flux at sea surface and sea floor.
@@ -52,6 +59,13 @@ MODULE vertical_movement_fabm
       REAL(wp) :: cmax_no,z2dt
       REAL(wp),DIMENSION(jpk) :: tr_it,tr_u,tr_d,tr_c,tr_slope,c_no,flux_lim
       REAL(wp),DIMENSION(jpk) :: phi_lim,x_fac
+#if defined key_trdtrc
+      CHARACTER (len=20) :: cltra
+#endif
+
+#if defined key_trdtrc && defined key_iomput
+      IF( lk_trdtrc ) tr_vmv = 0.0_wp
+#endif
 
       IF( neuler == 0 .AND. kt == nittrc000 ) THEN
           z2dt = rdt                  ! set time step size (Euler)
@@ -103,7 +117,7 @@ MODULE vertical_movement_fabm
                   ! effective Courant number:
                   c_no=c_no/n_iter
 
-                  tr_it(1:k_floor)=trb(ji,jj,1:k_floor,jp_fabm_m1+jn) 
+                  tr_it(1:k_floor)=trb(ji,jj,1:k_floor,jp_fabm_m1+jn)
                   DO n_count=1,n_iter ! Iterative loop
                      !Compute slope ratio
                      IF (k_floor.gt.2) THEN !More than 2 vertical wet points
@@ -155,7 +169,7 @@ MODULE vertical_movement_fabm
                         tr_slope(2:k_floor)=SIGN(1._wp,w_if(2:k_floor,jn))* &
                               (tr_c(2:k_floor)-tr_u(2:k_floor))*1.e10_wp
                      ENDWHERE
-                     
+
                      !QUICKEST flux limiter:
                      x_fac(2:k_floor)=(1._wp-2._wp*c_no(2:k_floor))/6._wp
                      phi_lim(2:k_floor)=(0.5_wp+x_fac(2:k_floor)) + &
@@ -185,12 +199,25 @@ MODULE vertical_movement_fabm
                   tra(ji,jj,1:k_floor,jp_fabm_m1+jn) = &
                      tra(ji,jj,1:k_floor,jp_fabm_m1+jn) + &
                      (tr_it(1:k_floor) - trb(ji,jj,1:k_floor,jp_fabm_m1+jn))/z2dt
+#if defined key_trdtrc && defined key_iomput
+                  IF( lk_trdtrc .AND. ln_trdtrc( jp_fabm_m1+jn ) ) THEN
+                    tr_vmv(ji,jj,1:k_floor,jn)=(tr_it(1:k_floor) - trb(ji,jj,1:k_floor,jn))/z2dt
+                  END IF
+#endif
                ENDDO ! State loop
             END IF ! Level check
          END DO ! i-loop
       END DO ! j-loop
+#if defined key_trdtrc && defined key_iomput
+      DO jn=1,jp_fabm ! State loop
+        IF( lk_trdtrc .AND. ln_trdtrc(jp_fabm_m1+jn) ) THEN
+          cltra = 'VMV_'//TRIM(ctrcnm(jp_fabm_m1+jn))
+          CALL iom_put( cltra,  tr_vmv(:,:,:,jn) )
+        END IF
+      ENDDO
+#endif
 
    END SUBROUTINE compute_vertical_movement
-   
+
 #endif
 END MODULE

@@ -13,6 +13,7 @@
   <field id="ATF_light_ADY" long_name="light gelbstoff absorption ATF trend" unit="1/m/s" default_value="0.000E+00" />
   <field id="RDB_light_ADY" long_name="light gelbstoff absorption RDB trend" unit="1/m/s" default_value="0.000E+00" />
   <field id="RDN_light_ADY" long_name="light gelbstoff absorption RDN trend" unit="1/m/s" default_value="0.000E+00" />
+  <field id="VMV_light_ADY" long_name="light gelbstoff absorption VMV trend" unit="1/m/s" default_value="0.000E+00" />
   <field id="N1_p" long_name="phosphate phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="XAD_N1_p" long_name="phosphate phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="YAD_N1_p" long_name="phosphate phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
@@ -26,6 +27,7 @@
   <field id="ATF_N1_p" long_name="phosphate phosphorus ATF trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDB_N1_p" long_name="phosphate phosphorus RDB trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDN_N1_p" long_name="phosphate phosphorus RDN trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_N1_p" long_name="phosphate phosphorus VMV trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="N3_n" long_name="nitrate nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_N3_n" long_name="nitrate nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_N3_n" long_name="nitrate nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -39,6 +41,7 @@
   <field id="ATF_N3_n" long_name="nitrate nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_N3_n" long_name="nitrate nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_N3_n" long_name="nitrate nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_N3_n" long_name="nitrate nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="N4_n" long_name="ammonium nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_N4_n" long_name="ammonium nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_N4_n" long_name="ammonium nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -52,6 +55,7 @@
   <field id="ATF_N4_n" long_name="ammonium nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_N4_n" long_name="ammonium nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_N4_n" long_name="ammonium nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_N4_n" long_name="ammonium nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="N5_s" long_name="silicate silicate" unit="mmol Si/m^3" default_value="-.200E+21" />
   <field id="XAD_N5_s" long_name="silicate silicate XAD trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="YAD_N5_s" long_name="silicate silicate YAD trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
@@ -65,6 +69,7 @@
   <field id="ATF_N5_s" long_name="silicate silicate ATF trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="RDB_N5_s" long_name="silicate silicate RDB trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="RDN_N5_s" long_name="silicate silicate RDN trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_N5_s" long_name="silicate silicate VMV trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="O2_o" long_name="oxygen oxygen" unit="mmol O_2/m^3" default_value="-.200E+21" />
   <field id="XAD_O2_o" long_name="oxygen oxygen XAD trend" unit="mmol O_2/m^3/s" default_value="0.000E+00" />
   <field id="YAD_O2_o" long_name="oxygen oxygen YAD trend" unit="mmol O_2/m^3/s" default_value="0.000E+00" />
@@ -78,6 +83,7 @@
   <field id="ATF_O2_o" long_name="oxygen oxygen ATF trend" unit="mmol O_2/m^3/s" default_value="0.000E+00" />
   <field id="RDB_O2_o" long_name="oxygen oxygen RDB trend" unit="mmol O_2/m^3/s" default_value="0.000E+00" />
   <field id="RDN_O2_o" long_name="oxygen oxygen RDN trend" unit="mmol O_2/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_O2_o" long_name="oxygen oxygen VMV trend" unit="mmol O_2/m^3/s" default_value="0.000E+00" />
   <field id="O3_c" long_name="carbonate total dissolved inorganic carbon" unit="mmol C/m^3" default_value="-.200E+21" />
   <field id="XAD_O3_c" long_name="carbonate total dissolved inorganic carbon XAD trend" unit="mmol C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_O3_c" long_name="carbonate total dissolved inorganic carbon YAD trend" unit="mmol C/m^3/s" default_value="0.000E+00" />
@@ -91,6 +97,7 @@
   <field id="ATF_O3_c" long_name="carbonate total dissolved inorganic carbon ATF trend" unit="mmol C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_O3_c" long_name="carbonate total dissolved inorganic carbon RDB trend" unit="mmol C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_O3_c" long_name="carbonate total dissolved inorganic carbon RDN trend" unit="mmol C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_O3_c" long_name="carbonate total dissolved inorganic carbon VMV trend" unit="mmol C/m^3/s" default_value="0.000E+00" />
   <field id="O3_bioalk" long_name="carbonate bioalkalinity" unit="umol/kg" default_value="-.200E+21" />
   <field id="XAD_O3_bioalk" long_name="carbonate bioalkalinity XAD trend" unit="umol/kg/s" default_value="0.000E+00" />
   <field id="YAD_O3_bioalk" long_name="carbonate bioalkalinity YAD trend" unit="umol/kg/s" default_value="0.000E+00" />
@@ -104,6 +111,7 @@
   <field id="ATF_O3_bioalk" long_name="carbonate bioalkalinity ATF trend" unit="umol/kg/s" default_value="0.000E+00" />
   <field id="RDB_O3_bioalk" long_name="carbonate bioalkalinity RDB trend" unit="umol/kg/s" default_value="0.000E+00" />
   <field id="RDN_O3_bioalk" long_name="carbonate bioalkalinity RDN trend" unit="umol/kg/s" default_value="0.000E+00" />
+  <field id="VMV_O3_bioalk" long_name="carbonate bioalkalinity VMV trend" unit="umol/kg/s" default_value="0.000E+00" />
   <field id="B1_c" long_name="bacteria carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_B1_c" long_name="bacteria carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_B1_c" long_name="bacteria carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -117,6 +125,7 @@
   <field id="ATF_B1_c" long_name="bacteria carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_B1_c" long_name="bacteria carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_B1_c" long_name="bacteria carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_B1_c" long_name="bacteria carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="B1_n" long_name="bacteria nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_B1_n" long_name="bacteria nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_B1_n" long_name="bacteria nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -130,6 +139,7 @@
   <field id="ATF_B1_n" long_name="bacteria nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_B1_n" long_name="bacteria nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_B1_n" long_name="bacteria nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_B1_n" long_name="bacteria nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="B1_p" long_name="bacteria phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="XAD_B1_p" long_name="bacteria phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="YAD_B1_p" long_name="bacteria phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
@@ -143,6 +153,7 @@
   <field id="ATF_B1_p" long_name="bacteria phosphorus ATF trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDB_B1_p" long_name="bacteria phosphorus RDB trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDN_B1_p" long_name="bacteria phosphorus RDN trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_B1_p" long_name="bacteria phosphorus VMV trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="P1_c" long_name="diatoms carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_P1_c" long_name="diatoms carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P1_c" long_name="diatoms carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -156,6 +167,7 @@
   <field id="ATF_P1_c" long_name="diatoms carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P1_c" long_name="diatoms carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P1_c" long_name="diatoms carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P1_c" long_name="diatoms carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="P1_n" long_name="diatoms nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_P1_n" long_name="diatoms nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P1_n" long_name="diatoms nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -169,6 +181,7 @@
   <field id="ATF_P1_n" long_name="diatoms nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P1_n" long_name="diatoms nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P1_n" long_name="diatoms nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P1_n" long_name="diatoms nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="P1_p" long_name="diatoms phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="XAD_P1_p" long_name="diatoms phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P1_p" long_name="diatoms phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
@@ -182,6 +195,7 @@
   <field id="ATF_P1_p" long_name="diatoms phosphorus ATF trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P1_p" long_name="diatoms phosphorus RDB trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P1_p" long_name="diatoms phosphorus RDN trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P1_p" long_name="diatoms phosphorus VMV trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="P1_Chl" long_name="diatoms chlorophyll a" unit="mg/m^3" default_value="-.200E+21" />
   <field id="XAD_P1_Chl" long_name="diatoms chlorophyll a XAD trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P1_Chl" long_name="diatoms chlorophyll a YAD trend" unit="mg/m^3/s" default_value="0.000E+00" />
@@ -195,6 +209,7 @@
   <field id="ATF_P1_Chl" long_name="diatoms chlorophyll a ATF trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P1_Chl" long_name="diatoms chlorophyll a RDB trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P1_Chl" long_name="diatoms chlorophyll a RDN trend" unit="mg/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P1_Chl" long_name="diatoms chlorophyll a VMV trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="P1_s" long_name="diatoms silicate" unit="mmol Si/m^3" default_value="-.200E+21" />
   <field id="XAD_P1_s" long_name="diatoms silicate XAD trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P1_s" long_name="diatoms silicate YAD trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
@@ -208,6 +223,7 @@
   <field id="ATF_P1_s" long_name="diatoms silicate ATF trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P1_s" long_name="diatoms silicate RDB trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P1_s" long_name="diatoms silicate RDN trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P1_s" long_name="diatoms silicate VMV trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="L2_c" long_name="calcite carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_L2_c" long_name="calcite carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_L2_c" long_name="calcite carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -221,6 +237,7 @@
   <field id="ATF_L2_c" long_name="calcite carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_L2_c" long_name="calcite carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_L2_c" long_name="calcite carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_L2_c" long_name="calcite carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="P2_c" long_name="nanophytoplankton carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_P2_c" long_name="nanophytoplankton carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P2_c" long_name="nanophytoplankton carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -234,6 +251,7 @@
   <field id="ATF_P2_c" long_name="nanophytoplankton carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P2_c" long_name="nanophytoplankton carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P2_c" long_name="nanophytoplankton carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P2_c" long_name="nanophytoplankton carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="P2_n" long_name="nanophytoplankton nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_P2_n" long_name="nanophytoplankton nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P2_n" long_name="nanophytoplankton nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -247,6 +265,7 @@
   <field id="ATF_P2_n" long_name="nanophytoplankton nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P2_n" long_name="nanophytoplankton nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P2_n" long_name="nanophytoplankton nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P2_n" long_name="nanophytoplankton nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="P2_p" long_name="nanophytoplankton phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="XAD_P2_p" long_name="nanophytoplankton phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P2_p" long_name="nanophytoplankton phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
@@ -260,6 +279,7 @@
   <field id="ATF_P2_p" long_name="nanophytoplankton phosphorus ATF trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P2_p" long_name="nanophytoplankton phosphorus RDB trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P2_p" long_name="nanophytoplankton phosphorus RDN trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P2_p" long_name="nanophytoplankton phosphorus VMV trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="P2_Chl" long_name="nanophytoplankton chlorophyll a" unit="mg/m^3" default_value="-.200E+21" />
   <field id="XAD_P2_Chl" long_name="nanophytoplankton chlorophyll a XAD trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P2_Chl" long_name="nanophytoplankton chlorophyll a YAD trend" unit="mg/m^3/s" default_value="0.000E+00" />
@@ -273,6 +293,7 @@
   <field id="ATF_P2_Chl" long_name="nanophytoplankton chlorophyll a ATF trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P2_Chl" long_name="nanophytoplankton chlorophyll a RDB trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P2_Chl" long_name="nanophytoplankton chlorophyll a RDN trend" unit="mg/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P2_Chl" long_name="nanophytoplankton chlorophyll a VMV trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="P3_c" long_name="picophytoplankton carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_P3_c" long_name="picophytoplankton carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P3_c" long_name="picophytoplankton carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -286,6 +307,7 @@
   <field id="ATF_P3_c" long_name="picophytoplankton carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P3_c" long_name="picophytoplankton carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P3_c" long_name="picophytoplankton carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P3_c" long_name="picophytoplankton carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="P3_n" long_name="picophytoplankton nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_P3_n" long_name="picophytoplankton nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P3_n" long_name="picophytoplankton nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -299,6 +321,7 @@
   <field id="ATF_P3_n" long_name="picophytoplankton nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P3_n" long_name="picophytoplankton nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P3_n" long_name="picophytoplankton nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P3_n" long_name="picophytoplankton nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="P3_p" long_name="picophytoplankton phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="XAD_P3_p" long_name="picophytoplankton phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P3_p" long_name="picophytoplankton phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
@@ -312,6 +335,7 @@
   <field id="ATF_P3_p" long_name="picophytoplankton phosphorus ATF trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P3_p" long_name="picophytoplankton phosphorus RDB trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P3_p" long_name="picophytoplankton phosphorus RDN trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P3_p" long_name="picophytoplankton phosphorus VMV trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="P3_Chl" long_name="picophytoplankton chlorophyll a" unit="mg/m^3" default_value="-.200E+21" />
   <field id="XAD_P3_Chl" long_name="picophytoplankton chlorophyll a XAD trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P3_Chl" long_name="picophytoplankton chlorophyll a YAD trend" unit="mg/m^3/s" default_value="0.000E+00" />
@@ -325,6 +349,7 @@
   <field id="ATF_P3_Chl" long_name="picophytoplankton chlorophyll a ATF trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P3_Chl" long_name="picophytoplankton chlorophyll a RDB trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P3_Chl" long_name="picophytoplankton chlorophyll a RDN trend" unit="mg/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P3_Chl" long_name="picophytoplankton chlorophyll a VMV trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="P4_c" long_name="microphytoplankton carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_P4_c" long_name="microphytoplankton carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P4_c" long_name="microphytoplankton carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -338,6 +363,7 @@
   <field id="ATF_P4_c" long_name="microphytoplankton carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P4_c" long_name="microphytoplankton carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P4_c" long_name="microphytoplankton carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P4_c" long_name="microphytoplankton carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="P4_n" long_name="microphytoplankton nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_P4_n" long_name="microphytoplankton nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P4_n" long_name="microphytoplankton nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -351,6 +377,7 @@
   <field id="ATF_P4_n" long_name="microphytoplankton nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P4_n" long_name="microphytoplankton nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P4_n" long_name="microphytoplankton nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P4_n" long_name="microphytoplankton nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="P4_p" long_name="microphytoplankton phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="XAD_P4_p" long_name="microphytoplankton phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P4_p" long_name="microphytoplankton phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
@@ -364,6 +391,7 @@
   <field id="ATF_P4_p" long_name="microphytoplankton phosphorus ATF trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P4_p" long_name="microphytoplankton phosphorus RDB trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P4_p" long_name="microphytoplankton phosphorus RDN trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P4_p" long_name="microphytoplankton phosphorus VMV trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="P4_Chl" long_name="microphytoplankton chlorophyll a" unit="mg/m^3" default_value="-.200E+21" />
   <field id="XAD_P4_Chl" long_name="microphytoplankton chlorophyll a XAD trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="YAD_P4_Chl" long_name="microphytoplankton chlorophyll a YAD trend" unit="mg/m^3/s" default_value="0.000E+00" />
@@ -377,6 +405,7 @@
   <field id="ATF_P4_Chl" long_name="microphytoplankton chlorophyll a ATF trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="RDB_P4_Chl" long_name="microphytoplankton chlorophyll a RDB trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="RDN_P4_Chl" long_name="microphytoplankton chlorophyll a RDN trend" unit="mg/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_P4_Chl" long_name="microphytoplankton chlorophyll a VMV trend" unit="mg/m^3/s" default_value="0.000E+00" />
   <field id="Z4_c" long_name="mesozooplankton carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_Z4_c" long_name="mesozooplankton carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_Z4_c" long_name="mesozooplankton carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -390,6 +419,7 @@
   <field id="ATF_Z4_c" long_name="mesozooplankton carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_Z4_c" long_name="mesozooplankton carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_Z4_c" long_name="mesozooplankton carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_Z4_c" long_name="mesozooplankton carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="Z5_c" long_name="microzooplankton carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_Z5_c" long_name="microzooplankton carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_Z5_c" long_name="microzooplankton carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -403,6 +433,7 @@
   <field id="ATF_Z5_c" long_name="microzooplankton carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_Z5_c" long_name="microzooplankton carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_Z5_c" long_name="microzooplankton carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_Z5_c" long_name="microzooplankton carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="Z5_n" long_name="microzooplankton nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_Z5_n" long_name="microzooplankton nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_Z5_n" long_name="microzooplankton nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -416,6 +447,7 @@
   <field id="ATF_Z5_n" long_name="microzooplankton nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_Z5_n" long_name="microzooplankton nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_Z5_n" long_name="microzooplankton nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_Z5_n" long_name="microzooplankton nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="Z5_p" long_name="microzooplankton phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="XAD_Z5_p" long_name="microzooplankton phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="YAD_Z5_p" long_name="microzooplankton phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
@@ -429,6 +461,7 @@
   <field id="ATF_Z5_p" long_name="microzooplankton phosphorus ATF trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDB_Z5_p" long_name="microzooplankton phosphorus RDB trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDN_Z5_p" long_name="microzooplankton phosphorus RDN trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_Z5_p" long_name="microzooplankton phosphorus VMV trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="Z6_c" long_name="nanoflagellates carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_Z6_c" long_name="nanoflagellates carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_Z6_c" long_name="nanoflagellates carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -442,6 +475,7 @@
   <field id="ATF_Z6_c" long_name="nanoflagellates carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_Z6_c" long_name="nanoflagellates carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_Z6_c" long_name="nanoflagellates carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_Z6_c" long_name="nanoflagellates carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="Z6_n" long_name="nanoflagellates nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_Z6_n" long_name="nanoflagellates nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_Z6_n" long_name="nanoflagellates nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -455,6 +489,7 @@
   <field id="ATF_Z6_n" long_name="nanoflagellates nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_Z6_n" long_name="nanoflagellates nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_Z6_n" long_name="nanoflagellates nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_Z6_n" long_name="nanoflagellates nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="Z6_p" long_name="nanoflagellates phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="XAD_Z6_p" long_name="nanoflagellates phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="YAD_Z6_p" long_name="nanoflagellates phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
@@ -468,6 +503,7 @@
   <field id="ATF_Z6_p" long_name="nanoflagellates phosphorus ATF trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDB_Z6_p" long_name="nanoflagellates phosphorus RDB trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDN_Z6_p" long_name="nanoflagellates phosphorus RDN trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_Z6_p" long_name="nanoflagellates phosphorus VMV trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="R1_c" long_name="labile dissolved organic matter carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_R1_c" long_name="labile dissolved organic matter carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R1_c" long_name="labile dissolved organic matter carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -481,6 +517,7 @@
   <field id="ATF_R1_c" long_name="labile dissolved organic matter carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R1_c" long_name="labile dissolved organic matter carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R1_c" long_name="labile dissolved organic matter carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R1_c" long_name="labile dissolved organic matter carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="R1_n" long_name="labile dissolved organic matter nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_R1_n" long_name="labile dissolved organic matter nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R1_n" long_name="labile dissolved organic matter nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -494,6 +531,7 @@
   <field id="ATF_R1_n" long_name="labile dissolved organic matter nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R1_n" long_name="labile dissolved organic matter nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R1_n" long_name="labile dissolved organic matter nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R1_n" long_name="labile dissolved organic matter nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="R1_p" long_name="labile dissolved organic matter phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="XAD_R1_p" long_name="labile dissolved organic matter phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R1_p" long_name="labile dissolved organic matter phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
@@ -507,6 +545,7 @@
   <field id="ATF_R1_p" long_name="labile dissolved organic matter phosphorus ATF trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R1_p" long_name="labile dissolved organic matter phosphorus RDB trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R1_p" long_name="labile dissolved organic matter phosphorus RDN trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R1_p" long_name="labile dissolved organic matter phosphorus VMV trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="R2_c" long_name="semi-labile dissolved organic matter carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_R2_c" long_name="semi-labile dissolved organic matter carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R2_c" long_name="semi-labile dissolved organic matter carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -520,6 +559,7 @@
   <field id="ATF_R2_c" long_name="semi-labile dissolved organic matter carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R2_c" long_name="semi-labile dissolved organic matter carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R2_c" long_name="semi-labile dissolved organic matter carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R2_c" long_name="semi-labile dissolved organic matter carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="R3_c" long_name="semi-refractory dissolved organic matter carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_R3_c" long_name="semi-refractory dissolved organic matter carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R3_c" long_name="semi-refractory dissolved organic matter carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -533,6 +573,7 @@
   <field id="ATF_R3_c" long_name="semi-refractory dissolved organic matter carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R3_c" long_name="semi-refractory dissolved organic matter carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R3_c" long_name="semi-refractory dissolved organic matter carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R3_c" long_name="semi-refractory dissolved organic matter carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="R4_c" long_name="small-size pom carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_R4_c" long_name="small-size pom carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R4_c" long_name="small-size pom carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -546,6 +587,7 @@
   <field id="ATF_R4_c" long_name="small-size pom carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R4_c" long_name="small-size pom carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R4_c" long_name="small-size pom carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R4_c" long_name="small-size pom carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="R4_n" long_name="small-size pom nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_R4_n" long_name="small-size pom nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R4_n" long_name="small-size pom nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -559,6 +601,7 @@
   <field id="ATF_R4_n" long_name="small-size pom nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R4_n" long_name="small-size pom nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R4_n" long_name="small-size pom nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R4_n" long_name="small-size pom nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="R4_p" long_name="small-size pom phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="XAD_R4_p" long_name="small-size pom phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R4_p" long_name="small-size pom phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
@@ -572,6 +615,7 @@
   <field id="ATF_R4_p" long_name="small-size pom phosphorus ATF trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R4_p" long_name="small-size pom phosphorus RDB trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R4_p" long_name="small-size pom phosphorus RDN trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R4_p" long_name="small-size pom phosphorus VMV trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="R6_c" long_name="medium-size pom carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_R6_c" long_name="medium-size pom carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R6_c" long_name="medium-size pom carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -585,6 +629,7 @@
   <field id="ATF_R6_c" long_name="medium-size pom carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R6_c" long_name="medium-size pom carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R6_c" long_name="medium-size pom carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R6_c" long_name="medium-size pom carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="R6_n" long_name="medium-size pom nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_R6_n" long_name="medium-size pom nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R6_n" long_name="medium-size pom nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -598,6 +643,7 @@
   <field id="ATF_R6_n" long_name="medium-size pom nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R6_n" long_name="medium-size pom nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R6_n" long_name="medium-size pom nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R6_n" long_name="medium-size pom nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="R6_p" long_name="medium-size pom phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="XAD_R6_p" long_name="medium-size pom phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R6_p" long_name="medium-size pom phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
@@ -611,6 +657,7 @@
   <field id="ATF_R6_p" long_name="medium-size pom phosphorus ATF trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R6_p" long_name="medium-size pom phosphorus RDB trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R6_p" long_name="medium-size pom phosphorus RDN trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R6_p" long_name="medium-size pom phosphorus VMV trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="R6_s" long_name="medium-size pom silicate" unit="mmol Si/m^3" default_value="-.200E+21" />
   <field id="XAD_R6_s" long_name="medium-size pom silicate XAD trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R6_s" long_name="medium-size pom silicate YAD trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
@@ -624,6 +671,7 @@
   <field id="ATF_R6_s" long_name="medium-size pom silicate ATF trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R6_s" long_name="medium-size pom silicate RDB trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R6_s" long_name="medium-size pom silicate RDN trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R6_s" long_name="medium-size pom silicate VMV trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="R8_c" long_name="large-size pom carbon" unit="mg C/m^3" default_value="-.200E+21" />
   <field id="XAD_R8_c" long_name="large-size pom carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R8_c" long_name="large-size pom carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" />
@@ -637,6 +685,7 @@
   <field id="ATF_R8_c" long_name="large-size pom carbon ATF trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R8_c" long_name="large-size pom carbon RDB trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R8_c" long_name="large-size pom carbon RDN trend" unit="mg C/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R8_c" long_name="large-size pom carbon VMV trend" unit="mg C/m^3/s" default_value="0.000E+00" />
   <field id="R8_n" long_name="large-size pom nitrogen" unit="mmol N/m^3" default_value="-.200E+21" />
   <field id="XAD_R8_n" long_name="large-size pom nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R8_n" long_name="large-size pom nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
@@ -650,6 +699,7 @@
   <field id="ATF_R8_n" long_name="large-size pom nitrogen ATF trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R8_n" long_name="large-size pom nitrogen RDB trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R8_n" long_name="large-size pom nitrogen RDN trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R8_n" long_name="large-size pom nitrogen VMV trend" unit="mmol N/m^3/s" default_value="0.000E+00" />
   <field id="R8_p" long_name="large-size pom phosphorus" unit="mmol P/m^3" default_value="-.200E+21" />
   <field id="XAD_R8_p" long_name="large-size pom phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R8_p" long_name="large-size pom phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
@@ -663,6 +713,7 @@
   <field id="ATF_R8_p" long_name="large-size pom phosphorus ATF trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R8_p" long_name="large-size pom phosphorus RDB trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R8_p" long_name="large-size pom phosphorus RDN trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R8_p" long_name="large-size pom phosphorus VMV trend" unit="mmol P/m^3/s" default_value="0.000E+00" />
   <field id="R8_s" long_name="large-size pom silicate" unit="mmol Si/m^3" default_value="-.200E+21" />
   <field id="XAD_R8_s" long_name="large-size pom silicate XAD trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="YAD_R8_s" long_name="large-size pom silicate YAD trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
@@ -676,6 +727,7 @@
   <field id="ATF_R8_s" long_name="large-size pom silicate ATF trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="RDB_R8_s" long_name="large-size pom silicate RDB trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
   <field id="RDN_R8_s" long_name="large-size pom silicate RDN trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
+  <field id="VMV_R8_s" long_name="large-size pom silicate VMV trend" unit="mmol Si/m^3/s" default_value="0.000E+00" />
  </field_group>
  <field_group id="sf_T" grid_ref="grid_T_2D">
   <field id="Q1_c" long_name="benthic dissolved organic matter carbon" unit="mg C/m^2" default_value="-.200E+21" />
