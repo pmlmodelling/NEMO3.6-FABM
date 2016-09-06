@@ -649,6 +649,7 @@
           <field field_ref="G3_c" operation="average" />
           <!-- <field field_ref="ben_nit_G4n" operation="average" /> -->
           <field field_ref="G3_c_pb_flux" operation="average" />
+          <field field_ref="K1_p_pb_flux" operation="average" />
           <field field_ref="K3_n_pb_flux" operation="average" />
           <field field_ref="K4_n_pb_flux" operation="average" />
           <field field_ref="K5_s_pb_flux" operation="average" />
