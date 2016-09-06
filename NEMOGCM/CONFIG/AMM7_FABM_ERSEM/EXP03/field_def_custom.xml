@@ -10,7 +10,7 @@
   <field id="XAD_PO_n" long_name="Particulate organic nitrogen XAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" > XAD_R4_n + XAD_R6_n + XAD_R8_n </field>
   <field id="XAD_PO_p" long_name="Particulate organic phosphorus XAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" > XAD_R4_p + XAD_R6_p + XAD_R8_p </field>
   <field id="XAD_PO_s" long_name="Particulate organic silicate XAD trend" unit="mmol Si/m^3/s" default_value="0.000E+00" > XAD_R6_s + XAD_R8_s </field>
-  <field id="XAD_DO_c" long_name="Phytoplankton carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" > XAD_R1_c + XAD_R2_c + XAD_R3_c </field>
+  <field id="XAD_DO_c" long_name="Dissolved organic carbon XAD trend" unit="mg C/m^3/s" default_value="0.000E+00" > XAD_R1_c + XAD_R2_c + XAD_R3_c </field>
   <field id="YAD_Phyto_c" long_name="Phytoplankton carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" > YAD_P1_c + YAD_P2_c + YAD_P3_c + YAD_P4_c </field>
   <field id="YAD_Phyto_n" long_name="Phytoplankton nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" > YAD_P1_n + YAD_P2_n + YAD_P3_n + YAD_P4_n </field>
   <field id="YAD_Phyto_p" long_name="Phytoplankton nitrogen YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" > YAD_P1_p + YAD_P2_p + YAD_P3_p + YAD_P4_p </field>
@@ -21,7 +21,7 @@
   <field id="YAD_PO_n" long_name="Particulate organic nitrogen YAD trend" unit="mmol N/m^3/s" default_value="0.000E+00" > YAD_R4_n + YAD_R6_n + YAD_R8_n </field>
   <field id="YAD_PO_p" long_name="Particulate organic phosphorus YAD trend" unit="mmol P/m^3/s" default_value="0.000E+00" > YAD_R4_p + YAD_R6_p + YAD_R8_p </field>
   <field id="YAD_PO_s" long_name="Particulate organic silicate YAD trend" unit="mmol Si/m^3/s" default_value="0.000E+00" > YAD_R6_s + YAD_R8_s </field>
-  <field id="YAD_DO_c" long_name="Phytoplankton carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" > YAD_R1_c + YAD_R2_c + YAD_R3_c </field>
+  <field id="YAD_DO_c" long_name="Dissolved organic carbon YAD trend" unit="mg C/m^3/s" default_value="0.000E+00" > YAD_R1_c + YAD_R2_c + YAD_R3_c </field>
   <field id="VMV_PO_c" long_name="Particulate organic carbon sinking trend" unit="mg C/m^3/s" default_value="0.000E+00" > VMV_R4_c + VMV_R6_c + VMV_R8_c + VMV_P1_c + VMV_P4_c </field>
 
  </field_group>
