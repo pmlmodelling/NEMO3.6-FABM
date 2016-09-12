@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<simulation> 
+<simulation>
 
  <context id="nemo" time_origin="1950-01-01 00:00:00" >
-    
+
     <!-- $id$ -->
-    
-    <!-- 
+
+    <!--
 ============================================================================================================
 =                                  definition of all existing variables                                    =
 =                                            DO NOT CHANGE                                                 =
@@ -13,62 +13,28 @@
     -->
     <field_definition src="./field_def.xml"/>
     <field_definition src="./field_def_fabm.xml"/>
-    <!-- 
+    <field_definition src="./field_def_custom.xml"/>
+    <!--
 ============================================================================================================
 =                                           output files definition                                        =
 =                                            Define your own files                                         =
 =                                         put the variables you want...                                    =
 ============================================================================================================
     -->
-    
-    <file_definition type="one_file" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="10d" min_digits="4">
-      <file_group id="1ts" output_freq="1ts"  output_level="10" enabled=".TRUE."> <!-- 1 time step files -->
-   <!--
-       <file id="file10" name_suffix="_ptrc_T" description="tracer variables" >
-          <field field_ref="AREA"     name="AREA"    long_name="cell area" operation="instant" />
-          <field field_ref="DEPTH"    name="DEPTH"   long_name="cell depth" operation="instant" />
-          <field field_ref="TR1"      name="TR1"     long_name="passive tracer density" operation="instant" />
-          <field field_ref="TR1_pool" name="TR1_pool" long_name="passive tracer pool" operation="instant" />
-          <field field_ref="XAD_TR1"  name="XAD_TR1" long_name="tracer trend advection in x direction" operation="instant" freq_op="1ts" />
-          <field field_ref="YAD_TR1"  name="YAD_TR1" long_name="tracer trend advection in y direction" operation="instant" freq_op="1ts" />
-          <field field_ref="LDF_TR1"  name="LDF_TR1" long_name="tracer trend from horizontal diffusion" operation="instant" freq_op="1ts" />
-          <field field_ref="ATF_TR1"  name="ATF_TR1" long_name="tracer trend from Asselin Tide Filter" operation="instant" freq_op="1ts" />
-          <field field_ref="RDB_TR1"  name="RDB_TR1" long_name="tracer trend from correcting negative concentrations" operation="instant" freq_op="1ts" />
-          <field field_ref="RDN_TR1"  name="RDN_TR1" long_name="tracer trend from correcting negative concentrations" operation="instant" freq_op="1ts" />
-          <field field_ref="e3t"      name="e3t"     operation="instant" />
-        </file>
-     -->
 
-      <!--
-        <file id="file33" name_suffix="_grid_U" description="ocean U grid variables" >
-          <field field_ref="uoce"         name="uo"      long_name="sea_water_x_velocity" operation="instant" />
-        </file>
-        <file id="file34" name_suffix="_grid_V" description="ocean V grid variables" >
-          <field field_ref="voce"         name="vo"      long_name="sea_water_y_velocity" operation="instant" />
-        </file>
-        <file id="file22" name_suffix="_grid_T" description="ocean T grid variables" >
-          <field field_ref="e3t"  />
-          <field field_ref="toce"         name="thetao"   long_name="sea_water_potential_temperature"          operation="instant" freq_op="1d" > @toce_e3t / @e3t </field>
-          <field field_ref="soce"         name="so"       long_name="sea_water_salinity"             operation="instant" freq_op="1d" > @soce_e3t / @e3t </field>
-          <field field_ref="sst"          name="sst"      long_name="sea_surface_temperature"             />
-          <field field_ref="sss"          name="sss"      long_name="sea_surface_salinity"                />
-          <field field_ref="ssh"          name="ssh"      long_name="sea_surface_height_above_geoid"      />
-        </file>
-        -->
+    <file_definition type="one_file" name="@expname@_@freq@_@startdate@_@enddate@" sync_freq="10d" min_digits="4">
+      <file_group id="1ts" output_freq="1ts"  output_level="10" enabled=".TRUE.">
+         <!-- 1 time step files -->
       </file_group>
 
       <file_group id="1h" output_freq="1h"  output_level="10" enabled=".TRUE."> <!-- 1h files -->
-       <!-- 
-        <file id="file31" name_suffix="_grid_T" description="ocean T grid variables" >
-          <field field_ref="ssh"          name="zos"      long_name="sea_surface_height_above_geoid"      />
-        </file>
-       -->
+        <!-- hourly files -->
       </file_group>
 
       <file_group id="2h" output_freq="2h"  output_level="10" enabled=".TRUE."/> <!-- 2h files -->
-      <file_group id="3h" output_freq="3h"  output_level="10" enabled=".TRUE."/> <!-- 3h files -->     
+      <file_group id="3h" output_freq="3h"  output_level="10" enabled=".TRUE."/> <!-- 3h files -->
       <file_group id="4h" output_freq="4h"  output_level="10" enabled=".TRUE."/> <!-- 4h files -->
-      <file_group id="6h" output_freq="6h"  output_level="10" enabled=".TRUE."/> <!-- 6h files -->     
+      <file_group id="6h" output_freq="6h"  output_level="10" enabled=".TRUE."/> <!-- 6h files -->
       <file_group id="1d" output_freq="1d"  output_level="10" enabled=".TRUE." > <!-- 1d files -->
         <file id="file50" name_suffix="_PAP" description="PAP T grid variables" sync_freq="1d">
           <field_group id="1d_pap" domain_ref="PAP">
@@ -610,87 +576,22 @@
 	  <field field_ref="soce"         long_name="sea_water_salinity"                                 operation="average" />
           </field_group>
         </file>
-        <!-- <file id="file51" name_suffix="_grid_T" description="ocean T grid variables" >
-          <field field_ref="e3t"  />
-          <field field_ref="e3t_m"  />
-          <field field_ref="toce"         name="thetao"   long_name="sea_water_potential_temperature" freq_op="1ts" > @toce_e3t / @e3t </field>
-          <field field_ref="soce"         name="so"       long_name="sea_water_salinity" freq_op="1ts" > @soce_e3t / @e3t </field>
-          <field field_ref="sst"          name="tos"      long_name="sea_surface_temperature"             />
-          <field field_ref="sss"          name="sos"      long_name="sea_surface_salinity"                />
-          <field field_ref="ssh"          name="zos"      long_name="sea_surface_height_above_geoid"      />
-        </file> -->
 
-        <!-- <file id="file53" name_suffix="_grid_U" description="ocean U grid variables" >
-          <field field_ref="e3u"  />
-          <field field_ref="ssu"          name="uos"     long_name="sea_surface_x_velocity"    />
-          <field field_ref="uoce"         name="uo"      long_name="sea_water_x_velocity" />
-        </file> -->
-
-        <!-- <file id="file54" name_suffix="_grid_V" description="ocean V grid variables" >
-          <field field_ref="e3v"  />
-          <field field_ref="ssv"          name="vos"     long_name="sea_surface_y_velocity"    />
-          <field field_ref="voce"         name="vo"      long_name="sea_water_y_velocity" />
-        </file> -->
-
-        <!-- <file id="file55" name_suffix="_grid_W" description="ocean W grid variables" >
-          <field field_ref="e3w"  />
-          <field field_ref="woce"         name="wo"      long_name="ocean vertical velocity" />
-        </file> -->
-
-        <!-- <file id="file8" name_suffix="_Tides" description="tidal harmonics" >
-          <field field_ref="M2x"          name="M2x"      long_name="M2 Elevation harmonic real part"                       />
-          <field field_ref="M2y"          name="M2y"      long_name="M2 Elevation harmonic imaginary part"                  />
-          <field field_ref="M2x_u"        name="M2x_u"    long_name="M2 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="M2y_u"        name="M2y_u"    long_name="M2 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="M2x_v"        name="M2x_v"    long_name="M2 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="M2y_v"        name="M2y_v"    long_name="M2 current barotropic along j-axis harmonic imaginary part "  />
-          <field field_ref="S2x"          name="S2x"      long_name="S2 Elevation harmonic real part"                       />
-          <field field_ref="S2y"          name="S2y"      long_name="S2 Elevation harmonic imaginary part"                  />
-          <field field_ref="S2x_u"        name="S2x_u"    long_name="S2 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="S2y_u"        name="S2y_u"    long_name="S2 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="S2x_v"        name="S2x_v"    long_name="S2 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="S2y_v"        name="S2y_v"    long_name="S2 current barotropic along j-axis harmonic imaginary part "  />
-          <field field_ref="K2x"          name="K2x"      long_name="K2 Elevation harmonic real part"                       />
-          <field field_ref="K2y"          name="K2y"      long_name="K2 Elevation harmonic imaginary part"                  />
-          <field field_ref="K2x_u"        name="K2x_u"    long_name="K2 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="K2y_u"        name="K2y_u"    long_name="K2 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="K2x_v"        name="K2x_v"    long_name="K2 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="K2y_v"        name="K2y_v"    long_name="K2 current barotropic along j-axis harmonic imaginary part "  />
-          <field field_ref="N2x"          name="N2x"      long_name="N2 Elevation harmonic real part"                       />
-          <field field_ref="N2y"          name="N2y"      long_name="N2 Elevation harmonic imaginary part"                  />
-          <field field_ref="N2x_u"        name="N2x_u"    long_name="N2 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="N2y_u"        name="N2y_u"    long_name="N2 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="N2x_v"        name="N2x_v"    long_name="N2 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="N2y_v"        name="N2y_v"    long_name="N2 current barotropic along j-axis harmonic imaginary part "  />
-          <field field_ref="K1x"          name="K1x"      long_name="K1 Elevation harmonic real part"                       />
-          <field field_ref="K1y"          name="K1y"      long_name="K1 Elevation harmonic imaginary part"                  />
-          <field field_ref="K1x_u"        name="K1x_u"    long_name="K1 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="K1y_u"        name="K1y_u"    long_name="K1 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="K1x_v"        name="K1x_v"    long_name="K1 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="K1y_v"        name="K1y_v"    long_name="K1 current barotropic along j-axis harmonic imaginary part "  />
-          <field field_ref="P1x"          name="P1x"      long_name="P1 Elevation harmonic real part"                       />
-          <field field_ref="P1y"          name="P1y"      long_name="P1 Elevation harmonic imaginary part"                  />
-          <field field_ref="P1x_u"        name="P1x_u"    long_name="P1 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="P1y_u"        name="P1y_u"    long_name="P1 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="P1x_v"        name="P1x_v"    long_name="P1 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="P1y_v"        name="P1y_v"    long_name="P1 current barotropic along j-axis harmonic imaginary part "  />
-          <field field_ref="O1x"          name="O1x"      long_name="O1 Elevation harmonic real part"                       />
-          <field field_ref="O1y"          name="O1y"      long_name="O1 Elevation harmonic imaginary part"                  />
-          <field field_ref="O1x_u"        name="O1x_u"    long_name="O1 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="O1y_u"        name="O1y_u"    long_name="O1 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="O1x_v"        name="O1x_v"    long_name="O1 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="O1y_v"        name="O1y_v"    long_name="O1 current barotropic along j-axis harmonic imaginary part "  />
-        </file> -->
-
-        <file id="file59" name_suffix="_diad_T" description="tracer variables"  sync_freq="1d">
+        <file id="file59" name_suffix="_ptrc_T" description="tracer variables"  sync_freq="1d">
           <field field_ref="N1_p" operation="average" />
           <field field_ref="N3_n" operation="average" />
           <field field_ref="N4_n" operation="average" />
           <field field_ref="N5_s" operation="average" />
           <field field_ref="O3_c" operation="average" />
           <field field_ref="O3_TA" operation="average" />
-          <field field_ref="O3_bioalk" operation="average" />
+          <field field_ref="O3_pH" operation="average" />
+          <field field_ref="O3_pCO2" operation="average" />
+          <field field_ref="O3_Om_arg" operation="average" />
           <field field_ref="O2_o" operation="average" />
+          <field field_ref="P1_Chl" operation="average" />
+          <field field_ref="P2_Chl" operation="average" />
+          <field field_ref="P3_Chl" operation="average" />
+          <field field_ref="P4_Chl" operation="average" />
           <field field_ref="P1_c" operation="average" />
           <field field_ref="P2_c" operation="average" />
           <field field_ref="P3_c" operation="average" />
@@ -706,6 +607,20 @@
           <field field_ref="R2_c" operation="average" />
           <field field_ref="R3_c" operation="average" />
           <field field_ref="L2_c" operation="average" />
+          <field field_ref="P1_fO3PIc" operation="average" />
+          <field field_ref="P2_fO3PIc" operation="average" />
+          <field field_ref="P3_fO3PIc" operation="average" />
+          <field field_ref="P4_fO3PIc" operation="average" />
+          <field field_ref="P1_fPIO3c" operation="average" />
+          <field field_ref="P2_fPIO3c" operation="average" />
+          <field field_ref="P3_fPIO3c" operation="average" />
+          <field field_ref="P4_fPIO3c" operation="average" />
+          <field field_ref="P1_fPIRIc_result" operation="average" />
+          <field field_ref="P2_fPIRIc_result" operation="average" />
+          <field field_ref="P3_fPIRIc_result" operation="average" />
+          <field field_ref="P4_fPIRIc_result" operation="average" />
+          <field field_ref="L2_L2O3c" operation="average" />
+          <field field_ref="gross_calcification_rate_result" operation="average" />
           <field field_ref="bL2_c"  operation="average" />
           <field field_ref="Q1_c" operation="average" />
           <field field_ref="Q6_c" operation="average" />
@@ -719,252 +634,289 @@
           <field field_ref="ben_col_D1m" operation="average" />
           <field field_ref="ben_col_D2m" operation="average" />
           <field field_ref="Q6_pen_depth_c" operation="average" />
-          <field field_ref="Q6_pen_depth_n" operation="average" />
+          <!-- <field field_ref="Q6_pen_depth_n" operation="average" />
           <field field_ref="Q6_pen_depth_p" operation="average" />
-          <field field_ref="Q6_pen_depth_s" operation="average" />
+          <field field_ref="Q6_pen_depth_s" operation="average" /> -->
           <field field_ref="Q7_pen_depth_c" operation="average" />
-          <field field_ref="Q7_pen_depth_n" operation="average" />
-          <field field_ref="Q7_pen_depth_p" operation="average" />
+          <!-- <field field_ref="Q7_pen_depth_n" operation="average" />
+          <field field_ref="Q7_pen_depth_p" operation="average" /> -->
           <field field_ref="K1_p" operation="average" />
           <field field_ref="K3_n" operation="average" />
           <field field_ref="K4_n" operation="average" />
           <field field_ref="K5_s" operation="average" />
           <field field_ref="G2_o" operation="average" />
-          <field field_ref="G2_o_deep" operation="average" />
+          <!-- <field field_ref="G2_o_deep" operation="average" /> -->
           <field field_ref="G3_c" operation="average" />
-          <field field_ref="ben_nit_G4n" operation="average" />
+          <!-- <field field_ref="ben_nit_G4n" operation="average" /> -->
+          <field field_ref="G3_c_pb_flux" operation="average" />
+          <field field_ref="K1_p_pb_flux" operation="average" />
+          <field field_ref="K3_n_pb_flux" operation="average" />
+          <field field_ref="K4_n_pb_flux" operation="average" />
+          <field field_ref="K5_s_pb_flux" operation="average" />
+          <field field_ref="G2_o_pb_flux" operation="average" />
+          <field field_ref="bL2_bremin" operation="average" />
+          <field field_ref="net_PelBen_POC_result" operation="average" />
           <field field_ref="e3t"      name="e3t"     operation="average" />
-          <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
-          <field field_ref="light_ADY" operation="average" />
-          <field field_ref="light_EIR" operation="average" />
+          <!-- <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" /> -->
+          <!-- <field field_ref="light_ADY" operation="average" />
+          <field field_ref="light_EIR" operation="average" /> -->
           <field field_ref="light_xEPS" operation="average" />
+          <field field_ref="O3_wind" operation="average" />
+          <field field_ref="O3_fair" operation="average" />
+        </file>
+
+        <file id="file60" name_suffix="_grid_T" description="tracer variables"  sync_freq="1d">
+          <field field_ref="toce" name="votemper"        operation="average"      long_name="sea_water_potential_temperature"                     />
+          <field field_ref="soce" name="vosaline"        operation="average"      long_name="sea_water_salinity"                                  />
+          <field field_ref="empmr"        operation="average"      long_name="water_flux_into_sea_water"                />
+          <field field_ref="mldr10_1"     operation="average"/>
+          <field field_ref="qsr"    operation="average"      long_name="surface_net_downward_shortwave_flux"           />
+      	  <field field_ref="qt"     operation="average"      long_name="surface_net_downward_total_heat_flux"          />
+          <field field_ref="XAD_O3_c" operation="average" />
+          <field field_ref="XAD_N3_n" operation="average" />
+          <field field_ref="XAD_N4_n" operation="average" />
+          <field field_ref="XAD_N1_p" operation="average" />
+          <field field_ref="XAD_N5_s" operation="average" />
+          <field field_ref="XAD_Phyto_c" operation="average" />
+          <field field_ref="XAD_Phyto_n" operation="average" />
+          <field field_ref="XAD_Phyto_p" operation="average" />
+          <field field_ref="XAD_P1_s" operation="average" />
+          <field field_ref="XAD_Heterotrophs_c" operation="average" />
+          <field field_ref="XAD_Heterotrophs_n" operation="average" />
+          <field field_ref="XAD_Heterotrophs_p" operation="average" />
+          <field field_ref="XAD_DO_c" operation="average" />
+          <field field_ref="XAD_R1_n" operation="average" />
+          <field field_ref="XAD_R1_p" operation="average" />
+          <field field_ref="XAD_PO_c" operation="average" />
+          <field field_ref="XAD_PO_n" operation="average" />
+          <field field_ref="XAD_PO_p" operation="average" />
+          <field field_ref="XAD_PO_s" operation="average" />
+          <field field_ref="YAD_O3_c" operation="average" />
+          <field field_ref="YAD_N3_n" operation="average" />
+          <field field_ref="YAD_N4_n" operation="average" />
+          <field field_ref="YAD_N1_p" operation="average" />
+          <field field_ref="YAD_N5_s" operation="average" />
+          <field field_ref="YAD_Phyto_c" operation="average" />
+          <field field_ref="YAD_Phyto_n" operation="average" />
+          <field field_ref="YAD_Phyto_p" operation="average" />
+          <field field_ref="YAD_P1_s" operation="average" />
+          <field field_ref="YAD_Heterotrophs_c" operation="average" />
+          <field field_ref="YAD_Heterotrophs_n" operation="average" />
+          <field field_ref="YAD_Heterotrophs_p" operation="average" />
+          <field field_ref="YAD_DO_c" operation="average" />
+          <field field_ref="YAD_R1_n" operation="average" />
+          <field field_ref="YAD_R1_p" operation="average" />
+          <field field_ref="YAD_PO_c" operation="average" />
+          <field field_ref="YAD_PO_n" operation="average" />
+          <field field_ref="YAD_PO_p" operation="average" />
+          <field field_ref="YAD_PO_s" operation="average" />
+          <field field_ref="VMV_PO_c" operation="average" />
+          <field field_ref="VMV_L2_c" operation="average" />
+        </file>
+
+        <file id="file61" name_suffix="_grid_U" description="tracer variables"  sync_freq="1d">
+          <field field_ref="uoce"         operation="average"      long_name="sea_water_x_velocity" />
+          <field field_ref="utau"         name="tauuo"   long_name="surface_downward_x_stress" />
+        </file>
+
+        <file id="file62" name_suffix="_grid_V" description="tracer variables"  sync_freq="1d">
+          <field field_ref="voce"         operation="average"      long_name="sea_water_y_velocity" />
+          <field field_ref="vtau"         name="tauvo"   long_name="surface_downward_y_stress" />
+        </file>
+
+        <file id="file63" name_suffix="_grid_W" description="tracer variables"  sync_freq="1d">
           <field field_ref="woce" operation="average" />
         </file>
 
       </file_group>
 
-      <file_group id="3d" output_freq="3d"  output_level="10" enabled=".TRUE."/> <!-- 3d files -->    
+      <file_group id="3d" output_freq="3d"  output_level="10" enabled=".TRUE."/> <!-- 3d files -->
 
-      <file_group id="5d" output_freq="5d"  output_level="10" enabled=".TRUE." >  <!-- 5d files -->  
- 
-	<file id="file1" name_suffix="_grid_T" description="ocean T grid variables" >
-	  <field field_ref="e3t"  />
-	  <field field_ref="toce"         name="thetao"   long_name="sea_water_potential_temperature"                    operation="instant" freq_op="5d" > @toce_e3t / @e3t </field>
-	  <field field_ref="soce"         name="so"       long_name="sea_water_salinity"                                 operation="instant" freq_op="5d" > @soce_e3t / @e3t </field>
-	  <field field_ref="sst"          name="tos"      long_name="sea_surface_temperature"                       />
-	  <field field_ref="sss"          name="sos"      long_name="sea_surface_salinity"                          />
-	  <field field_ref="ssh"          name="zos"      long_name="sea_surface_height_above_geoid"                />
-	  <field field_ref="sst"          name="tosstd"   long_name="sea_surface_temperature_standard_deviation"         operation="instant" freq_op="5d" > sqrt( @sst2 - @sst * @sst ) </field>
-	  <field field_ref="ssh"          name="zosstd"   long_name="sea_surface_height_above_geoid_standard_deviation"  operation="instant" freq_op="5d" > sqrt( @ssh2 - @ssh * @ssh ) </field>
-	  <field field_ref="sst"          name="sstdcy"   long_name="amplitude of sst diurnal cycle" operation="average" freq_op="1d" > @sstmax - @sstmin </field>
-	  <field field_ref="mldkz5"       />
-	  <field field_ref="mldr10_1"     />
-	  <field field_ref="mldr10_1"     name="mldr10_1dcy"  long_name="amplitude of mldr10_1 diurnal cycle" operation="average" freq_op="1d" > @mldr10_1max - @mldr10_1min </field>
-	  <field field_ref="empmr"        name="wfo"      long_name="water_flux_into_sea_water"                     />
-	  <field field_ref="qsr"          name="rsntds"   long_name="surface_net_downward_shortwave_flux"           />
-	  <field field_ref="qt"           name="tohfls"   long_name="surface_net_downward_total_heat_flux"          />
-	  <field field_ref="saltflx"      name="sosflxdo" />
-	  <field field_ref="taum"         name="taum"     />
-	  <field field_ref="wspd"         name="sowindsp" />
-          <field field_ref="precip"       name="soprecip" />
-	  <field field_ref="sbt"                          />
-	</file>
-
-         <!-- <file id="file2" name_suffix="_ptrc_T" description="tracer variables" >
-
-          <field field_ref="TR1_pool" name="TR1_pool" long_name="passive tracer pool" operation="instant" />
-          <field field_ref="DEPTH"    name="DEPTH"   long_name="cell depth" operation="instant" />
-          <field field_ref="AREA"     name="AREA"    long_name="cell area" operation="instant" />
-          <field field_ref="XAD_TR1"  name="XAD_TR1" long_name="tracer trend advection in x direction" operation="average" freq_op="1ts" />
-          <field field_ref="YAD_TR1"  name="YAD_TR1" long_name="tracer trend advection in y direction" operation="average" freq_op="1ts" />
-          <field field_ref="LDF_TR1"  name="LDF_TR1" long_name="tracer trend from horizontal diffusion" operation="average" freq_op="1ts" />
-          <field field_ref="ATF_TR1"  name="ATF_TR1" long_name="tracer trend from Asselin Tide Filter" operation="average" freq_op="1ts" />
-          <field field_ref="RDB_TR1"  name="RDB_TR1" long_name="tracer trend from correcting negative concentrations" operation="average" freq_op="1ts" />
-          <field field_ref="RDN_TR1"  name="RDN_TR1" long_name="tracer trend from correcting negative concentrations" operation="average" freq_op="1ts" />
-         </file> -->
-
-         <!--
-	<file id="file3" name_suffix="_grid_U" description="ocean U grid variables" >
-	  <field field_ref="e3u"  />
-	  <field field_ref="ssu"          name="uos"     long_name="sea_surface_x_velocity"    />
-	  <field field_ref="uoce"         name="uo"      long_name="sea_water_x_velocity" operation="instant" freq_op="5d" > @uoce_e3u / @e3u </field>
-	  <field field_ref="utau"         name="tauuo"   long_name="surface_downward_x_stress" />
-	</file>
-        -->
-	
-          <!--
-	<file id="file4" name_suffix="_grid_V" description="ocean V grid variables" >
-	  <field field_ref="e3v"  />
-	  <field field_ref="ssv"          name="vos"     long_name="sea_surface_y_velocity"    />
-	  <field field_ref="voce"         name="vo"      long_name="sea_water_y_velocity" operation="instant" freq_op="5d" > @voce_e3v / @e3v </field>
-	  <field field_ref="vtau"         name="tauvo"   long_name="surface_downward_y_stress" />
-	</file>
-        -->
-	
-          <!--
-	<file id="file5" name_suffix="_grid_W" description="ocean W grid variables" >
-	  <field field_ref="e3w"  />
-	  <field field_ref="woce"         name="wo"      long_name="ocean vertical velocity" operation="instant" freq_op="5d" > @woce_e3w / @e3w </field>
-	  <field field_ref="avt"          name="difvho"  long_name="ocean_vertical_heat_diffusivity" />
-	</file>
-        -->
-
-          <!-- 
-	<file id="file6" name_suffix="_icemod" description="ice variables" >
-	  <field field_ref="ice_pres"                     />
-	  <field field_ref="snowthic_cea" name="snd"     long_name="surface_snow_thickness"   />
-	  <field field_ref="icethic_cea"  name="sit"     long_name="sea_ice_thickness"        />
-	  <field field_ref="iceprod_cea"  name="sip"     long_name="sea_ice_thickness"        />
-	  <field field_ref="ist_ipa"      />
-	  <field field_ref="uice_ipa"     />
-	  <field field_ref="vice_ipa"     />
-	  <field field_ref="utau_ice"     />
-	  <field field_ref="vtau_ice"     />
-	  <field field_ref="qsr_io_cea"   />
-	  <field field_ref="qns_io_cea"   />
-	  <field field_ref="snowpre"      />
-	</file>
-         -->
-
-      <!--
-	<file id="file8" name_suffix="_Tides" description="tidal harmonics" >
-	  <field field_ref="M2x"          name="M2x"      long_name="M2 Elevation harmonic real part"                       />
-	  <field field_ref="M2y"          name="M2y"      long_name="M2 Elevation harmonic imaginary part"                  />
-	  <field field_ref="M2x_u"        name="M2x_u"    long_name="M2 current barotropic along i-axis harmonic real part "       />
-	  <field field_ref="M2y_u"        name="M2y_u"    long_name="M2 current barotropic along i-axis harmonic imaginary part "  />
-	  <field field_ref="M2x_v"        name="M2x_v"    long_name="M2 current barotropic along j-axis harmonic real part "       />
-	  <field field_ref="M2y_v"        name="M2y_v"    long_name="M2 current barotropic along j-axis harmonic imaginary part "  />
-          <field field_ref="S2x"          name="S2x"      long_name="S2 Elevation harmonic real part"                       />
-          <field field_ref="S2y"          name="S2y"      long_name="S2 Elevation harmonic imaginary part"                  />
-          <field field_ref="S2x_u"        name="S2x_u"    long_name="S2 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="S2y_u"        name="S2y_u"    long_name="S2 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="S2x_v"        name="S2x_v"    long_name="S2 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="S2y_v"        name="S2y_v"    long_name="S2 current barotropic along j-axis harmonic imaginary part "  />
-          <field field_ref="K2x"          name="K2x"      long_name="K2 Elevation harmonic real part"                       />
-          <field field_ref="K2y"          name="K2y"      long_name="K2 Elevation harmonic imaginary part"                  />
-          <field field_ref="K2x_u"        name="K2x_u"    long_name="K2 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="K2y_u"        name="K2y_u"    long_name="K2 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="K2x_v"        name="K2x_v"    long_name="K2 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="K2y_v"        name="K2y_v"    long_name="K2 current barotropic along j-axis harmonic imaginary part "  />
-          <field field_ref="N2x"          name="N2x"      long_name="N2 Elevation harmonic real part"                       />
-          <field field_ref="N2y"          name="N2y"      long_name="N2 Elevation harmonic imaginary part"                  />
-          <field field_ref="N2x_u"        name="N2x_u"    long_name="N2 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="N2y_u"        name="N2y_u"    long_name="N2 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="N2x_v"        name="N2x_v"    long_name="N2 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="N2y_v"        name="N2y_v"    long_name="N2 current barotropic along j-axis harmonic imaginary part "  />
-          <field field_ref="K1x"          name="K1x"      long_name="K1 Elevation harmonic real part"                       />
-          <field field_ref="K1y"          name="K1y"      long_name="K1 Elevation harmonic imaginary part"                  />
-          <field field_ref="K1x_u"        name="K1x_u"    long_name="K1 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="K1y_u"        name="K1y_u"    long_name="K1 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="K1x_v"        name="K1x_v"    long_name="K1 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="K1y_v"        name="K1y_v"    long_name="K1 current barotropic along j-axis harmonic imaginary part "  />
-          <field field_ref="P1x"          name="P1x"      long_name="P1 Elevation harmonic real part"                       />
-          <field field_ref="P1y"          name="P1y"      long_name="P1 Elevation harmonic imaginary part"                  />
-          <field field_ref="P1x_u"        name="P1x_u"    long_name="P1 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="P1y_u"        name="P1y_u"    long_name="P1 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="P1x_v"        name="P1x_v"    long_name="P1 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="P1y_v"        name="P1y_v"    long_name="P1 current barotropic along j-axis harmonic imaginary part "  />
-          <field field_ref="O1x"          name="O1x"      long_name="O1 Elevation harmonic real part"                       />
-          <field field_ref="O1y"          name="O1y"      long_name="O1 Elevation harmonic imaginary part"                  />
-          <field field_ref="O1x_u"        name="O1x_u"    long_name="O1 current barotropic along i-axis harmonic real part "       />
-          <field field_ref="O1y_u"        name="O1y_u"    long_name="O1 current barotropic along i-axis harmonic imaginary part "  />
-          <field field_ref="O1x_v"        name="O1x_v"    long_name="O1 current barotropic along j-axis harmonic real part "       />
-          <field field_ref="O1y_v"        name="O1y_v"    long_name="O1 current barotropic along j-axis harmonic imaginary part "  />
-	</file>
-    -->
-
-      </file_group>
-
+      <file_group id="5d" output_freq="5d"  output_level="10" enabled=".TRUE." />  <!-- 5d files -->
 
       <file_group id="1m" output_freq="1mo" output_level="10" enabled=".TRUE." > <!-- real monthly files -->
+
         <file id="file21" name_suffix="_grid_T" description="ocean T grid variables" >
-          <field field_ref="e3t"  />
           <field field_ref="taubot" name="avtaubot" operation="average" />
           <field field_ref="taubot" name="maxtaubot" operation="maximum" />
-          <field field_ref="toce"         name="thetao"   long_name="sea_water_potential_temperature"          operation="instant" freq_op="1d" > @toce_e3t / @e3t </field>
-          <field field_ref="rhop"         name="rho"   long_name="sea_water_potential_density"          operation="average" />
-          <field field_ref="soce"         name="so"       long_name="sea_water_salinity"             operation="instant" freq_op="1d" > @soce_e3t / @e3t </field>
-          <field field_ref="sst"          name="tos"      long_name="sea_surface_temperature"             />
-          <field field_ref="sss"          name="sos"      long_name="sea_surface_salinity"                />
-          <field field_ref="ssh"          name="zos"      long_name="sea_surface_height_above_geoid"      />
-        </file>
-
-        <file id="file23" name_suffix="_grid_U" description="ocean U grid variables" >
-          <field field_ref="e3u"  />
-          <field field_ref="ssu"          name="uos"     long_name="sea_surface_x_velocity"    />
-          <field field_ref="uoce"         name="uo"      long_name="sea_water_x_velocity" />
-          <field field_ref="utau"         name="tauuo"   long_name="surface_downward_x_stress" />
-        </file>
-
-        <file id="file24" name_suffix="_grid_V" description="ocean V grid variables" >
-          <field field_ref="e3v"  />
-          <field field_ref="ssv"          name="vos"     long_name="sea_surface_y_velocity"    />
-          <field field_ref="voce"         name="vo"      long_name="sea_water_y_velocity" />
-          <field field_ref="vtau"         name="tauvo"   long_name="surface_downward_y_stress" />
         </file>
 
         <file id="file25" name_suffix="_grid_W" description="ocean W grid variables" >
           <field field_ref="e3w"  />
-          <field field_ref="woce"         name="wo"      operation="average" long_name="ocean vertical velocity" />
           <field field_ref="avt"          name="difvho"  operation="maximum" long_name="ocean_vertical_heat_diffusivity" />
         </file>
 
         <file id="file26" name_suffix="_ptrc_T" description="ocean tracers" >
-          <field field_ref="N1_p" operation="average" />
-          <field field_ref="N3_n" operation="average" />
-          <field field_ref="N4_n" operation="average" />
-          <field field_ref="N5_s" operation="average" />
-          <field field_ref="O3_c" operation="average" />
-          <field field_ref="O3_TA" operation="average" />
-          <field field_ref="O3_bioalk" operation="average" />
-          <field field_ref="O2_o" operation="average" />
-          <field field_ref="P1_c" operation="average" />
-          <field field_ref="P2_c" operation="average" />
-          <field field_ref="P3_c" operation="average" />
-          <field field_ref="P4_c" operation="average" />
-          <field field_ref="B1_c" operation="average" />
-          <field field_ref="Z4_c" operation="average" />
-          <field field_ref="Z5_c" operation="average" />
-          <field field_ref="Z6_c" operation="average" />
-          <field field_ref="R4_c" operation="average" />
-          <field field_ref="R6_c" operation="average" />
-          <field field_ref="R8_c" operation="average" />
-          <field field_ref="R1_c" operation="average" />
-          <field field_ref="R2_c" operation="average" />
-          <field field_ref="R3_c" operation="average" />
-          <field field_ref="L2_c" operation="average" />
-          <field field_ref="bL2_c"  operation="average" />
-          <field field_ref="Q1_c" operation="average" />
-          <field field_ref="Q6_c" operation="average" />
-          <field field_ref="Q7_c" operation="average" />
-          <field field_ref="Q17_c"  operation="average" />
-          <field field_ref="H1_c" operation="average" />
-          <field field_ref="H2_c" operation="average" />
-          <field field_ref="Y2_c" operation="average" />
-          <field field_ref="Y3_c" operation="average" />
-          <field field_ref="Y4_c" operation="average" />
-          <field field_ref="ben_col_D1m" operation="average" />
-          <field field_ref="ben_col_D2m" operation="average" />
-          <field field_ref="Q6_pen_depth_c" operation="average" />
-          <field field_ref="Q6_pen_depth_n" operation="average" />
-          <field field_ref="Q6_pen_depth_p" operation="average" />
-          <field field_ref="Q6_pen_depth_s" operation="average" />
-          <field field_ref="Q7_pen_depth_c" operation="average" />
-          <field field_ref="Q7_pen_depth_n" operation="average" />
-          <field field_ref="Q7_pen_depth_p" operation="average" />
-          <field field_ref="K1_p" operation="average" />
-          <field field_ref="K3_n" operation="average" />
-          <field field_ref="K4_n" operation="average" />
-          <field field_ref="K5_s" operation="average" />
-          <field field_ref="G2_o" operation="average" />
-          <field field_ref="G2_o_deep" operation="average" />
-          <field field_ref="G3_c" operation="average" />
-          <field field_ref="ben_nit_G4n" operation="average" />
-          <field field_ref="e3t"      name="e3t"     operation="average" />
-          <field field_ref="total_chlorophyll_calculator_result"      name="Chl"     long_name="Chlorophyll-a" operation="average" />
-          <field field_ref="light_ADY" operation="average" />
-          <field field_ref="light_EIR" operation="average" />
-          <field field_ref="light_xEPS" operation="average" />
+          <field field_ref="R1_n" operation="average" />
+          <field field_ref="R1_p" operation="average" />
+          <field field_ref="PON_result" units="mmol N/m^3" operation="average" />
+          <field field_ref="POP_result" units="mmol P/m^3" operation="average" />
+          <field field_ref="POSi_result" units="mmol Si/m^3" operation="average" />
+          <field field_ref="O3_Om_cal" operation="average" />
+          <field field_ref="Q1_n" operation="average" />
+          <field field_ref="Q1_p" operation="average" />
+          <field field_ref="Q6_s" operation="average" />
+          <field field_ref="Q17_n" operation="average" />
+          <field field_ref="Q17_p" operation="average" />
+          <field field_ref="ben_PON_result" units="mmol N/m^3" operation="average" />
+          <field field_ref="ben_POP_result" units="mmol P/m^3" operation="average" />
+          <field field_ref="erosion_v_er" operation="average" />
+          <field field_ref="erosion_v_er" name="max_erosion_v_er" operation="maximum" />
+          <field field_ref="phytoplankton_uptake_oxN_result" operation="average" />
+          <field field_ref="phytoplankton_uptake_redN_result" operation="average" />
+          <field field_ref="phytoplankton_uptake_DIP_result" operation="average" />
+          <field field_ref="P1_fN5PIs" name="phytoplankton_uptake_DIS_result" operation="average" />
+          <field field_ref="phytoplankton_loss_to_labile_DOC_result" operation="average" />
+          <field field_ref="phytoplankton_loss_to_labile_DON_result" operation="average" />
+          <field field_ref="phytoplankton_loss_to_labile_DOP_result" operation="average" />
+          <field field_ref="phytoplankton_loss_to_non_labile_DOC_result" operation="average" />
+          <field field_ref="phytoplankton_loss_to_POC_result" operation="average" />
+          <field field_ref="phytoplankton_loss_to_PON_result" operation="average" />
+          <field field_ref="phytoplankton_loss_to_POP_result" operation="average" />
+          <field field_ref="P1_fPIRPs" name="phytoplankton_loss_to_POS_result" operation="average" />
+          <field field_ref="B1_fB1O3c" operation="average" />
+          <field field_ref="B1_fR1B1c" operation="average" />
+          <field field_ref="B1_fR1B1n" operation="average" />
+          <field field_ref="B1_fR1B1p" operation="average" />
+          <field field_ref="B1_fR2B1c" operation="average" />
+          <field field_ref="B1_fR3B1c" operation="average" />
+          <field field_ref="B1_fB1R1c" operation="average" />
+          <field field_ref="B1_fB1R1n" operation="average" />
+          <field field_ref="B1_fB1R1p" operation="average" />
+          <field field_ref="B1_fB1R2c" operation="average" />
+          <field field_ref="B1_fB1R3c" operation="average" />
+          <field field_ref="B1_fB1NIn" operation="average" />
+          <field field_ref="B1_fB1N1p" operation="average" />
+          <field field_ref="Z4_fZIO3c" operation="average" />
+          <field field_ref="Z4_fZIRPc" operation="average" />
+          <field field_ref="Z4_fZIRPn" operation="average" />
+          <field field_ref="Z4_fZIRPp" operation="average" />
+          <field field_ref="Z4_fZIRDc" operation="average" />
+          <field field_ref="Z4_fZIRDn" operation="average" />
+          <field field_ref="Z4_fZIRDp" operation="average" />
+          <field field_ref="Z4_fZINIn" operation="average" />
+          <field field_ref="Z4_fZINIp" operation="average" />
+          <field field_ref="Z4_fphytoc_result" operation="average" />
+          <field field_ref="Z4_fphyton_result" operation="average" />
+          <field field_ref="Z4_fphytop_result" operation="average" />
+          <field field_ref="Z4_fprey1s" name="Z4_fphytos_result" operation="average" />
+          <field field_ref="Z4_fzooc_result" operation="average" />
+          <field field_ref="Z4_fzoon_result" operation="average" />
+          <field field_ref="Z4_fzoop_result" operation="average" />
+          <field field_ref="Z4_fprey9c" name="Z4_fdetrc_result" operation="average" />
+          <field field_ref="Z4_fprey9n" name="Z4_fdetrn_result" operation="average" />
+          <field field_ref="Z4_fprey9p" name="Z4_fdetrp_result" operation="average" />
+          <field field_ref="Z4_fprey9s" name="Z4_fdetrs_result" operation="average" />
+          <field field_ref="total_microzooplankton_respiration_result" operation="average" />
+          <field field_ref="total_microzooplankton_loss_to_POC_result" operation="average" />
+          <field field_ref="total_microzooplankton_loss_to_PON_result" operation="average" />
+          <field field_ref="total_microzooplankton_loss_to_POP_result" operation="average" />
+          <field field_ref="total_microzooplankton_loss_to_DOC_result" operation="average" />
+          <field field_ref="total_microzooplankton_loss_to_DON_result" operation="average" />
+          <field field_ref="total_microzooplankton_loss_to_DOP_result" operation="average" />
+          <field field_ref="total_microzooplankton_loss_to_DIN_result" operation="average" />
+          <field field_ref="total_microzooplankton_loss_to_DIP_result" operation="average" />
+          <field field_ref="Z5_fphytoc_result" operation="average" />
+          <field field_ref="Z5_fphyton_result" operation="average" />
+          <field field_ref="Z5_fphytop_result" operation="average" />
+          <field field_ref="Z5_fprey2s" name="Z5_fphytos_result" operation="average" />
+          <field field_ref="Z5_fprey1c" name="Z5_fbacc_result" operation="average" />
+          <field field_ref="Z5_fprey1n" name="Z5_fbacn_result" operation="average" />
+          <field field_ref="Z5_fprey1p" name="Z5_fbacp_result" operation="average" />
+          <field field_ref="Z5_fzooc_result" operation="average" />
+          <field field_ref="Z5_fzoon_result" operation="average" />
+          <field field_ref="Z5_fzoop_result" operation="average" />
+          <field field_ref="Z6_fphytoc_result" operation="average" />
+          <field field_ref="Z6_fphyton_result" operation="average" />
+          <field field_ref="Z6_fphytop_result" operation="average" />
+          <field field_ref="Z6_fprey1c" name="Z6_fbacc_result" operation="average" />
+          <field field_ref="Z6_fprey1n" name="Z6_fbacn_result" operation="average" />
+          <field field_ref="Z6_fprey1p" name="Z6_fbacp_result" operation="average" />
+          <field field_ref="Z6_fprey4c" name="Z6_fzooc_result" operation="average" />
+          <field field_ref="Z6_fprey4n" name="Z6_fzoon_result" operation="average" />
+          <field field_ref="Z6_fprey4p" name="Z6_fzoop_result" operation="average" />
+          <field field_ref="pel_nit_rate" operation="average" />
+          <field field_ref="O2_fair" operation="average" />
+          <field field_ref="ben_nit_nrate" operation="average" />
+          <field field_ref="benthic_denitrification_ammonification_result" operation="average" />
+          <field field_ref="Y2_fprey1c" name="Y2_faerbacc_result" operation="average" />
+          <field field_ref="Y2_fprey1n" name="Y2_faerbacn_result" operation="average" />
+          <field field_ref="Y2_fprey1p" name="Y2_faerbacp_result" operation="average" />
+          <field field_ref="Y2_fprey2c" name="Y2_fanaerbacc_result" operation="average" />
+          <field field_ref="Y2_fprey2n" name="Y2_fanaerbacn_result" operation="average" />
+          <field field_ref="Y2_fprey2p" name="Y2_fanaerbacp_result" operation="average" />
+          <field field_ref="Y2_fprey3c" name="Y2_fdetrc_result" operation="average" />
+          <field field_ref="Y2_fprey3n" name="Y2_fdetrn_result" operation="average" />
+          <field field_ref="Y2_fprey3p" name="Y2_fdetrp_result" operation="average" />
+          <field field_ref="Y2_fprey4c" name="Y2_fmeioc_result" operation="average" />
+          <field field_ref="Y2_fprey4n" name="Y2_fmeion_result" operation="average" />
+          <field field_ref="Y2_fprey4p" name="Y2_fmeiop_result" operation="average" />
+          <field field_ref="Y3_fphytoc_result" operation="average" />
+          <field field_ref="Y3_fphyton_result" operation="average" />
+          <field field_ref="Y3_fphytop_result" operation="average" />
+          <field field_ref="Y3_fprey1s" name="Y3_fphytos_result" operation="average" />
+          <field field_ref="Y3_fprey4c" name="Y3_fpeldetrc_result" operation="average" />
+          <field field_ref="Y3_fprey4n" name="Y3_fpeldetrn_result" operation="average" />
+          <field field_ref="Y3_fprey4p" name="Y3_fpeldetrp_result" operation="average" />
+          <field field_ref="Y3_fprey4s" name="Y3_fpeldetrs_result" operation="average" />
+          <field field_ref="Y3_fprey5c" name="Y3_faerbacc_result" operation="average" />
+          <field field_ref="Y3_fprey5n" name="Y3_faerbacn_result" operation="average" />
+          <field field_ref="Y3_fprey5p" name="Y3_faerbacp_result" operation="average" />
+          <field field_ref="Y3_fprey6c" name="Y3_fbendetrc_result" operation="average" />
+          <field field_ref="Y3_fprey6n" name="Y3_fbendetrn_result" operation="average" />
+          <field field_ref="Y3_fprey6p" name="Y3_fbendetrp_result" operation="average" />
+          <field field_ref="Ymacro_fYG3c_result" operation="average" />
+          <field field_ref="Ymacro_fYQPc_result" operation="average" />
+          <field field_ref="Ymacro_fYQPn_result" operation="average" />
+          <field field_ref="Ymacro_fYQPp_result" operation="average" />
+          <field field_ref="Ymacro_fYKIn_result" operation="average" />
+          <field field_ref="Ymacro_fYK1p_result" operation="average" />
+          <field field_ref="Y4_fprey1c" name="Y4_faerbacc_result" operation="average" />
+          <field field_ref="Y4_fprey1n" name="Y4_faerbacn_result" operation="average" />
+          <field field_ref="Y4_fprey1p" name="Y4_faerbacp_result" operation="average" />
+          <field field_ref="Y4_fprey2c" name="Y4_fanaerbacc_result" operation="average" />
+          <field field_ref="Y4_fprey2n" name="Y4_fanaerbacn_result" operation="average" />
+          <field field_ref="Y4_fprey2p" name="Y4_fanaerbacp_result" operation="average" />
+          <field field_ref="Y4_fprey3c" name="Y4_fmeioc_result" operation="average" />
+          <field field_ref="Y4_fprey3n" name="Y4_fmeion_result" operation="average" />
+          <field field_ref="Y4_fprey3p" name="Y4_fmeiop_result" operation="average" />
+          <field field_ref="Y4_fprey4c" name="Y4_fdetrc_result" operation="average" />
+          <field field_ref="Y4_fprey4n" name="Y4_fdetrn_result" operation="average" />
+          <field field_ref="Y4_fprey4p" name="Y4_fdetrp_result" operation="average" />
+          <field field_ref="Y4_fYG3c" operation="average" />
+          <field field_ref="Y4_fYQPc" operation="average" />
+          <field field_ref="Y4_fYQPn" operation="average" />
+          <field field_ref="Y4_fYQPp" operation="average" />
+          <field field_ref="Y4_fYKIn" operation="average" />
+          <field field_ref="Y4_fYK1p" operation="average" />
+          <field field_ref="H1_fQ1Hc" operation="average" />
+          <field field_ref="H1_fQ1Hn" operation="average" />
+          <field field_ref="H1_fQ1Hp" operation="average" />
+          <field field_ref="H1_fHG3c" operation="average" />
+          <field field_ref="H1_fHQ1c" operation="average" />
+          <field field_ref="H1_fHQ1n" operation="average" />
+          <field field_ref="H1_fHQ1p" operation="average" />
+          <field field_ref="H1_fHQPc" operation="average" />
+          <field field_ref="H1_fHQPn" operation="average" />
+          <field field_ref="H1_fHQPp" operation="average" />
+          <field field_ref="H1_fHKIn" operation="average" />
+          <field field_ref="H1_fHK1p" operation="average" />
+          <field field_ref="H2_fQPHc" operation="average" />
+          <field field_ref="H2_fQ1Hn" operation="average" />
+          <field field_ref="H2_fQ1Hp" operation="average" />
+          <field field_ref="H2_fHG3c" operation="average" />
+          <field field_ref="H2_fHQ1c" operation="average" />
+          <field field_ref="H2_fHQ1n" operation="average" />
+          <field field_ref="H2_fHQ1p" operation="average" />
+          <field field_ref="H2_fHQPc" operation="average" />
+          <field field_ref="H2_fHQPn" operation="average" />
+          <field field_ref="H2_fHQPp" operation="average" />
+          <field field_ref="H2_fHKIn" operation="average" />
+          <field field_ref="H2_fHK1p" operation="average" />
+          <field field_ref="Q6_remins_result" operation="average" />
+          <field field_ref="net_PelBen_PON_result" operation="average" />
+          <field field_ref="net_PelBen_POP_result" operation="average" />
+          <field field_ref="net_PelBen_POS_result" operation="average" />
         </file>
 
       </file_group>
@@ -981,25 +933,25 @@
       <file_group id="10y" output_freq="10y" output_level="10" enabled=".TRUE."/> <!-- real 10y files -->
 
    </file_definition>
-    
-    <!-- 
+
+    <!--
 ============================================================================================================
 = grid definition = = DO NOT CHANGE =
 ============================================================================================================
     -->
-    
-   <axis_definition>  
+
+   <axis_definition>
       <axis id="deptht" long_name="Vertical T levels" unit="m" positive="down" />
       <axis id="depthu" long_name="Vertical U levels" unit="m" positive="down" />
       <axis id="depthv" long_name="Vertical V levels" unit="m" positive="down" />
       <axis id="depthw" long_name="Vertical W levels" unit="m" positive="down" />
       <axis id="nfloat" long_name="Float number"      unit="-"  />
       <axis id="icbcla" long_name="Iceberg class"     unit="-"  />
-   </axis_definition> 
-    
+   </axis_definition>
+
    <domain_definition src="./domain_def.xml"/>
-   
-   <grid_definition>    
+
+   <grid_definition>
      <grid id="grid_T_2D" domain_ref="grid_T"/>
      <grid id="grid_T_3D" domain_ref="grid_T" axis_ref="deptht"/>
      <grid id="grid_U_2D" domain_ref="grid_U"/>
@@ -1009,15 +961,15 @@
      <grid id="grid_W_2D" domain_ref="grid_W"/>
      <grid id="grid_W_3D" domain_ref="grid_W" axis_ref="depthw"/>
      <grid id="grid_0" domain_ref="no_grid"/>
-    </grid_definition>   
+    </grid_definition>
   </context>
-  
+
 
   <context id="xios">
 
       <variable_definition>
-	
-     <!-- 
+
+     <!--
         We must have buffer_size > jpi*jpj*jpk*8 (with jpi and jpj the subdomain size)
 -->
 	  <variable id="buffer_size"               type="integer">5000000</variable>
@@ -1026,9 +978,9 @@
 	  <variable id="using_server"              type="boolean">true</variable>
 	  <variable id="using_oasis"               type="boolean">false</variable>
 	  <variable id="oasis_codes_id"            type="string" >oceanx</variable>
-	
+
       </variable_definition>
-               
+
   </context>
-  
+
 </simulation>
