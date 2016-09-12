@@ -1751,7 +1751,7 @@ instances:
       term15: Y3/fprey3p
       term16: Y3/fprey4p
       term17: Q6/resuspension_flux_p
-  net_PelBen_POS:
+  net_PelBen_POSi:
    long_name: flux of particulate organic silicate from pelagic to benthos
    model: horizontal_weighted_sum
    parameters:

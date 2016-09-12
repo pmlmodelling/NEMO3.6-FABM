@@ -163,7 +163,7 @@ CONTAINS
           number_dimensions=-1 !default, don't specify grid_ref
       ENDIF
 
-      WRITE (missing_value,'(E9.3)') 0.0E0
+      WRITE (missing_value,'(E9.3)') -2.E20
       WRITE (string_dimensions,'(I1)') number_dimensions
       IF(lwp) WRITE(numout,*) "Size of trd_tags:",size(trd_tags)
       SELECT CASE (number_dimensions)
