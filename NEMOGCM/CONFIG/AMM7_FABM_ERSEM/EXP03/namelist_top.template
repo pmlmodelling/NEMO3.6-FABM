@@ -72,10 +72,10 @@
    cn_dir        =  './'      !  root directory for the location of the data files
 /
 !-----------------------------------------------------------------------
-&namtrc_adv    !   advection scheme for passive tracer 
+&namtrc_adv    !   advection scheme for passive tracer
 !-----------------------------------------------------------------------
-   ln_trcadv_cen2    =  .false.  !  2nd order centered scheme   
-   ln_trcadv_tvd     =  .true.   !  TVD scheme    
+   ln_trcadv_cen2    =  .false.  !  2nd order centered scheme
+   ln_trcadv_tvd     =  .true.   !  TVD scheme
    ln_trcadv_muscl   =  .false.  !  MUSCL scheme
    ln_trcadv_muscl2  =  .false.  !  MUSCL2 scheme + cen2 at boundaries
    ln_trcadv_ubs     =  .false.  !  UBS scheme
@@ -83,14 +83,14 @@
    ln_trcadv_msc_ups =  .false.  !  use upstream scheme within muscl
 /
 !-----------------------------------------------------------------------
-&namtrc_ldf    !   lateral diffusion scheme for passive tracer 
+&namtrc_ldf    !   lateral diffusion scheme for passive tracer
 !-----------------------------------------------------------------------
 !  ln_trcldf_diff   =  .false. ! slwa .true.   !  performs lateral diffusion (T) or not (F) ! slwa
-!                               !  Type of the operator : 
-   ln_trcldf_lap    =  .false. ! slwa .true.   !     laplacian operator       
-   ln_trcldf_bilap  =  .false.  !     bilaplacian operator     
+!                               !  Type of the operator :
+   ln_trcldf_lap    =  .false. ! slwa .true.   !     laplacian operator
+   ln_trcldf_bilap  =  .false.  !     bilaplacian operator
                                 !  Direction of action  :
-   ln_trcldf_level  =  .false.  !     iso-level                
+   ln_trcldf_level  =  .false.  !     iso-level
    ln_trcldf_hor    =  .true.   !     horizontal (geopotential)         (require "key_ldfslp" when ln_sco=T)
    ln_trcldf_iso    =  .false.  !     iso-neutral                       (require "key_ldfslp")
 !                               !  Coefficient
@@ -100,16 +100,16 @@
 !-----------------------------------------------------------------------
 &namtrc_zdf        !   vertical physics
 !-----------------------------------------------------------------------
-   ln_trczdf_exp   =  .false.  !  split explicit (T) or implicit (F) time stepping 
+   ln_trczdf_exp   =  .false.  !  split explicit (T) or implicit (F) time stepping
    nn_trczdf_exp   =   3       !  number of sub-timestep for ln_trczdfexp=T
 /
 !-----------------------------------------------------------------------
-&namtrc_rad        !  treatment of negative concentrations 
+&namtrc_rad        !  treatment of negative concentrations
 !-----------------------------------------------------------------------
    ln_trcrad   =  .true.  !  artificially correct negative concentrations (T) or not (F)  ! slwa .true.
 /
 !-----------------------------------------------------------------------
-&namtrc_dmp    !   passive tracer newtonian damping   
+&namtrc_dmp    !   passive tracer newtonian damping
 !-----------------------------------------------------------------------
    nn_zdmp_tr  =    1      !  vertical   shape =0    damping throughout the water column
                            !                   =1 no damping in the mixing layer (kz  criteria)
@@ -136,6 +136,8 @@
    ln_trdtrc(12)  =   .true. ! P1_c
    ln_trdtrc(13)  =   .true. ! P1_n
    ln_trdtrc(14)  =   .true. ! P1_p
+   ln_trdtrc(16)  =   .true. ! P1_s
+   ln_trdtrc(17)  =   .true. ! L2_c
    ln_trdtrc(18)  =   .true. ! P2_c
    ln_trdtrc(19)  =   .true. ! P2_n
    ln_trdtrc(20)  =   .true. ! P2_p
