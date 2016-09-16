@@ -2750,4 +2750,16 @@
   <field id="total_nitrogen" long_name="total_nitrogen" unit="mmol m-3" default_value="-.200E+21" />
   <field id="total_phosphorus" long_name="total_phosphorus" unit="mmol m-3" default_value="-.200E+21" />
  </field_group>
+ <field_group id="fabm_input" grid_ref="grid_T_2D">
+  <field id="INP_N4_flux" long_name="N4_flux input" unit="" default_value="-.200E+21" />
+  <field id="INP_N3_flux" long_name="N3_flux input" unit="" default_value="-.200E+21" />
+  <field id="INP_gelbstoff_absorption_satellite" long_name="gelbstoff_absorption_satellite input" unit="" default_value="-.200E+21" />
+  <field id="INP_robioalk" long_name="robioalk input" unit="" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="INP_roo" long_name="roo input" unit="" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="INP_rodic" long_name="rodic input" unit="" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="INP_rosio2" long_name="rosio2 input" unit="" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="INP_rop" long_name="rop input" unit="" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="INP_ronh4" long_name="ronh4 input" unit="" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="INP_rono3" long_name="rono3 input" unit="" default_value="-.200E+21" grid_ref="grid_T_3D" />
+ </field_group>
 </field_definition>

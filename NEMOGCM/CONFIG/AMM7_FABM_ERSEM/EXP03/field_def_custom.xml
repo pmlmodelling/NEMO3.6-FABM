@@ -151,5 +151,12 @@
   <field id="Z6_fprey4n_e3t" long_name="heterotrophic flagellate predation on zooplankton nitrogen cell depth integrated" unit="mmol N/m^2/d" default_value="-.200E+21" > Z6_fprey4n * e3t </field>
   <field id="Z6_fprey4p_e3t" long_name="heterotrophic flagellate predation on zooplankton phosphorus cell depth integrated" unit="mmol P/m^2/d" default_value="-.200E+21" > Z6_fprey4p * e3t </field>
   <field id="pel_nit_rate_e3t" long_name="pelagic nitrification rate cell depth integrated" unit="mmol N/m^2/d" default_value="-.200E+21" > pel_nit_rate * e3t </field>
+  <field id="INP_rodic_e3t" default_value="-.200E+21" > INP_rodic * e3t </field>
+  <field id="INP_rono3_e3t" default_value="-.200E+21" > INP_rono3 * e3t </field>
+  <field id="INP_ronh4_e3t" default_value="-.200E+21" > INP_ronh4 * e3t </field>
+  <field id="INP_rop_e3t" default_value="-.200E+21" > INP_rop * e3t </field>
+  <field id="INP_ronsio2_e3t" default_value="-.200E+21" > INP_rosio2 * e3t </field>
+  <field id="INP_roo_e3t" default_value="-.200E+21" > INP_roo * e3t </field>
+  <field id="INP_robioalk_e3t" default_value="-.200E+21" > INP_robioalk * e3t </field>
  </field_group>
 </field_definition>

@@ -712,6 +712,16 @@
           <field field_ref="YAD_PO_s" operation="instant" freq_op="1d" > @YAD_PO_s_e3t / @e3t </field>
           <field field_ref="VMV_PO_c" operation="instant" freq_op="1d" > @VMV_PO_c_e3t / @e3t </field>
           <field field_ref="VMV_L2_c" operation="instant" freq_op="1d" > @VMV_L2_c_e3t / @e3t </field>
+          <field field_ref="INP_rodic" long_name="riverine DIC input" unit="mg/m^3/s" operation="instant" freq_op="1d" > @INP_rodic_e3t / @e3t </field>
+          <field field_ref="INP_roo" long_name="riverine dissolved oxygen input" unit="mg/m^3/s" operation="instant" freq_op="1d" > @INP_roo_e3t / @e3t </field>
+          <field field_ref="INP_rono3" long_name="riverine oxidised nitrogen input" unit="mmol/m^3/s" operation="instant" freq_op="1d" > @INP_rono3_e3t / @e3t </field>
+          <field field_ref="INP_ronh4" long_name="riverine reduced nitrogen input" unit="mmol/m^3/s" operation="instant" freq_op="1d" > @INP_ronh4_e3t / @e3t </field>
+          <field field_ref="INP_rosio2" long_name="riverine silicate input" unit="mmol/m^3/s" operation="instant" freq_op="1d" > @INP_ronsio2_e3t / @e3t </field>
+          <field field_ref="INP_rop" long_name="riverine phosphate input" unit="mmol/m^3/s" operation="instant" freq_op="1d" > @INP_rop_e3t / @e3t </field>
+          <field field_ref="INP_robioalk" long_name="riverine bioalkalinity input" unit="umol/kg/s" operation="instant" freq_op="1d" > @INP_robioalk_e3t / @e3t </field>
+          <field field_ref="INP_N3_flux" long_name="atmospheric deposition of oxidised nitrogen" unit="mmol/m^2/s" operation="average" />
+          <field field_ref="INP_N4_flux" long_name="atmospheric deposition of reduced nitrogen" unit="mmol/m^2/s" operation="average" />
+          <field field_ref="INP_gelbstoff_absorption_satellite" long_name="background gelbstoff absoprtion" unit="1/m" operation="average" />
           <field field_ref="e3t"      operation="average" />
         </file>
 

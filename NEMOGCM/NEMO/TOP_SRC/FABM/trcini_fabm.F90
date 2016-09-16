@@ -18,6 +18,9 @@ MODULE trcini_fabm
    USE trcsms_fabm
    USE fabm_config,ONLY: fabm_create_model_from_yaml_file
    USE fabm,ONLY: type_external_variable, fabm_initialize_library
+   USE inputs_fabm,ONLY: initialize_inputs,link_inputs, &
+     type_input_variable,type_input_data,type_river_data, &
+     first_input_data,first_river_data
 #if defined key_git_version
    USE fabm_version,ONLY: fabm_commit_id=>git_commit_id, &
                           fabm_branch_name=>git_branch_name
@@ -47,6 +50,9 @@ CONTAINS
    SUBROUTINE nemo_fabm_init()
       INTEGER :: jn
       INTEGER, PARAMETER :: xml_unit = 1979
+      TYPE (type_input_data),POINTER :: input_data
+      TYPE (type_river_data),POINTER :: river_data
+      CLASS (type_input_variable),POINTER :: input_pointer
 
       ! Allow FABM to parse fabm.yaml. This ensures numbers of variables are known.
       call fabm_create_model_from_yaml_file(model)
@@ -61,6 +67,9 @@ CONTAINS
       jpdia2d = jpdia2d + size(model%horizontal_diagnostic_variables)
       jpdia3d = jpdia3d + size(model%diagnostic_variables)
       jpdiabio = jpdiabio + jp_fabm
+
+      !Initialize input data structures.
+      call initialize_inputs
 
       IF (lwp) THEN
          ! write field_def_fabm.xml on lead process
@@ -98,6 +107,21 @@ CONTAINS
          WRITE (xml_unit,1000) ' <field_group id="fabm_scalar" grid_ref="grid_0">'
          DO jn=1,size(model%conserved_quantities)
             CALL write_variable_xml(xml_unit,model%conserved_quantities(jn))
+         END DO
+         WRITE (xml_unit,1000) ' </field_group>'
+
+         WRITE (xml_unit,1000) ' <field_group id="fabm_input" grid_ref="grid_T_2D">'
+         input_data => first_input_data
+         DO WHILE (ASSOCIATED(input_data))
+           input_pointer => input_data
+           CALL write_input_xml(xml_unit,input_pointer)
+            input_data => input_data%next
+         END DO
+         river_data => first_river_data
+         DO WHILE (ASSOCIATED(river_data))
+           input_pointer => river_data
+           CALL write_input_xml(xml_unit,input_pointer,3)
+            river_data => river_data%next
          END DO
          WRITE (xml_unit,1000) ' </field_group>'
 
@@ -165,7 +189,6 @@ CONTAINS
 
       WRITE (missing_value,'(E9.3)') -2.E20
       WRITE (string_dimensions,'(I1)') number_dimensions
-      IF(lwp) WRITE(numout,*) "Size of trd_tags:",size(trd_tags)
       SELECT CASE (number_dimensions)
       CASE (3)
         DO i=1,size(trd_tags)
@@ -180,6 +203,35 @@ CONTAINS
       END SELECT
 
    END SUBROUTINE write_trends_xml
+
+   SUBROUTINE write_input_xml(xml_unit,variable,flag_grid_ref)
+      INTEGER,INTENT(IN) :: xml_unit
+      INTEGER,INTENT(IN),OPTIONAL :: flag_grid_ref
+      CLASS(type_input_variable),POINTER,INTENT(IN) :: variable
+
+      INTEGER :: number_dimensions,i
+      CHARACTER(LEN=20) :: missing_value,string_dimensions
+
+      ! Check variable dimension for grid_ref specificaiton.
+      ! Default is to not specify the grid_ref in the field definition.
+      IF (present(flag_grid_ref)) THEN
+          number_dimensions=flag_grid_ref
+      ELSE
+          number_dimensions=-1 !default, don't specify grid_ref
+      ENDIF
+
+      WRITE (missing_value,'(E9.3)') -2.E20
+      WRITE (string_dimensions,'(I1)') number_dimensions
+      SELECT CASE (number_dimensions)
+      CASE (3)
+        WRITE (xml_unit,'(A)') '  <field id="'//'INP_'//TRIM(variable%sf(1)%clvar)//'" long_name="'//TRIM(variable%sf(1)%clvar)//' input" unit="" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
+      CASE (-1)
+        WRITE (xml_unit,'(A)') '  <field id="'//'INP_'//TRIM(variable%sf(1)%clvar)//'" long_name="'//TRIM(variable%sf(1)%clvar)//' input" unit="" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
+      CASE default
+         IF(lwp) WRITE(numout,*) ' trc_ini_fabm: Failing to initialise input diagnostic of variable '//TRIM(variable%sf(1)%clvar)//': Output of '//TRIM(ADJUSTL(string_dimensions))//'-dimensional diagnostic not supported!!!'
+      END SELECT
+
+   END SUBROUTINE write_input_xml
 
    SUBROUTINE trc_ini_fabm
       !!----------------------------------------------------------------------

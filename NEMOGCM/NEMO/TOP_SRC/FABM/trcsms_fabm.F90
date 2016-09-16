@@ -18,9 +18,9 @@ MODULE trcsms_fabm
    USE trcbc
    USE trd_oce
    USE trdtrc
-   #if defined key_trdtrc && defined key_iomput
-      USE trdtrc_oce
-   #endif
+#if defined key_trdtrc && defined key_iomput
+   USE trdtrc_oce
+#endif
 
    USE oce, only: tsn  ! Needed?
    USE sbc_oce, only: lk_oasis
@@ -374,6 +374,7 @@ CONTAINS
       ALLOCATE(current_total(jpi,SIZE(model%conserved_quantities)))
 #if defined key_trdtrc && defined key_iomput
       IF( lk_trdtrc ) ALLOCATE(tr_vmv(jpi,jpj,jpk,jp_fabm))
+      IF( lk_trdtrc ) ALLOCATE(tr_inp(jpi,jpj,jpk))
 #endif
 
       trc_sms_fabm_alloc = 0      ! set to zero if no array to be allocated
@@ -430,8 +431,8 @@ CONTAINS
       swr_id = model%get_bulk_variable_id(standard_variables%downwelling_shortwave_flux)
 
       ! Obtain user-specified input variables (read from NetCDF file)
-      call initialize_inputs
-      call update_inputs(nit000)
+      call link_inputs
+      call update_inputs( nit000, .false. )
 
       ! Check whether FABM has all required data
       call fabm_check_ready(model)
