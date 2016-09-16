@@ -39,7 +39,7 @@
 /
 &riverdata
    name='O2_o'
-   sn=         'rivers',24,            'rodic', .false.,  .true.,   'yearly',     '',         '',        ''
+   sn=         'rivers',24,            'roo', .false.,  .true.,   'yearly',     '',         '',        ''
    rfac=62.5 ! 1000./15.9994 (g/s -> mmol/s)
 /
 &riverdata
