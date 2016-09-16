@@ -1086,9 +1086,9 @@
   <field id="Z4_fZIRPc" long_name="mesozooplankton loss to POC" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="Z4_fZIRPn" long_name="mesozooplankton loss to PON" unit="mmol N/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="Z4_fZIRPp" long_name="mesozooplankton loss to POP" unit="mmol P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="Z4_fZIRDc" long_name="mesozooplankton loss to POC" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="Z4_fZIRDn" long_name="mesozooplankton loss to PON" unit="mmol N/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="Z4_fZIRDp" long_name="mesozooplankton loss to POP" unit="mmol P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="Z4_fZIRDc" long_name="mesozooplankton loss to DOC" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="Z4_fZIRDn" long_name="mesozooplankton loss to DON" unit="mmol N/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="Z4_fZIRDp" long_name="mesozooplankton loss to DOP" unit="mmol P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="Z4_prey1_state1_sms" long_name="mesozooplankton prey1 state variable 1 sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="Z4_prey1_state2_sms" long_name="mesozooplankton prey1 state variable 2 sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="Z4_prey1_state3_sms" long_name="mesozooplankton prey1 state variable 3 sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
