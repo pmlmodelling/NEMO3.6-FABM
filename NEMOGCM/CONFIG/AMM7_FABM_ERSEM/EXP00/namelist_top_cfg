@@ -72,10 +72,10 @@
    cn_dir        =  './'      !  root directory for the location of the data files
 /
 !-----------------------------------------------------------------------
-&namtrc_adv    !   advection scheme for passive tracer 
+&namtrc_adv    !   advection scheme for passive tracer
 !-----------------------------------------------------------------------
-   ln_trcadv_cen2    =  .false.  !  2nd order centered scheme   
-   ln_trcadv_tvd     =  .true.   !  TVD scheme    
+   ln_trcadv_cen2    =  .false.  !  2nd order centered scheme
+   ln_trcadv_tvd     =  .true.   !  TVD scheme
    ln_trcadv_muscl   =  .false.  !  MUSCL scheme
    ln_trcadv_muscl2  =  .false.  !  MUSCL2 scheme + cen2 at boundaries
    ln_trcadv_ubs     =  .false.  !  UBS scheme
@@ -83,14 +83,14 @@
    ln_trcadv_msc_ups =  .false.  !  use upstream scheme within muscl
 /
 !-----------------------------------------------------------------------
-&namtrc_ldf    !   lateral diffusion scheme for passive tracer 
+&namtrc_ldf    !   lateral diffusion scheme for passive tracer
 !-----------------------------------------------------------------------
 !  ln_trcldf_diff   =  .false. ! slwa .true.   !  performs lateral diffusion (T) or not (F) ! slwa
-!                               !  Type of the operator : 
-   ln_trcldf_lap    =  .false. ! slwa .true.   !     laplacian operator       
-   ln_trcldf_bilap  =  .false.  !     bilaplacian operator     
+!                               !  Type of the operator :
+   ln_trcldf_lap    =  .false. ! slwa .true.   !     laplacian operator
+   ln_trcldf_bilap  =  .false.  !     bilaplacian operator
                                 !  Direction of action  :
-   ln_trcldf_level  =  .false.  !     iso-level                
+   ln_trcldf_level  =  .false.  !     iso-level
    ln_trcldf_hor    =  .true.   !     horizontal (geopotential)         (require "key_ldfslp" when ln_sco=T)
    ln_trcldf_iso    =  .false.  !     iso-neutral                       (require "key_ldfslp")
 !                               !  Coefficient
@@ -100,16 +100,16 @@
 !-----------------------------------------------------------------------
 &namtrc_zdf        !   vertical physics
 !-----------------------------------------------------------------------
-   ln_trczdf_exp   =  .false.  !  split explicit (T) or implicit (F) time stepping 
+   ln_trczdf_exp   =  .false.  !  split explicit (T) or implicit (F) time stepping
    nn_trczdf_exp   =   3       !  number of sub-timestep for ln_trczdfexp=T
 /
 !-----------------------------------------------------------------------
-&namtrc_rad        !  treatment of negative concentrations 
+&namtrc_rad        !  treatment of negative concentrations
 !-----------------------------------------------------------------------
    ln_trcrad   =  .true.  !  artificially correct negative concentrations (T) or not (F)  ! slwa .true.
 /
 !-----------------------------------------------------------------------
-&namtrc_dmp    !   passive tracer newtonian damping   
+&namtrc_dmp    !   passive tracer newtonian damping
 !-----------------------------------------------------------------------
    nn_zdmp_tr  =    1      !  vertical   shape =0    damping throughout the water column
                            !                   =1 no damping in the mixing layer (kz  criteria)
@@ -125,7 +125,51 @@
    rn_ucf_trc  =   1        !  unit conversion factor (=1 -> /seconds ; =86400. -> /day)
    ln_trdmxl_trc_restart = .false.  !  restart for ML diagnostics
    ln_trdmxl_trc_instant = .true.  !  flag to diagnose trends of instantantaneous or mean ML T/S
-   ln_trdtrc(1)  =   .false.
+   ln_trdtrc(2)  =   .true. ! N1_p
+   ln_trdtrc(3)  =   .true. ! N3_n
+   ln_trdtrc(4)  =   .true. ! N4_n
+   ln_trdtrc(5)  =   .true. ! N5_s
+   ln_trdtrc(7)  =   .true. ! O3_c
+   ln_trdtrc(9)  =   .true. ! B1_c
+   ln_trdtrc(10)  =   .true. ! B1_n
+   ln_trdtrc(11)  =   .true. ! B1_p
+   ln_trdtrc(12)  =   .true. ! P1_c
+   ln_trdtrc(13)  =   .true. ! P1_n
+   ln_trdtrc(14)  =   .true. ! P1_p
+   ln_trdtrc(16)  =   .true. ! P1_s
+   ln_trdtrc(17)  =   .true. ! L2_c
+   ln_trdtrc(18)  =   .true. ! P2_c
+   ln_trdtrc(19)  =   .true. ! P2_n
+   ln_trdtrc(20)  =   .true. ! P2_p
+   ln_trdtrc(22)  =   .true. ! P3_c
+   ln_trdtrc(23)  =   .true. ! P3_n
+   ln_trdtrc(24)  =   .true. ! P3_p
+   ln_trdtrc(26)  =   .true. ! P4_c
+   ln_trdtrc(27)  =   .true. ! P4_n
+   ln_trdtrc(28)  =   .true. ! P4_p
+   ln_trdtrc(30)  =   .true. ! Z4_c
+   ln_trdtrc(31)  =   .true. ! Z5_c
+   ln_trdtrc(32)  =   .true. ! Z5_n
+   ln_trdtrc(33)  =   .true. ! Z5_p
+   ln_trdtrc(34)  =   .true. ! Z6_c
+   ln_trdtrc(35)  =   .true. ! Z6_n
+   ln_trdtrc(36)  =   .true. ! Z6_p
+   ln_trdtrc(37)  =   .true. ! R1_c
+   ln_trdtrc(38)  =   .true. ! R1_n
+   ln_trdtrc(39)  =   .true. ! R1_p
+   ln_trdtrc(40)  =   .true. ! R2_c
+   ln_trdtrc(41)  =   .true. ! R3_c
+   ln_trdtrc(42)  =   .true. ! R4_c
+   ln_trdtrc(43)  =   .true. ! R4_n
+   ln_trdtrc(44)  =   .true. ! R4_p
+   ln_trdtrc(45)  =   .true. ! R6_c
+   ln_trdtrc(46)  =   .true. ! R6_n
+   ln_trdtrc(47)  =   .true. ! R6_p
+   ln_trdtrc(48)  =   .true. ! R6_s
+   ln_trdtrc(49)  =   .true. ! R8_c
+   ln_trdtrc(50)  =   .true. ! R8_n
+   ln_trdtrc(51)  =   .true. ! R8_p
+   ln_trdtrc(52)  =   .true. ! R8_s
 /
 !-----------------------------------------------------------------------
 &namtrc_dia       !   parameters for passive tracer additional diagnostics
