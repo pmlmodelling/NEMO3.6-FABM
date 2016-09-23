@@ -897,8 +897,8 @@
   <field id="P1_fPIR2c" long_name="diatoms phytoplankton loss to semi-labile DOC" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P1_fPIRPc" long_name="diatoms phytoplankton loss to POC" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P1_fPIRPn" long_name="diatoms phytoplankton loss to PON" unit="mmol N/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="P1_fPIRPp" long_name="diatoms phytoplankton loss to POP" unit="mmon P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="P1_fPIRPs" long_name="diatoms phytoplankton loss to POSi" unit="mmol Si/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P1_fPIRPp" long_name="diatoms phytoplankton loss to POP" unit="mmol P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P1_fPIRPs" long_name="diatoms phytoplankton loss to POS" unit="mmol Si/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="L2_c_sms" long_name="calcite carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="L2_c_w" long_name="calcite carbon vertical movement" unit="m/s" default_value="-.116E-03" grid_ref="grid_T_3D" />
   <field id="L2_RainR" long_name="calcite rain ratio" unit="1" default_value="-.200E+21" grid_ref="grid_T_3D" />
@@ -940,7 +940,7 @@
   <field id="P2_fPIR2c" long_name="nanophytoplankton phytoplankton loss to semi-labile DOC" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P2_fPIRPc" long_name="nanophytoplankton phytoplankton loss to POC" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P2_fPIRPn" long_name="nanophytoplankton phytoplankton loss to PON" unit="mmol N/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="P2_fPIRPp" long_name="nanophytoplankton phytoplankton loss to POP" unit="mmon P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P2_fPIRPp" long_name="nanophytoplankton phytoplankton loss to POP" unit="mmol P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P2_L2c_sms" long_name="nanophytoplankton free calcite sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="P2_l" long_name="nanophytoplankton bound calcite" unit="mg C/m^3" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="P2_calcification" long_name="nanophytoplankton calcification rate" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
@@ -978,7 +978,7 @@
   <field id="P3_fPIR2c" long_name="picophytoplankton phytoplankton loss to semi-labile DOC" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P3_fPIRPc" long_name="picophytoplankton phytoplankton loss to POC" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P3_fPIRPn" long_name="picophytoplankton phytoplankton loss to PON" unit="mmol N/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="P3_fPIRPp" long_name="picophytoplankton phytoplankton loss to POP" unit="mmon P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P3_fPIRPp" long_name="picophytoplankton phytoplankton loss to POP" unit="mmol P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P4_c_sms" long_name="microphytoplankton carbon sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="P4_c_w" long_name="microphytoplankton carbon vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="P4_n_sms" long_name="microphytoplankton nitrogen sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
@@ -1013,7 +1013,7 @@
   <field id="P4_fPIR2c" long_name="microphytoplankton phytoplankton loss to semi-labile DOC" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P4_fPIRPc" long_name="microphytoplankton phytoplankton loss to POC" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P4_fPIRPn" long_name="microphytoplankton phytoplankton loss to PON" unit="mmol N/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
-  <field id="P4_fPIRPp" long_name="microphytoplankton phytoplankton loss to POP" unit="mmon P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="P4_fPIRPp" long_name="microphytoplankton phytoplankton loss to POP" unit="mmol P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P1_total_carbon_calculator_result" long_name="diatoms total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P2_total_carbon_calculator_result" long_name="nanophytoplankton total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="P3_total_carbon_calculator_result" long_name="picophytoplankton total_carbon_calculator result" unit="mmol m-3" default_value="-.200E+21" grid_ref="grid_T_3D" />
