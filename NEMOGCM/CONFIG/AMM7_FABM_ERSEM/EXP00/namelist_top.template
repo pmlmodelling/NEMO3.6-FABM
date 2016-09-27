@@ -131,7 +131,6 @@
    ln_trdtrc(4)  =   .true. ! N4_n
    ln_trdtrc(5)  =   .true. ! N5_s
    ln_trdtrc(7)  =   .true. ! O3_c
-   ln_trdtrc(8)  =   .true. ! O3_bioalk
    ln_trdtrc(9)  =   .true. ! B1_c
    ln_trdtrc(10)  =   .true. ! B1_n
    ln_trdtrc(11)  =   .true. ! B1_p
