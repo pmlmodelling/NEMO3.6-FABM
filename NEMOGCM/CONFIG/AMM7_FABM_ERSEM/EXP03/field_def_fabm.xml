@@ -841,6 +841,8 @@
   <field id="B1_fR3B1c" long_name="bacteria bacterial uptake of semi-refractory DOC" unit="mg C/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="B1_fR1B1n" long_name="bacteria bacterial DON uptake" unit="mmol N/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="B1_fR1B1p" long_name="bacteria bacterial DOP uptake" unit="mmol P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="B1_minn" long_name="bacteria N mineralisation" unit="mmol N/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="B1_minp" long_name="bacteria P mineralisation" unit="mmol P/m^3/d" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="B1_RP1_state1_sms" long_name="bacteria RP1 state variable 1 sources-sinks" unit="mg C/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="B1_RP1_state2_sms" long_name="bacteria RP1 state variable 2 sources-sinks" unit="mmol N/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="B1_RP1_state3_sms" long_name="bacteria RP1 state variable 3 sources-sinks" unit="mmol P/m^3/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
