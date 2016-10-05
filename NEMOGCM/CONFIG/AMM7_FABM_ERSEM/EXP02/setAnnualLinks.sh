@@ -3,8 +3,8 @@
 #   1: simulation year
 #
 
-INPUTPATH="/work/n01/n01/momme/AMM7-INPUTS"
-RUNPATH="/work/n01/n01/yuti/AMM7-v1-hindcast"
+INPUTPATH="$HOME/AMM7-INPUTS"
+RUNPATH="/work/momm/AMM7-v1"
 
 yn=$1
 yb=$(( $yn-1 ))

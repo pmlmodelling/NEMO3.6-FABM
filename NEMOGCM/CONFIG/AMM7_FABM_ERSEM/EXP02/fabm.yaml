@@ -58,7 +58,6 @@ instances:
       iswCO2: 1                                            # carbonate system diagnostics (0: off, 1: on), default = 1
       iswASFLUX: 1                                         # air-sea CO2 exchange (0: none, 1: Nightingale and Liss, 2: Wanninkhof 1992 without chemical enhancement, 3: Wanninkhof 1992 with chemical enhancement, 4: Wanninkhof 1999), default = 1
       iswtalk: 2                                           # alkalinity formulation (1-4: from salinity and temperature, 5: dynamic alkalinity), default = 5
-      iswbioalk: 1
     initialization:
       c: 2130.0                                            # total dissolved inorganic carbon (mmol C/m^3)
   R1:
@@ -93,29 +92,21 @@ instances:
     parameters:
       composition: cnpf                                    # elemental composition
       rm: 1.0                                              # sinking velocity (m/d), default = 0.0
-      ndeposition: 2                                           # number of target pools where the sedimentation flux goes (-)
-      qxc2: 0.1
-      qxn2: 0.1
-      qxp2: 0.06
+      ndeposition: 1                                           # number of target pools where the sedimentation flux goes (-)
       c0: 0.0033                                           # background carbon concentration (mg C/m^3), default = 0.0
     initialization:
       c: 7.2                                               # carbon (mg C/m^3)
       n: 0.1                                               # nitrogen (mmol N/m^3)
       p: 0.007                                             # phosphorus (mmol P/m^3)
     coupling:
-      deposition_target1: Q6/surface
-      deposition_target2: Q7/surface
+      deposition_target1: Q5
   R6:
     long_name: medium-size pom
     model: ersem/pelagic_base
     parameters:
       composition: cnpsf                                   # elemental composition
       rm: 5.0                                              # sinking velocity (m/d), default = 0.0
-      ndeposition: 2                                           # number of target pools where the sedimentation flux goes (-)
-      qxc2: 0.1
-      qxn2: 0.1
-      qxp2: 0.06
-      qxs2: 0.0
+      ndeposition: 1                                           # number of target pools where the sedimentation flux goes (-)
       c0: 0.0033                                           # background carbon concentration (mg C/m^3), default = 0.0
     initialization:
       c: 17.0                                              # carbon (mg C/m^3)
@@ -123,19 +114,14 @@ instances:
       p: 0.02                                              # phosphorus (mmol P/m^3)
       s: 0.1                                               # silicate (mmol Si/m^3)
     coupling:
-      deposition_target1: Q6/surface
-      deposition_target2: Q7/surface
+      deposition_target1: Q5
   R8:
     long_name: large-size pom
     model: ersem/pelagic_base
     parameters:
       composition: cnps                                    # elemental composition
       rm: 10.0                                             # sinking velocity (m/d), default = 0.0
-      ndeposition: 2                                       # number of target pools where the sedimentation flux goes (-)
-      qxc2: 0.1
-      qxn2: 0.1
-      qxp2: 0.06
-      qxs2: 0.0
+      ndeposition: 1                                       # number of target pools where the sedimentation flux goes (-)
       c0: 0.0033                                           # background carbon concentration (mg C/m^3), default = 0.0
     initialization:
       c: 0.17                                              # carbon (mg C/m^3)
@@ -143,8 +129,42 @@ instances:
       p: 0.0002                                            # phosphorus (mmol P/m^3)
       s: 0.001                                             # silicate (mmol Si/m^3)
     coupling:
-      deposition_target1: Q6/surface
-      deposition_target2: Q7/surface
+      deposition_target1: Q5
+  TEP:
+      long_name: available transparent exopolymer particles
+      model: ersem/TEP_pelagic
+      parameters:
+         composition: c                                    # elemental composition
+         rm: 0.0                                           # sinking velocity (m/d), default = 0.0
+         ndeposition: 1
+         c0: 0.0                                           # background carbon concentration (mg C/m^3), default = 0.0
+         p_sw_sticky: 3                                    # the way how TEP changes for normal to sticky: linear (1, not implemented?), non-linear(2) or min(1,non-linear) (3)
+         p_steep: 0.1                                      # steepness of the non-linear sinking rate function
+         p_chTEPTEPc: 750.0                                  # concentration at which TEP becomes sticky
+         p_raTEPm: 10.0                                    # maximal sinking rate in complex of TEP/TEP detritus sinking rate
+         p_raMAm: 70.0                                     # maximal sedimentation rate of macro-aggregates
+      initialization:
+         c: 0.0                                            # carbon (mg C/m^3)
+      coupling:
+         deposition_target1: Q5
+         maTEP: maTEP/c
+
+  maTEP:
+      long_name: transparent exopolymer particles in macro-aggregates
+      model: ersem/maTEP_pelagic
+      parameters:
+         composition: c                                    # elemental composition
+         rm: 2.0                                           # sinking velocity (m/d), default = 0.0
+         ndeposition: 1
+         c0: 0.0                                           # background carbon concentration (mg C/m^3), default = 0.0
+      initialization:
+         c: 0.0                                            # carbon (mg C/m^3)
+      coupling:
+         TEP: TEP/c
+         stickiness: TEP/stickiness                           # stickiness of TEP
+         raMAm: TEP/raMAm                                     # maximal sedimentation rate of macro-aggregates
+         deposition_target1: Q5
+
   Q1:
     long_name: benthic dissolved organic matter
     model: ersem/benthic_base
@@ -155,6 +175,36 @@ instances:
       c: 18.9                                              # carbon (mg C/m^2)
       n: 0.6                                               # nitrogen (mmol N/m^2)
       p: 0.0035                                            # phosphorus (mmol P/m^2)
+  Q5:
+    long_name: fluff
+    model: ersem/fluff
+    parameters:
+      composition: cnpsf
+      resuspension: true
+      vel_crit: 0.002                                       # critical shear velocity for resuspension
+      sdQ5: 0.6
+      ndeposition: 3                                        # number of target pools where the sedimentation flux goes (-)
+      #                                                    # fraction for target pool number 1 is calculated by difference
+      qxc2: 0.01                                            # fraction of C flux reaching target pool #2 (-)
+      qxn2: 0.01                                            # fraction of N flux reaching target pool #2 (-)
+      qxp2: 0.01                                            # fraction of P flux reaching target pool #2 (-)
+      qxs2: 0.0                                            # fraction of Si flux reaching target pool #2 (-)
+      qxc3: 0.01                                            # fraction of C flux reaching target pool #3 (-)
+      qxn3: 0.01                                            # fraction of N flux reaching target pool #3 (-)
+      qxp3: 0.01                                            # fraction of P flux reaching target pool #3 (-)
+      qxs3: 0.0                                            # fraction of Si flux reaching target pool #3 (-)
+     # qxs2: 0.0
+     # qxs3: 0.0
+    initialization:
+      c: 305.2
+      n: 0.35
+      p: 0.05
+      s: 14.9
+    coupling:
+      RP: R6
+      deposition_target1: Q6/surface
+      deposition_target2: Q1
+      deposition_target3: Q7/surface
   Q6:
     long_name: benthic particulate organic matter
     model: ersem/benthic_column_particulate_matter
@@ -203,6 +253,7 @@ instances:
     long_name: bacteria
     model: ersem/bacteria_docdyn
     parameters:
+      lswTEP: true                                         # logical switch for TEP mineralisation
       iswBlim: 2                                           # nutrient limitation (1: minimum of inorganic and organic availability, 2: additive availability)
       q10: 2.0                                             # Q_10 temperature coefficient (-)
       chdo: 0.31                                           # Michaelis-Menten constant for oxygen limitation (-)
@@ -225,9 +276,14 @@ instances:
       sRP1R1: 0.01                                         # remineralisation of substrate 1 to DOM (1/d)
       sRP2R1: 0.0025                                       # remineralisation of substrate 2 to DOM (1/d)
       sRP3R1: 0.001                                        # remineralisation of substrate 3 to DOM (1/d)
+      sRP1N5: 0.025                                        # reference dissolution rate of Si from substrate 1 (1/d)
+      sRP2N5: 0.025                                        # reference dissolution rate of Si from substrate 1 (1/d)
+      sRP3N5: 0.025                                        # reference dissolution rate of Si from substrate 1 (1/d)
+      siref: 0.01                                          # reference Si:C ratio in POM
       rR2: 0.0075                                          # fraction of semi-labile DOC available to bacteria (-)
       rR3: 0.0025                                          # fraction of semi-refractory DOC available to bacteria (-)
       frR3: 0.3                                            # fraction of activity respiration converted to semi-refractory DOC (-)
+      suTEP: 0.25                                          # specific potential TEP availability (1/d)
     initialization:
       c: 15.7                                              # carbon (mg C/m^3)
       n: 0.26                                              # nitrogen (mmol N/m^3)
@@ -238,6 +294,8 @@ instances:
       RP3: R8
       N1p: N1/p                                            # phosphate (mmol P/m^3)
       N4n: N4/n                                            # ammonium (mmol N/m^3)
+      N5s: N5/s                                            # silicaon (mm Si/m^3)
+      TEP: TEP/c                                           # available TEP (mg C/m^3)
       R1c: R1/c                                            # labile dissolved organic carbon (mg C/m^3)
       R1p: R1/p                                            # labile dissolved organic phosphorus (mmol P/m^3)
       R1n: R1/n                                            # labile dissolved organic nitrogen (mmol N/m^3)
@@ -260,7 +318,7 @@ instances:
       O2o: O2/o                                            # oxygen (mmol O_2/m^3)
   P1:
     long_name: diatoms
-    model: ersem/primary_producer
+    model: ersem/primary_producer_TEP
     parameters:
       sum: 1.375                                           # maximum specific productivity at reference temperature (1/d)
       q10: 2.0                                             # Q_10 temperature coefficient (-)
@@ -294,15 +352,8 @@ instances:
       resm: 5.0                                            # maximum nutrient-limitation-induced sinking velocity (m/d), default = 0.0
       esni: 0.7                                            # level of nutrient limitation below which sinking commences (-)
       cenh: false                                          # enable atmospheric CO2 influence on photosynthesis, default = false
-      ndeposition: 3                                       # number of target pools for sedimentation, default = 1
-      qxc2: 0.2                                            # fraction of carbon sinking into deposition target 2 (-)
-      qxc3: 0.005                                          # fraction of carbon sinking into deposition target 3 (-)
-      qxn2: 0.2                                            # fraction of nitrogen sinking into deposition target 2 (-)
-      qxn3: 0.005                                          # fraction of nitrogen sinking into deposition target 3 (-)
-      qxp2: 0.24                                           # fraction of phosphorus sinking into deposition target 2 (-)
-      qxp3: 0.003                                          # fraction of phosphorus sinking into deposition target 3 (-)
-      qxs2: 0.0                                            # fraction of silicate sinking into deposition target 2 (-)
-      qxs3: 0.0                                            # fraction of silicate sinking into deposition target 3 (-)
+      ndeposition: 1                                           # number of target pools where the sedimentation flux goes (-)
+      poTEPPI: 8.0                                         # optimal proportion between macro-aggregates and phyto at which macro aggregates occur
     initialization:
       c: 8.0                                               # carbon (mg C/m^3)
       n: 0.1114                                            # nitrogen (mmol N/m^3)
@@ -311,22 +362,24 @@ instances:
       Chl: 0.4                                             # chlorophyll a (mg/m^3)
     coupling:
       RP: R6
-      deposition_target1: Q6/surface
-      deposition_target2: Q1
-      deposition_target3: Q7/surface
       N1p: N1/p                                            # phosphate (mmol P/m^3)
       N3n: N3/n                                            # nitrate (mmol N/m^3)
       N4n: N4/n                                            # ammonium (mmol N/m^3)
       N5s: N5/s                                            # silicate (mmol Si/m^3)
+      TEP: TEP/c                                          # available TEP (mg C/m^3)
+      maTEP: maTEP/c                                      # macro-aggregate TEP (mg C/m^3)
+      stickiness: TEP/stickiness                           # stickiness of TEP
+      raMAm: TEP/raMAm                                     # maximal sedimentation rate of macro-aggregates
       R1c: R1/c                                            # dissolved organic carbon (mg C/m^3)
       R1p: R1/p                                            # dissolved organic phosphorus (mmol P/m^3)
       R1n: R1/n                                            # dissolved organic nitrogen (mmol N/m^3)
       R2c: R2/c                                            # semi-labile dissolved organic carbon (mg C/m^3)
       O2o: O2/o                                            # oxygen (mmol O_2/m^3)
       O3c: O3/c                                            # carbon dioxide (mmol C/m^3)
+      deposition_target1: Q5
   P2:
     long_name: nanophytoplankton
-    model: ersem/primary_producer
+    model: ersem/primary_producer_TEP
     parameters:
       sum: 1.625                                           # maximum specific productivity at reference temperature (1/d)
       q10: 2.0                                             # Q_10 temperature coefficient (-)
@@ -359,13 +412,8 @@ instances:
       resm: 0.0                                            # maximum nutrient-limitation-induced sinking velocity (m/d), default = 0.0
       esni: 0.7                                            # level of nutrient limitation below which sinking commences (-)
       cenh: false                                          # enable atmospheric CO2 influence on photosynthesis, default = false
-      ndeposition: 3                                       # number of target pools for sedimentation, default = 1
-      qxc2: 0.5                                            # fraction of carbon sinking into deposition target 2 (-)
-      qxc3: 0.05                                           # fraction of carbon sinking into deposition target 3 (-)
-      qxn2: 0.5                                            # fraction of nitrogen sinking into deposition target 2 (-)
-      qxn3: 0.05                                           # fraction of nitrogen sinking into deposition target 3 (-)
-      qxp2: 0.6                                            # fraction of phosphorus sinking into deposition target 2 (-)
-      qxp3: 0.03                                           # fraction of phosphorus sinking into deposition target 3 (-)
+      ndeposition: 1                                           # number of target pools where the sedimentation flux goes (-)
+      poTEPPI: 8.0                                         # optimal proportion between macro-aggregates and phyto at which macro aggregates occur
     initialization:
       c: 5.9                                               # carbon (mg C/m^3)
       n: 0.0926                                            # nitrogen (mmol N/m^3)
@@ -373,12 +421,13 @@ instances:
       Chl: 0.3                                             # chlorophyll a (mg/m^3)
     coupling:
       RP: R4
-      deposition_target1: Q6/surface
-      deposition_target2: Q1
-      deposition_target3: Q7/surface
       N1p: N1/p                                            # phosphate (mmol P/m^3)
       N3n: N3/n                                            # nitrate (mmol N/m^3)
       N4n: N4/n                                            # ammonium (mmol N/m^3)
+      TEP: TEP/c                                          # available TEP (mg C/m^3)
+      maTEP: maTEP/c                                      # macro-aggregate TEP (mg C/m^3)
+      stickiness: TEP/stickiness                           # stickiness of TEP
+      raMAm: TEP/raMAm                                     # maximal sedimentation rate of macro-aggregates
       R1c: R1/c                                            # dissolved organic carbon (mg C/m^3)
       R1p: R1/p                                            # dissolved organic phosphorus (mmol P/m^3)
       R1n: R1/n                                            # dissolved organic nitrogen (mmol N/m^3)
@@ -387,9 +436,10 @@ instances:
       O3c: O3/c                                            # carbon dioxide (mmol C/m^3)
       RainR: L2/RainR                                      # rain ratio (PIC : POC) (-)
       L2c: L2/c                                            # free calcite (mg C/m^3)
+      deposition_target1: Q5
   P3:
     long_name: picophytoplankton
-    model: ersem/primary_producer
+    model: ersem/primary_producer_TEP
     parameters:
       sum: 2.0                                             # maximum specific productivity at reference temperature (1/d)
       q10: 2.0                                             # Q_10 temperature coefficient (-)
@@ -421,13 +471,8 @@ instances:
       resm: 0.0                                            # maximum nutrient-limitation-induced sinking velocity (m/d), default = 0.0
       esni: 0.7                                            # level of nutrient limitation below which sinking commences (-)
       cenh: false                                          # enable atmospheric CO2 influence on photosynthesis, default = false
-      ndeposition: 3                                       # number of target pools for sedimentation, default = 1
-      qxc2: 0.5                                            # fraction of carbon sinking into deposition target 2 (-)
-      qxc3: 0.05                                           # fraction of carbon sinking into deposition target 3 (-)
-      qxn2: 0.5                                            # fraction of nitrogen sinking into deposition target 2 (-)
-      qxn3: 0.05                                           # fraction of nitrogen sinking into deposition target 3 (-)
-      qxp2: 0.6                                            # fraction of phosphorus sinking into deposition target 2 (-)
-      qxp3: 0.03                                           # fraction of phosphorus sinking into deposition target 3 (-)
+      ndeposition: 1                                           # number of target pools where the sedimentation flux goes (-)
+      poTEPPI: 8.0                                         # optimal proportion between macro-aggregates and phyto at which macro aggregates occur
     initialization:
       c: 5.9                                               # carbon (mg C/m^3)
       n: 0.0926                                            # nitrogen (mmol N/m^3)
@@ -435,21 +480,23 @@ instances:
       Chl: 0.3                                             # chlorophyll a (mg/m^3)
     coupling:
       RP: R4
-      deposition_target1: Q6/surface
-      deposition_target2: Q1
-      deposition_target3: Q7/surface
       N1p: N1/p                                            # phosphate (mmol P/m^3)
       N3n: N3/n                                            # nitrate (mmol N/m^3)
       N4n: N4/n                                            # ammonium (mmol N/m^3)
+      TEP: TEP/c                                          # available TEP (mg C/m^3)
+      maTEP: maTEP/c                                      # macro-aggregate TEP (mg C/m^3)
+      stickiness: TEP/stickiness                           # stickiness of TEP
+      raMAm: TEP/raMAm                                     # maximal sedimentation rate of macro-aggregates
       R1c: R1/c                                            # dissolved organic carbon (mg C/m^3)
       R1p: R1/p                                            # dissolved organic phosphorus (mmol P/m^3)
       R1n: R1/n                                            # dissolved organic nitrogen (mmol N/m^3)
       R2c: R2/c                                            # semi-labile dissolved organic carbon (mg C/m^3)
       O2o: O2/o                                            # oxygen (mmol O_2/m^3)
       O3c: O3/c                                            # carbon dioxide (mmol C/m^3)
+      deposition_target1: Q5
   P4:
     long_name: microphytoplankton
-    model: ersem/primary_producer
+    model: ersem/primary_producer_TEP
     parameters:
       sum: 1.125                                           # maximum specific productivity at reference temperature (1/d)
       q10: 2.0                                             # Q_10 temperature coefficient (-)
@@ -481,13 +528,8 @@ instances:
       resm: 5.0                                            # maximum nutrient-limitation-induced sinking velocity (m/d), default = 0.0
       esni: 0.7                                            # level of nutrient limitation below which sinking commences (-)
       cenh: false                                          # enable atmospheric CO2 influence on photosynthesis, default = false
-      ndeposition: 3                                       # number of target pools for sedimentation, default = 1
-      qxc2: 0.5                                            # fraction of carbon sinking into deposition target 2 (-)
-      qxc3: 0.05                                           # fraction of carbon sinking into deposition target 3 (-)
-      qxn2: 0.5                                            # fraction of nitrogen sinking into deposition target 2 (-)
-      qxn3: 0.05                                           # fraction of nitrogen sinking into deposition target 3 (-)
-      qxp2: 0.6                                            # fraction of phosphorus sinking into deposition target 2 (-)
-      qxp3: 0.03                                           # fraction of phosphorus sinking into deposition target 3 (-)
+      ndeposition: 1                                           # number of target pools where the sedimentation flux goes (-)
+      poTEPPI: 8.0                                         # optimal proportion between macro-aggregates and phyto at which macro aggregates occur
     initialization:
       c: 5.9                                               # carbon (mg C/m^3)
       n: 0.0926                                            # nitrogen (mmol N/m^3)
@@ -495,18 +537,20 @@ instances:
       Chl: 0.3                                             # chlorophyll a (mg/m^3)
     coupling:
       RP: R6
-      deposition_target1: Q6/surface
-      deposition_target2: Q1
-      deposition_target3: Q7/surface
       N1p: N1/p                                            # phosphate (mmol P/m^3)
       N3n: N3/n                                            # nitrate (mmol N/m^3)
       N4n: N4/n                                            # ammonium (mmol N/m^3)
+      TEP: TEP/c                                           # available TEP (mg C/m^3)
+      maTEP: maTEP/c                                       # macro-aggregate TEP (mg C/m^3)
+      stickiness: TEP/stickiness                           # stickiness of TEP
+      raMAm: TEP/raMAm                                     # maximal sedimentation rate of macro-aggregates
       R1c: R1/c                                            # dissolved organic carbon (mg C/m^3)
       R1p: R1/p                                            # dissolved organic phosphorus (mmol P/m^3)
       R1n: R1/n                                            # dissolved organic nitrogen (mmol N/m^3)
       R2c: R2/c                                            # semi-labile dissolved organic carbon (mg C/m^3)
       O2o: O2/o                                            # oxygen (mmol O_2/m^3)
       O3c: O3/c                                            # carbon dioxide (mmol C/m^3)
+      deposition_target1: Q5
   Z4:
     long_name: mesozooplankton
     model: ersem/mesozooplankton
@@ -569,12 +613,12 @@ instances:
       L2c: L2/c                                            # calcite (mg C/m^3)
   Z5:
     long_name: microzooplankton
-    model: ersem/microzooplankton
+    model: ersem/microzooplankton_SMP
     parameters:
       q10: 2.0                                             # Q_10 temperature coefficient (-)
-      minfood: 12.0                                        # Michaelis-Menten constant to perceive food (mg C/m^3)
-      chuc: 32.0                                           # Michaelis-Menten constant for food uptake (mg C/m^3)
-      sum: 1.25                                            # maximum specific uptake at reference temperature (1/d)
+      minfood: 10.                                         # Michaelis-Menten constant to perceive food (mg C/m^3)
+      chuc: 20.                                            # Michaelis-Menten constant for food uptake (mg C/m^3)
+      sum: 1.5                                             # maximum specific uptake at reference temperature (1/d)
       pu: 0.5                                              # assimilation efficiency (-)
       pu_ea: 0.5                                           # fraction of unassimilated prey that is excreted (not respired) (-)
       pe_R1: 0.5                                           # dissolved fraction of excreted/dying matter (-)
@@ -593,13 +637,20 @@ instances:
       gutdiss: 0.5                                         # fraction of prey calcite that dissolves after ingestion (-)
       c0: 0.0033                                           # background concentration (mg C/m^3)
       nprey: 7                                             # number of prey types, default = 0
-      suprey1: 0.1                                         # relative affinity for prey type 1 (-)
+      suprey1: 0.25                                        # relative affinity for prey type 1 (-)
       suprey2: 0.15                                        # relative affinity for prey type 2 (-)
       suprey3: 0.15                                        # relative affinity for prey type 3 (-)
       suprey4: 0.15                                        # relative affinity for prey type 4 (-)
       suprey5: 0.1                                         # relative affinity for prey type 5 (-)
-      suprey6: 0.15                                        # relative affinity for prey type 6 (-)
+      suprey6: 0.0                                         # relative affinity for prey type 6 (-)
       suprey7: 0.2                                         # relative affinity for prey type 7 (-)
+      Zmax: 0.75                                           # maximum assimilation efficiency (-)
+      Zmin: 0.25                                           # minimum assimilation efficiency (-)
+      smp: -1.                                             # smp paramter (-) from Mitra, JPR, 2006
+      ksmp: 1.                                             # half-saturation constant for SMP (-) from Mitra, JPR, 2006
+      redP: 7.862E-004                                     # Redield ratio for P (mmolP/mgC)
+      redN: 1.26E-002                                      # Redield ratio for N (mmolP/mgC)
+      red2: 2.                                             # scaling factor for Redfield for optimal growth (-)
     initialization:
       c: 7.2                                               # carbon (mg C/m^3)
       n: 0.12                                              # nitrogen (mmol N/m^3)
@@ -624,11 +675,11 @@ instances:
       L2c: L2/c                                            # calcite (mg C/m^3)
   Z6:
     long_name: nanoflagellates
-    model: ersem/microzooplankton
+    model: ersem/microzooplankton_SMP
     parameters:
       q10: 2.0                                             # Q_10 temperature coefficient (-)
-      minfood: 12.0                                        # Michaelis-Menten constant to perceive food (mg C/m^3)
-      chuc: 28.0                                           # Michaelis-Menten constant for food uptake (mg C/m^3)
+      minfood: 8.0                                         # Michaelis-Menten constant to perceive food (mg C/m^3)
+      chuc: 20.                                            # Michaelis-Menten constant for food uptake (mg C/m^3)
       sum: 1.5                                             # maximum specific uptake at reference temperature (1/d)
       pu: 0.4                                              # assimilation efficiency (-)
       pu_ea: 0.5                                           # fraction of unassimilated prey that is excreted (not respired) (-)
@@ -648,10 +699,17 @@ instances:
       gutdiss: 0.5                                         # fraction of prey calcite that dissolves after ingestion (-)
       c0: 0.0033                                           # background concentration (mg C/m^3)
       nprey: 4                                             # number of prey types, default = 0
-      suprey1: 0.45                                        # relative affinity for prey type 1 (-)
-      suprey2: 0.15                                        # relative affinity for prey type 2 (-)
-      suprey3: 0.25                                        # relative affinity for prey type 3 (-)
-      suprey4: 0.15                                        # relative affinity for prey type 4 (-)
+      suprey1: 0.5                                         # relative affinity for prey type 1 (-)
+      suprey2: 0.2                                         # relative affinity for prey type 2 (-)
+      suprey3: 0.3                                         # relative affinity for prey type 3 (-)
+      suprey4: 0.0                                         # relative affinity for prey type 4 (-)
+      Zmax: 0.75                                           # maximum assimilation efficiency (-)
+      Zmin: 0.25                                           # minimum assimilation efficiency (-)
+      smp: -1.                                             # smp paramter (-) from Mitra, JPR, 2006
+      ksmp: 1.                                             # half-saturation constant for SMP (-) from Mitra, JPR, 2006
+      redP: 7.862E-004                                     # Redield ratio for P (mmolP/mgC)
+      redN: 1.26E-002                                      # Redield ratio for N (mmolP/mgC)
+      red2: 2.                                             # scaling factor for Redfield for optimal growth (-)
     initialization:
       c: 2.421                                             # carbon (mg C/m^3)
       n: 0.0505                                            # nitrogen (mmol N/m^3)
@@ -708,6 +766,7 @@ instances:
       qPW: 0.4                                             # sediment porosity (-)
       EDZ_mix: 20.0                                        # equilibrium diffusive speed between sediment surface water (d/m)
       d_tot: 0.3                                           # depth of sediment column (m)
+      perm: 5.0e-11                                        # sediment permeability (m^2) 2.0e-11,
       Etur: 2e-06                                          # basal bioturbation rate (m^2/d)
       mtur: 10.0                                           # maximum relative turbation enhancement (-)
       htur: 116.0                                          # Michaelis-Menten constant for bioturbation (mg C/m^2/d)
@@ -734,6 +793,7 @@ instances:
       p: 6.8                                               # phosphorus (mmol/m^2)
     coupling:
       p_pel: N1/p                                          # pelagic phosphorus (mmol/m^3)
+      layer1_conc: K1/per_layer/p1_pw
   K3:
     long_name: benthic nitrate
     model: ersem/benthic_column_dissolved_matter
@@ -747,6 +807,7 @@ instances:
       n: 0.584                                             # nitrogen (mmol/m^2)
     coupling:
       n_pel: N3/n                                          # pelagic nitrogen (mmol/m^3)
+      layer1_conc: K3/per_layer/n1_pw
   K4:
     long_name: benthic ammonium
     model: ersem/benthic_column_dissolved_matter
@@ -761,6 +822,7 @@ instances:
       n: 25.0                                              # nitrogen (mmol/m^2)
     coupling:
       n_pel: N4/n                                          # pelagic nitrogen (mmol/m^3)
+      layer1_conc: K4/per_layer/n1_pw
   K5:
     long_name: benthic silicate
     model: ersem/benthic_column_dissolved_matter
@@ -771,6 +833,7 @@ instances:
       s: 20.1                                              # silicate (mmol/m^2)
     coupling:
       s_pel: N5/s                                          # pelagic silicate (mmol/m^3)
+      layer1_conc: K5/per_layer/s1_pw
   G2:
     long_name: benthic oxygen
     model: ersem/benthic_column_dissolved_matter
@@ -781,8 +844,10 @@ instances:
       minD: 0.0001                                         # minimum depth of zero-concentration isocline (m)
     initialization:
       o: 0.0225                                            # oxygen (mmol/m^2)
+      o_deep: .0                                           # oxygen (mmol/m^2)
     coupling:
       o_pel: O2/o                                          # pelagic oxygen (mmol/m^3)
+      layer1_conc: G2/per_layer/o1_pw                      # !!!JNA
   G3:
     long_name: benthic dissolved inorganic carbon
     model: ersem/benthic_column_dissolved_matter
@@ -792,6 +857,23 @@ instances:
       c: 375.0                                             # carbon (mmol/m^2)
     coupling:
       c_pel: O3/c                                          # pelagic carbon (mmol/m^3)
+      layer1_conc: G3/per_layer/c1_pw
+  benTA:
+    long_name: benthic alkalinity
+    model: ersem/benthic_column_dissolved_matter
+    parameters:
+      composition: a
+    initialization:
+      a: 280.0
+    coupling:
+      a_pel: O3/TA
+      layer1_conc: benTA/per_layer/a1_pw                      # !!!JNA
+  benC:
+    long_name: benthic carbonate system - bulk
+    model: ersem/benthic_carbonate
+    coupling:
+      G3c: G3/per_layer/c_conc
+      benTA: benTA/per_layer/a_conc
   Q6s_aerobic:
     long_name: aerobic particulate silicate
     model: ersem/benthic_column_particulate_matter_layer
@@ -835,8 +917,8 @@ instances:
       K4n: K4/per_layer/n1                                 # ammonium (mmol N/m^2)
       G2o: G2/per_layer/o1                                 # oxygen (mmol O_2/m^2)
       N4n: N4/n                                            # pelagic ammonium (mmol N/m^3)
-      benTA: zero_hz                                       # benthic alkalinity in aerobic layer (mEq/m^2)
-      benTA2: zero_hz                                      # benthic alkalinity in anaerobic layer (mEq/m^2)
+      benTA: benTA/per_layer/a1                            # benthic alkalinity in aerobic layer (mEq/m^2)
+      benTA2: benTA/per_layer/a2                                   # benthic alkalinity in anaerobic layer (mEq/m^2)
       K3n2: K3/per_layer/n2                                # benthic nitrate in 2nd layer (mmol N/m^2)
       K4n2: K4/per_layer/n2                                # benthic ammonium in 2nd layer (mmol N/m^2)
       G2o2: G2/per_layer/o2                                # oxygen in 2nd layer (mmol O_2/m^2)
@@ -872,7 +954,7 @@ instances:
       K1p: K1/per_layer/p1_pw                              # phosphate (mmol N/m^2)
       G2o: G2/per_layer/o1                                 # oxygen (mmol O_2/m^2)
       G3c: G3/per_layer/c1                                 # dissolved inorganic carbon (mmol C/m^2)
-      benTA: zero_hz                                       # benthic alkalinity (mEq/m^2)
+      benTA: benTA/per_layer/a1                            # benthic alkalinity (mEq/m^2)
   H1_Q6:
     long_name: benthic aerobic bacteria POM
     model: ersem/benthic_column_particulate_matter_layer
@@ -924,7 +1006,7 @@ instances:
       K1p: K1/per_layer/p2_pw                              # phosphate (mmol N/m^2)
       G2o: ben_nit/K6_calculator/K6                        # oxygen (mmol O_2/m^2)
       G3c: G3/per_layer/c2                                 # dissolved inorganic carbon (mmol C/m^2)
-      benTA: zero_hz                                       # benthic alkalinity (mEq/m^2)
+      benTA: benTA/per_layer/a1                                   # benthic alkalinity (mEq/m^2)
   H2_Q6:
     long_name: benthic anaerobic bacteria POM
     model: ersem/benthic_column_particulate_matter_layer
@@ -996,8 +1078,8 @@ instances:
       K4n: K4/per_layer/n1                                 # benthic ammonium in aerobic layer (mmol N/m^2)
       K1p2: K1/per_layer/p2                                # benthic phosphate in anaerobic layer (mmol P/m^2)
       K4n2: K4/per_layer/n2                                # benthic ammonium in anaerobic layer (mmol N/m^2)
-      benTA: zero_hz                                       # benthic alkalinity in aerobic layer (mEq/m^2)
-      benTA2: zero_hz                                      # benthic alkalinity in anaerobic layer (mEq/m^2)
+      benTA: benTA/per_layer/a1                            # benthic alkalinity in aerobic layer (mEq/m^2)
+      benTA2: benTA/per_layer/a2                           # benthic alkalinity in anaerobic layer (mEq/m^2)
       food2c_an: H2/c                                      # food source 2 carbon in anaerobic layer (mg C/m^2)
       food3c_an: Y2_Q6_source_anaerobic/c                  # food source 3 carbon in anaerobic layer (mg C/m^2)
   Y2_Q6_source:
@@ -1054,11 +1136,12 @@ instances:
       xdc: -0.7                                            # e-folding temperature factor of cold mortality response (1/degree_C)
       sr: 0.0027                                           # specific rest respiration at reference temperature (1/d)
       pur: 0.4                                             # fraction of assimilated food that is respired (-)
-      nfood: 6                                             # number of food sources, default = 0
+      nfood: 8                                             # number of food sources, default = 0
       food1ispel: true                                     # food source 1 is pelagic, default = false
       food2ispel: true                                     # food source 2 is pelagic, default = false
       food3ispel: true                                     # food source 3 is pelagic, default = false
       food4ispel: true                                     # food source 4 is pelagic, default = false
+      food7ispel: true                                     # food source 7 is pelagic, default = false
       food5_ll: true                                       # availability of food source 5 is limited by aerobic layer height, default = false
       pufood1: 1.0                                         # preference for food source 1 (-)
       pufood2: 1.0                                         # preference for food source 2 (-)
@@ -1066,6 +1149,8 @@ instances:
       pufood4: 1.0                                         # preference for food source 4 (-)
       pufood5: 1.0                                         # preference for food source 5 (-)
       pufood6: 0.1                                         # preference for food source 6 (-)
+      pufood7: 1.0                                         # preference for food source 7 (-)
+      pufood8: 1.0                                         # preference for food source 8 (-)
       food4ispom: true                                     # food source 4 is detritus, default = false
       food6ispom: true                                     # food source 6 is detritus, default = false
       dwat: 1.0                                            # water layer accessible for pelagic food uptake (m), default = 1.0
@@ -1079,6 +1164,8 @@ instances:
       food4: R6
       food5: H1
       food6: Y3_Q6
+      food7: maTEP
+      food8: Q5
       Q: Y3_Q6
       Dm: ben_col/D1m                                      # depth of limiting layer for uptake (m)
       O2o: O2/o                                            # pelagic oxygen (mmol O_2/m^3)
@@ -1088,8 +1175,8 @@ instances:
       K4n: K4/per_layer/n1                                 # benthic ammonium in aerobic layer (mmol N/m^2)
       K1p2: K1/per_layer/p2                                # benthic phosphate in anaerobic layer (mmol P/m^2)
       K4n2: K4/per_layer/n2                                # benthic ammonium in anaerobic layer (mmol N/m^2)
-      benTA: zero_hz                                       # benthic alkalinity in aerobic layer (mEq/m^2)
-      benTA2: zero_hz                                      # benthic alkalinity in anaerobic layer (mEq/m^2)
+      benTA: benTA/per_layer/a1                                       # benthic alkalinity in aerobic layer (mEq/m^2)
+      benTA2: benTA/per_layer/a2                                      # benthic alkalinity in anaerobic layer (mEq/m^2)
   Y3_Q6:
     long_name: benthic suspension feeder POM
     model: ersem/benthic_column_particulate_matter_layer
@@ -1147,8 +1234,8 @@ instances:
       K4n: K4/per_layer/n1                                 # benthic ammonium in aerobic layer (mmol N/m^2)
       K1p2: K1/per_layer/p2                                # benthic phosphate in anaerobic layer (mmol P/m^2)
       K4n2: K4/per_layer/n2                                # benthic ammonium in anaerobic layer (mmol N/m^2)
-      benTA: zero_hz                                       # benthic alkalinity in aerobic layer (mEq/m^2)
-      benTA2: zero_hz                                      # benthic alkalinity in anaerobic layer (mEq/m^2)
+      benTA: benTA/per_layer/a1                                       # benthic alkalinity in aerobic layer (mEq/m^2)
+      benTA2: benTA/per_layer/a2                                      # benthic alkalinity in anaerobic layer (mEq/m^2)
   Y4_Q6:
     long_name: benthic meiofauna POM
     model: ersem/benthic_column_particulate_matter_layer
@@ -1158,21 +1245,591 @@ instances:
       maximum_depth: 0.03                                  # maximum depth (m), default = 0.0
     coupling:
       Q: Q6
-  pco2a:  
+  #Inputs:
+  pco2a:
     model: horizontal_constant
     parameters:
       value: 385
       standard_name: mole_fraction_of_carbon_dioxide_in_air
-  tauB:  
-    model: horizontal_constant
-    parameters:
-      value: 0.0
-      standard_name: bottom_stress
-  N3_flux:  
+  N3_flux:
     model: external_surface_flux
     coupling:
       target: N3/n
-  N4_flux:  
+  N4_flux:
     model: external_surface_flux
     coupling:
       target: N4/n
+  erosion:
+    model: ersem/benthic_erosion
+  #Diagnostics:
+  PON:
+   long_name: particulate organic nitrogen
+   model: weighted_sum
+   parameters:
+      n: 11
+      weight5: 0.0126
+   coupling:
+      term1: P1/n
+      term2: P2/n
+      term3: P3/n
+      term4: P4/n
+      term5: Z4/c
+      term6: Z5/n
+      term7: Z6/n
+      term8: B1/n
+      term9: R4/n
+      term10: R6/n
+      term11: R8/n
+  POP:
+   long_name: particulate organic phosphorus
+   model: weighted_sum
+   parameters:
+      n: 11
+      weight5: 0.000786
+   coupling:
+      term1: P1/p
+      term2: P2/p
+      term3: P3/p
+      term4: P4/p
+      term5: Z4/c
+      term6: Z5/p
+      term7: Z6/p
+      term8: B1/p
+      term9: R4/p
+      term10: R6/p
+      term11: R8/p
+  POSi:
+   model: weighted_sum
+   parameters:
+      n: 3
+   coupling:
+      term1: P1/s
+      term2: R6/s
+      term3: R8/s
+  P1_fPIRIc:
+    long_name: diatom loss to organic carbon
+    model: weighted_sum
+    parameters:
+      n: 3
+    coupling:
+      term1: P1/fPIR1c
+      term2: P1/fPIR2c
+      term3: P1/fPIRPc
+  P2_fPIRIc:
+    long_name: nanophytoplankton loss to organic carbon
+    model: weighted_sum
+    parameters:
+      n: 3
+    coupling:
+      term1: P2/fPIR1c
+      term2: P2/fPIR2c
+      term3: P2/fPIRPc
+  P3_fPIRIc:
+    long_name: picophytoplankton loss to organic carbon
+    model: weighted_sum
+    parameters:
+      n: 3
+    coupling:
+      term1: P3/fPIR1c
+      term2: P3/fPIR2c
+      term3: P3/fPIRPc
+  P4_fPIRIc:
+    long_name: microphytoplankton loss to organic carbon
+    model: weighted_sum
+    parameters:
+      n: 3
+    coupling:
+      term1: P4/fPIR1c
+      term2: P4/fPIR2c
+      term3: P4/fPIRPc
+  phytoplankton_loss_to_labile_DOC:
+   long_name: phytoplankton loss to labile dissolved organic carbon
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: P1/fPIR1c
+      term2: P2/fPIR1c
+      term3: P3/fPIR1c
+      term4: P4/fPIR1c
+  phytoplankton_loss_to_labile_DON:
+   long_name: phytoplankton loss to labile dissolved organic nitrogen
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: P1/fPIR1n
+      term2: P2/fPIR1n
+      term3: P3/fPIR1n
+      term4: P4/fPIR1n
+  phytoplankton_loss_to_labile_DOP:
+   long_name: phytoplankton loss to labile dissolved organic phosphorus
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: P1/fPIR1p
+      term2: P2/fPIR1p
+      term3: P3/fPIR1p
+      term4: P4/fPIR1p
+  phytoplankton_loss_to_non_labile_DOC:
+   long_name: phytoplankton loss to non-labile dissolved organic carbon
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: P1/fPIR2c
+      term2: P2/fPIR2c
+      term3: P3/fPIR2c
+      term4: P4/fPIR2c
+  phytoplankton_loss_to_POC:
+   long_name: phytoplankton loss to particulate organic carbon
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: P1/fPIRPc
+      term2: P2/fPIRPc
+      term3: P3/fPIRPc
+      term4: P4/fPIRPc
+  phytoplankton_loss_to_PON:
+   long_name: phytoplankton loss to particulate organic nitrogen
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: P1/fPIRPn
+      term2: P2/fPIRPn
+      term3: P3/fPIRPn
+      term4: P4/fPIRPn
+  phytoplankton_loss_to_POP:
+   long_name: phytoplankton loss to particulate organic phosphorus
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: P1/fPIRPp
+      term2: P2/fPIRPp
+      term3: P3/fPIRPp
+      term4: P4/fPIRPp
+  phytoplankton_uptake_oxN:
+   long_name: phytoplankton uptake of oxidized nitrogen
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: P1/fN3PIn
+      term2: P2/fN3PIn
+      term3: P3/fN3PIn
+      term4: P4/fN3PIn
+  phytoplankton_uptake_redN:
+   long_name: phytoplankton uptake of reduced nitrogen
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: P1/fN4PIn
+      term2: P2/fN4PIn
+      term3: P3/fN4PIn
+      term4: P4/fN4PIn
+  phytoplankton_uptake_DIP:
+   long_name: phytoplankton uptake of dissolved inorganic phosphorus
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: P1/fN1PIp
+      term2: P2/fN1PIp
+      term3: P3/fN1PIp
+      term4: P4/fN1PIp
+  Z4_fphytoc:
+   long_name: mesozooplankton grazing of phytoplankton carbon
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: Z4/fprey1c
+      term2: Z4/fprey2c
+      term3: Z4/fprey3c
+      term4: Z4/fprey4c
+  Z4_fphyton:
+   long_name: mesozooplankton grazing of phytoplankton nitrogen
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: Z4/fprey1n
+      term2: Z4/fprey2n
+      term3: Z4/fprey3n
+      term4: Z4/fprey4n
+  Z4_fphytop:
+   long_name: mesozooplankton grazing of phytoplankton phosphorus
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: Z4/fprey1p
+      term2: Z4/fprey2p
+      term3: Z4/fprey3p
+      term4: Z4/fprey4p
+  Z4_fzooc:
+   long_name: mesozooplankton predation of phytoplankton carbon
+   model: weighted_sum
+   parameters:
+      n: 3
+   coupling:
+      term1: Z4/fprey5c
+      term2: Z4/fprey6c
+      term3: Z4/fprey7c
+  Z4_fzoon:
+   long_name: mesozooplankton predation of phytoplankton nitrogen
+   model: weighted_sum
+   parameters:
+      n: 3
+   coupling:
+      term1: Z4/fprey5n
+      term2: Z4/fprey6n
+      term3: Z4/fprey7n
+  Z4_fzoop:
+   long_name: mesozooplankton predation of zooplankton phosphorus
+   model: weighted_sum
+   parameters:
+      n: 3
+   coupling:
+      term1: Z4/fprey5p
+      term2: Z4/fprey6p
+      term3: Z4/fprey7p
+  Z5_fphytoc:
+   long_name: microzooplankton grazing of phytoplankton carbon
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: Z5/fprey2c
+      term2: Z5/fprey3c
+      term3: Z5/fprey4c
+      term4: Z5/fprey5c
+  Z5_fphyton:
+   long_name: microzooplankton grazing of phytoplankton nitrogen
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: Z5/fprey2n
+      term2: Z5/fprey3n
+      term3: Z5/fprey4n
+      term4: Z5/fprey5n
+  Z5_fphytop:
+   long_name: microzooplankton grazing of phytoplankton phosphorus
+   model: weighted_sum
+   parameters:
+      n: 4
+   coupling:
+      term1: Z5/fprey2p
+      term2: Z5/fprey3p
+      term3: Z5/fprey4p
+      term4: Z5/fprey5p
+  Z5_fzooc:
+   long_name: microzooplankton predation of zooplankton carbon
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z5/fprey6c
+      term2: Z5/fprey7c
+  Z5_fzoon:
+   long_name: microzooplankton predation of zooplankton nitrogen
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z5/fprey6n
+      term2: Z5/fprey7n
+  Z5_fzoop:
+   long_name: microzooplankton predation of zooplankton phosphorus
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z5/fprey6p
+      term2: Z5/fprey7p
+  Z6_fphytoc:
+   long_name: heterotrophic flagellate grazing of phytoplankton carbon
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z6/fprey2c
+      term2: Z6/fprey3c
+  Z6_fphyton:
+   long_name: heterotrophic flagellate grazing of phytoplankton nitrogen
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z6/fprey2n
+      term2: Z6/fprey3n
+  Z6_fphytop:
+   long_name: heterotrophic flagellate grazing of phytoplankton phosphorus
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z6/fprey2p
+      term2: Z6/fprey3p
+  total_microzooplankton_loss_to_POC:
+   long_name: total microzooplankton loss to particulate organic carbon
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z5/fZIRPc
+      term2: Z6/fZIRPc
+  total_microzooplankton_loss_to_PON:
+   long_name: total microzooplankton loss to particulate organic nitrogen
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z5/fZIRPn
+      term2: Z6/fZIRPn
+  total_microzooplankton_loss_to_POP:
+   long_name: total microzooplankton loss to particulate organic phosphorus
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z5/fZIRPp
+      term2: Z6/fZIRPp
+  total_microzooplankton_loss_to_DOC:
+   long_name: total microzooplankton loss to dissolved organic carbon
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z5/fZIRDc
+      term2: Z6/fZIRDc
+  total_microzooplankton_loss_to_DON:
+   long_name: total microzooplankton loss to dissolved organic nitrogen
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z5/fZIRDn
+      term2: Z6/fZIRDn
+  total_microzooplankton_loss_to_DOP:
+   long_name: total microzooplankton loss to dissolved organic phosphorus
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z5/fZIRDp
+      term2: Z6/fZIRDp
+  total_microzooplankton_respiration:
+   long_name: total microzooplankton respiration
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z5/fZIO3c
+      term2: Z6/fZIO3c
+  total_microzooplankton_loss_to_DIN:
+   long_name: total microzooplankton loss to dissolved inorganic nitrogen
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z5/fZINIn
+      term2: Z6/fZINIn
+  total_microzooplankton_loss_to_DIP:
+   long_name: total microzooplankton loss to dissolved inorganic phosphorus
+   model: weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Z5/fZINIp
+      term2: Z6/fZINIp
+  gross_calcification_rate:
+    long_name: gross calcification rate
+    model: weighted_sum
+    parameters:
+      n: 4
+    coupling:
+      term1: P2/calcification
+      term2: Z4/calcification
+      term3: Z5/calcification
+      term4: Z6/calcification
+  ben_PON:
+   long_name: benthic particulate organic nitrogen
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Q6/n
+      term2: Q7/n
+  ben_POP:
+   long_name: benthic particulate organic phosphate
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Q6/p
+      term2: Q7/p
+  benthic_denitrification_ammonification:
+    long_name: benthic denitrification and ammonification
+    model: horizontal_weighted_sum
+    parameters:
+      n: 2
+    coupling:
+      term1: ben_nit/jM3G4n
+      term2: ben_nit/jM3M4n
+  Y3_fphytoc:
+   long_name: benthic suspension feeder grazing of phytoplankton carbon
+   model: horizontal_weighted_sum
+   parameters:
+      n: 3
+   coupling:
+      term1: Y3/fprey1c
+      term2: Y3/fprey2c
+      term3: Y3/fprey3c
+  Y3_fphyton:
+   long_name: benthic suspension feeder grazing of phytoplankton nitrogen
+   model: horizontal_weighted_sum
+   parameters:
+      n: 3
+   coupling:
+      term1: Y3/fprey1n
+      term2: Y3/fprey2n
+      term3: Y3/fprey3n
+  Y3_fphytop:
+   long_name: benthic suspension feeder grazing of phytoplankton phosphorus
+   model: horizontal_weighted_sum
+   parameters:
+      n: 3
+   coupling:
+      term1: Y3/fprey1p
+      term2: Y3/fprey2p
+      term3: Y3/fprey3p
+  Ymacro_fYG3c:
+   long_name: benthic macrofauna respiration
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Y2/fYG3c
+      term2: Y3/fYG3c
+  Ymacro_fYQPc:
+   long_name: benthic macrofauna loass to particulate organic carbon
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Y2/fYQPc
+      term2: Y3/fYQPc
+  Ymacro_fYQPn:
+   long_name: benthic macrofauna loass to particulate organic nitrogen
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Y2/fYQPn
+      term2: Y3/fYQPn
+  Ymacro_fYQPp:
+   long_name: benthic macrofauna loass to particulate organic phosphorus
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Y2/fYQPp
+      term2: Y3/fYQPp
+  Ymacro_fYKIn:
+   long_name: benthic macrofauna loass to dissolved inorganic nitrogen
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Y2/fYKIn
+      term2: Y3/fYKIn
+  Ymacro_fYK1p:
+   long_name: benthic macrofauna loass to dissolved inorganic phosphorus
+   model: horizontal_weighted_sum
+   parameters:
+      n: 2
+   coupling:
+      term1: Y2/fYK1p
+      term2: Y3/fYK1p
+  Q6_remins:
+    long_name: benthic remineralisation of silicate
+    model: horizontal_weighted_sum
+    parameters:
+      n: 1
+      weight1: 0.007
+    coupling:
+      term1: Q6/s
+  net_PelBen_POC:
+   long_name: flux of particulate organic carbon from pelagic to benthos
+   model: horizontal_weighted_sum
+   parameters:
+      n: 13
+      weight11: -1.
+   coupling:
+      term1: R4/dep1c
+      term2: R6/dep1c
+      term3: R8/dep1c
+      term4: P1/dep1c
+      term5: P4/dep1c
+      term6: TEP/dep1c
+      term7: maTEP/dep1c
+      term8: Y3/fprey1c
+      term9: Y3/fprey2c
+      term10: Y3/fprey3c
+      term11: Y3/fprey4c
+      term12: Y3/fprey7c
+      term13: Q5/resuspension_flux_c
+  net_PelBen_PON:
+   long_name: flux of particulate organic nitrogen from pelagic to benthos
+   model: horizontal_weighted_sum
+   parameters:
+      n: 10
+      weight10: -1.
+   coupling:
+      term1: R4/dep1n
+      term2: R6/dep1n
+      term3: R8/dep1n
+      term4: P1/dep1n
+      term5: P4/dep1n
+      term6: Y3/fprey1n
+      term7: Y3/fprey2n
+      term8: Y3/fprey3n
+      term9: Y3/fprey4n
+      term10: Q5/resuspension_flux_n
+  net_PelBen_POP:
+   long_name: flux of particulate organic phosphorus from pelagic to benthos
+   model: horizontal_weighted_sum
+   parameters:
+      n: 10
+      weight10: -1.
+   coupling:
+      term1: R4/dep1p
+      term2: R6/dep1p
+      term3: R8/dep1p
+      term4: P1/dep1p
+      term5: P4/dep1p
+      term6: Y3/fprey1p
+      term7: Y3/fprey2p
+      term8: Y3/fprey3p
+      term9: Y3/fprey4p
+      term10: Q6/resuspension_flux_p
+  net_PelBen_POSi:
+   long_name: flux of particulate organic silicate from pelagic to benthos
+   model: horizontal_weighted_sum
+   parameters:
+      n: 6
+      weight6: -1.
+   coupling:
+      term1: R6/dep1s
+      term2: R8/dep1s
+      term3: P1/dep1s
+      term4: Y3/fprey1s
+      term5: Y3/fprey4s
+      term6: Q5/resuspension_flux_s
