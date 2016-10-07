@@ -82,9 +82,6 @@
   <field id="P3_fPIRIc_result_e3t" long_name="picophytoplankton loss to organic carbon cell depth integrated" unit="mg C/m^2/d" default_value="-.200E+21" > P3_fPIRIc_result * e3t </field>
   <field id="P4_fPIRIc_result_e3t" long_name="microphytoplankton loss to organic carbon cell depth integrated" unit="mg C/m^2/d" default_value="-.200E+21" > P4_fPIRIc_result * e3t </field>
   <field id="P1_fPITEPc_e3t" long_name="diatom loss to transparent exopolymer particles depth integrated" unit="mg C/m^2/d" default_value="-.200E+21" > P1_fPITEPc * e3t </field>
-  <field id="P2_fPITEPc_e3t" long_name="nanophytoplankton phytoplankton loss to transparent exopolymer particles cell depth integrated" unit="mg C/m^2/d" default_value="-.200E+21" > P2_fPITEPc * e3t </field>
-  <field id="P3_fPITEPc_e3t" long_name="picophytoplankton phytoplankton loss to transparent exopolymer particles cell depth integrated" unit="mg C/m^2/d" default_value="-.200E+21" > P3_fPITEPc * e3t </field>
-  <field id="P4_fPITEPc_e3t" long_name="microphytoplankton phytoplankton loss to transparent exopolymer particles cell depth integrated" unit="mg C/m^2/d" default_value="-.200E+21" > P4_fPITEPc * e3t </field>
   <field id="L2_L2O3c_e3t" long_name="calcite calcite dissolution rate cell depth integrated" unit="mg C/m^2/d" default_value="-.200E+21" > L2_L2O3c * e3t </field>
   <field id="gross_calcification_rate_e3t" long_name="gross calcification rate cell depth integrated" unit="mg C/m^2/d" default_value="-.200E+21" > gross_calcification_rate_result * e3t </field>
   <field id="phytoplankton_uptake_oxN_result_e3t" long_name="phytoplankton uptake of oxidized nitrogen cell depth integrated" unit="mmol N/m^2/d" default_value="-.200E+21" > phytoplankton_uptake_oxN_result * e3t </field>
