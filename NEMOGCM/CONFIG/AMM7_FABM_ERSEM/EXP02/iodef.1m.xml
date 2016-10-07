@@ -3014,9 +3014,6 @@
           <field field_ref="phytoplankton_loss_to_POP_result" unit="mmol P/m^3/d" operation="instant" freq_op="1mo"> @phytoplankton_loss_to_POP_result_e3t / @e3t </field>
           <field field_ref="P1_fPIRPs" name="diatom_loss_to_POSi_result" unit="mmol Si/m^3/d" operation="instant" freq_op="1mo"> @P1_fPIRPs_e3t / @e3t </field>
           <field field_ref="P1_fPITEPc" name="diatom_loss_to_TEP_result" unit="mg C/m^3/d" operation="instant" freq_op="1mo"> @P1_fPITEPc_e3t / @e3t </field>
-          <field field_ref="P2_fPITEPc" name="nanophytoplankton_loss_to_TEP_result" unit="mg C/m^3/d" operation="instant" freq_op="1mo"> @P2_fPITEPc_e3t / @e3t </field>
-          <field field_ref="P3_fPITEPc" name="picophytoplankton_loss_to_TEP_result" unit="mg C/m^3/d" operation="instant" freq_op="1mo"> @P3_fPITEPc_e3t / @e3t </field>
-          <field field_ref="P4_fPITEPc" name="microphytoplankton_loss_to_TEP_result" unit="mg C/m^3/d" operation="instant" freq_op="1mo"> @P4_fPITEPc_e3t / @e3t </field>
           <field field_ref="B1_fB1O3c" operation="instant" freq_op="1mo"> @B1_fB1O3c_e3t / @e3t </field>
           <field field_ref="B1_fR1B1c" operation="instant" freq_op="1mo"> @B1_fR1B1c_e3t / @e3t </field>
           <field field_ref="B1_fR1B1n" operation="instant" freq_op="1mo"> @B1_fR1B1n_e3t / @e3t </field>
