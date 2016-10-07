@@ -140,7 +140,7 @@
    ln_trdtrc(13)  =   .true. ! P1_c
    ln_trdtrc(14)  =   .true. ! P1_n
    ln_trdtrc(15)  =   .true. ! P1_p
-   ln_trdtrc(16)  =   .true. ! P1_s
+   ln_trdtrc(17)  =   .true. ! P1_s
    ln_trdtrc(18)  =   .true. ! L2_c
    ln_trdtrc(19)  =   .true. ! P2_c
    ln_trdtrc(20)  =   .true. ! P2_n
