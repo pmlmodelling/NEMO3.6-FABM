@@ -181,13 +181,13 @@ instances:
     parameters:
       composition: cnpsf
       resuspension: true
-      vel_crit: 0.002                                       # critical shear velocity for resuspension
-      sdQ5: 0.6
+      vel_crit: 0.008                                       # critical shear velocity for resuspension
+      sdQ5: 0.3
       ndeposition: 3                                        # number of target pools where the sedimentation flux goes (-)
       #                                                    # fraction for target pool number 1 is calculated by difference
-      qxc2: 0.01                                            # fraction of C flux reaching target pool #2 (-)
-      qxn2: 0.01                                            # fraction of N flux reaching target pool #2 (-)
-      qxp2: 0.01                                            # fraction of P flux reaching target pool #2 (-)
+      qxc2: 0.02                                            # fraction of C flux reaching target pool #2 (-)
+      qxn2: 0.02                                            # fraction of N flux reaching target pool #2 (-)
+      qxp2: 0.02                                            # fraction of P flux reaching target pool #2 (-)
       qxs2: 0.0                                            # fraction of Si flux reaching target pool #2 (-)
       qxc3: 0.01                                            # fraction of C flux reaching target pool #3 (-)
       qxn3: 0.01                                            # fraction of N flux reaching target pool #3 (-)
@@ -217,7 +217,7 @@ instances:
       c: 3052.0                                            # carbon (mg C/m^2)
       n: 3.5                                               # nitrogen (mmol N/m^2)
       p: 0.5                                               # phosphorus (mmol P/m^2)
-      s: 149.0                                             # silicate (mmol Si/m^2)
+      s: 3.5 #149.0                                             # silicate (mmol Si/m^2)
       pen_depth_c: 0.0173                                  # penetration depth of carbon (m)
       pen_depth_n: 0.02                                    # penetration depth of nitrogen (m)
       pen_depth_p: 0.025                                   # penetration depth of phosphorus (m)
@@ -654,7 +654,7 @@ instances:
     initialization:
       c: 7.2                                               # carbon (mg C/m^3)
       n: 0.12                                              # nitrogen (mmol N/m^3)
-      p: 0.0113                                            # phosphorus (mmol P/m^3)
+      p: 0.0072                                            # phosphorus (mmol P/m^3)
     coupling:
       prey1: B1
       prey2: P1
@@ -764,7 +764,7 @@ instances:
     model: ersem/benthic_column
     parameters:
       qPW: 0.4                                             # sediment porosity (-)
-      EDZ_mix: 20.0                                        # equilibrium diffusive speed between sediment surface water (d/m)
+      EDZ_mix: 10.0                                        # equilibrium diffusive speed between sediment surface water (d/m)
       d_tot: 0.3                                           # depth of sediment column (m)
       perm: 5.0e-11                                        # sediment permeability (m^2) 2.0e-11,
       Etur: 2e-06                                          # basal bioturbation rate (m^2/d)
@@ -830,7 +830,7 @@ instances:
       composition: s                                       # composition (any combination of c,n,p,s,o,a)
       c0: 9.e-05                                           # background concentration (mg C/m^2)
     initialization:
-      s: 20.1                                              # silicate (mmol/m^2)
+      s: 5.0 #20.1                                              # silicate (mmol/m^2)
     coupling:
       s_pel: N5/s                                          # pelagic silicate (mmol/m^3)
       layer1_conc: K5/per_layer/s1_pw
@@ -879,7 +879,7 @@ instances:
     model: ersem/benthic_column_particulate_matter_layer
     parameters:
       composition: s                                       # elemental composition
-      remin: 0.007                                         # remineralization rate (1/d), default = 0.0
+      remin: 0.014                                         # remineralization rate (1/d), default = 0.0
       minimum_depth: 0.0                                   # minimum depth (m), default = 0.0
       variable_maximum_depth: true                         # maximum depth is variable, default = false
     coupling:
@@ -891,7 +891,7 @@ instances:
     model: ersem/benthic_column_particulate_matter_layer
     parameters:
       composition: s                                       # elemental composition
-      remin: 0.007                                         # remineralization rate (1/d), default = 0.0
+      remin: 0.014                                         # remineralization rate (1/d), default = 0.0
       variable_minimum_depth: true                         # minimum depth is variable, default = false
       maximum_depth: 0.3                                   # maximum depth (m), default = 0.0
       source_depth_distribution: 2                         # vertical distribution of changes (1: constant absolute rate, 2: constant relative rate, 3: constant carbon-based relative rate), default = 1
@@ -1149,8 +1149,8 @@ instances:
       pufood4: 1.0                                         # preference for food source 4 (-)
       pufood5: 1.0                                         # preference for food source 5 (-)
       pufood6: 0.1                                         # preference for food source 6 (-)
-      pufood7: 1.0                                         # preference for food source 7 (-)
-      pufood8: 1.0                                         # preference for food source 8 (-)
+      pufood7: 0.1                                         # preference for food source 7 (-)
+      pufood8: 0.1                                         # preference for food source 8 (-)
       food4ispom: true                                     # food source 4 is detritus, default = false
       food6ispom: true                                     # food source 6 is detritus, default = false
       dwat: 1.0                                            # water layer accessible for pelagic food uptake (m), default = 1.0
