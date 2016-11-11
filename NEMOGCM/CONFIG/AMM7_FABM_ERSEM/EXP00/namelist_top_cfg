@@ -279,7 +279,7 @@
    sn_trcobc2(14) = 'amm7skagbdy_trc' ,    -1     , 'diatoms_p' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
    sn_trcobc2(15) = 'amm7skagbdy_trc' ,    -1     , 'diatoms_Chl' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
    sn_trcobc2(16) = 'amm7skagbdy_trc' ,    -1     , 'diatoms_s' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
-   sn_trcobc2(17) = 'amm7bdy_trc' ,    -1     , 'calcite_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(17) = 'amm7skagbdy_trc' ,    -1     , 'calcite_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
    sn_trcobc2(18) = 'amm7skagbdy_trc' ,    -1     , 'nanophytoplankton_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
    sn_trcobc2(19) = 'amm7skagbdy_trc' ,    -1     , 'nanophytoplankton_n' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
    sn_trcobc2(20) = 'amm7skagbdy_trc' ,    -1     , 'nanophytoplankton_p' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''

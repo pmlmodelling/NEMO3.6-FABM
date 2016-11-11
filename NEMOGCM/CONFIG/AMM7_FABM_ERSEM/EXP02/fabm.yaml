@@ -1771,7 +1771,7 @@ instances:
    model: horizontal_weighted_sum
    parameters:
       n: 13
-      weight11: -1.
+      weight13: -1.
    coupling:
       term1: R4/dep1c
       term2: R6/dep1c
