@@ -64,6 +64,8 @@ MODULE inputs_fabm
         TYPE (type_input_data),POINTER :: input_data
         TYPE (type_river_data),POINTER :: river_data
         INTEGER :: jn
+        INTEGER , PARAMETER :: nbtimes = 366  !: maximum number of times record in a file
+        REAL(wp), DIMENSION(nbtimes) :: zsteps
 
         ! Check if fabm_input.nml exists - if not, do nothing and return.
         INQUIRE( FILE='fabm_input.nml', EXIST=l_ext )
@@ -94,6 +96,12 @@ MODULE inputs_fabm
            CALL fld_fill(input_data%sf, (/sn/), '', 'inputs_fabm:initialize_inputs', 'FABM variable '//TRIM(name), 'variable' )
            ALLOCATE( input_data%sf(1)%fnow(jpi,jpj,1)   )
            IF( sn%ln_tint ) ALLOCATE( input_data%sf(1)%fdta(jpi,jpj,1,2) )
+
+           ! Get number of record in file (if there is only one, we will read data
+           ! only at the very first time step)
+           CALL fld_clopn( input_data%sf(1) )
+           CALL iom_gettime( input_data%sf(1)%num, zsteps, kntime=input_data%ntimes)
+           CALL iom_close( input_data%sf(1)%num )
 
            ! Prepend new input variable to list.
            input_data%next => first_input_data
@@ -139,6 +147,12 @@ MODULE inputs_fabm
 
            ! Load unit conversion factor:
            river_data%rn_trrnfac=rfac
+
+           ! Get number of record in file (if there is only one, we will read data
+           ! only at the very first time step)
+           CALL fld_clopn( river_data%sf(1) )
+           CALL iom_gettime( river_data%sf(1)%num, zsteps, kntime=input_data%ntimes)
+           CALL iom_close( river_data%sf(1)%num )
 
            ! Prepend new input variable to list.
            river_data%next => first_river_data
