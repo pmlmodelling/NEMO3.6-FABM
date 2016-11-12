@@ -151,7 +151,7 @@ MODULE inputs_fabm
            ! Get number of record in file (if there is only one, we will read data
            ! only at the very first time step)
            CALL fld_clopn( river_data%sf(1) )
-           CALL iom_gettime( river_data%sf(1)%num, zsteps, kntime=input_data%ntimes)
+           CALL iom_gettime( river_data%sf(1)%num, zsteps, kntime=river_data%ntimes)
            CALL iom_close( river_data%sf(1)%num )
 
            ! Prepend new input variable to list.
