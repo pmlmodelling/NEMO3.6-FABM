@@ -100,7 +100,9 @@ CONTAINS
       IF( nn_timing == 1 )  CALL timing_start('trc_sms_fabm')
       !
       IF(lwp) WRITE(numout,*)
-      IF(lwp) WRITE(numout,*) ' trc_sms_fabm:  FABM model, iteration',kt
+      IF(lwp) WRITE(numout,'(a,i0,a,i4.4,a,i2.2,a,i2.2,a,i5,a)') &
+          ' trc_sms_fabm:  FABM model, iteration',kt,' ', &
+          nyear,'-',nmonth,'-',nday,' ',nsec_day," secs"
       IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~~~~'
 
       CALL update_inputs( kt )
