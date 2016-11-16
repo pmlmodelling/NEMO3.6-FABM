@@ -101,7 +101,7 @@ CONTAINS
       !
       IF(lwp) WRITE(numout,*)
       IF(lwp) WRITE(numout,'(a,i0,a,i4.4,a,i2.2,a,i2.2,a,i5,a)') &
-          ' trc_sms_fabm:  FABM model, iteration',kt,' ', &
+          ' trc_sms_fabm:  FABM model, iteration ',kt,' ', &
           nyear,'-',nmonth,'-',nday,' ',nsec_day," secs"
       IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~~~~'
 
