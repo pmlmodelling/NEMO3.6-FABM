@@ -356,6 +356,9 @@
           <field field_ref="H1_fQ1Hc" operation="average" />
           <field field_ref="H1_fQ1Hn" operation="average" />
           <field field_ref="H1_fQ1Hp" operation="average" />
+          <field field_ref="H1_fQPHc" operation="average" />
+          <field field_ref="H1_fQPHn" operation="average" />
+          <field field_ref="H1_fQPHp" operation="average" />
           <field field_ref="H1_fHG3c" operation="average" />
           <field field_ref="H1_fHQ1c" operation="average" />
           <field field_ref="H1_fHQ1n" operation="average" />
@@ -366,8 +369,8 @@
           <field field_ref="H1_fHKIn" operation="average" />
           <field field_ref="H1_fHK1p" operation="average" />
           <field field_ref="H2_fQPHc" operation="average" />
-          <field field_ref="H2_fQ1Hn" operation="average" />
-          <field field_ref="H2_fQ1Hp" operation="average" />
+          <field field_ref="H2_fQPHn" operation="average" />
+          <field field_ref="H2_fQPHp" operation="average" />
           <field field_ref="H2_fHG3c" operation="average" />
           <field field_ref="H2_fHQ1c" operation="average" />
           <field field_ref="H2_fHQ1n" operation="average" />

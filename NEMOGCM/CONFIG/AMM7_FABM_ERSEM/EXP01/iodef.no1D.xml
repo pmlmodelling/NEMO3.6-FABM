@@ -67,10 +67,6 @@
           <field field_ref="R2_c" operation="average" />
           <field field_ref="R3_c" operation="average" />
           <field field_ref="L2_c" operation="average" />
-          <field field_ref="TEP_c" operation="average" />
-          <field field_ref="maTEP_c" operation="average" />
-          <field field_ref="benTA_a" operation="average" />
-          <field field_ref="benC_pH" operation="average" />
           <field field_ref="P1_fO3PIc" operation="instant" freq_op="1d"> @P1_fO3PIc_e3t / @e3t </field>
           <field field_ref="P2_fO3PIc" operation="instant" freq_op="1d"> @P2_fO3PIc_e3t / @e3t </field>
           <field field_ref="P3_fO3PIc" operation="instant" freq_op="1d"> @P3_fO3PIc_e3t / @e3t </field>
@@ -87,7 +83,6 @@
           <field field_ref="gross_calcification_rate_result" unit="mg/m^3/d" operation="instant" freq_op="1d"> @gross_calcification_rate_e3t / @e3t </field>
           <field field_ref="bL2_c"  operation="average" />
           <field field_ref="Q1_c" operation="average" />
-          <field field_ref="Q5_c" operation="average" />
           <field field_ref="Q6_c" operation="average" />
           <field field_ref="Q7_c" operation="average" />
           <field field_ref="Q17_c"  operation="average" />
@@ -146,7 +141,6 @@
           <field field_ref="XAD_PO_n" operation="instant" freq_op="1d" > @XAD_PO_n_e3t / @e3t </field>
           <field field_ref="XAD_PO_p" operation="instant" freq_op="1d" > @XAD_PO_p_e3t / @e3t </field>
           <field field_ref="XAD_PO_s" operation="instant" freq_op="1d" > @XAD_PO_s_e3t / @e3t </field>
-          <field field_ref="XAD_TEPI_c" operation="instant" freq_op="1d" > @XAD_TEPI_c_e3t / @e3t </field>
           <field field_ref="YAD_O3_c" operation="instant" freq_op="1d" > @YAD_O3_c_e3t / @e3t </field>
           <field field_ref="YAD_N3_n" operation="instant" freq_op="1d" > @YAD_N3_n_e3t / @e3t </field>
           <field field_ref="YAD_N4_n" operation="instant" freq_op="1d" > @YAD_N4_n_e3t / @e3t </field>
@@ -166,10 +160,8 @@
           <field field_ref="YAD_PO_n" operation="instant" freq_op="1d" > @YAD_PO_n_e3t / @e3t </field>
           <field field_ref="YAD_PO_p" operation="instant" freq_op="1d" > @YAD_PO_p_e3t / @e3t </field>
           <field field_ref="YAD_PO_s" operation="instant" freq_op="1d" > @YAD_PO_s_e3t / @e3t </field>
-          <field field_ref="YAD_TEPI_c" operation="instant" freq_op="1d" > @YAD_TEPI_c_e3t / @e3t </field>
           <field field_ref="VMV_PO_c" operation="instant" freq_op="1d" > @VMV_PO_c_e3t / @e3t </field>
           <field field_ref="VMV_L2_c" operation="instant" freq_op="1d" > @VMV_L2_c_e3t / @e3t </field>
-          <field field_ref="VMV_TEPI_c" operation="instant" freq_op="1d" > @VMV_TEPI_c_e3t / @e3t </field>
           <field field_ref="INP_rodic" long_name="riverine DIC input" unit="mg/m^3/s" operation="instant" freq_op="1d" > @INP_rodic_e3t / @e3t </field>
           <field field_ref="INP_roo" long_name="riverine dissolved oxygen input" unit="mg/m^3/s" operation="instant" freq_op="1d" > @INP_roo_e3t / @e3t </field>
           <field field_ref="INP_rono3" long_name="riverine oxidised nitrogen input" unit="mmol/m^3/s" operation="instant" freq_op="1d" > @INP_rono3_e3t / @e3t </field>
@@ -224,16 +216,11 @@
           <field field_ref="O3_Om_cal" operation="average" />
           <field field_ref="Q1_n" operation="average" />
           <field field_ref="Q1_p" operation="average" />
-          <field field_ref="Q5_n" operation="average" />
-          <field field_ref="Q5_p" operation="average" />
-          <field field_ref="Q5_s" operation="average" />
           <field field_ref="Q6_s" operation="average" />
           <field field_ref="Q17_n" operation="average" />
           <field field_ref="Q17_p" operation="average" />
           <field field_ref="ben_PON_result" unit="mmol N/m^2" operation="average" />
           <field field_ref="ben_POP_result" unit="mmol P/m^2" operation="average" />
-          <field field_ref="benC_Om_cal" operation="average" />
-          <field field_ref="benC_Om_arg" operation="average" />
           <field field_ref="erosion_v_er" operation="average" />
           <field field_ref="erosion_v_er" name="max_erosion_v_er" operation="maximum" />
           <field field_ref="phytoplankton_uptake_oxN_result" unit="mmol N/m^3/d" operation="instant" freq_op="1mo"> @phytoplankton_uptake_oxN_result_e3t / @e3t </field>
@@ -248,7 +235,6 @@
           <field field_ref="phytoplankton_loss_to_PON_result" unit="mmol N/m^3/d" operation="instant" freq_op="1mo"> @phytoplankton_loss_to_PON_result_e3t / @e3t </field>
           <field field_ref="phytoplankton_loss_to_POP_result" unit="mmol P/m^3/d" operation="instant" freq_op="1mo"> @phytoplankton_loss_to_POP_result_e3t / @e3t </field>
           <field field_ref="P1_fPIRPs" name="diatom_loss_to_POSi_result" unit="mmol Si/m^3/d" operation="instant" freq_op="1mo"> @P1_fPIRPs_e3t / @e3t </field>
-          <field field_ref="P1_fPITEPc" name="diatom_loss_to_TEP_result" unit="mg C/m^3/d" operation="instant" freq_op="1mo"> @P1_fPITEPc_e3t / @e3t </field>
           <field field_ref="B1_fB1O3c" operation="instant" freq_op="1mo"> @B1_fB1O3c_e3t / @e3t </field>
           <field field_ref="B1_fR1B1c" operation="instant" freq_op="1mo"> @B1_fR1B1c_e3t / @e3t </field>
           <field field_ref="B1_fR1B1n" operation="instant" freq_op="1mo"> @B1_fR1B1n_e3t / @e3t </field>
@@ -262,9 +248,6 @@
           <field field_ref="B1_fB1R3c" operation="instant" freq_op="1mo"> @B1_fB1R3c_e3t / @e3t </field>
           <field field_ref="B1_fB1NIn" operation="instant" freq_op="1mo"> @B1_fB1NIn_e3t / @e3t </field>
           <field field_ref="B1_fB1N1p" operation="instant" freq_op="1mo"> @B1_fB1N1p_e3t / @e3t </field>
-          <field field_ref="B1_minn" operation="instant" freq_op="1mo"> @B1_minn_e3t / @e3t </field>
-          <field field_ref="B1_minp" operation="instant" freq_op="1mo"> @B1_minp_e3t / @e3t </field>
-          <field field_ref="B1_mins" operation="instant" freq_op="1mo"> @B1_mins_e3t / @e3t </field>
           <field field_ref="Z4_fZIO3c" operation="instant" freq_op="1mo"> @Z4_fZIO3c_e3t / @e3t </field>
           <field field_ref="Z4_fZIRPc" operation="instant" freq_op="1mo"> @Z4_fZIRPc_e3t / @e3t </field>
           <field field_ref="Z4_fZIRPn" operation="instant" freq_op="1mo"> @Z4_fZIRPn_e3t / @e3t </field>
@@ -343,9 +326,6 @@
           <field field_ref="Y3_fprey6c" name="Y3_fbendetrc_result" long_name="benthic suspension feeders scavenging of benthic detrital carbon" operation="average" />
           <field field_ref="Y3_fprey6n" name="Y3_fbendetrn_result" long_name="benthic suspension feeders scavenging of benthic detrital nitrogen" operation="average" />
           <field field_ref="Y3_fprey6p" name="Y3_fbendetrp_result" long_name="benthic suspension feeders scavenging of benthic detrital phosphorus" operation="average" />
-          <field field_ref="Y3_fprey7c" name="Y3_fluffc_result" long_name="benthic suspension feeders scavenging on fluff layer detrital carbon" operation="average" />
-          <field field_ref="Y3_fprey7n" name="Y3_fluffn_result" long_name="benthic suspension feeders scavenging on fluff layer detrital nitrogen" operation="average" />
-          <field field_ref="Y3_fprey7p" name="Y3_fluffp_result" long_name="benthic suspension feeders scavenging on fluff layer detrital phosphorus" operation="average" />
           <field field_ref="Ymacro_fYG3c_result" unit="mg C/m^2/d" operation="average" />
           <field field_ref="Ymacro_fYQPc_result" unit="mg C/m^2/d" operation="average" />
           <field field_ref="Ymacro_fYQPn_result" unit="mmol N/m^2/d" operation="average" />
