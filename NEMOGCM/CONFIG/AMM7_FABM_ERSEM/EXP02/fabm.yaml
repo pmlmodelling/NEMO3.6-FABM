@@ -934,11 +934,11 @@ instances:
       dd: 0.001                                            # Michaelis-Menten constant for oxygen limitation through layer thickness (m)
       nfood: 3                                             # number of food sources
       su1: 0.0005                                          # base affinity for food source 1 (m^2/mg C/d)
-      su2: 2.e-05                                           # base affinity for food source 2 (m^2/mg C/d)
+      su2: 2.e-05                                          # base affinity for food source 2 (m^2/mg C/d)
       suf2: 0.0002                                         # additional affinity for food source 2 subject to nutrient limitation (m^2/mg C/d), default = 0.0
       puinc2: 2.0                                          # affinity for nutrients relative to carbon in food source 2 (-), default = 1.0
       pue2: 0.1                                            # fraction of consumed food source 2 that is excreted (-), default = 0.0
-      su3: 2.e-06                                           # base affinity for food source 3 (m^2/mg C/d)
+      su3: 2.e-06                                          # base affinity for food source 3 (m^2/mg C/d)
       pue3: 0.1                                            # fraction of consumed food source 3 that is excreted (-), default = 0.0
       pur: 0.3                                             # fraction of consumed carbon that is respired (-)
       sr: 0.02                                             # specific rest respiration (1/d)
@@ -988,11 +988,11 @@ instances:
       q10: 2.0                                             # Q_10 temperature coefficient (-)
       dd: 0.01                                             # Michaelis-Menten constant for oxygen limitation through layer thickness (m)
       nfood: 2                                             # number of food sources
-      su1: 2.e-05                                           # base affinity for food source 1 (m^2/mg C/d)
+      su1: 2.e-05                                          # base affinity for food source 1 (m^2/mg C/d)
       suf1: 0.0002                                         # additional affinity for food source 1 subject to nutrient limitation (m^2/mg C/d), default = 0.0
       puinc1: 2.0                                          # affinity for nutrients relative to carbon in food source 1 (-), default = 1.0
       pue1: 0.0                                            # fraction of consumed food source 1 that is excreted (-), default = 0.0
-      su2: 2e-06                                           # base affinity for food source 2 (m^2/mg C/d)
+      su2: 2.e-06                                          # base affinity for food source 2 (m^2/mg C/d)
       pue2: 0.0                                            # fraction of consumed food source 2 that is excreted (-), default = 0.0
       pur: 0.3                                             # fraction of consumed carbon that is respired (-)
       sr: 0.02                                             # specific rest respiration (1/d)
