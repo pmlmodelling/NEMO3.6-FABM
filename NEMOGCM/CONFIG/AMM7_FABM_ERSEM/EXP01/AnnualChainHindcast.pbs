@@ -178,7 +178,7 @@ yp=$(( y0 + 1 ))
 if [ $yp -le $yend ]
 then
    echo 'Submitting' $yp '...'
-   qsub -v year=$yp AnnualChainHindcast.pbs
+   qsub -v y0=$yp AnnualChainHindcast.pbs
    echo "Done."
 else
    echo "All done."
