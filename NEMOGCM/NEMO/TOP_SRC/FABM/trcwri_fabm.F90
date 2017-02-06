@@ -22,7 +22,8 @@ MODULE trcwri_fabm
    PRIVATE
 
 #if defined key_tracer_budget
-   REAL(wp), ALLOCATABLE, DIMENSION(:,:,:,:), SAVE :: trb_temp ! slwa
+   REAL(wp), ALLOCATABLE, DIMENSION(:,:,:,:), SAVE :: tr_temp
+   REAL(wp), ALLOCATABLE, DIMENSION(:,:,:), SAVE :: fabm_st2d_temp
 #endif
 
    INTERFACE trc_wri_fabm
@@ -47,7 +48,8 @@ CONTAINS
 #if defined key_tracer_budget
       INTEGER              :: jn
       CHARACTER (len=20)   :: cltra
-      REAL(wp), DIMENSION(jpi,jpj,jpk)    :: trpool,st2dpool !temporary storage pools
+      REAL(wp), DIMENSION(jpi,jpj,jpk)    :: trpool !temporary storage pool 3D
+      REAL(wp), DIMENSION(jpi,jpj)    :: st2dpool !temporary storage pool 2D
       !!---------------------------------------------------------------------
  
       ! write the tracer concentrations in the file
@@ -55,20 +57,20 @@ CONTAINS
 ! depth integrated
 ! for strict budgetting write this out at end of timestep as an average between 'now' and 'after' at kt
       DO jn = 1, jp_fabm1
-         trpool(:,:,:) = 0.5 * (trn(:,:,:,jp_fabm0+jn-1)*fse3t_a(:,:,:) +  &
-                             tr_temp(:,:,:jp_fabm0+jn-1jn)*fse3t(:,:,:) )
+         trpool(:,:,:) = 0.5 * ( trn(:,:,:,jp_fabm0+jn-1)*fse3t_a(:,:,:) + &
+                             tr_temp(:,:,:,jn)*fse3t(:,:,:) )
          cltra = TRIM( model%state_variables(jn)%name )//"e3t"     ! depth integrated output
          IF( kt == nittrc000 ) write(6,*)'output pool ',cltra
          CALL iom_put( cltra, trpool)
       END DO
-      DO jn = 1, jp_fabm1_surface
+      DO jn = 1, jp_fabm_surface
          st2dpool(:,:) = 0.5 * (fabm_st2dn(:,:,jn) +  &
                              fabm_st2d_temp(:,:,jn))
          cltra = TRIM( model%surface_state_variables(jn)%name )//"e3t"     ! depth integrated output
          IF( kt == nittrc000 ) write(6,*)'output pool ',cltra
          CALL iom_put( cltra, st2dpool)
       END DO
-      DO jn = 1, jp_fabm1_bottom
+      DO jn = 1, jp_fabm_bottom
          st2dpool(:,:) = 0.5 * (fabm_st2dn(:,:,jp_fabm_surface+jn) +  &
                              fabm_st2d_temp(:,:,jp_fabm_surface+jn))
          cltra = TRIM( model%surface_state_variables(jn)%name )//"e3t"     ! depth integrated output
@@ -92,10 +94,10 @@ CONTAINS
 
 #if defined key_tracer_budget
       IF( kt == nittrc000 ) THEN
-         ALLOCATE(tr_temp(jpi,jpj,jpk,jp_my_trc),fabm_st2d_temp(jpi,jpj,jp_fabm1_surface+jp_fabm_bottom)  ! slwa
+         ALLOCATE(tr_temp(jpi,jpj,jpk,jp_fabm),fabm_st2d_temp(jpi,jpj,jp_fabm_surface+jp_fabm_bottom))
       ENDIF
-      tr_temp(:,:,:,:)=trn(:,:,:,:) ! slwa save for tracer budget (unfiltered trn)
-      fabm_st2d_temp(:,:,:,:)=fabm_st2dn(:,:,:,:)
+      tr_temp(:,:,:,:)=trn(:,:,:,jp_fabm0:jp_fabm1) ! slwa save for tracer budget (unfiltered trn)
+      fabm_st2d_temp(:,:,:)=fabm_st2dn(:,:,:)
 #else
       DO jn = 1, jp_fabm
          CALL iom_put( model%state_variables(jn)%name, trn(:,:,:,jp_fabm0+jn-1) )
