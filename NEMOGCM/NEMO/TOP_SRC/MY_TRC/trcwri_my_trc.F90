@@ -54,43 +54,26 @@ CONTAINS
 ! depth integrated
 ! for strict budgetting write this out at end of timestep as an average between 'now' and 'after' at kt
          DO jn = jp_myt0, jp_myt1 
+          IF(ln_trdtrc (jn))THEN
             trpool(:,:,:) = 0.5 * ( trn(:,:,:,jn) * fse3t_a(:,:,:) +  &
                                         trb_temp(:,:,:,jn) * fse3t(:,:,:) )
-!
-            cltra = TRIM( ctrcnm(jn) )                  ! output of tracer density 
-            CALL iom_put( cltra, trpool(:,:,:) / (0.5* (fse3t(:,:,:) + fse3t_a(:,:,:) ) ) )
-!
-            cltra = TRIM( ctrcnm(jn) )//"_pool"     ! volume integrated output
+            cltra = TRIM( ctrcnm(jn) )//"e3t"     ! depth integrated output
+            IF( kt == nittrc000 ) write(6,*)'output pool ',cltra
             DO jk = 1, jpk
-               trpool(:,:,jk) = trpool(:,:,jk) * e1t(:,:) * e2t(:,:)
+               trpool(:,:,jk) = trpool(:,:,jk)
             END DO
             CALL iom_put( cltra, trpool)
 
-!           cltra = TRIM( ctrcnm(jn) )//"_pool"     ! volume integrated output
-!           DO jk = 1, jpk
-!              trpool(:,:,jk) = 0.5 * ( trn(:,:,jk,jn) * fse3t_a(:,:,jk) +  & 
-!                                       trb_temp(:,:,jk,jn) * fse3t(:,:,jk) ) * & 
-!                                       e1t(:,:) * e2t(:,:)
-!           END DO
-!           CALL iom_put( cltra, trpool)
-!           cltra = TRIM( ctrcnm(jn) )                  ! output of tracer density 
-!           CALL iom_put( cltra, trpool(:,:,:) / (0.5* (fse3t(:,:,:) + fse3t_a(:,:,:) ) ) )
+          END IF
          END DO
-         CALL iom_put( "DEPTH" , 0.5* (fse3t(:,:,:) + fse3t_a(:,:,:) ) )  !  equivalent 'depth' at same time as tracer pool output
+
       ELSE
 
          IF( kt == nittrc000 ) THEN
-           ALLOCATE(trb_temp(jpi,jpj,jpk,jptra))  ! slwa
+           ALLOCATE(trb_temp(jpi,jpj,jpk,jp_my_trc))  ! slwa
          ENDIF
          trb_temp(:,:,:,:)=trn(:,:,:,:) ! slwa save for tracer budget (unfiltered trn)
 
-!        DO jn = jp_myt0, jp_myt1
-!           cltra = TRIM( ctrcnm(jn) )                  ! short title for tracer
-!           CALL iom_put( cltra, trn(:,:,:,jn) ) 
-!        END DO
-! write out depths and areas in double precision for tracer budget calculations
-         CALL iom_put( "AREA" , e1t(:,:) * e2t(:,:))
-!        CALL iom_put( "DEPTH" , fse3t(:,:,:) )  ! need depth at same time as tracer output
 
       END IF
 #else
