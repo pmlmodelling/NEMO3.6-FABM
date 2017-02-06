@@ -91,7 +91,13 @@ CONTAINS
    !!----------------------------------------------------------------------
    PUBLIC trc_wri_my_trc
 CONTAINS
-   SUBROUTINE trc_wri_my_trc                     ! Empty routine  
+#if defined key_tracer_budget
+   SUBROUTINE trc_wri_my_trc (kt, fl) ! slwa
+      INTEGER, INTENT( in ), OPTIONAL     :: fl 
+      INTEGER, INTENT( in )               :: kt
+#else
+   SUBROUTINE trc_wri_my_trc
+#endif
    END SUBROUTINE trc_wri_my_trc
 #endif
 
