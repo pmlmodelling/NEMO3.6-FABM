@@ -81,7 +81,7 @@ CONTAINS
       ENDIF
 #else
       IF( lk_fabm  )   CALL trc_wri_fabm (kt)     ! FABM  tracers
-      IF( lk_my_trc  )   CALL trc_wri_my_trc     ! MY_TRC  tracers
+      IF( lk_my_trc  )   CALL trc_wri_my_trc(kt)     ! MY_TRC  tracers
 #endif
       ! FABM <<<+++
       !
