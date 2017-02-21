@@ -134,7 +134,7 @@ CONTAINS
       IF( l_trdtrc )  CALL wrk_alloc( jpi, jpj, jpk, ztrtrdb, ztrtrdn )
 #if defined key_tracer_budget
       IF( kt == nittrc000 .AND. l_trdtrc) THEN
-         ALLOCATE( ztrtrdb_m1(jpi,jpj,jpk,jptra) )  ! slwa
+         IF (.not. ALLOCATED(ztrtrdb_m1)) ALLOCATE( ztrtrdb_m1(jpi,jpj,jpk,jptra) )  ! slwa
          IF( ln_rsttr .AND.    &                     ! Restart: read in restart  file
             iom_varid( numrtr, 'rdb_trend_'//TRIM(ctrcnm(1)), ldstop = .FALSE. ) > 0 ) THEN
             IF(lwp) WRITE(numout,*) '          nittrc000-nn_dttrc RDB tracer trend read in the restart file'
