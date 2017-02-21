@@ -61,7 +61,7 @@ CONTAINS
         IF(ln_trdtrc (jn))THEN
          trpool(:,:,:) = 0.5 * ( trn(:,:,:,jp_fabm0+jn-1)*fse3t_a(:,:,:) + &
                              tr_temp(:,:,:,jn)*fse3t(:,:,:) )
-         cltra = TRIM( model%state_variables(jn)%name )//"e3t"     ! depth integrated output
+         cltra = TRIM( model%state_variables(jn)%name )//"_e3t"     ! depth integrated output
          IF( kt == nittrc000 ) write(6,*)'output pool ',cltra
          CALL iom_put( cltra, trpool)
         ENDIF
