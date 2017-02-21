@@ -13,6 +13,7 @@ MODULE trcwri_fabm
    !!----------------------------------------------------------------------
    USE trc         ! passive tracers common variables 
    USE iom         ! I/O manager
+   USE trdtrc_oce
    USE trcsms_fabm, only: trc_sms_fabm_check_mass
    USE par_fabm
    USE st2d_fabm
@@ -57,25 +58,13 @@ CONTAINS
 ! depth integrated
 ! for strict budgetting write this out at end of timestep as an average between 'now' and 'after' at kt
       DO jn = 1, jp_fabm1
+        IF(ln_trdtrc (jn))THEN
          trpool(:,:,:) = 0.5 * ( trn(:,:,:,jp_fabm0+jn-1)*fse3t_a(:,:,:) + &
                              tr_temp(:,:,:,jn)*fse3t(:,:,:) )
          cltra = TRIM( model%state_variables(jn)%name )//"e3t"     ! depth integrated output
          IF( kt == nittrc000 ) write(6,*)'output pool ',cltra
          CALL iom_put( cltra, trpool)
-      END DO
-      DO jn = 1, jp_fabm_surface
-         st2dpool(:,:) = 0.5 * (fabm_st2dn(:,:,jn) +  &
-                             fabm_st2d_temp(:,:,jn))
-         cltra = TRIM( model%surface_state_variables(jn)%name )//"e3t"     ! depth integrated output
-         IF( kt == nittrc000 ) write(6,*)'output pool ',cltra
-         CALL iom_put( cltra, st2dpool)
-      END DO
-      DO jn = 1, jp_fabm_bottom
-         st2dpool(:,:) = 0.5 * (fabm_st2dn(:,:,jp_fabm_surface+jn) +  &
-                             fabm_st2d_temp(:,:,jp_fabm_surface+jn))
-         cltra = TRIM( model%surface_state_variables(jn)%name )//"e3t"     ! depth integrated output
-         IF( kt == nittrc000 ) write(6,*)'output pool ',cltra
-         CALL iom_put( cltra, st2dpool)
+        ENDIF
       END DO
 #else
       CONTINUE
