@@ -138,7 +138,7 @@ CONTAINS
          IF( ln_rsttr .AND.    &                     ! Restart: read in restart  file
             iom_varid( numrtr, 'rdb_trend_'//TRIM(ctrcnm(1)), ldstop = .FALSE. ) > 0 ) THEN
             IF(lwp) WRITE(numout,*) '          nittrc000-nn_dttrc RDB tracer trend read in the restart file'
-            DO jn = 1, jptra
+            DO jn = 1, jp_sms0, jp_sms1
                CALL iom_get( numrtr, jpdom_autoglo, 'rdb_trend_'//TRIM(ctrcnm(jn)), ztrtrdb_m1(:,:,:,jn) )   ! before tracer trend for rdb
             END DO
          ELSE
@@ -254,7 +254,7 @@ CONTAINS
          IF(lwp) WRITE(numout,*) 'trc : RDB trend at last time step for tracer budget written in tracer restart file ',   &
             &                    'at it= ', kt,' date= ', ndastp
          IF(lwp) WRITE(numout,*) '~~~~'
-         DO jn = 1, jptra
+         DO jn = 1, jp_sms0, jp_sms1
             CALL iom_rstput( kt, nitrst, numrtw, 'rdb_trend_'//TRIM(ctrcnm(jn)), ztrtrdb_m1(:,:,:,jn) )
          END DO
       ENDIF
