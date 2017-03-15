@@ -142,7 +142,7 @@ CONTAINS
                   CALL iom_get( numrtr, jpdom_autoglo, 'rdb_trend_'//TRIM(ctrcnm(jn)), ztrtrdb_m1(:,:,:,jn) )   ! before tracer trend for rdb
                ELSE
                   IF(lwp) WRITE(numout,*) '          no nittrc000-nn_dttrc RDB tracer trend for',TRIM(ctrcnm(jn)),', setting to 0.'
-                  ztrtrdb_m1=0.0
+                  ztrtrdb_m1(:,:,:,jn)=0.0
                ENDIF
             END DO
       ENDIF
