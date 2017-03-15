@@ -451,6 +451,7 @@ CONTAINS
       END DO
 
       ! Set mask for negativity corrections to the relevant states
+      lk_rad_fabm = .FALSE.
       DO jn=1,jp_fabm
         IF (model%state_variables(jn)%minimum.ge.0) THEN
           lk_rad_fabm(jn)=.TRUE.
