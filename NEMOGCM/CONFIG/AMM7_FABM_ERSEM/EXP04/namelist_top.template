@@ -1,0 +1,382 @@
+!!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!! NEMO/TOP1 :   - tracer run information                (namtrc_run)
+!!               - tracer definition                     (namtrc    )
+!!               - tracer data initialisation            (namtrc_dta)
+!!               - tracer advection                      (namtrc_adv)
+!!               - tracer lateral diffusion              (namtrc_ldf)
+!!               - tracer vertical physics               (namtrc_zdf)
+!!               - tracer newtonian damping              (namtrc_dmp)
+!!               - dynamical tracer trends               (namtrc_trd)
+!!               - tracer output diagonstics             (namtrc_dia)
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!-----------------------------------------------------------------------
+&namtrc_run     !   run information
+!-----------------------------------------------------------------------
+   nn_dttrc      =  1        !  time step frequency for passive sn_tracers
+   nn_writetrc   =  105120     !  time step frequency for sn_tracer outputs
+   ln_top_euler  = .false.    !  use Euler time-stepping for TOP
+   ln_rsttr      = .true. ! start from a restart file (T) or not (F)
+   nn_rsttr      = __RST__ ! restart control = 0 initial time step is not compared to the restart file value
+                           !                  = 1 do not use the value in the restart file
+                           !                  = 2 calendar parameters read in the restart file
+   cn_trcrst_in  = "restart_trc"   !  suffix of pass. sn_tracer restart name (input)
+   cn_trcrst_out = "restart_trc"   !  suffix of pass. sn_tracer restart name (output)
+   cn_trcrst_indir   = "./"   !  directory of ocean restart name (input)
+   cn_trcrst_outdir  = "./"   !  directory of ocean restart name (output)
+/
+!-----------------------------------------------------------------------
+&namtrc     !   tracers definition
+!-----------------------------------------------------------------------
+!                    sname       lname                unit ,  init    ,  sbc     ,   cbc   ,  obc   ,  save
+   sn_tracer(1)   = 'light_ADY' , 'phosphate  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(2)   = 'N1_p     ' , 'phosphate  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(3)   = 'N3_n     ' , 'oxidised nitrogen  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(5)   = 'N5_s     ' , 'silicate  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(6)   = 'O2_o     ' , 'dissolved inorganic carbon  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(7)   = 'O3_c     ' , 'dissolved inorganic carbon  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(8)   = 'O3_bioalk' , 'carbonate bioalkalinity  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(9)   = 'B1_c' , 'carbonate bioalkalinity  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(10)   = 'B1_n' , 'carbonate bioalkalinity  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(11)   = 'B1_p' , 'carbonate bioalkalinity  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(12)   = 'TEP_c    ' , 'available transparent exopolymer particles carbon  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(13)   = 'P1_c     ' , 'diatom carbon  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(14)   = 'P1_n     ' , 'diatom nitrogen  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(15)   = 'P1_p     ' , 'diatom phosphorus  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(16)   = 'P1_Chl     ' , 'diatom chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(17)   = 'P1_s     ' , 'diatom silicate  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(18)   = 'L2_c     ' , 'calcite  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(19)   = 'P2_c     ' , 'nanophytoplankton carbon  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(20)   = 'P2_n     ' , 'nanophytoplankton nitrogen  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(21)   = 'P2_p     ' , 'nanophytoplankton phosphorus  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(22)   = 'P2_Chl     ' , 'nanophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(23)   = 'P3_c     ' , 'picophytoplankton carbon  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(24)   = 'P3_n     ' , 'picophytoplankton nitrogen  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(25)   = 'P3_p     ' , 'picophytoplankton phosphorus  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(26)   = 'P3_Chl     ' , 'picophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(27)   = 'P4_c     ' , 'picrophytoplankton carbon  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(28)   = 'P4_n     ' , 'picrophytoplankton nitrogen  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(29)   = 'P4_p     ' , 'picrophytoplankton phosphorus  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(30)   = 'P4_Chl     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(31)   = 'Z4_c     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(32)   = 'Z5_c     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(33)   = 'Z5_n     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(34)   = 'Z5_p     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(35)   = 'Z6_c     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(36)   = 'Z6_n     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(37)   = 'Z6_p     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(38)   = 'R1_c     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(39)   = 'R1_n     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(40)   = 'R1_p     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(41)   = 'R2_c     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(42)   = 'R3_c     ' , 'picrophytoplankton chlorophyll  ',  ' '  , .false.  ,  .false. , .false. , .false. , .false.
+   sn_tracer(43)   = 'R4_c     ' , 'small particulate carbon  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(44)   = 'R4_n     ' , 'small particulate nitrogen  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(45)   = 'R4_p     ' , 'small particulate phosphorus  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(46)   = 'R6_c     ' , 'medium particulate carbon  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(47)   = 'R6_n     ' , 'medium particulate nitrogen  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(48)   = 'R6_p     ' , 'medium particulate phosphorus  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(49)   = 'R6_s     ' , 'medium particulate silicate  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(50)   = 'R8_c     ' , 'large particulate carbon  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(51)   = 'R8_n     ' , 'large particulate nitrogen  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(52)   = 'R8_p     ' , 'large particulate phosphorus  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(53)   = 'R8_s     ' , 'large particulate silicate  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   sn_tracer(54)   = 'maTEP_c     ' , 'transparent exopolymer particles in macro-aggregates carbon  ',  ' '  , .false.  ,  .false. , .false. , .true. , .false.
+   ln_trcdta     =  .false.  !  Initialisation from data input file (T) or not (F)
+   ln_trcdmp     =  .false.  !  add a damping termn (T) or not (F)
+   ln_trcdmp_clo =  .false.  !  damping term (T) or not (F) on closed seas
+/
+!-----------------------------------------------------------------------
+&namtrc_dta      !    Initialisation from data input file
+!-----------------------------------------------------------------------
+!
+   cn_dir        =  './'      !  root directory for the location of the data files
+/
+!-----------------------------------------------------------------------
+&namtrc_adv    !   advection scheme for passive tracer
+!-----------------------------------------------------------------------
+   ln_trcadv_cen2    =  .false.  !  2nd order centered scheme
+   ln_trcadv_tvd     =  .true.   !  TVD scheme
+   ln_trcadv_muscl   =  .false.  !  MUSCL scheme
+   ln_trcadv_muscl2  =  .false.  !  MUSCL2 scheme + cen2 at boundaries
+   ln_trcadv_ubs     =  .false.  !  UBS scheme
+   ln_trcadv_qck     =  .false.  !  QUICKEST scheme
+   ln_trcadv_msc_ups =  .false.  !  use upstream scheme within muscl
+/
+!-----------------------------------------------------------------------
+&namtrc_ldf    !   lateral diffusion scheme for passive tracer
+!-----------------------------------------------------------------------
+!  ln_trcldf_diff   =  .false. ! slwa .true.   !  performs lateral diffusion (T) or not (F) ! slwa
+!                               !  Type of the operator :
+   ln_trcldf_lap    =  .false. ! slwa .true.   !     laplacian operator
+   ln_trcldf_bilap  =  .false.  !     bilaplacian operator
+                                !  Direction of action  :
+   ln_trcldf_level  =  .false.  !     iso-level
+   ln_trcldf_hor    =  .true.   !     horizontal (geopotential)         (require "key_ldfslp" when ln_sco=T)
+   ln_trcldf_iso    =  .false.  !     iso-neutral                       (require "key_ldfslp")
+!                               !  Coefficient
+   rn_ahtrc_0       =  50 ! slwa 2000.    !  horizontal eddy diffusivity for tracers [m2/s]
+   rn_ahtrb_0       =     0.    !     background eddy diffusivity for ldf_iso [m2/s]
+/
+!-----------------------------------------------------------------------
+&namtrc_zdf        !   vertical physics
+!-----------------------------------------------------------------------
+   ln_trczdf_exp   =  .false.  !  split explicit (T) or implicit (F) time stepping
+   nn_trczdf_exp   =   3       !  number of sub-timestep for ln_trczdfexp=T
+/
+!-----------------------------------------------------------------------
+&namtrc_rad        !  treatment of negative concentrations
+!-----------------------------------------------------------------------
+   ln_trcrad   =  .true.  !  artificially correct negative concentrations (T) or not (F)  ! slwa .true.
+/
+!-----------------------------------------------------------------------
+&namtrc_dmp    !   passive tracer newtonian damping
+!-----------------------------------------------------------------------
+   nn_zdmp_tr  =    1      !  vertical   shape =0    damping throughout the water column
+                           !                   =1 no damping in the mixing layer (kz  criteria)
+                           !                   =2 no damping in the mixed  layer (rho crieria)
+   cn_resto_tr  = 'resto_tr.nc'    !  create a damping.coeff NetCDF file (=1) or not (=0)
+/
+!-----------------------------------------------------------------------
+&namtrc_trd       !   diagnostics on tracer trends        ('key_trdtrc')
+!                          or mixed-layer trends          ('key_trdmld_trc')
+!----------------------------------------------------------------------
+   nn_trd_trc  =   1     !  time step frequency and tracers trends
+   nn_ctls_trc =   50        !  control surface type in mixed-layer trends (0,1 or n<jpk)
+   rn_ucf_trc  =   1        !  unit conversion factor (=1 -> /seconds ; =86400. -> /day)
+   ln_trdmxl_trc_restart = .false.  !  restart for ML diagnostics
+   ln_trdmxl_trc_instant = .true.  !  flag to diagnose trends of instantantaneous or mean ML T/S
+   ln_trdtrc(2)  =   .true. ! N1_p
+   ln_trdtrc(3)  =   .true. ! N3_n
+   ln_trdtrc(4)  =   .true. ! N4_n
+   ln_trdtrc(5)  =   .true. ! N5_s
+   ln_trdtrc(7)  =   .true. ! O3_c
+   ln_trdtrc(9)  =   .true. ! B1_c
+   ln_trdtrc(10)  =   .true. ! B1_n
+   ln_trdtrc(11)  =   .true. ! B1_p
+   ln_trdtrc(12)  =   .true. ! TEP_c
+   ln_trdtrc(13)  =   .true. ! P1_c
+   ln_trdtrc(14)  =   .true. ! P1_n
+   ln_trdtrc(15)  =   .true. ! P1_p
+   ln_trdtrc(17)  =   .true. ! P1_s
+   ln_trdtrc(18)  =   .true. ! L2_c
+   ln_trdtrc(19)  =   .true. ! P2_c
+   ln_trdtrc(20)  =   .true. ! P2_n
+   ln_trdtrc(21)  =   .true. ! P2_p
+   ln_trdtrc(23)  =   .true. ! P3_c
+   ln_trdtrc(24)  =   .true. ! P3_n
+   ln_trdtrc(25)  =   .true. ! P3_p
+   ln_trdtrc(27)  =   .true. ! P4_c
+   ln_trdtrc(28)  =   .true. ! P4_n
+   ln_trdtrc(29)  =   .true. ! P4_p
+   ln_trdtrc(31)  =   .true. ! Z4_c
+   ln_trdtrc(32)  =   .true. ! Z5_c
+   ln_trdtrc(33)  =   .true. ! Z5_n
+   ln_trdtrc(34)  =   .true. ! Z5_p
+   ln_trdtrc(35)  =   .true. ! Z6_c
+   ln_trdtrc(36)  =   .true. ! Z6_n
+   ln_trdtrc(37)  =   .true. ! Z6_p
+   ln_trdtrc(38)  =   .true. ! R1_c
+   ln_trdtrc(39)  =   .true. ! R1_n
+   ln_trdtrc(40)  =   .true. ! R1_p
+   ln_trdtrc(41)  =   .true. ! R2_c
+   ln_trdtrc(42)  =   .true. ! R3_c
+   ln_trdtrc(43)  =   .true. ! R4_c
+   ln_trdtrc(44)  =   .true. ! R4_n
+   ln_trdtrc(45)  =   .true. ! R4_p
+   ln_trdtrc(46)  =   .true. ! R6_c
+   ln_trdtrc(47)  =   .true. ! R6_n
+   ln_trdtrc(48)  =   .true. ! R6_p
+   ln_trdtrc(49)  =   .true. ! R6_s
+   ln_trdtrc(50)  =   .true. ! R8_c
+   ln_trdtrc(51)  =   .true. ! R8_n
+   ln_trdtrc(52)  =   .true. ! R8_p
+   ln_trdtrc(53)  =   .true. ! R8_s
+   ln_trdtrc(54)  =   .true. ! maTEP_c
+/
+!-----------------------------------------------------------------------
+&namtrc_dia       !   parameters for passive tracer additional diagnostics
+!----------------------------------------------------------------------
+   ln_diatrc     =  .true.   !  save additional diag. (T) or not (F)
+   ln_diabio     =  .true.   !  output biological trends
+   nn_writedia   =  105120 ! 1440     !  time step frequency for diagnostics
+   nn_writebio   =  105120 ! 10     !: frequency of biological outputs
+/
+!----------------------------------------------------------------------
+! namtrc_bc       !   data for boundary conditions
+!-----------------------------------------------------------------------
+&namtrc_bc
+!
+   cn_dir_sbc        =  './'      !  root directory for the location of SURFACE data files
+   cn_dir_cbc        =  './'      !  root directory for the location of COASTAL data files
+   cn_dir_obc        =  './'      !  root directory for the location of OPEN data files
+!          !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!          !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
+   sn_trcobc2(2) = 'amm7bdy_trc' ,    -1     , 'phosphate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(3) = 'amm7bdy_trc' ,    -1     , 'nitrate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(5) = 'amm7bdy_trc' ,    -1     , 'silicate' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(7) = 'amm7bdy_trc' ,    -1     , 'DIC' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(8) = 'amm7bdy_trc' ,    -1     , 'bioalk' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(12) = 'amm7bdy_trc' ,    -1     , 'tep_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(13) = 'amm7bdy_trc' ,    -1     , 'diatoms_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(14) = 'amm7bdy_trc' ,    -1     , 'diatoms_n' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(15) = 'amm7bdy_trc' ,    -1     , 'diatoms_p' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(16) = 'amm7bdy_trc' ,    -1     , 'diatoms_Chl' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(17) = 'amm7bdy_trc' ,    -1     , 'diatoms_s' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(18) = 'amm7bdy_trc' ,    -1     , 'calcite_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(19) = 'amm7bdy_trc' ,    -1     , 'nanophytoplankton_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(20) = 'amm7bdy_trc' ,    -1     , 'nanophytoplankton_n' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(21) = 'amm7bdy_trc' ,    -1     , 'nanophytoplankton_p' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(22) = 'amm7bdy_trc' ,    -1     , 'nanophytoplankton_Chl' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(23) = 'amm7bdy_trc' ,    -1     , 'picophytoplankton_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(24) = 'amm7bdy_trc' ,    -1     , 'picophytoplankton_n' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(25) = 'amm7bdy_trc' ,    -1     , 'picophytoplankton_p' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(26) = 'amm7bdy_trc' ,    -1     , 'picophytoplankton_Chl' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(27) = 'amm7bdy_trc' ,    -1     , 'microphytoplankton_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(28) = 'amm7bdy_trc' ,    -1     , 'microphytoplankton_n' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(29) = 'amm7bdy_trc' ,    -1     , 'microphytoplankton_p' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(30) = 'amm7bdy_trc' ,    -1     , 'microphytoplankton_Chl' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(43) = 'amm7bdy_trc' ,    -1     , 'small_poc' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(44) = 'amm7bdy_trc' ,    -1     , 'small_pon' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(45) = 'amm7bdy_trc' ,    -1     , 'small_pop' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(46) = 'amm7bdy_trc' ,    -1     , 'medium_poc' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(47) = 'amm7bdy_trc' ,    -1     , 'medium_pon' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(48) = 'amm7bdy_trc' ,    -1     , 'medium_pop' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(49) = 'amm7bdy_trc' ,    -1     , 'medium_pos' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(50) = 'amm7bdy_trc' ,    -1     , 'large_poc' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(51) = 'amm7bdy_trc' ,    -1     , 'large_pon' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(52) = 'amm7bdy_trc' ,    -1     , 'large_pop' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(53) = 'amm7bdy_trc' ,    -1     , 'large_pos' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(54) = 'amm7bdy_trc' ,    -1     , 'matep_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   rn_trofac(2) = 1
+   rn_trofac(3) = 1
+   rn_trofac(5) = 1
+   rn_trofac(7) = 1
+   rn_trofac(8) = 1
+   rn_trofac(12) = 1
+   rn_trofac(13) = 1
+   rn_trofac(14) = 1
+   rn_trofac(15) = 1
+   rn_trofac(16) = 1
+   rn_trofac(17) = 1
+   rn_trofac(18) = 1
+   rn_trofac(19) = 1
+   rn_trofac(20) = 1
+   rn_trofac(21) = 1
+   rn_trofac(22) = 1
+   rn_trofac(23) = 1
+   rn_trofac(24) = 1
+   rn_trofac(25) = 1
+   rn_trofac(26) = 1
+   rn_trofac(27) = 1
+   rn_trofac(28) = 1
+   rn_trofac(29) = 1
+   rn_trofac(30) = 1
+   rn_trofac(43) = 1
+   rn_trofac(44) = 1
+   rn_trofac(45) = 1
+   rn_trofac(46) = 1
+   rn_trofac(47) = 1
+   rn_trofac(48) = 1
+   rn_trofac(49) = 1
+   rn_trofac(50) = 1
+   rn_trofac(51) = 1
+   rn_trofac(52) = 1
+   rn_trofac(53) = 1
+   rn_trofac(54) = 1
+/
+!----------------------------------------------------------------------
+! namtrc_bc       !   data for boundary conditions
+!-----------------------------------------------------------------------
+&namtrc_bc
+!
+   cn_dir_sbc        =  './'      !  root directory for the location of SURFACE data files
+   cn_dir_cbc        =  './'      !  root directory for the location of COASTAL data files
+   cn_dir_obc        =  './'      !  root directory for the location of OPEN data files
+!          !  file name  ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!          !             !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
+   sn_trcobc2(2) = 'amm7skagbdy_trc' ,    -1 , 'phosphate'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(3) = 'amm7skagbdy_trc' ,    -1 , 'nitrate'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(5) = 'amm7skagbdy_trc' ,    -1 , 'silicate'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(7) = 'amm7skagbdy_trc' ,    -1 , 'DIC'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(8) = 'amm7skagbdy_trc' ,    -1 , 'bioalk'     ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(12) = 'amm7skagbdy_trc' ,    -1     , 'tep_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(13) = 'amm7skagbdy_trc' ,    -1     , 'diatoms_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(14) = 'amm7skagbdy_trc' ,    -1     , 'diatoms_n' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(15) = 'amm7skagbdy_trc' ,    -1     , 'diatoms_p' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(16) = 'amm7skagbdy_trc' ,    -1     , 'diatoms_Chl' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(17) = 'amm7skagbdy_trc' ,    -1     , 'diatoms_s' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(18) = 'amm7skagbdy_trc' ,    -1     , 'calcite_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(19) = 'amm7skagbdy_trc' ,    -1     , 'nanophytoplankton_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(20) = 'amm7skagbdy_trc' ,    -1     , 'nanophytoplankton_n' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(21) = 'amm7skagbdy_trc' ,    -1     , 'nanophytoplankton_p' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(22) = 'amm7skagbdy_trc' ,    -1     , 'nanophytoplankton_Chl' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(23) = 'amm7skagbdy_trc' ,    -1     , 'picophytoplankton_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(24) = 'amm7skagbdy_trc' ,    -1     , 'picophytoplankton_n' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(25) = 'amm7skagbdy_trc' ,    -1     , 'picophytoplankton_p' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(26) = 'amm7skagbdy_trc' ,    -1     , 'picophytoplankton_Chl' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(27) = 'amm7skagbdy_trc' ,    -1     , 'microphytoplankton_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(28) = 'amm7skagbdy_trc' ,    -1     , 'microphytoplankton_n' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(29) = 'amm7skagbdy_trc' ,    -1     , 'microphytoplankton_p' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(30) = 'amm7skagbdy_trc' ,    -1     , 'microphytoplankton_Chl' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(43) = 'amm7skagbdy_trc' ,    -1     , 'small_poc' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(44) = 'amm7skagbdy_trc' ,    -1     , 'small_pon' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(45) = 'amm7skagbdy_trc' ,    -1     , 'small_pop' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(46) = 'amm7skagbdy_trc' ,    -1     , 'medium_poc' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(47) = 'amm7skagbdy_trc' ,    -1     , 'medium_pon' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(48) = 'amm7skagbdy_trc' ,    -1     , 'medium_pop' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(49) = 'amm7skagbdy_trc' ,    -1     , 'medium_pos' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(50) = 'amm7skagbdy_trc' ,    -1     , 'large_poc' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(51) = 'amm7skagbdy_trc' ,    -1     , 'large_pon' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(52) = 'amm7skagbdy_trc' ,    -1     , 'large_pop' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(53) = 'amm7skagbdy_trc' ,    -1     , 'large_pos' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   sn_trcobc2(54) = 'amm7skagbdy_trc' ,    -1     , 'matep_c' ,   .true.     , .true. , 'yearly'  , ''       , ''       ,   ''
+   rn_trofac(2) = 1
+   rn_trofac(3) = 1
+   rn_trofac(5) = 1
+   rn_trofac(7) = 1
+   rn_trofac(8) = 1
+   rn_trofac(12) = 1
+   rn_trofac(13) = 1
+   rn_trofac(14) = 1
+   rn_trofac(15) = 1
+   rn_trofac(16) = 1
+   rn_trofac(17) = 1
+   rn_trofac(18) = 1
+   rn_trofac(19) = 1
+   rn_trofac(20) = 1
+   rn_trofac(21) = 1
+   rn_trofac(22) = 1
+   rn_trofac(23) = 1
+   rn_trofac(24) = 1
+   rn_trofac(25) = 1
+   rn_trofac(26) = 1
+   rn_trofac(27) = 1
+   rn_trofac(28) = 1
+   rn_trofac(29) = 1
+   rn_trofac(30) = 1
+   rn_trofac(43) = 1
+   rn_trofac(44) = 1
+   rn_trofac(45) = 1
+   rn_trofac(46) = 1
+   rn_trofac(47) = 1
+   rn_trofac(48) = 1
+   rn_trofac(49) = 1
+   rn_trofac(50) = 1
+   rn_trofac(51) = 1
+   rn_trofac(52) = 1
+   rn_trofac(53) = 1
+   rn_trofac(54) = 1
+/
+!----------------------------------------------------------------------
+!namtrc_bdy       !   Setup of tracer boundary conditions
+!-----------------------------------------------------------------------
+&namtrc_bdy
+   !cn_trc_dflt     =  'specified','none'   !  OBC applied by default to all tracers
+   cn_trc_dflt     =  'neumann','neumann'   !  OBC applied by default to all tracers
+   cn_trc          =  'frs','frs'   !  Boundary conditions appled to the active tracers (see namtrc)
+   !cn_trc          =  'frs','frs'   !  Boundary conditions appled to the active tracers (see namtrc)
+   nn_trcdmp_bdy   = 0,0     !  Use damping timescales defined in nambdy of namelist
+                           !  = 0 NO damping of tracers at open boudaries
+                           !  = 1 Only for tracers forced with external data
+                           !  = 2 Damping applied to all tracers
+/
