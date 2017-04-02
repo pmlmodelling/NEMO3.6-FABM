@@ -21,6 +21,8 @@ NNODES=64
 #NNODES=8
 NCORES=$(( NNODES*24 ))
 
+echo "Submitting year" $y0 "..."
+
 ystart=1981
 yend=2015
 

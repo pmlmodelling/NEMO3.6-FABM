@@ -33,5 +33,5 @@ then
     chmod g+rX $folder
     chmod -R g+rX $folder/..
   done
-
+fi
 echo "Done."
