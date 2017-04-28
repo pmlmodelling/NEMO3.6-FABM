@@ -175,9 +175,17 @@ CONTAINS
 
       INTEGER :: number_dimensions,i
       CHARACTER(LEN=20) :: missing_value,string_dimensions
+#if defined key_tracer_budget
+      CHARACTER(LEN=3),DIMENSION(10),PARAMETER :: trd_tags = (/ &
+        'LDF','BBL','FOR','ZDF','DMP','SMS','ATF', &
+        'RDB','RDN','VMV' /)
+      CHARACTER(LEN=3),DIMENSION(3),PARAMETER :: trd_e3t_tags = (/ &
+        'XAD','YAD','ZAD' /)
+#else
       CHARACTER(LEN=3),DIMENSION(13),PARAMETER :: trd_tags = (/ &
         'XAD','YAD','ZAD','LDF','BBL','FOR','ZDF','DMP','SMS','ATF', &
         'RDB','RDN','VMV' /)
+#endif
 
       ! Check variable dimension for grid_ref specificaiton.
       ! Default is to not specify the grid_ref in the field definition.
@@ -194,10 +202,22 @@ CONTAINS
         DO i=1,size(trd_tags)
          WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_tags(i))//'_'//TRIM(variable%name)//'" long_name="'//TRIM(variable%long_name)//' '//TRIM(trd_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
         END DO
+#if defined key_tracer_budget
+        DO i=1,size(trd_e3t_tags)
+         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_e3t_tags(i))//'_'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated '//TRIM(trd_e3t_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
+        END DO
+        WRITE (xml_unit,'(A)') '  <field id="'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
+#endif
       CASE (-1)
         DO i=1,size(trd_tags)
          WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_tags(i))//'_'//TRIM(variable%name)//'" long_name="'//TRIM(variable%long_name)//' '//TRIM(trd_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
         END DO
+#if defined key_tracer_budget
+        DO i=1,size(trd_e3t_tags)
+         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_e3t_tags(i))//'_'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated '//TRIM(trd_e3t_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
+        END DO
+        WRITE (xml_unit,'(A)') '  <field id="'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
+#endif
       CASE default
          IF(lwp) WRITE(numout,*) ' trc_ini_fabm: Failing to initialise trends of variable '//TRIM(variable%name)//': Output of '//TRIM(ADJUSTL(string_dimensions))//'-dimensional trends not supported!!!'
       END SELECT

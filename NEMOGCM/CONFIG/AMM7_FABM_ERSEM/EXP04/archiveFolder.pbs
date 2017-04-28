@@ -1,0 +1,13 @@
+#!/bin/bash --login
+#
+#PBS -l select=serial=true:ncpus=1
+#PBS -l walltime=4:00:00
+#PBS -A n01-PML
+#PBS -N archAMM7
+#PBS -j oe
+#
+
+RUNDIR=/work/n01/n01/momme/AMM7-v1	
+
+cd $RUNDIR
+./archiveFolder.sh $folder 

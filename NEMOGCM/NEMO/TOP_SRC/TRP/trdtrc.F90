@@ -101,6 +101,15 @@ CONTAINS
          CASE( jptra_radn )       ;    WRITE (cltra,'("RDN_",4a)')
          END SELECT
                                           cltra = TRIM(cltra)//TRIM(ctrcnm(kjn))
+         ! +++>>>FABM
+#if defined key_tracer_budget
+! for outputting depth integrated
+         SELECT CASE( ktrd )
+         CASE( jptra_xad, jptra_yad, jptra_zad  ) 
+           cltra = TRIM(cltra)//"_e3t"
+         END SELECT
+#endif
+         ! FABM <<<+++
                                           CALL iom_put( cltra,  ptrtrd(:,:,:) )
          !
       END IF

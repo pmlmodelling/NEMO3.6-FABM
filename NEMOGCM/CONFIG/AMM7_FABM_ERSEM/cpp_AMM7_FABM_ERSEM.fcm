@@ -6,4 +6,4 @@ bld::tool::fppkeys key_dynspg_ts key_ldfslp \
                    key_bdy \
                    key_tide  key_iomput key_vvl \
                    key_top key_fabm key_git_version \
-                   key_trdtrc key_trdtrc_div
+                   key_trdtrc key_tracer_budget

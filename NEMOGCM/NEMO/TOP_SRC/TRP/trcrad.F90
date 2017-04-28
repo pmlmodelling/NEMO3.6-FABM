@@ -134,16 +134,17 @@ CONTAINS
       IF( l_trdtrc )  CALL wrk_alloc( jpi, jpj, jpk, ztrtrdb, ztrtrdn )
 #if defined key_tracer_budget
       IF( kt == nittrc000 .AND. l_trdtrc) THEN
-         ALLOCATE( ztrtrdb_m1(jpi,jpj,jpk,jptra) )  ! slwa
-         IF( ln_rsttr .AND.    &                     ! Restart: read in restart  file
-            iom_varid( numrtr, 'rdb_trend_'//TRIM(ctrcnm(1)), ldstop = .FALSE. ) > 0 ) THEN
-            IF(lwp) WRITE(numout,*) '          nittrc000-nn_dttrc RDB tracer trend read in the restart file'
-            DO jn = 1, jptra
-               CALL iom_get( numrtr, jpdom_autoglo, 'rdb_trend_'//TRIM(ctrcnm(jn)), ztrtrdb_m1(:,:,:,jn) )   ! before tracer trend for rdb
+         IF (.not. ALLOCATED(ztrtrdb_m1)) ALLOCATE( ztrtrdb_m1(jpi,jpj,jpk,jptra) )  ! slwa
+            DO jn = jp_sms0, jp_sms1
+               IF( ln_rsttr .AND.    &                     ! Restart: read in restart  file
+                  iom_varid( numrtr, 'rdb_trend_'//TRIM(ctrcnm(jn)), ldstop = .FALSE. ) > 0 ) THEN
+                  IF(lwp) WRITE(numout,*) '          nittrc000-nn_dttrc RDB tracer trend read for',TRIM(ctrcnm(jn))
+                  CALL iom_get( numrtr, jpdom_autoglo, 'rdb_trend_'//TRIM(ctrcnm(jn)), ztrtrdb_m1(:,:,:,jn) )   ! before tracer trend for rdb
+               ELSE
+                  IF(lwp) WRITE(numout,*) '          no nittrc000-nn_dttrc RDB tracer trend for',TRIM(ctrcnm(jn)),', setting to 0.'
+                  ztrtrdb_m1(:,:,:,jn)=0.0
+               ENDIF
             END DO
-         ELSE
-           ztrtrdb_m1=0.0
-         ENDIF
       ENDIF
 #endif
       
@@ -254,7 +255,7 @@ CONTAINS
          IF(lwp) WRITE(numout,*) 'trc : RDB trend at last time step for tracer budget written in tracer restart file ',   &
             &                    'at it= ', kt,' date= ', ndastp
          IF(lwp) WRITE(numout,*) '~~~~'
-         DO jn = 1, jptra
+         DO jn = jp_sms0, jp_sms1
             CALL iom_rstput( kt, nitrst, numrtw, 'rdb_trend_'//TRIM(ctrcnm(jn)), ztrtrdb_m1(:,:,:,jn) )
          END DO
       ENDIF
