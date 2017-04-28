@@ -175,7 +175,6 @@
          <!--
          <domain id="1point" zoom_ibegin="1" zoom_jbegin="1" zoom_ni="1" zoom_nj="1" />
          -->
-         <domain id="no_grid"/>
       </domain_group>
 
    </domain_definition>    

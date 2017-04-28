@@ -6,9 +6,44 @@
 /
 &variable
    name='N3_flux/flux'
-   sn=         'ORCA2-TM3-NDeposition.1993',-12,            'N3_flux', .false.,  .true.,   'yearly',     '',         '',        ''
+   sn=         'ORCA2-TM3-NDeposition',-12,            'N3_flux', .false.,  .false.,   'yearly',     '',         '',        ''
 /
 &variable
    name='N4_flux/flux'
-   sn=         'ORCA2-TM3-NDeposition.1993',-12,            'N4_flux', .false.,  .true.,   'yearly',     '',         '',        ''
+   sn=         'ORCA2-TM3-NDeposition',-12,            'N4_flux', .false.,  .false.,   'yearly',     '',         '',        ''
+/
+&riverdata
+   name='N3_n'
+   sn=         'river.orca',120,            'riverdin', .false.,  .true.,   'yearly',     '',         '',        ''
+   rfac=2263901. !Tg/y -> mmol/s 1.e12/86400./365.*1000./14.0067
+/
+&riverdata
+   name='N1_p'
+   sn=         'river.orca',120,            'riverdip', .false.,  .true.,   'yearly',     '',         '',        ''
+   rfac=1023762. !Tg/y -> mmol/s 1.e12/86400./365.*1000./30.9738
+/
+&riverdata
+   name='N5_s'
+   sn=         'river.orca',120,            'riverdsi', .false.,  .true.,   'yearly',     '',         '',        ''
+   rfac=1129045. !Tg/y -> mmol/s 1.e12/86400./365.*1000./28.0855
+/
+&riverdata
+   name='O3_c'
+   sn=         'river.orca',120,            'riverdic', .false.,  .true.,   'yearly',     '',         '',        ''
+   rfac=2640128. !Tg/y -> mmol/s 1.e12/86400./365.*1000./12.0107
+/
+&riverdata
+   name='R1_c'
+   sn=         'river.orca',120,            'riverdoc', .false.,  .true.,   'yearly',     '',         '',        ''
+   rfac=0.00098 !Tg/y -> mmol/s 1.e12/86400./365.*1000./12.0107
+/
+&riverdata
+   name='R1_n'
+   sn=         'river.orca',120,            'riverdon', .false.,  .true.,   'yearly',     '',         '',        ''
+   rfac=2263901. !Tg/y -> mmol/s 1.e12/86400./365.*1000./14.0067
+/
+&riverdata
+   name='R1_p'
+   sn=         'river.orca',120,            'riverdop', .false.,  .true.,   'yearly',     '',         '',        ''
+   rfac=1023762. !Tg/y -> mmol/s 1.e12/86400./365.*1000./30.9738
 /
