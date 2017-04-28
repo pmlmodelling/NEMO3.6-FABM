@@ -1,11 +1,13 @@
 #!/bin/bash 
 
+module load intel intel-mpi netcdf-intelmpi hdf5-intelmpi
+
 NEMO_BUILD_DIR=$HOME/git/NEMO-shelf/NEMOGCM/CONFIG
 RUNDIR=/data/ORCA2
-export XIOS_HOME=$HOME/local/xios-gnu-debug
+export XIOS_HOME=$HOME/local/xios-intel-debug
 export FABM_HOME=$HOME/local/fabm/nemo-debug
 
-ARCH=GCC_UBUNTU_DEBUG
+ARCH=CETO_INTEL_NOSIGNEDZERO_DEBUG
 
 cd $NEMO_BUILD_DIR
 echo "Cleaning old build ..."
