@@ -40,6 +40,8 @@ CONTAINS
       INTEGER, INTENT( in ), OPTIONAL     :: fl 
       INTEGER, INTENT( in )               :: kt
       REAL(wp), DIMENSION(jpi,jpj,jpk)    :: trpool !tracer pool temporary output
+#else
+      INTEGER, INTENT( in )               :: kt
 #endif
       CHARACTER (len=20)   :: cltra
       INTEGER              :: jn,jk
@@ -96,7 +98,8 @@ CONTAINS
       INTEGER, INTENT( in ), OPTIONAL     :: fl 
       INTEGER, INTENT( in )               :: kt
 #else
-   SUBROUTINE trc_wri_my_trc
+   SUBROUTINE trc_wri_my_trc (kt)
+      INTEGER, INTENT( in )               :: kt
 #endif
    END SUBROUTINE trc_wri_my_trc
 #endif
