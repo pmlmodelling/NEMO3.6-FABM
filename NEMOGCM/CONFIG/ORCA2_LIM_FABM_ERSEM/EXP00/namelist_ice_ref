@@ -12,7 +12,7 @@
 !-----------------------------------------------------------------------
 &namicerun     !   Share parameters for dynamics/advection/thermo
 !-----------------------------------------------------------------------
-   cn_icerst_in  = "restart_ice_in"   !  suffix of ice restart name (input)
+   cn_icerst_in  = "restart_ice"   !  suffix of ice restart name (input)
    cn_icerst_indir = "."              !  directory from which to read input ice restarts
    cn_icerst_out = "restart_ice"      !  suffix of ice restart name (output)
    cn_icerst_outdir = "."             !  directory in which to write output ice restarts

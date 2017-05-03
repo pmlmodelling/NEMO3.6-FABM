@@ -11,6 +11,7 @@
                            !    = 0 nn_date0 read in namelist ; nn_it000 : read in namelist
                            !    = 1 nn_date0 read in namelist ; nn_it000 : check consistancy between namelist and restart
                            !    = 2 nn_date0 read in restart  ; nn_it000 : check consistancy between namelist and restart
+   ln_clobber  = .true.   !  clobber (overwrite) an existing file
 /
 !-----------------------------------------------------------------------
 &namcfg        !   parameters of the configuration

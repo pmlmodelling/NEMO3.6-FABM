@@ -6,11 +6,11 @@
 /
 &variable
    name='N3_flux/flux'
-   sn=         'ORCA2-TM3-NDeposition',-12,            'N3_flux', .false.,  .false.,   'yearly',     '',         '',        ''
+   sn=         'ORCA2-TM3-NDeposition.1993',-12,            'N3_flux', .true.,  .true.,   'yearly',     '',         '',        ''
 /
 &variable
    name='N4_flux/flux'
-   sn=         'ORCA2-TM3-NDeposition',-12,            'N4_flux', .false.,  .false.,   'yearly',     '',         '',        ''
+   sn=         'ORCA2-TM3-NDeposition.1993',-12,            'N4_flux', .true.,  .true.,   'yearly',     '',         '',        ''
 /
 &riverdata
    name='N3_n'
