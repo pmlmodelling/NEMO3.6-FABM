@@ -87,7 +87,7 @@ CONTAINS
       ENDIF
       tr_temp(:,:,:,:)=trn(:,:,:,jp_fabm0:jp_fabm1) ! slwa save for tracer budget (unfiltered trn)
       fabm_st2d_temp(:,:,:)=fabm_st2dn(:,:,:)
-#else
+#endif
       DO jn = 1, jp_fabm
          CALL iom_put( model%state_variables(jn)%name, trn(:,:,:,jp_fabm0+jn-1) )
       END DO
@@ -97,7 +97,7 @@ CONTAINS
       DO jn = 1, jp_fabm_bottom
          CALL iom_put( model%bottom_state_variables(jn)%name, fabm_st2dn(:,:,jp_fabm_surface+jn) )
       END DO
-#endif
+
       ! write 3D diagnostics in the file
       ! ---------------------------------------
       DO jn = 1, size(model%diagnostic_variables)
