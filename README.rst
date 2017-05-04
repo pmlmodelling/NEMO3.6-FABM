@@ -103,3 +103,11 @@ due to what is supposed to be a bug-fix, that is incompatible with NEMO 3.6 (XIO
 Use the following repository for a NEMO 3.6 compatible version of XIOS-1:
 
 https://gitlab.ecosystem-modelling.pml.ac.uk/momm/XIOS1/tree/nemo3.6-fix
+
+Troubleshooting
+===============
+
+* Missing Perl packages: the fcm compilation system that is used to build xios and nemo depends on several Perl packages including URI.pm and Text/Balanced.pm.
+ These two packages are not present on all systems. For instance, on the PML Fedora-based workstations they need to be installed through the package manager: `dnf install install perl-URI`, `dnf install perl-Text-Balanced`.
+
+* Error building xios: `.../boost/functional/hash/extensions.hpp:38:33: error: 'template<class T, class A> std::size_t boost::hash_value' conflicts with a previous declaration`. This appears to affect newer versions of GCC. It can be addressed by adding `-DBOOST_DETAIL_NO_CONTAINER_FWD` to `BASE_CFLAGS` in `arch/arch-<ARCHITECTURE>.fcm` (where `<ARCHITECTURE>` is the architecture that you provide to `make_xios` with `--arch`.
