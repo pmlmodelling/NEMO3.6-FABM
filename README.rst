@@ -115,7 +115,7 @@ https://gitlab.ecosystem-modelling.pml.ac.uk/momm/XIOS1/tree/nemo3.6-fix
 
 This has files for architecture ``GCC_PMPC`` included.
 
-After you obtain the xios code (and optionally, add architecture files), you can compile it on a typical PML workstation with
+After you obtain the xios code (and optionally, add architecture files), you can compile it on a typical PML workstation with::
 
    module load mpi #required on fedora
    ./make_xios -arch GCC_PMPC
