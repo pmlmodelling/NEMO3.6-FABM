@@ -105,7 +105,7 @@ The official NEMO documentation therefore recommends checking out a specific rev
 
 http://www.nemo-ocean.eu/Using-NEMO/User-Guides/Basics/XIOS-IO-server-installation-and-use
 
-If you use this official code, you need to add files ``arch/arch-<ARCHITECTURE>.env``, ``arch/arch-<ARCHITECTURE>.fcm``, ``arch/arch-<ARCHITECTURE>.path`` for your computer architecture and OS (``<ARCHITECTURE>``).
+If you use this official code, you need to add files ``arch/arch-<ARCHITECTURE>.env``, ``arch/arch-<ARCHITECTURE>.fcm``, ``arch/arch-<ARCHITECTURE>.path`` for your computer architecture and OS.
 For PML workstations (``<ARCHITECTURE>=GCC_PMPC``), you can base these files on their equivalent for archicture ``GCC_LINUX``;
 the only change you need to make is to add ``-DBOOST_DETAIL_NO_CONTAINER_FWD`` to ``BASE_CFLAGS`` in ``arch/arch-GCC_PMPC.fcm``
 
@@ -115,10 +115,10 @@ https://gitlab.ecosystem-modelling.pml.ac.uk/momm/XIOS1/tree/nemo3.6-fix
 
 This has files for architecture ``GCC_PMPC`` included.
 
-After you obtain the xios code (an doptionally, add architecture files), you can compile it on a typical PML workstation with
+After you obtain the xios code (and optionally, add architecture files), you can compile it on a typical PML workstation with
 
-  module load mpi #required on fedora
-  ./make_xios -arch GCC_PMPC
+   module load mpi #required on fedora
+   ./make_xios -arch GCC_PMPC
 
 Troubleshooting
 ===============
