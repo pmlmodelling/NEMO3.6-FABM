@@ -157,10 +157,10 @@ mv ORCA2_1m_grid_?.nc $ARCHIVEDIR
 bzip2 ocean.output && mv -f ocean.output.bz2 $ARCHIVEDIR
 
 #resubmit:
-if [ $np -le $nend ]
+if [ $np -le $nendcycle ]
 then
-   echo "Submitting cycle" $np '...'
-   sbatch Perpetual.sh $np $nend
+   echo "Submitting cycle" $np 'of' $nendcycle '...'
+   sbatch Perpetual.sh $np $nendcycle
    echo "Done."
 else
    echo "All done."
