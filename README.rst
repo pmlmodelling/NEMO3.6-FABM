@@ -95,11 +95,34 @@ where `$XIOSCORES` is the number of I/O-SERVERS and `$NEMOCORES` is the number o
 
 In addition, the archer architecture consists of nodes with 24 cores on two processors (with 12 nodes each), so if you use more that on server per node it is prudent to specify the distribution on the processors with the `-S` flag giving the number of processes per processor (e.g. running 4 XIOS cores on one node with two servers per processor would require the options `-b -n 4 -N 4 -S 2)`
 
-XIOS-1 library bug
+XIOS-1
 ==================
 
 Note that NEMO 3.6 stable is incompatible with XIOS-1 versions more recent than September 2015,
 due to what is supposed to be a bug-fix, that is incompatible with NEMO 3.6 (XIOS-1 commit of 1st October 2015).
-Use the following repository for a NEMO 3.6 compatible version of XIOS-1:
+
+The official NEMO documentation therefore recommends checking out a specific revision (703) of XIOS-1:
+
+http://www.nemo-ocean.eu/Using-NEMO/User-Guides/Basics/XIOS-IO-server-installation-and-use
+
+If you use this official code, you need to add files ``arch/arch-<ARCHITECTURE>.env``, ``arch/arch-<ARCHITECTURE>.fcm``, ``arch/arch-<ARCHITECTURE>.path`` for your computer architecture and OS.
+For PML workstations (``<ARCHITECTURE>=GCC_PMPC``), you can base these files on their equivalent for archicture ``GCC_LINUX``;
+the only change you need to make is to add ``-DBOOST_DETAIL_NO_CONTAINER_FWD`` to ``BASE_CFLAGS`` in ``arch/arch-GCC_PMPC.fcm``
+
+Note that you can also use the following repository for a customized NEMO 3.6 compatible version of XIOS-1:
 
 https://gitlab.ecosystem-modelling.pml.ac.uk/momm/XIOS1/tree/nemo3.6-fix
+
+This has files for architecture ``GCC_PMPC`` included.
+
+After you obtain the xios code (and optionally, add architecture files), you can compile it on a typical PML workstation with::
+
+   module load mpi #required on fedora
+   ./make_xios -arch GCC_PMPC
+
+Troubleshooting
+===============
+
+* Missing Perl packages: the fcm compilation system that is used to build xios and nemo depends on several Perl packages including ``URI.pm`` and ``Text/Balanced.pm``. These two packages are not present on all systems. For instance, on the PML Fedora-based workstations they need to be installed through the package manager: ``dnf install install perl-URI``, ``dnf install perl-Text-Balanced``.
+
+* Error building xios: ``.../boost/functional/hash/extensions.hpp:38:33: error: 'template<class T, class A> std::size_t boost::hash_value' conflicts with a previous declaration``. This appears to affect newer versions of GCC. It can be addressed by adding ``-DBOOST_DETAIL_NO_CONTAINER_FWD`` to ``BASE_CFLAGS`` in ``arch/arch-<ARCHITECTURE>.fcm`` (where ``<ARCHITECTURE>`` is the architecture that you provide to ``make_xios`` with ``--arch``.
