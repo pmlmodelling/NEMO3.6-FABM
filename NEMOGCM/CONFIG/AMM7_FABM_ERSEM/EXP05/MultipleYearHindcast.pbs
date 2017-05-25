@@ -1,5 +1,5 @@
 #!/bin/bash --login
-#PBS -N AMM7-v0-4
+#PBS -N AMM7-v0-M
 #PBS -l select=65
 #PBS -l walltime=48:00:00
 #PBS -q long
@@ -10,9 +10,9 @@
 
 # NOTE:
 # the simulation year and month must be passed to this pbs script at runtime
-# by defning externally the variable y0 [assing it to the pbs script,
+# by defning externally the variables y0,m0 passing them to the pbs script,
 # e.g.:
-# "qsub -v y0=1981 MultipleYearHindcast.pbs"
+# "qsub -v y0=1981,m01=1 MultiMonthHindcast.pbs"
 #
 
 set -u
@@ -21,12 +21,15 @@ NNODES=64
 #NNODES=8
 NCORES=$(( NNODES*24 ))
 
-echo "Submitting year" $y0 "..."
+#number of month to launch:
+nmmax=31
+
+echo "Submitting year" $y0 "month" $m0 "..."
 
 ystart=1981
 yend=2015
 
-RUNDIR=/work/n01/n01/momme/AMM7-v0
+RUNDIR=/work/n01/n01/momme/AMM7-v0-budgets
 INPUTS=/work/n01/n01/momme/AMM7-INPUTS
 
 cd $RUNDIR
@@ -40,39 +43,38 @@ stopflag=0
 dt=300 #time step
 nsstart=$(date -d "$ystart-01-01 00:00:00 GMT" +%s) #seconds since EPOCH for total simulation start
 
-for iy in {1..3} #annual increment 
+#cleanup:
+./annualclean.sh
+
+#link annual forcing files:
+./setAnnualLinks.sh $y0
+
+nm=1 #initialise month counter
+
+while [ $nm -le $nmmax ]
 do
+ #Compute previous and next month:
+ mp=$(( $m0 + 1 ))
+ if [ $mp -eq 13 ]
+ then
+    mp=1
+    yp=$(( y0 + 1 ))
+ else
+    yp=$y0
+ fi
+ mm=$(( $m0 - 1 ))
+ if [ $mm -eq 0 ]
+ then
+    mm=12
+    ym=$(( y0 - 1 ))
+ else
+    ym=$y0
+ fi
+ echo "Processing month $nm of $nmmax..."
  if [ $y0 -le $yend ]
  then
-
-
-  #cleanup:
-  ./annualclean.sh
-
-  #link annual forcing files:
-  ./setAnnualLinks.sh $y0
-
-  for m0 in {1..12} #Month loop
-  do
    echo "Preparing $y0 $m0 ..."
    ./monthlyclean.sh
-   #Compute previous and next month:
-   mp=$(( $m0 + 1 ))
-   if [ $mp -eq 13 ]
-   then
-      mp=1
-      yp=$(( y0 + 1 ))
-   else
-      yp=$y0
-   fi
-   mm=$(( $m0 - 1 ))
-   if [ $mm -eq 0 ]
-   then
-      mm=12
-      ym=$(( y0 - 1 ))
-   else
-      ym=$y0
-   fi
 
    m0str=$(printf %02d $m0)
    mpstr=$(printf %02d $mp)
@@ -182,17 +184,23 @@ do
    echo "Archiving in $fname ..."
    qsub -v folder=$fname archiveFolder.pbs
 
-  done #end of month loop
-  fi
-  y0=$(( y0+1 ))
-done #end of annual loop
-
+   #prepare for next launch:
+   if [ $yp -gt $y0 ]
+   then
+      ./annualclean.sh
+      ./setAnnualLinks.sh $yp
+   fi
+ fi
+ y0=$yp
+ m0=$mp
+ nm=$(( $nm + 1 ))
+done
 
 #resubmit:
 if [ $y0 -le $yend ]
 then
-   echo 'Submitting' $y0 '...'
-   qsub -v y0=$yp MultipleYearHindcast.pbs
+   echo 'Submitting' $y0 $m0 '...'
+   qsub -v y0=$y0,m0=$m0 MultiMonthHindcast.pbs
    echo "Done."
 else
    echo "All done."

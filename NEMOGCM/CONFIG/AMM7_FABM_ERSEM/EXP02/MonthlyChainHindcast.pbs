@@ -10,9 +10,9 @@
 
 # NOTE:
 # the simulation year and month must be passed to this pbs script at runtime
-# by defning externally the variable y0 [assing it to the pbs script,
+# by defning externally the variables y0,m0 passing them to the pbs script,
 # e.g.:
-# "qsub -v y0=1980 -v m0=1 hindcast.pbs"
+# "qsub -v y0=1980,m0=1 MonthlyChainhindcast.pbs"
 #
 
 

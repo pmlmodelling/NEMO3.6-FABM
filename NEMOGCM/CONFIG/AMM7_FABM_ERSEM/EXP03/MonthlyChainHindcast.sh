@@ -11,7 +11,7 @@
 
 
 # NOTE:
-# the simulation year and month must be passed to this pbs script at runtime
+# the simulation year and month must be passed to this slurm script at runtime
 # by the command line, e.g.:
 # "sbatch 1980 1 MonthlyChainHindcast.sh"
 #

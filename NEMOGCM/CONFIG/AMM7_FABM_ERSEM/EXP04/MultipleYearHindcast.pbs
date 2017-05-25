@@ -9,8 +9,8 @@
 #PBS -A n01-PML
 
 # NOTE:
-# the simulation year and month must be passed to this pbs script at runtime
-# by defning externally the variable y0 [assing it to the pbs script,
+# the simulation year must be passed to this pbs script at runtime
+# by defning externally the variable y0 passing it to the pbs script,
 # e.g.:
 # "qsub -v y0=1981 MultipleYearHindcast.pbs"
 #
