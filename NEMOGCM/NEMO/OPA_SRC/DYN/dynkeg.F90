@@ -131,6 +131,10 @@ CONTAINS
             END DO
          ENDIF
       ENDDO  
+!CEOD ADD
+      CALL lbc_lnk( un,'U',-1. )
+      CALL lbc_lnk( vn,'V',-1. )
+!CEOD ADD
 #endif 
       SELECT CASE ( kscheme )             !== Horizontal kinetic energy at T-point  ==!
       !
