@@ -151,6 +151,9 @@ CONTAINS
             ENDDO
             CALL wrk_dealloc( jpi, jpj, jpk, ztrcdta )
         ENDIF
+        !
+        trb(:,:,:,:) = trn(:,:,:,:)
+        ! 
       ENDIF
       ! --->>> FABM
 ! Initialisation of tracers Boundary Conditions  - here so that you can use initial condition as boundary
