@@ -110,7 +110,7 @@
 !  ln_wave = .false.       !  Activate coupling with wave (either Stokes Drift or Drag coefficient, or both)  (T => fill namsbc_wave)
 !  ln_cdgw = .false.       !  Neutral drag coefficient read from wave model (T => fill namsbc_wave)
 !  ln_sdw  = .false.       !  Computation of 3D stokes drift                (T => fill namsbc_wave)
-   nn_lsm  = 0             !  =0 land/sea mask for input fields is not applied (keep empty land/sea mask filename field) ,
+   nn_lsm  = 10             !  =0 land/sea mask for input fields is not applied (keep empty land/sea mask filename field) ,
                            !  =1:n number of iterations of land/sea mask application for input fields (fill land/sea mask filename field)
 !  cn_iceflx = 'linear'    !  redistribution of solar input into ice categories during coupling ice/atm.
 /
