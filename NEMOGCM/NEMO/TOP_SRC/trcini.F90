@@ -164,7 +164,7 @@ CONTAINS
       IF( lk_fabm )     THEN
           wndm=0._wp !uninitiased field at this point
           qsr=0._wp !uninitiased field at this point
-          CALL compute_fabm ! only needed to set-up diagnostics
+          CALL compute_fabm( nit000 ) ! only needed to initialise diagnostics
           CALL trc_bc_init(jptra)
       ENDIF
       ! FABM <<<+++

@@ -107,7 +107,7 @@ CONTAINS
 
       CALL update_inputs( kt )
 
-      CALL compute_fabm
+      CALL compute_fabm( kt )
 
       CALL compute_vertical_movement( kt )
 
@@ -130,7 +130,9 @@ CONTAINS
 
    END SUBROUTINE trc_sms_fabm
 
-   SUBROUTINE compute_fabm()
+   SUBROUTINE compute_fabm( kt )
+      INTEGER, INTENT(in) ::   kt   ! ocean time-step index
+
       INTEGER :: ji,jj,jk,jn
       TYPE(type_state) :: valid_state
       REAL(wp) :: zalfg,zztmpx,zztmpy
@@ -156,36 +158,45 @@ CONTAINS
          WRITE(numout,*) "Total bottom repairs up to now on process",narea,":",repair_bottom_count
       ENDIF
 
+      daynumber_in_year = fjulday - fjulstartyear + 1
+
       ! Compute the now hydrostatic pressure
       ! copied from istate.F90
       ! ------------------------------------
 
-      zalfg = 0.5e-4 * grav ! FABM wants dbar, convert from Pa
+      IF (ALLOCATED(rho)) rho = rau0 * ( 1._wp + rhd )
 
-      rho = rau0 * ( 1. + rhd )
+      IF (ALLOCATED(prn)) THEN
+         zalfg = 0.5e-4_wp * grav ! FABM wants dbar, convert from Pa (and multiply with 0.5 to average 2 cell thicknesses below)
+         prn(:,:,1) = 10.1325_wp + zalfg * fse3t(:,:,1) * rho(:,:,1)
+         DO jk = 2, jpk                                              ! Vertical integration from the surface
+            prn(:,:,jk) = prn(:,:,jk-1) + zalfg * ( &
+                        fse3t(:,:,jk-1) * rho(:,:,jk-1)  &
+                        + fse3t(:,:,jk) * rho(:,:,jk) )
+         END DO
+      END IF
 
-      prn(:,:,1) = 10.1325 + zalfg * fse3t(:,:,1) * rho(:,:,1)
+      ! Compute the bottom stress
+      ! copied from diawri.F90
+      ! ------------------------------------
 
-      daynumber_in_year=(fjulday-fjulstartyear+1)*1._wp
+      IF (ALLOCATED(taubot)) THEN
+         taubot(:,:) = 0._wp
+         DO jj = 2, jpjm1
+            DO ji = fs_2, fs_jpim1   ! vector opt.
+                  zztmpx = (  bfrua(ji  ,jj) * un(ji  ,jj,mbku(ji  ,jj))  &
+                        &  + bfrua(ji-1,jj) * un(ji-1,jj,mbku(ji-1,jj))  )
+                  zztmpy = (  bfrva(ji,  jj) * vn(ji,jj  ,mbkv(ji,jj  ))  &
+                        &  + bfrva(ji,jj-1) * vn(ji,jj-1,mbkv(ji,jj-1))  )
+                  taubot(ji,jj) = 0.5_wp * rau0 * SQRT( zztmpx * zztmpx + zztmpy * zztmpy ) * tmask(ji,jj,1)
+                  !
+            END DO
+         END DO
+      END IF
 
-      DO jk = 2, jpk                                              ! Vertical integration from the surface
-         prn(:,:,jk) = prn(:,:,jk-1) + zalfg * ( &
-                     fse3t(:,:,jk-1) * rho(:,:,jk-1)  &
-                     + fse3t(:,:,jk) * rho(:,:,jk) )
-      END DO
+      ! Inform FABM about new time, allowing it to update temporal means
+      CALL fabm_update_time(model,real(kt, wp))
 
-      ! Bottom stress
-      taubot(:,:) = 0._wp
-      DO jj = 2, jpjm1
-         DO ji = fs_2, fs_jpim1   ! vector opt.
-               zztmpx = (  bfrua(ji  ,jj) * un(ji  ,jj,mbku(ji  ,jj))  &
-                      &  + bfrua(ji-1,jj) * un(ji-1,jj,mbku(ji-1,jj))  )
-               zztmpy = (  bfrva(ji,  jj) * vn(ji,jj  ,mbkv(ji,jj  ))  &
-                      &  + bfrva(ji,jj-1) * vn(ji,jj-1,mbkv(ji,jj-1))  )
-               taubot(ji,jj) = 0.5_wp * rau0 * SQRT( zztmpx * zztmpx + zztmpy * zztmpy ) * tmask(ji,jj,1)
-               !
-         ENDDO
-      ENDDO
       ! Compute light extinction
       DO jk=1,jpk
           DO jj=1,jpj
@@ -351,9 +362,9 @@ CONTAINS
       !
       ! ALLOCATE here the arrays specific to FABM
       ALLOCATE( lk_rad_fabm(jp_fabm))
-      ALLOCATE( prn(jpi, jpj, jpk))
-      ALLOCATE( rho(jpi, jpj, jpk))
-      ALLOCATE( taubot(jpi, jpj))
+      IF (model%variable_needs_values(standard_variables%pressure)) ALLOCATE(prn(jpi, jpj, jpk))
+      IF (ALLOCATED(prn) .or. model%variable_needs_values(standard_variables%density)) ALLOCATE(rho(jpi, jpj, jpk))
+      IF (model%variable_needs_values(standard_variables%bottom_stress)) ALLOCATE(taubot(jpi, jpj))
       ! ALLOCATE( tab(...) , STAT=trc_sms_fabm_alloc )
 
       ! Allocate arrays to hold state for surface-attached and bottom-attached state variables
@@ -393,7 +404,7 @@ CONTAINS
       END DO
 
       ! Provide FABM with domain extents [after this, the save attribute of diagnostic variables can no longe change!]
-      call fabm_set_domain(model,jpi, jpj, jpk)
+      call fabm_set_domain(model,jpi, jpj, jpk, rdt)
 
       ! Provide FABM with the vertical indices of the surface and bottom, and the land-sea mask.
       call model%set_bottom_index(mbkt)  ! NB mbkt extents should match dimension lengths provided to fabm_set_domain
@@ -401,34 +412,34 @@ CONTAINS
       call fabm_set_mask(model,tmask,tmask(:,:,1)) ! NB tmask extents should match dimension lengths provided to fabm_set_domain
 
       ! Send pointers to state data to FABM
-      do jn=1,jp_fabm
-         call fabm_link_bulk_state_data(model,jn,trn(:,:,:,jp_fabm_m1+jn))
-      end do
+      DO jn=1,jp_fabm
+         CALL model%link_interior_state_data(jn,trn(:,:,:,jp_fabm_m1+jn))
+      END DO
       DO jn=1,jp_fabm_surface
-         CALL fabm_link_surface_state_data(model,jn,fabm_st2Dn(:,:,jn))
+         CALL model%link_surface_state_data(jn,fabm_st2Dn(:,:,jn))
       END DO
       DO jn=1,jp_fabm_bottom
-         CALL fabm_link_bottom_state_data(model,jn,fabm_st2Dn(:,:,jp_fabm_surface+jn))
+         CALL model%link_bottom_state_data(jn,fabm_st2Dn(:,:,jp_fabm_surface+jn))
       END DO
 
       ! Send pointers to environmental data to FABM
-      call fabm_link_bulk_data(model,standard_variables%temperature,tsn(:,:,:,jp_tem))
-      call fabm_link_bulk_data(model,standard_variables%practical_salinity,tsn(:,:,:,jp_sal))
-      call fabm_link_bulk_data(model,standard_variables%density,rho(:,:,:))
-      call fabm_link_bulk_data(model,standard_variables%pressure,prn)
-      call fabm_link_horizontal_data(model,standard_variables%bottom_stress,taubot(:,:))
+      call model%link_interior_data(standard_variables%temperature,tsn(:,:,:,jp_tem))
+      call model%link_interior_data(standard_variables%practical_salinity,tsn(:,:,:,jp_sal))
+      IF (ALLOCATED(rho)) call model%link_interior_data(standard_variables%density,rho(:,:,:))
+      IF (ALLOCATED(prn)) call model%link_interior_data(standard_variables%pressure,prn)
+      IF (ALLOCATED(taubot)) call model%link_horizontal_data(standard_variables%bottom_stress,taubot(:,:))
       ! correct target for cell thickness depends on NEMO configuration:
 #ifdef key_vvl
-      call fabm_link_bulk_data(model,standard_variables%cell_thickness,e3t_n)
+      call model%link_interior_data(standard_variables%cell_thickness,e3t_n)
 #else
-      call fabm_link_bulk_data(model,standard_variables%cell_thickness,e3t_0)
+      call model%link_interior_data(standard_variables%cell_thickness,e3t_0)
 #endif
-      call fabm_link_horizontal_data(model,standard_variables%latitude,gphit)
-      call fabm_link_horizontal_data(model,standard_variables%longitude,glamt)
-      call fabm_link_scalar_data(model,standard_variables%number_of_days_since_start_of_the_year,daynumber_in_year)
-      call fabm_link_horizontal_data(model,standard_variables%wind_speed,wndm(:,:))
-      call fabm_link_horizontal_data(model,standard_variables%surface_downwelling_shortwave_flux,qsr(:,:))
-      call fabm_link_horizontal_data(model,standard_variables%bottom_depth_below_geoid,bathy(:,:))
+      call model%link_horizontal_data(standard_variables%latitude,gphit)
+      call model%link_horizontal_data(standard_variables%longitude,glamt)
+      call model%link_scalar(standard_variables%number_of_days_since_start_of_the_year,daynumber_in_year)
+      call model%link_horizontal_data(standard_variables%wind_speed,wndm(:,:))
+      call model%link_horizontal_data(standard_variables%surface_downwelling_shortwave_flux,qsr(:,:))
+      call model%link_horizontal_data(standard_variables%bottom_depth_below_geoid,bathy(:,:))
 
       swr_id = model%get_bulk_variable_id(standard_variables%downwelling_shortwave_flux)
 
