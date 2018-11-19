@@ -1,14 +1,23 @@
 ============================================================================
-Fork of NEMO_ 3.6 stable branch with modifcations for FABM_ and shelf systems.
+Fork of NEMO_ 3.6 stable branch with modifications for FABM_ and shelf systems.
 ============================================================================
 
-This master branch includes modifications for shelf systems and FABM_ with ERSEM_ enabled.
+This master branch includes the NEMO-FABM coupler and modifications for shelf systems.
+It is currently based on svn revision ``@6232`` in the central NEMO repository.
 
-The pure NEMO_-code without shelf and FABM modifications is in the ``feat/NEMO-svn`` branch.
-It should remain untouched in order to enable conflict-free syncing with the central NEMO repository.
-The current state is based on svn revision ``@6232``.
+NEMO is shared under the CeCILL free software license (see NEMOGCM/License_CeCILL.txt)
+The NEMO-FABM coupler is developed by the `Plymouth Marine Laboratory`_ and made available
+under the CeCILL license as well.
 
-Shelf-enabled code without the FABM coupler is in ``feat/shelf-enabled``.
+We emphasize that *this is not an official NEMO release*. It is a codebase maintained
+by the Plymouth Marine Laboratory for the purpose of distributing the NEMO-FABM coupler code
+and a NEMO 3.6 codebase tailored to the North-West European shelf. While this is a production-ready code
+(e.g., it underpins all 3D simulations within the the `UK Shelf Seas Biogeochemistry Programme`_),
+compatibiltiy with other codebases based on NEMO 3.6 is not guaranteed.
+
+If you want to use the NEMO-FABM coupler with another NEMO 3.6 codebase, the place to start
+is the NEMOGCM/NEMO/TOP_SRC directory, which contains modifications (and a new FABM subdirectory)
+to activate the NEMO coupler.
 
 Compilation using ``makenemo``
 ==============================
@@ -20,7 +29,7 @@ To compile on a typical PML workstation using the ``makenemo`` tool provided wit
   # typical global configuration:
   ./makenemo -m GCC_PMPC -n AMM7
 
-To compile on *archer* using the intel compiler::
+To compile on *ARCHER* using the intel compiler::
 
   module unload PrgEnv-cray PrgEnv-gnu
   module load PrgEnv-intel
@@ -64,8 +73,10 @@ The initial FABM_ implementation in this repository is carried over from the NEM
 
 .. _FABM: http://fabm.net
 .. _NEMO: http://www.nemo-ocean.eu
-.. _ERSEM: http://shelfseasmodelling.org
-.. _NEMO-FABM: https://gitlab.ecosystem-modelling.pml.ac.uk/momm/NEMO-FABM
+.. _ERSEM: https://www.pml.ac.uk/Modelling_at_PML/Models/ERSEM
+.. _NEMO-FABM: https://gitlab.ecosystem-modelling.pml.ac.uk/nemo-fabm/NEMO-ERSEM-shelf
+.. _Plymouth Marine Laboratory: https://www.pml.ac.uk
+.. _UK Shelf Seas Biogeochemistry Programme: https://www.uk-ssb.org
 
 Setting-up XIOS in detached mode using dedicated I/O-servers as mpi tasks
 =========================================================================
