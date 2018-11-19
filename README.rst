@@ -31,7 +31,7 @@ To compile on a typical PML workstation using the ``makenemo`` tool provided wit
   # typical global configuration:
   ./makenemo -m GCC_PMPC -n AMM7
 
-To compile on *ARCHER* using the intel compiler::
+To compile on `ARCHER` using the Intel compiler::
 
   module unload PrgEnv-cray PrgEnv-gnu
   module load PrgEnv-intel
