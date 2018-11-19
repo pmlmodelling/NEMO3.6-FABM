@@ -14,7 +14,7 @@ by the Plymouth Marine Laboratory for the purpose of distributing a NEMO 3.6 cod
 that supports ERSEM_ (through FABM) and is tailored to the North-West European shelf.
 As such, it is also the authoritative repository for the NEMO-FABM coupler.
 While this is a production-ready code (e.g., it underpins all 3D simulations within the
-the `UK Shelf Seas Biogeochemistry Programme`_), compatibiltiy with other codebases based
+the `UK Shelf Seas Biogeochemistry Programme`_), compatibility with other codebases based
 on NEMO 3.6 is not guaranteed.
 
 If you want to use the NEMO-FABM coupler with another NEMO 3.6 codebase, the place to start
@@ -50,14 +50,15 @@ Usually, the following suffices to achieve this::
    cmake <FABMDIR>/src/ -DFABM_HOST=nemo -DFABM_ERSEM_BASE=<ERSEMDIR> -DFABM_EMBED_VERSION=ON
    make install
 
-In the above, replace `<FABMDIR>` with the directory with the FABM source code, e.g., `~/fabm-git` and `<ERSEMMDIR>` with the directory with the ERSEM_ source code, e.g., `~/ersem-git`.
+In the above, replace `<FABMDIR>` with the directory with the FABM source code, e.g., `~/fabm-git`
+and `<ERSEMDIR>` with the directory with the ERSEM_ source code, e.g., `~/ersem-git`.
 For a compilation without ERSEM, the `-DFABM_ERSEM_BASE` argument should be omitted
 
 Executing the above commands will create the FABM library in the default folder `~/local/fabm/nemo/lib`.
 This is the directory where NEMO will look by default when linking to FABM.
 
 The FABM coupler for NEMO is added in a subfolder ``FABM`` in ``NEMOGCM/NEMO/TOP_SRC``.
-Changes to existing code in order to accomadate FABM within NEMO are restricted to the ``NEMOGCM/NEMO/TOP_SRC``
+Changes to existing code in order to accommodate FABM within NEMO are restricted to the ``NEMOGCM/NEMO/TOP_SRC``
 and ``NEMOGCM/TOOLS/COMPILE`` folder and shall be marked in the code in the following way:
 
 Additions are encapsulated using the tags::
@@ -74,7 +75,8 @@ Removed sections are encapsulated as::
 
 (In the FCM scripts the ``!`` is replaced by ``#``.)
 
-The initial FABM_ implementation in this repository is carried over from the NEMO-FABM_ repository developed by M. Butenschön and J. Bruggeman, as a single patch commit.
+The initial FABM_ implementation in this repository is carried over from the NEMO-FABM_ repository developed
+by M. Butenschön and J. Bruggeman, as a single patch commit.
 
 .. _FABM: http://fabm.net
 .. _NEMO: http://www.nemo-ocean.eu
