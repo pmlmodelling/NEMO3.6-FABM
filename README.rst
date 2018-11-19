@@ -43,7 +43,7 @@ To compile on *ARCHER* using the intel compiler::
 Specific notes on the NEMO-FABM coupler
 =============================================
 
-FABM needs to be compiled separately before the compilation of NEMO with FABM (and ERSEM) can be enabled.
+FABM needs to be compiled separately before NEMO can be compiled with FABM (and ERSEM) support.
 Usually, the following suffices to achieve this::
 
    mkdir -p ~/build/nemo && cd ~/build/nemo
