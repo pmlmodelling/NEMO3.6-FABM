@@ -10,10 +10,12 @@ The NEMO-FABM coupler is developed by the `Plymouth Marine Laboratory`_ and made
 under the CeCILL license as well.
 
 We emphasize that *this is not an official NEMO release*. It is a codebase maintained
-by the Plymouth Marine Laboratory for the purpose of distributing the NEMO-FABM coupler code
-and a NEMO 3.6 codebase tailored to the North-West European shelf. While this is a production-ready code
-(e.g., it underpins all 3D simulations within the the `UK Shelf Seas Biogeochemistry Programme`_),
-compatibiltiy with other codebases based on NEMO 3.6 is not guaranteed.
+by the Plymouth Marine Laboratory for the purpose of distributing a NEMO 3.6 codebase
+that supports ERSEM_ (through FABM) and is tailored to the North-West European shelf.
+As such, it is also the authoritative repository for the NEMO-FABM coupler.
+While this is a production-ready code (e.g., it underpins all 3D simulations within the
+the `UK Shelf Seas Biogeochemistry Programme`_), compatibiltiy with other codebases based
+on NEMO 3.6 is not guaranteed.
 
 If you want to use the NEMO-FABM coupler with another NEMO 3.6 codebase, the place to start
 is the ``NEMOGCM/NEMO/TOP_SRC`` directory, which contains modifications (and a new ``FABM`` subdirectory)
@@ -38,10 +40,10 @@ To compile on *ARCHER* using the intel compiler::
   #typical global:
   ./makenemo -m XC_ARCHER_INTEL_NOSIGNEDZERO -n ORCA2_LIM_FABM
 
-Specific notes on the FABM_-ERSEM_ implementation
+Specific notes on the NEMO-FABM coupler
 =============================================
 
-FABM needs to be compiled separately before the compilation of NEMO with ERSEM enabled.
+FABM needs to be compiled separately before the compilation of NEMO with FABM (and ERSEM) can be enabled.
 Usually, the following suffices to achieve this::
 
    mkdir -p ~/build/nemo && cd ~/build/nemo
@@ -49,11 +51,14 @@ Usually, the following suffices to achieve this::
    make install
 
 In the above, replace `<FABMDIR>` with the directory with the FABM source code, e.g., `~/fabm-git` and `<ERSEMMDIR>` with the directory with the ERSEM_ source code, e.g., `~/ersem-git`.
+For a compilation without ERSEM, the `-DFABM_ERSEM_BASE` argument should be omitted
 
-This will create the library in the standard folder `~/local/fabm/nemo/lib` where NEMO-FABM will look for linking to NEMO.
+Executing the above commands will create the FABM library in the default folder `~/local/fabm/nemo/lib`.
+This is the directory where NEMO will look by default when linking to FABM.
 
-The FABM coupler for NEMO is added in a sub-folder ``FABM`` in ``NEMOGCM/NEMO/TOP_SRC``.
-Changes to existing code in order to accomadate FABM within NEMO are restricted to the ``NEMOGCM/NEMO/TOP_SRC`` and ``NEMOGCM/TOOLS/COMPILE`` folder and shall be marked in the code in the following way:
+The FABM coupler for NEMO is added in a subfolder ``FABM`` in ``NEMOGCM/NEMO/TOP_SRC``.
+Changes to existing code in order to accomadate FABM within NEMO are restricted to the ``NEMOGCM/NEMO/TOP_SRC``
+and ``NEMOGCM/TOOLS/COMPILE`` folder and shall be marked in the code in the following way:
 
 Additions are encapsulated using the tags::
 
