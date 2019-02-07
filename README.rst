@@ -1,14 +1,25 @@
 ============================================================================
-Fork of NEMO_ 3.6 stable branch with modifcations for FABM_ and shelf systems.
+Fork of NEMO_ 3.6 stable branch with modifications for FABM_ and shelf systems.
 ============================================================================
 
-This master branch includes modifications for shelf systems and FABM_ with ERSEM_ enabled.
+This master branch includes the NEMO-FABM coupler and modifications for shelf systems.
+It is currently based on svn revision ``@6232`` in the central NEMO repository.
 
-The pure NEMO_-code without shelf and FABM modifications is in the ``feat/NEMO-svn`` branch.
-It should remain untouched in order to enable conflict-free syncing with the central NEMO repository.
-The current state is based on svn revision ``@6232``.
+NEMO is shared under the CeCILL free software license (see ``NEMOGCM/License_CeCILL.txt``)
+The NEMO-FABM coupler is developed by the `Plymouth Marine Laboratory`_ and made available
+under the CeCILL license as well.
 
-Shelf-enabled code without the FABM coupler is in ``feat/shelf-enabled``.
+We emphasize that *this is not an official NEMO release*. It is a codebase maintained
+by the Plymouth Marine Laboratory for the purpose of distributing a NEMO 3.6 codebase
+that supports ERSEM_ (through FABM) and is tailored to the North-West European shelf.
+As such, it is also the authoritative repository for the NEMO-FABM coupler.
+While this is a production-ready code (e.g., it underpins all 3D simulations within the
+the `UK Shelf Seas Biogeochemistry Programme`_), compatibility with other codebases based
+on NEMO 3.6 is not guaranteed.
+
+If you want to use the NEMO-FABM coupler with another NEMO 3.6 codebase, the place to start
+is the ``NEMOGCM/NEMO/TOP_SRC`` folder, which contains modifications (and a new ``FABM`` subdirectory)
+to activate the NEMO coupler.
 
 Compilation using ``makenemo``
 ==============================
@@ -20,7 +31,7 @@ To compile on a typical PML workstation using the ``makenemo`` tool provided wit
   # typical global configuration:
   ./makenemo -m GCC_PMPC -n AMM7
 
-To compile on *archer* using the intel compiler::
+To compile on `ARCHER` using the Intel compiler::
 
   module unload PrgEnv-cray PrgEnv-gnu
   module load PrgEnv-intel
@@ -29,22 +40,26 @@ To compile on *archer* using the intel compiler::
   #typical global:
   ./makenemo -m XC_ARCHER_INTEL_NOSIGNEDZERO -n ORCA2_LIM_FABM
 
-Specific notes on the FABM_-ERSEM_ implementation
+Specific notes on the NEMO-FABM coupler
 =============================================
 
-FABM needs to be compiled separately before the compilation of NEMO with ERSEM enabled.
+FABM needs to be compiled separately before NEMO can be compiled with FABM (and ERSEM) support.
 Usually, the following suffices to achieve this::
 
    mkdir -p ~/build/nemo && cd ~/build/nemo
-   cmake <FABMDIR>/src/ -DFABM_HOST=nemo -DFABM_ERSEM_BASE=<ERSEMDIR> -DFABM_EMBED_VERSION=ON
+   cmake <FABMDIR>/src -DFABM_HOST=nemo -DFABM_ERSEM_BASE=<ERSEMDIR> -DFABM_EMBED_VERSION=ON
    make install
 
-In the above, replace `<FABMDIR>` with the directory with the FABM source code, e.g., `~/fabm-git` and `<ERSEMMDIR>` with the directory with the ERSEM_ source code, e.g., `~/ersem-git`.
+In the above, replace `<FABMDIR>` with the folder with the FABM_ source code, e.g., `~/fabm-git`
+and `<ERSEMDIR>` with the folder with the ERSEM_ source code, e.g., `~/ersem-git`.
+For a compilation without ERSEM, the `-DFABM_ERSEM_BASE` argument should be omitted
 
-This will create the library in the standard folder `~/local/fabm/nemo/lib` where NEMO-FABM will look for linking to NEMO.
+Executing the above commands will create the FABM library in the default folder `~/local/fabm/nemo/lib`.
+This is the folder where NEMO will look by default when linking to FABM.
 
-The FABM coupler for NEMO is added in a sub-folder ``FABM`` in ``NEMOGCM/NEMO/TOP_SRC``.
-Changes to existing code in order to accomadate FABM within NEMO are restricted to the ``NEMOGCM/NEMO/TOP_SRC`` and ``NEMOGCM/TOOLS/COMPILE`` folder and shall be marked in the code in the following way:
+The FABM coupler for NEMO is located in subfolder ``FABM`` in ``NEMOGCM/NEMO/TOP_SRC``.
+Changes to existing NEMO code in order to accommodate FABM are restricted to the ``NEMOGCM/NEMO/TOP_SRC``
+and ``NEMOGCM/TOOLS/COMPILE`` folder and shall be marked in the code in the following way:
 
 Additions are encapsulated using the tags::
 
@@ -60,12 +75,15 @@ Removed sections are encapsulated as::
 
 (In the FCM scripts the ``!`` is replaced by ``#``.)
 
-The initial FABM_ implementation in this repository is carried over from the NEMO-FABM_ repository developed by M. Butenschön and J. Bruggeman, as a single patch commit.
+The initial FABM_ implementation in this repository is carried over from the NEMO-FABM_ repository developed
+by M. Butenschön and J. Bruggeman, as a single patch commit.
 
 .. _FABM: http://fabm.net
 .. _NEMO: http://www.nemo-ocean.eu
-.. _ERSEM: http://shelfseasmodelling.org
-.. _NEMO-FABM: https://gitlab.ecosystem-modelling.pml.ac.uk/momm/NEMO-FABM
+.. _ERSEM: https://www.pml.ac.uk/Modelling_at_PML/Models/ERSEM
+.. _NEMO-FABM: https://gitlab.ecosystem-modelling.pml.ac.uk/nemo-fabm/NEMO-ERSEM-shelf
+.. _Plymouth Marine Laboratory: https://www.pml.ac.uk
+.. _UK Shelf Seas Biogeochemistry Programme: https://www.uk-ssb.org
 
 Setting-up XIOS in detached mode using dedicated I/O-servers as mpi tasks
 =========================================================================
