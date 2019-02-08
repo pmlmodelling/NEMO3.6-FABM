@@ -98,20 +98,6 @@ CONTAINS
          CALL iom_put( model%bottom_state_variables(jn)%name, fabm_st2dn(:,:,jp_fabm_surface+jn) )
       END DO
 
-      ! write 3D diagnostics in the file
-      ! ---------------------------------------
-      DO jn = 1, size(model%diagnostic_variables)
-         IF (model%diagnostic_variables(jn)%save) &
-             CALL iom_put( model%diagnostic_variables(jn)%name, fabm_get_bulk_diagnostic_data(model,jn))
-      END DO
-
-      ! write 2D diagnostics in the file
-      ! ---------------------------------------
-      DO jn = 1, size(model%horizontal_diagnostic_variables)
-         IF (model%horizontal_diagnostic_variables(jn)%save) &
-             CALL iom_put( model%horizontal_diagnostic_variables(jn)%name, fabm_get_horizontal_diagnostic_data(model,jn))
-      END DO
-      !
       CALL trc_sms_fabm_check_mass
 
    END SUBROUTINE wri_fabm

@@ -26,7 +26,7 @@ MODULE trcsms_fabm
    USE sbc_oce, only: lk_oasis
    USE dom_oce
    USE zdf_oce
-   !USE iom
+   USE iom
    USE xios
    USE cpl_oasis3
    USE st2D_fabm
@@ -117,6 +117,18 @@ CONTAINS
 
       CALL trc_bc_read  ( kt )       ! tracers: surface and lateral Boundary Conditions
       CALL trc_rnf_fabm ( kt ) ! River forcings
+
+      ! Send 3D diagnostics to output (these apply to time "n")
+      DO jn = 1, size(model%diagnostic_variables)
+         IF (model%diagnostic_variables(jn)%save) &
+             CALL iom_put( model%diagnostic_variables(jn)%name, fabm_get_interior_diagnostic_data(model,jn))
+      END DO
+
+      ! Send 2D diagnostics to output (these apply to time "n")
+      DO jn = 1, size(model%horizontal_diagnostic_variables)
+         IF (model%horizontal_diagnostic_variables(jn)%save) &
+             CALL iom_put( model%horizontal_diagnostic_variables(jn)%name, fabm_get_horizontal_diagnostic_data(model,jn))
+      END DO
 
       IF( l_trdtrc ) THEN      ! Save the trends in the mixed layer
           DO jn = jp_fabm0, jp_fabm1
