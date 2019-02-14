@@ -325,6 +325,7 @@ CONTAINS
       CHARACTER(len=*),              INTENT(IN)    :: location, message
 
       CALL ctl_stop('STOP', TRIM(location)//': '//TRIM(message))
+      STOP
    END SUBROUTINE
 
    SUBROUTINE nemo_fabm_driver_log_message(self, message)
