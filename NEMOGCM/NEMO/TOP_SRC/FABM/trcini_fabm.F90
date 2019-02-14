@@ -18,6 +18,7 @@ MODULE trcini_fabm
    USE trcsms_fabm
    USE fabm_config,ONLY: fabm_create_model_from_yaml_file
    USE fabm,ONLY: type_external_variable, fabm_initialize_library
+   USE fabm_driver
    USE inputs_fabm,ONLY: initialize_inputs,link_inputs, &
      type_input_variable,type_input_data,type_river_data, &
      first_input_data,first_river_data
@@ -40,6 +41,12 @@ MODULE trcini_fabm
    PUBLIC   trc_ini_fabm   ! called by trcini.F90 module
    PUBLIC   nemo_fabm_init
 
+   TYPE,extends(type_base_driver) :: type_nemo_fabm_driver
+   contains
+      procedure :: fatal_error => nemo_fabm_driver_fatal_error
+      procedure :: log_message => nemo_fabm_driver_log_message
+   end type
+
    !!----------------------------------------------------------------------
    !! NEMO/TOP 3.3 , NEMO Consortium (2010)
    !! $Id$
@@ -53,6 +60,8 @@ CONTAINS
       TYPE (type_input_data),POINTER :: input_data
       TYPE (type_river_data),POINTER :: river_data
       CLASS (type_input_variable),POINTER :: input_pointer
+
+      ALLOCATE(type_nemo_fabm_driver::driver)
 
       ! Allow FABM to parse fabm.yaml. This ensures numbers of variables are known.
       call fabm_create_model_from_yaml_file(model)
@@ -310,6 +319,20 @@ CONTAINS
       ENDIF
 
    END SUBROUTINE trc_ini_fabm
+
+   SUBROUTINE nemo_fabm_driver_fatal_error(self, location, message)
+      CLASS (type_nemo_fabm_driver), INTENT(INOUT) :: self
+      CHARACTER(len=*),              INTENT(IN)    :: location, message
+
+      CALL ctl_stop('STOP', TRIM(location)//': '//TRIM(message))
+   END SUBROUTINE
+
+   SUBROUTINE nemo_fabm_driver_log_message(self, message)
+      CLASS (type_nemo_fabm_driver), INTENT(INOUT) :: self
+      CHARACTER(len=*),              INTENT(IN)    :: message
+
+      IF(lwp) WRITE (numout,*) TRIM(message)
+   END SUBROUTINE
 
 #else
    !!----------------------------------------------------------------------
