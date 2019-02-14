@@ -108,8 +108,16 @@ CONTAINS
    !!----------------------------------------------------------------------
    PUBLIC trc_wri_fabm
 CONTAINS
-   SUBROUTINE trc_wri_fabm                     ! Empty routine  
+
+   SUBROUTINE wri_fabm_fl(kt,fl)
+      INTEGER, INTENT( in )               :: fl
+      INTEGER, INTENT( in )               :: kt
+   END SUBROUTINE wri_fabm_fl
+
+   SUBROUTINE trc_wri_fabm(kt)                 ! Empty routine  
+      INTEGER, INTENT( in )               :: kt
    END SUBROUTINE trc_wri_fabm
+
 #endif
 
    !!----------------------------------------------------------------------
