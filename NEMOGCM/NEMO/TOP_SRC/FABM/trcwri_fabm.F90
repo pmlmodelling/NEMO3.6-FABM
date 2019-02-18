@@ -31,7 +31,6 @@ MODULE trcwri_fabm
        MODULE PROCEDURE wri_fabm,wri_fabm_fl
    END INTERFACE trc_wri_fabm
 
-
    PUBLIC trc_wri_fabm 
 
 #  include "top_substitute.h90"
@@ -106,17 +105,22 @@ CONTAINS
    !!----------------------------------------------------------------------
    !!  Dummy module :                                     No passive tracer
    !!----------------------------------------------------------------------
+   INTERFACE trc_wri_fabm
+       MODULE PROCEDURE wri_fabm,wri_fabm_fl
+   END INTERFACE trc_wri_fabm
+
    PUBLIC trc_wri_fabm
-CONTAINS
+
+   CONTAINS
 
    SUBROUTINE wri_fabm_fl(kt,fl)
       INTEGER, INTENT( in )               :: fl
       INTEGER, INTENT( in )               :: kt
    END SUBROUTINE wri_fabm_fl
 
-   SUBROUTINE trc_wri_fabm(kt)                 ! Empty routine  
+   SUBROUTINE wri_fabm(kt)                 ! Empty routine  
       INTEGER, INTENT( in )               :: kt
-   END SUBROUTINE trc_wri_fabm
+   END SUBROUTINE wri_fabm
 
 #endif
 
