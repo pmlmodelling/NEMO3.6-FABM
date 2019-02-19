@@ -213,9 +213,9 @@ CONTAINS
         END DO
 #if defined key_tracer_budget
         DO i=1,size(trd_e3t_tags)
-         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_e3t_tags(i))//'_'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated '//TRIM(trd_e3t_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
+         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_e3t_tags(i))//'_'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated '//TRIM(trd_e3t_tags(i))//' trend" unit="'//TRIM(variable%units)//'*m/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
         END DO
-        WRITE (xml_unit,'(A)') '  <field id="'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
+        WRITE (xml_unit,'(A)') '  <field id="'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated" unit="'//TRIM(variable%units)//'*m" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
 #endif
       CASE (-1)
         DO i=1,size(trd_tags)
@@ -223,9 +223,9 @@ CONTAINS
         END DO
 #if defined key_tracer_budget
         DO i=1,size(trd_e3t_tags)
-         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_e3t_tags(i))//'_'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated '//TRIM(trd_e3t_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
+         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_e3t_tags(i))//'_'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated '//TRIM(trd_e3t_tags(i))//' trend" unit="'//TRIM(variable%units)//'*m/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
         END DO
-        WRITE (xml_unit,'(A)') '  <field id="'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
+        WRITE (xml_unit,'(A)') '  <field id="'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated" unit="'//TRIM(variable%units)//'*m" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
 #endif
       CASE default
          IF(lwp) WRITE(numout,*) ' trc_ini_fabm: Failing to initialise trends of variable '//TRIM(variable%name)//': Output of '//TRIM(ADJUSTL(string_dimensions))//'-dimensional trends not supported!!!'
