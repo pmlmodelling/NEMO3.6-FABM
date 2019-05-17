@@ -207,7 +207,7 @@ CONTAINS
       END IF
 
       ! Inform FABM about new time, allowing it to update temporal means
-      CALL fabm_update_time(model,real(kt, wp))
+      CALL fabm_update_time(model,real(kt, wp),nyear,nmonth,nday,REAL(nsec_day,wp))
 
       ! Compute light extinction
       DO jk=1,jpk
