@@ -3,7 +3,7 @@
 #   1: simulation year
 #
 
-INPUTPATH="$HOME/AMM7-INPUTS"
+INPUTPATH="/users/modellers/momm/AMM7-INPUTS"
 RUNPATH="$HOME/run/AMM7"
 
 yn=$1
