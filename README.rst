@@ -4,6 +4,7 @@ Fork of NEMO_ 3.6 stable branch with modifications for FABM_ and shelf systems.
 
 This master branch includes the NEMO-FABM coupler and modifications for shelf systems.
 It is currently based on svn revision ``@6232`` in the central NEMO repository.
+http://forge.ipsl.jussieu.fr/nemo/svn/branches/2015/nemo_v3_6_STABLE/NEMOGCM@6232 
 
 NEMO is shared under the CeCILL free software license (see ``NEMOGCM/License_CeCILL.txt``)
 The NEMO-FABM coupler is developed by the `Plymouth Marine Laboratory`_ and made available
