@@ -52,7 +52,7 @@ MODULE vertical_movement_fabm
       INTEGER, INTENT(in) ::   method ! advection method (1: 1st order upstream, 3: 3rd order TVD with QUICKEST limiter)
 
       INTEGER :: ji,jj,jk,jn,k_floor
-      REAL(wp) :: zwgt_if(0:jpk), flux(0:jpk), dc(1:jpk), w_if(0:jpk)
+      REAL(wp) :: zwgt_if(0:jpk), flux(0:jpk), dc(1:jpk), w_if(0:jpk), z2dt
 #if defined key_trdtrc
       CHARACTER (len=20) :: cltra
 #endif
@@ -60,6 +60,12 @@ MODULE vertical_movement_fabm
 #if defined key_trdtrc && defined key_iomput
       IF( lk_trdtrc ) tr_vmv = 0.0_wp
 #endif
+
+      IF( neuler == 0 .AND. kt == nittrc000 ) THEN
+         z2dt = rdt                  ! set time step size (Euler)
+      ELSE
+         z2dt = 2._wp * rdt          ! set time step size (Leapfrog)
+      ENDIF
 
       ! Compute interior vertical velocities and include them in source array.
       DO jj=1,jpj ! j-loop
@@ -91,7 +97,7 @@ MODULE vertical_movement_fabm
                   IF (method == 1) THEN
                      CALL advect_1(k_floor, trn(ji,jj,1:k_floor,jp_fabm_m1+jn), w_if(0:k_floor), fse3t(ji,jj,1:k_floor), dc(1:k_floor))
                   ELSE
-                     CALL advect_3(k_floor, trn(ji,jj,1:k_floor,jp_fabm_m1+jn), w_if(0:k_floor), fse3t(ji,jj,1:k_floor), dc(1:k_floor))
+                     CALL advect_3(k_floor, trn(ji,jj,1:k_floor,jp_fabm_m1+jn), w_if(0:k_floor), fse3t(ji,jj,1:k_floor), z2dt, dc(1:k_floor))
                   END IF
 
                   ! Compute change (per volume) due to vertical movement per layer
@@ -129,7 +135,7 @@ MODULE vertical_movement_fabm
       ! Compute fluxes (per surface area) over at interfaces (remember: positive for upwards)
       flux(0) = 0._wp
       DO jk=1,nk-1 ! k-loop
-         IF (w_if(jk) > 0) THEN
+         IF (w(jk) > 0) THEN
             ! Upward movement (source layer is jk+1)
             flux(jk) = w(jk) * c(jk+1)
          ELSE
@@ -141,15 +147,16 @@ MODULE vertical_movement_fabm
       trend = (flux(1:nk) - flux(0:nk-1)) / h
    END SUBROUTINE
 
-   SUBROUTINE advect_3(nk, c, w, h, trend)
+   SUBROUTINE advect_3(nk, c, w, h, dt, trend)
       INTEGER,  INTENT(IN)  :: nk
       REAL(wp), INTENT(IN)  :: c(1:nk)
       REAL(wp), INTENT(IN)  :: w(0:nk)
       REAL(wp), INTENT(IN)  :: h(1:nk)
       REAL(wp), INTENT(OUT) :: trend(1:nk)
+      REAL(wp), INTENT(IN)  :: dt
 
       INTEGER, PARAMETER :: n_itermax=100
-      REAL(wp) :: z2dt,cmax_no
+      REAL(wp) :: cmax_no
       REAL(wp) :: cfl(1:nk-1)
       INTEGER  :: n_iter, n_count, jk
       REAL(wp) :: c_new(1:nk)
@@ -162,14 +169,8 @@ MODULE vertical_movement_fabm
       REAL(wp) :: limiter(1:nk-1)
       REAL(wp) :: flux_if(1:nk)
 
-      IF( neuler == 0 .AND. kt == nittrc000 ) THEN
-          z2dt = rdt                  ! set time step size (Euler)
-      ELSE
-          z2dt = 2._wp * rdt          ! set time step size (Leapfrog)
-      ENDIF
-
       ! get maximum Courant number:
-      cfl = abs(w(1:nk-1)) * z2dt / ( 0.5_wp*(h(2:nk) + h(1:nk-1)))
+      cfl = abs(w(1:nk-1)) * dt / ( 0.5_wp*(h(2:nk) + h(1:nk-1)))
       cmax_no = MAXVAL(cfl)
 
       ! number of iterations:
@@ -242,14 +243,14 @@ MODULE vertical_movement_fabm
 
          ! Compute pseudo update for trend aggregation:
          c_new = c
-         c_new(1:nk-1) = c_new(1:nk-1) + z2dt / real(n_iter, wp) / h(1:nk-1) * flux_if(2:nk)
-         c_new(2:nk)   = c_new(2:nk)   - z2dt / real(n_iter, wp) / h(2:nk)   * flux_if(2:nk)
+         c_new(1:nk-1) = c_new(1:nk-1) + dt / real(n_iter, wp) / h(1:nk-1) * flux_if(2:nk)
+         c_new(2:nk)   = c_new(2:nk)   - dt / real(n_iter, wp) / h(2:nk)   * flux_if(2:nk)
 
       ENDDO ! Iterative loop
 
       ! Estimate rate of change from pseudo state updates (source
       ! splitting):
-      trend = (c_new - c) / z2dt
+      trend = (c_new - c) / dt
    END SUBROUTINE
 
 #endif
