@@ -113,13 +113,7 @@ CONTAINS
 
       CALL compute_fabm( kt )
 
-      if (nn_adv == 1) then
-         ! 1st order upwind
-         CALL compute_vertical_movement_1( kt )
-      else
-         ! 3rd order upwind with QUICKEST limiter
-         CALL compute_vertical_movement_3( kt )
-      end if
+      CALL compute_vertical_movement_1( kt, nn_adv )
 
       CALL st2d_fabm_nxt( kt )
 
@@ -411,9 +405,6 @@ CONTAINS
 
       ! Allocate work arrays for vertical movement
       ALLOCATE(w_ct(jpi,jpk,jp_fabm))
-      ALLOCATE(w_if(jpk,jp_fabm))
-      ALLOCATE(zwgt_if(jpk,jp_fabm))
-      ALLOCATE(flux_if(jpk,jp_fabm))
       ALLOCATE(current_total(jpi,SIZE(model%conserved_quantities)))
 #if defined key_trdtrc && defined key_iomput
       IF( lk_trdtrc ) ALLOCATE(tr_vmv(jpi,jpj,jpk,jp_fabm))
