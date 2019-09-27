@@ -52,7 +52,7 @@ MODULE vertical_movement_fabm
       INTEGER, INTENT(in) ::   method ! advection method (1: 1st order upstream, 3: 3rd order TVD with QUICKEST limiter)
 
       INTEGER :: ji,jj,jk,jn,k_floor
-      REAL(wp) :: zwgt_if(0:jpk), flux(0:jpk), dc(1:jpk)
+      REAL(wp) :: zwgt_if(0:jpk), flux(0:jpk), dc(1:jpk), w_if(0:jpk)
 #if defined key_trdtrc
       CHARACTER (len=20) :: cltra
 #endif
@@ -141,7 +141,7 @@ MODULE vertical_movement_fabm
       trend = (flux(1:nk) - flux(0:nk-1)) / h
    END SUBROUTINE
 
-   SUBROUTINE advect_3(kt, c, w, h, trend)
+   SUBROUTINE advect_3(nk, c, w, h, trend)
       INTEGER,  INTENT(IN)  :: nk
       REAL(wp), INTENT(IN)  :: c(1:nk)
       REAL(wp), INTENT(IN)  :: w(0:nk)
