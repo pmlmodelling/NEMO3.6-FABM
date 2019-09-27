@@ -60,6 +60,9 @@ CONTAINS
       TYPE (type_input_data),POINTER :: input_data
       TYPE (type_river_data),POINTER :: river_data
       CLASS (type_input_variable),POINTER :: input_pointer
+      LOGICAL :: l_ext
+      INTEGER :: nmlunit, ios
+      NAMELIST/namfabm/ nn_adv
 
       ALLOCATE(type_nemo_fabm_driver::driver)
 
@@ -76,6 +79,21 @@ CONTAINS
       jpdia2d = jpdia2d + size(model%horizontal_diagnostic_variables)
       jpdia3d = jpdia3d + size(model%diagnostic_variables)
       jpdiabio = jpdiabio + jp_fabm
+
+      nn_adv = 3
+      INQUIRE( FILE='namelist_fabm_ref', EXIST=l_ext )
+      IF (l_ext) then
+         CALL ctl_opn( nmlunit, 'namelist_fabm_ref', 'OLD', 'FORMATTED', 'SEQUENTIAL', -1, 6, .FALSE.)
+         READ(nmlunit, nml=namfabm, iostat=ios)
+         IF( ios /= 0 ) CALL ctl_nam ( ios , 'namfabm in namelist_fabm_ref', .TRUE. )
+      END IF
+      INQUIRE( FILE='namelist_fabm_cfg', EXIST=l_ext )
+      IF (l_ext) then
+         CALL ctl_opn( nmlunit, 'namelist_fabm_cfg', 'OLD', 'FORMATTED', 'SEQUENTIAL', -1, 6, .FALSE.)
+         READ(nmlunit, nml=namfabm, iostat=ios)
+         IF( ios /= 0 ) CALL ctl_nam ( ios , 'namfabm in namelist_fabm_cfg', .TRUE. )
+      END IF
+      IF (nn_adv /= 1 .and. nn_adv /= 3) CALL ctl_stop('STOP', 'nemo_fabm_init: nn_adv must be 1 or 3.')
 
       !Initialize input data structures.
       call initialize_inputs

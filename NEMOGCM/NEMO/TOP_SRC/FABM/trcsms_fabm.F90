@@ -77,6 +77,8 @@ MODULE trcsms_fabm
 
    TYPE (type_bulk_variable_id),SAVE :: swr_id
 
+   INTEGER, PUBLIC :: nn_adv
+
    !!----------------------------------------------------------------------
    !! NEMO/TOP 3.3 , NEMO Consortium (2010)
    !! $Id$
@@ -111,7 +113,13 @@ CONTAINS
 
       CALL compute_fabm( kt )
 
-      CALL compute_vertical_movement( kt )
+      if (nn_adv == 1) then
+         ! 1st order upwind
+         CALL compute_vertical_movement_1( kt )
+      else
+         ! 3rd order upwind with QUICKEST limiter
+         CALL compute_vertical_movement_3( kt )
+      end if
 
       CALL st2d_fabm_nxt( kt )
 
