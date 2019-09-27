@@ -1,3 +1,5 @@
+#include "fabm_version.h"
+
 MODULE trcsms_fabm
    !!======================================================================
    !!                         ***  MODULE trcsms_fabm  ***
@@ -209,6 +211,9 @@ CONTAINS
       ! Inform FABM about new time, allowing it to update temporal means
       CALL fabm_update_time(model,real(kt, wp),nyear,nmonth,nday,REAL(nsec_day,wp))
 
+#if _FABM_API_VERSION_ >= 1
+      CALL model%process(model%prepare_job)
+#else
       ! Compute light extinction
       DO jk=1,jpk
           DO jj=1,jpj
@@ -222,6 +227,7 @@ CONTAINS
             call fabm_get_light(model,1,jpk,ji,jj)
          END DO
       END DO
+#endif
 
       ! TODO: retrieve 3D shortwave and store in etot3
 
@@ -256,6 +262,10 @@ CONTAINS
               CALL fabm_do(model,1,jpi,jj,jk,tra(:,jj,jk,jp_fabm0:jp_fabm1))
           END DO
       END DO
+
+#if _FABM_API_VERSION_ >= 1
+      CALL model%process(model%get_diagnostics_job)
+#endif
    END SUBROUTINE compute_fabm
 
    FUNCTION check_state(repair) RESULT(exit_state)
@@ -435,24 +445,20 @@ CONTAINS
       END DO
 
       ! Send pointers to environmental data to FABM
+      call model%link_interior_data(standard_variables%depth,fsdept(:,:,:))
       call model%link_interior_data(standard_variables%temperature,tsn(:,:,:,jp_tem))
       call model%link_interior_data(standard_variables%practical_salinity,tsn(:,:,:,jp_sal))
       IF (ALLOCATED(rho)) call model%link_interior_data(standard_variables%density,rho(:,:,:))
       IF (ALLOCATED(prn)) call model%link_interior_data(standard_variables%pressure,prn)
       IF (ALLOCATED(taubot)) call model%link_horizontal_data(standard_variables%bottom_stress,taubot(:,:))
-      ! correct target for cell thickness depends on NEMO configuration:
-#ifdef key_vvl
-      call model%link_interior_data(standard_variables%cell_thickness,e3t_n)
-#else
-      call model%link_interior_data(standard_variables%cell_thickness,e3t_0)
-#endif
+      call model%link_interior_data(standard_variables%cell_thickness,fse3t(:,:,:))
       call model%link_horizontal_data(standard_variables%latitude,gphit)
       call model%link_horizontal_data(standard_variables%longitude,glamt)
       call model%link_scalar(standard_variables%number_of_days_since_start_of_the_year,daynumber_in_year)
       call model%link_horizontal_data(standard_variables%wind_speed,wndm(:,:))
       call model%link_horizontal_data(standard_variables%surface_downwelling_shortwave_flux,qsr(:,:))
       call model%link_horizontal_data(standard_variables%bottom_depth_below_geoid,bathy(:,:))
-
+      call model%link_horizontal_data(standard_variables%ice_area_fraction,fr_i(:,:))
       swr_id = model%get_bulk_variable_id(standard_variables%downwelling_shortwave_flux)
 
       ! Obtain user-specified input variables (read from NetCDF file)
