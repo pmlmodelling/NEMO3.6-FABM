@@ -113,7 +113,7 @@ CONTAINS
 
       CALL compute_fabm( kt )
 
-      CALL compute_vertical_movement_1( kt, nn_adv )
+      CALL compute_vertical_movement( kt, nn_adv )
 
       CALL st2d_fabm_nxt( kt )
 
