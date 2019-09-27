@@ -25,7 +25,7 @@ MODULE trcsms_fabm
 #endif
 
    USE oce, only: tsn  ! Needed?
-   USE sbc_oce, only: lk_oasis
+   USE sbc_oce, only: lk_oasis,fr_i
    USE dom_oce
    USE zdf_oce
    USE iom
