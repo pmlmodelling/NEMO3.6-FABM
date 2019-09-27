@@ -53,7 +53,7 @@
 %FFLAGS              %FCFLAGS
 %LD                  %FC
 # F2003 compliant compilers require key_nosignedzero:
-%FPPFLAGS            -P -C -nostdinc -Dkey_nosignedzero
+%FPPFLAGS            -P -C -nostdinc -Dkey_nosignedzero %FABM_INC
 %LDFLAGS	     -pg -lstdc++
 %AR                  ar 
 %ARFLAGS             -rs

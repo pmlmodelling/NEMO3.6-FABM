@@ -52,7 +52,7 @@
 %FFLAGS              -integer-size 32 -real-size 64 -O3 -zero -fpp -warn all -funroll-loops -safe-cray-ptr -free -xHost -fp-model source -traceback
 %LD                  CC -Wl,"--allow-multiple-definition"
 # F2003 compliant compilers require key_nosignedzero:
-%FPPFLAGS            -P -C -traditional -Dkey_nosignedzero
+%FPPFLAGS            -P -C -traditional -Dkey_nosignedzero %FABM_INC
 %LDFLAGS
 %AR                  ar 
 %ARFLAGS             -r
