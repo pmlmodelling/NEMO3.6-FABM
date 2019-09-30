@@ -147,9 +147,9 @@ MODULE vertical_movement_fabm
       trend = (flux(1:nk) - flux(0:nk-1)) / h
    END SUBROUTINE
 
-   SUBROUTINE advect_3(nk, c, w, h, dt, trend)
+   SUBROUTINE advect_3(nk, c_old, w, h, dt, trend)
       INTEGER,  INTENT(IN)  :: nk
-      REAL(wp), INTENT(IN)  :: c(1:nk)
+      REAL(wp), INTENT(IN)  :: c_old(1:nk)
       REAL(wp), INTENT(IN)  :: w(0:nk)
       REAL(wp), INTENT(IN)  :: h(1:nk)
       REAL(wp), INTENT(OUT) :: trend(1:nk)
@@ -159,7 +159,7 @@ MODULE vertical_movement_fabm
       REAL(wp) :: cmax_no
       REAL(wp) :: cfl(1:nk-1)
       INTEGER  :: n_iter, n_count, jk
-      REAL(wp) :: c_new(1:nk)
+      REAL(wp) :: c(1:nk)
       REAL(wp) :: tr_u(1:nk)
       REAL(wp) :: tr_c(1:nk)
       REAL(wp) :: tr_d(1:nk)
@@ -168,6 +168,8 @@ MODULE vertical_movement_fabm
       REAL(wp) :: phi_lim(1:nk-1)
       REAL(wp) :: limiter(1:nk-1)
       REAL(wp) :: flux_if(1:nk)
+
+      c(:) = c_old(:)
 
       ! get maximum Courant number:
       cfl = abs(w(1:nk-1)) * dt / ( 0.5_wp*(h(2:nk) + h(1:nk-1)))
@@ -242,15 +244,13 @@ MODULE vertical_movement_fabm
          flux_if = w(1:nk-1) * (tr_c + 0.5_wp * limiter * (1._wp - cfl) * (tr_d - tr_c))
 
          ! Compute pseudo update for trend aggregation:
-         c_new = c
-         c_new(1:nk-1) = c_new(1:nk-1) + dt / real(n_iter, wp) / h(1:nk-1) * flux_if(2:nk)
-         c_new(2:nk)   = c_new(2:nk)   - dt / real(n_iter, wp) / h(2:nk)   * flux_if(2:nk)
+         c(1:nk-1) = c(1:nk-1) + dt / real(n_iter, wp) / h(1:nk-1) * flux_if(2:nk)
+         c(2:nk)   = c(2:nk)   - dt / real(n_iter, wp) / h(2:nk)   * flux_if(2:nk)
 
       ENDDO ! Iterative loop
 
-      ! Estimate rate of change from pseudo state updates (source
-      ! splitting):
-      trend = (c_new - c) / dt
+      ! Estimate rate of change from pseudo state updates (source splitting):
+      trend = (c - c_old) / dt
    END SUBROUTINE
 
 #endif
