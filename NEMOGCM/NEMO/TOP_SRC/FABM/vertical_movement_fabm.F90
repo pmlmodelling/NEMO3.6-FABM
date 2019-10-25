@@ -167,7 +167,7 @@ MODULE vertical_movement_fabm
       REAL(wp) :: x_fac(1:nk-1)
       REAL(wp) :: phi_lim(1:nk-1)
       REAL(wp) :: limiter(1:nk-1)
-      REAL(wp) :: flux_if(1:nk)
+      REAL(wp) :: flux_if(1:nk-1)
 
       c(:) = c_old(:)
 
@@ -244,8 +244,8 @@ MODULE vertical_movement_fabm
          flux_if = w(1:nk-1) * (tr_c + 0.5_wp * limiter * (1._wp - cfl) * (tr_d - tr_c))
 
          ! Compute pseudo update for trend aggregation:
-         c(1:nk-1) = c(1:nk-1) + dt / real(n_iter, wp) / h(1:nk-1) * flux_if(2:nk)
-         c(2:nk)   = c(2:nk)   - dt / real(n_iter, wp) / h(2:nk)   * flux_if(2:nk)
+         c(1:nk-1) = c(1:nk-1) + dt / real(n_iter, wp) / h(1:nk-1) * flux_if
+         c(2:nk)   = c(2:nk)   - dt / real(n_iter, wp) / h(2:nk)   * flux_if
 
       ENDDO ! Iterative loop
 
