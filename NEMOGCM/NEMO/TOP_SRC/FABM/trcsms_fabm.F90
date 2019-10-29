@@ -134,7 +134,7 @@ CONTAINS
             IF (iom_use(TRIM(model%diagnostic_variables(jn)%name)//'_VINT')) THEN
                vint = 0._wp
                DO jk = 1, jpk
-                  vint = vint + pdat(:,:,jk) * fse3t(:,:,jk)
+                  vint = vint + pdat(:,:,jk) * fse3t(:,:,jk) * tmask(:,:,jk)
                END DO
                CALL iom_put(TRIM(model%diagnostic_variables(jn)%name)//'_VINT', vint)
             END IF
