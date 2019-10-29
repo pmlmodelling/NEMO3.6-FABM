@@ -96,8 +96,9 @@ CONTAINS
       !!----------------------------------------------------------------------
       !
       INTEGER, INTENT(in) ::   kt   ! ocean time-step index
-      INTEGER :: jn
-      REAL(wp), POINTER, DIMENSION(:,:,:) :: ztrfabm
+      INTEGER :: jn, jk
+      REAL(wp), POINTER, DIMENSION(:,:,:) :: ztrfabm, pdat
+      REAL(wp), DIMENSION(jpi,jpj)    :: vint
 
 !!----------------------------------------------------------------------
       !
@@ -124,8 +125,20 @@ CONTAINS
 
       ! Send 3D diagnostics to output (these apply to time "n")
       DO jn = 1, size(model%diagnostic_variables)
-         IF (model%diagnostic_variables(jn)%save) &
-             CALL iom_put( model%diagnostic_variables(jn)%name, fabm_get_interior_diagnostic_data(model,jn))
+         IF (model%diagnostic_variables(jn)%save) THEN
+            ! Save 3D field
+            pdat => fabm_get_interior_diagnostic_data(model,jn)
+            CALL iom_put(model%diagnostic_variables(jn)%name, pdat)
+
+            ! Save depth integral if selected for output in XIOS
+            IF (iom_use(TRIM(model%diagnostic_variables(jn)%name)//'_VINT')) THEN
+               vint = 0._wp
+               DO jk = 1, jpk
+                  vint = vint + pdat(:,:,jk) * fse3t(:,:,jk)
+               END DO
+               CALL iom_put(TRIM(model%diagnostic_variables(jn)%name)//'_VINT'), vint)
+            END IF
+         END IF
       END DO
 
       ! Send 2D diagnostics to output (these apply to time "n")

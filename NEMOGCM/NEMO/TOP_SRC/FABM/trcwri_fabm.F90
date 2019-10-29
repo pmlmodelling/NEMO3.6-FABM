@@ -78,7 +78,8 @@ CONTAINS
       !! ** Purpose :   output passive tracers fields 
       !!---------------------------------------------------------------------
       INTEGER, INTENT( in )               :: kt
-      INTEGER              :: jn
+      INTEGER              :: jn, jk
+      REAL(wp), DIMENSION(jpi,jpj)    :: vint
 
 #if defined key_tracer_budget
       IF( kt == nittrc000 ) THEN
@@ -88,7 +89,17 @@ CONTAINS
       fabm_st2d_temp(:,:,:)=fabm_st2dn(:,:,:)
 #endif
       DO jn = 1, jp_fabm
-         CALL iom_put( model%state_variables(jn)%name, trn(:,:,:,jp_fabm0+jn-1) )
+         ! Save 3D field
+         CALL iom_put(model%state_variables(jn)%name, trn(:,:,:,jp_fabm0+jn-1))
+
+         ! Save depth integral if selected for output in XIOS
+         IF (iom_use(TRIM(model%state_variables(jn)%name)//'_VINT')) THEN
+            vint = 0._wp
+            DO jk = 1, jpk
+               vint = vint + trn(:,:,jk,jp_fabm0+jn-1) * fse3t(:,:,jk)
+            END DO
+            CALL iom_put(TRIM(model%state_variables(jn)%name)//'_VINT'), vint)
+         END IF
       END DO
       DO jn = 1, jp_fabm_surface
          CALL iom_put( model%surface_state_variables(jn)%name, fabm_st2dn(:,:,jn) )

@@ -129,6 +129,12 @@ CONTAINS
          DO jn=1,size(model%horizontal_diagnostic_variables)
             CALL write_variable_xml(xml_unit,model%horizontal_diagnostic_variables(jn))
          END DO
+         DO jn=1,size(model%state_variables)
+            WRITE (xml_unit,'(A)') '  <field id="'//TRIM(model%state_variables(jn)%name)//'_VINT" long_name="depth-integrated '//TRIM(model%state_variables(jn)%long_name)//'" unit="'//TRIM(model%state_variables(jn)%units)//'*m" default_value="0.0" />'
+         END DO
+         DO jn=1,size(model%diagnostic_variables)
+            WRITE (xml_unit,'(A)') '  <field id="'//TRIM(model%diagnostic_variables(jn)%name)//'_VINT" long_name="depth-integrated '//TRIM(model%diagnostic_variables(jn)%long_name)//'" unit="'//TRIM(model%diagnostic_variables(jn)%units)//'*m" default_value="0.0" />'
+         END DO
          WRITE (xml_unit,1000) ' </field_group>'
 
          WRITE (xml_unit,1000) ' <field_group id="fabm_scalar" grid_ref="grid_0">'
