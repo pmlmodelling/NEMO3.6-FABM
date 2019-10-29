@@ -136,7 +136,7 @@ CONTAINS
                DO jk = 1, jpk
                   vint = vint + pdat(:,:,jk) * fse3t(:,:,jk)
                END DO
-               CALL iom_put(TRIM(model%diagnostic_variables(jn)%name)//'_VINT'), vint)
+               CALL iom_put(TRIM(model%diagnostic_variables(jn)%name)//'_VINT', vint)
             END IF
          END IF
       END DO

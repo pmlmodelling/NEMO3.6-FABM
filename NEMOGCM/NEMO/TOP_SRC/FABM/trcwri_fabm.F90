@@ -98,7 +98,7 @@ CONTAINS
             DO jk = 1, jpk
                vint = vint + trn(:,:,jk,jp_fabm0+jn-1) * fse3t(:,:,jk)
             END DO
-            CALL iom_put(TRIM(model%state_variables(jn)%name)//'_VINT'), vint)
+            CALL iom_put(TRIM(model%state_variables(jn)%name)//'_VINT', vint)
          END IF
       END DO
       DO jn = 1, jp_fabm_surface
