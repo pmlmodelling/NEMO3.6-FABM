@@ -20,9 +20,11 @@ MODULE trcwri
    USE trcwri_cfc
    USE trcwri_c14b
    USE trcwri_my_trc
+#if defined key_fabm
    ! +++>>> FABM
    USE trcwri_fabm
    ! FABM <<<+++
+#endif
 
    IMPLICIT NONE
    PRIVATE
@@ -70,8 +72,9 @@ CONTAINS
       IF( lk_pisces  )   CALL trc_wri_pisces     ! PISCES 
       IF( lk_cfc     )   CALL trc_wri_cfc        ! surface fluxes of CFC
       IF( lk_c14b    )   CALL trc_wri_c14b       ! surface fluxes of C14
-      ! +++>>>FABM
+#if defined key_fabm
 #if defined key_tracer_budget
+      ! +++>>>FABM
       IF( PRESENT(fl) ) THEN
          IF( lk_fabm    )   CALL trc_wri_fabm (kt, fl) ! MY_TRC  tracers for budget
          IF( lk_my_trc ) CALL trc_wri_my_trc (kt, fl)    ! MY_TRC  tracers for budget
@@ -82,8 +85,12 @@ CONTAINS
 #else
       IF( lk_fabm  )   CALL trc_wri_fabm (kt)     ! FABM  tracers
       IF( lk_my_trc  )   CALL trc_wri_my_trc(kt)     ! MY_TRC  tracers
-#endif
       ! FABM <<<+++
+#endif
+#else
+      IF( lk_my_trc  )   CALL trc_wri_my_trc(kt)     ! MY_TRC  tracers
+#endif
+
       !
 
       IF( nn_timing == 1 )  CALL timing_stop('trc_wri')
