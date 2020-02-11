@@ -52,7 +52,7 @@ MODULE vertical_movement_fabm
       INTEGER, INTENT(in) ::   method ! advection method (1: 1st order upstream, 3: 3rd order TVD with QUICKEST limiter)
 
       INTEGER :: ji,jj,jk,jn,k_floor
-      REAL(wp) :: zwgt_if(0:jpk), flux(0:jpk), dc(1:jpk), w_if(0:jpk), z2dt
+      REAL(wp) :: zwgt_if(1:jpk-1), dc(1:jpk), w_if(1:jpk-1), z2dt
 #if defined key_trdtrc
       CHARACTER (len=20) :: cltra
 #endif
@@ -82,22 +82,19 @@ MODULE vertical_movement_fabm
                !    - interface k sits between cell centre k and k+1 (k=0 for surface)
                !    - k [1,jpk] increases downwards
                !    - upward velocity is positive, downward velocity is negative
-               zwgt_if(0) = 0._wp ! surface
                zwgt_if(1:k_floor-1) = fse3t(ji,jj,2:k_floor) / (fse3t(ji,jj,1:k_floor-1) + fse3t(ji,jj,2:k_floor))
-               zwgt_if(k_floor:) = 0._wp ! sea floor and below
+
                ! Advect:
                DO jn=1,jp_fabm ! State loop
                   IF (ALL(w_ct(ji,1:k_floor,jn) == 0)) CYCLE
 
                   ! Compute velocities at interfaces
-                  w_if(0) = 0._wp ! surface
                   w_if(1:k_floor-1) = zwgt_if(1:k_floor-1) * w_ct(ji,1:k_floor-1,jn) + (1._wp - zwgt_if(1:k_floor-1)) * w_ct(ji,2:k_floor,jn)
-                  w_if(k_floor:) = 0._wp ! sea floor and below
 
                   IF (method == 1) THEN
-                     CALL advect_1(k_floor, trn(ji,jj,1:k_floor,jp_fabm_m1+jn), w_if(0:k_floor), fse3t(ji,jj,1:k_floor), dc(1:k_floor))
+                     CALL advect_1(k_floor, trn(ji,jj,1:k_floor,jp_fabm_m1+jn), w_if(1:k_floor-1), fse3t(ji,jj,1:k_floor), z2dt, dc(1:k_floor))
                   ELSE
-                     CALL advect_3(k_floor, trn(ji,jj,1:k_floor,jp_fabm_m1+jn), w_if(0:k_floor), fse3t(ji,jj,1:k_floor), z2dt, dc(1:k_floor))
+                     CALL advect_3(k_floor, trn(ji,jj,1:k_floor,jp_fabm_m1+jn), w_if(1:k_floor-1), fse3t(ji,jj,1:k_floor), z2dt, dc(1:k_floor))
                   END IF
 
                   ! Compute change (per volume) due to vertical movement per layer
@@ -123,11 +120,12 @@ MODULE vertical_movement_fabm
 
    END SUBROUTINE compute_vertical_movement
 
-   SUBROUTINE advect_1(nk, c, w, h, trend)
+   SUBROUTINE advect_1(nk, c, w, h, dt, trend)
       INTEGER,  INTENT(IN)  :: nk
       REAL(wp), INTENT(IN)  :: c(1:nk)
-      REAL(wp), INTENT(IN)  :: w(0:nk)
+      REAL(wp), INTENT(IN)  :: w(1:nk-1)
       REAL(wp), INTENT(IN)  :: h(1:nk)
+      REAL(wp), INTENT(IN)  :: dt
       REAL(wp), INTENT(OUT) :: trend(1:nk)
 
       REAL(wp) :: flux(0:nk)
@@ -137,10 +135,10 @@ MODULE vertical_movement_fabm
       DO jk=1,nk-1 ! k-loop
          IF (w(jk) > 0) THEN
             ! Upward movement (source layer is jk+1)
-            flux(jk) = w(jk) * c(jk+1)
+            flux(jk) = min(w(jk), h(jk+1)/dt) * c(jk+1)
          ELSE
             ! Downward movement (source layer is jk)
-            flux(jk) = w(jk) * c(jk)
+            flux(jk) = max(w(jk), -h(jk)/dt) * c(jk)
          END IF
       END DO
       flux(nk) = 0._wp
@@ -150,19 +148,21 @@ MODULE vertical_movement_fabm
    SUBROUTINE advect_3(nk, c_old, w, h, dt, trend)
       INTEGER,  INTENT(IN)  :: nk
       REAL(wp), INTENT(IN)  :: c_old(1:nk)
-      REAL(wp), INTENT(IN)  :: w(0:nk)
+      REAL(wp), INTENT(IN)  :: w(1:nk-1)
       REAL(wp), INTENT(IN)  :: h(1:nk)
-      REAL(wp), INTENT(OUT) :: trend(1:nk)
       REAL(wp), INTENT(IN)  :: dt
+      REAL(wp), INTENT(OUT) :: trend(1:nk)
 
       INTEGER, PARAMETER :: n_itermax=100
       REAL(wp) :: cmax_no
       REAL(wp) :: cfl(1:nk-1)
       INTEGER  :: n_iter, n_count, jk
       REAL(wp) :: c(1:nk)
-      REAL(wp) :: tr_u(1:nk)
-      REAL(wp) :: tr_c(1:nk)
-      REAL(wp) :: tr_d(1:nk)
+      REAL(wp) :: tr_u(1:nk-1)
+      REAL(wp) :: tr_c(1:nk-1)
+      REAL(wp) :: tr_d(1:nk-1)
+      REAL(wp) :: delta_tr_u(1:nk-1)
+      REAL(wp) :: delta_tr(1:nk-1)
       REAL(wp) :: ratio(1:nk-1)
       REAL(wp) :: x_fac(1:nk-1)
       REAL(wp) :: phi_lim(1:nk-1)
@@ -172,11 +172,11 @@ MODULE vertical_movement_fabm
       c(:) = c_old(:)
 
       ! get maximum Courant number:
-      cfl = abs(w(1:nk-1)) * dt / ( 0.5_wp*(h(2:nk) + h(1:nk-1)))
+      cfl = ABS(w) * dt / (0.5_wp * (h(2:nk) + h(1:nk-1)))
       cmax_no = MAXVAL(cfl)
 
       ! number of iterations:
-      n_iter = min(n_itermax, int(cmax_no)+1)
+      n_iter = MIN(n_itermax, INT(cmax_no) + 1)
       IF (ln_ctl.AND.(n_iter .gt. 1)) THEN
          WRITE(numout,*) 'compute_vertical_movement::advect_3():'
          WRITE(numout,*) '   Maximum Courant number is ',cmax_no,'.'
@@ -187,61 +187,82 @@ MODULE vertical_movement_fabm
       cfl = cfl/n_iter
 
       DO n_count=1,n_iter ! Iterative loop
-         !Compute slope ratio
-         IF (nk.gt.2) THEN !More than 2 vertical wet points
+         ! Determine tracer concentration at 1.5 upstream (tr_u), 0.5 upstream (tr_c), 0.5 downstream (tr_d) from interface
+         IF (nk.gt.2) THEN
+            ! More than 2 vertical wet points
             IF (nk.gt.3) THEN
-               WHERE (w(2:nk-2).ge.0._wp) !upward movement
+               WHERE (w(2:nk-2).ge.0._wp)
+                  !upward movement
                   tr_u(2:nk-2)=c(4:nk)
                   tr_c(2:nk-2)=c(3:nk-1)
                   tr_d(2:nk-2)=c(2:nk-2)
-               ELSEWHERE !downward movement
+               ELSEWHERE
+                  ! downward movement
                   tr_u(2:nk-2)=c(1:nk-3)
                   tr_c(2:nk-2)=c(2:nk-2)
                   tr_d(2:nk-2)=c(3:nk-1)
                ENDWHERE
             ENDIF
+
+            ! Interface between surface layer and the next
             IF (w(1).ge.0._wp) THEN
+               ! upward movement
                tr_u(1)=c(3)
                tr_c(1)=c(2)
                tr_d(1)=c(1)
             ELSE
+               ! downward movement
                tr_u(1)=c(1)
                tr_c(1)=c(1)
                tr_d(1)=c(2)
             ENDIF
+
+            ! Interface between bottom layer and the previous
             IF (w(nk-1).ge.0._wp) THEN
+               ! upward movement
                tr_u(nk-1)=c(nk)
                tr_c(nk-1)=c(nk)
                tr_d(nk-1)=c(nk-1)
             ELSE
+               ! downward movement
                tr_u(nk-1)=c(nk-2)
                tr_c(nk-1)=c(nk-1)
                tr_d(nk-1)=c(nk)
             ENDIF
-         ELSE !only 2 vertical wet points, i.e. only 1 interface
+         ELSE
+            ! only 2 vertical wet points, i.e. only 1 interface
             IF (w(1).ge.0._wp) THEN
+               ! upward movement
                tr_u(1)=c(2)
                tr_c(1)=c(2)
                tr_d(1)=c(1)
             ELSE
+               ! downward movement
                tr_u(1)=c(1)
                tr_c(1)=c(1)
                tr_d(1)=c(2)
             ENDIF
          ENDIF
-         WHERE (abs(tr_d - tr_c) .gt. 1.e-10_wp)
-            ratio = (tr_c - tr_u) / (tr_d - tr_c)
+
+         delta_tr_u = tr_c - tr_u
+         delta_tr = tr_d - tr_c
+         WHERE (delta_tr * delta_tr_u > 0._wp)
+            ! Monotonic function over tr_u, tr_c, r_d
+
+            ! Compute slope ratio
+            ratio = delta_tr_u / delta_tr
+
+            ! QUICKEST flux limiter
+            x_fac = (1._wp - 2._wp * cfl) / 6._wp
+            phi_lim = (0.5_wp + x_fac) + (0.5_wp - x_fac) * ratio
+            limiter = MIN(phi_lim, 2._wp / (1._wp - cfl), 2._wp * ratio / (cfl + 1.e-10_wp))
+
+            ! Compute limited flux
+            flux_if = w * (tr_c + 0.5_wp * limiter * (1._wp - cfl) * delta_tr)
          ELSEWHERE
-            ratio = (tr_c - tr_u) * SIGN(1._wp, w(1:nk-1)) * 1.e10_wp
+            ! Non-monotonic, use 1st order upstream
+            flux_if = w * tr_c
          ENDWHERE
-
-         !QUICKEST flux limiter:
-         x_fac = (1._wp - 2._wp * cfl) / 6._wp
-         phi_lim = (0.5_wp + x_fac) + (0.5_wp - x_fac) * ratio
-         limiter = max(0._wp, min( phi_lim, 2._wp / (1._wp - cfl), 2._wp * ratio / (cfl + 1.e-10_wp)))
-
-         ! Compute limited flux:
-         flux_if = w(1:nk-1) * (tr_c + 0.5_wp * limiter * (1._wp - cfl) * (tr_d - tr_c))
 
          ! Compute pseudo update for trend aggregation:
          c(1:nk-1) = c(1:nk-1) + dt / real(n_iter, wp) / h(1:nk-1) * flux_if
