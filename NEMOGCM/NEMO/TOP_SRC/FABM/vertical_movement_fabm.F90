@@ -52,7 +52,7 @@ MODULE vertical_movement_fabm
       INTEGER, INTENT(in) ::   method ! advection method (1: 1st order upstream, 3: 3rd order TVD with QUICKEST limiter)
 
       INTEGER :: ji,jj,jk,jn,k_floor
-      REAL(wp) :: zwgt_if(1:jpk-1), dc(1:jpk), w_if(1:jpk-1), z2dt
+      REAL(wp) :: zwgt_if(1:jpk-1), dc(1:jpk), w_if(1:jpk-1), z2dt, h(1:jpk)
 #if defined key_trdtrc
       CHARACTER (len=20) :: cltra
 #endif
@@ -82,22 +82,24 @@ MODULE vertical_movement_fabm
                !    - interface k sits between cell centre k and k+1 (k=0 for surface)
                !    - k [1,jpk] increases downwards
                !    - upward velocity is positive, downward velocity is negative
-               zwgt_if(1:k_floor-1) = fse3t(ji,jj,2:k_floor) / (fse3t(ji,jj,1:k_floor-1) + fse3t(ji,jj,2:k_floor))
+               h(1:k_floor) = fse3t(ji,jj,1:k_floor)
+               zwgt_if(1:k_floor-1) = h(2:k_floor) / (h(1:k_floor-1) + h(2:k_floor))
 
                ! Advect:
                DO jn=1,jp_fabm ! State loop
-                  IF (ALL(w_ct(ji,1:k_floor,jn) == 0)) CYCLE
+                  IF (ALL(w_ct(ji,1:k_floor,jn) == 0._wp)) CYCLE
 
                   ! Compute velocities at interfaces
                   w_if(1:k_floor-1) = zwgt_if(1:k_floor-1) * w_ct(ji,1:k_floor-1,jn) + (1._wp - zwgt_if(1:k_floor-1)) * w_ct(ji,2:k_floor,jn)
 
+                  ! Compute change (per volume) due to vertical movement per layer
                   IF (method == 1) THEN
-                     CALL advect_1(k_floor, trn(ji,jj,1:k_floor,jp_fabm_m1+jn), w_if(1:k_floor-1), fse3t(ji,jj,1:k_floor), z2dt, dc(1:k_floor))
+                     CALL advect_1(k_floor, trn(ji,jj,1:k_floor,jp_fabm_m1+jn), w_if(1:k_floor-1), h(1:k_floor), z2dt, dc(1:k_floor))
                   ELSE
-                     CALL advect_3(k_floor, trn(ji,jj,1:k_floor,jp_fabm_m1+jn), w_if(1:k_floor-1), fse3t(ji,jj,1:k_floor), z2dt, dc(1:k_floor))
+                     CALL advect_3(k_floor, trb(ji,jj,1:k_floor,jp_fabm_m1+jn), w_if(1:k_floor-1), h(1:k_floor), z2dt, dc(1:k_floor))
                   END IF
 
-                  ! Compute change (per volume) due to vertical movement per layer
+                  ! Incorporate chnage due to verticla movement in sources-sinks
                   tra(ji,jj,1:k_floor,jp_fabm_m1+jn) = tra(ji,jj,1:k_floor,jp_fabm_m1+jn) + dc(1:k_floor)
 
 #if defined key_trdtrc && defined key_iomput
