@@ -38,15 +38,19 @@ CONTAINS
 
    SUBROUTINE trc_nam_fabm_override
       INTEGER :: jn
+      CHARACTER(LEN=3) :: index
 
       DO jn=1,jp_fabm
-         ctrcnm(jp_fabm_m1+jn) = model%state_variables(jn)%name
+         IF (ctrcnm(jp_fabm_m1+jn) /= model%state_variables(jn)%name) THEN
+            WRITE (index,'(i0)') jn
+            CALL ctl_stop('Tracer name mismatch in namtrc: '//TRIM(ctrcnm(jp_fabm_m1+jn))//' found at sn_tracer('//TRIM(index)//') where '//TRIM(model%state_variables(jn)%name)//' was expected.')
+         END IF
          ctrcln(jp_fabm_m1+jn) = model%state_variables(jn)%long_name
          ctrcun(jp_fabm_m1+jn) = model%state_variables(jn)%units
          ln_trc_ini(jp_fabm_m1+jn) = .FALSE.
       END DO
    END SUBROUTINE trc_nam_fabm_override
-   
+
 #else
    !!----------------------------------------------------------------------
    !!  Dummy module :                                             No FABM
