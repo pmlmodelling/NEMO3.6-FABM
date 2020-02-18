@@ -324,6 +324,7 @@ CONTAINS
       sn_tracer(:)%llsbc = .FALSE.
       sn_tracer(:)%llcbc = .FALSE.
       sn_tracer(:)%llcbc = .FALSE.
+      sn_tracer(jn)%clsname = 'NONAME'
 #endif
 
       REWIND( numnat_ref )              ! Namelist namtrc in reference namelist : Passive tracer variables
@@ -334,6 +335,10 @@ CONTAINS
       READ  ( numnat_cfg, namtrc, IOSTAT = ios, ERR = 902 )
 902   IF( ios /= 0 ) CALL ctl_nam ( ios , 'namtrc in configuration namelist', lwp )
       IF(lwm) WRITE ( numont, namtrc )
+
+      ! +++>>> FABM
+      if (lk_fabm) CALL trc_nam_fabm_override(sn_tracer)
+      ! FABM <<<+++
 
       DO jn = 1, jptra
          ctrcnm    (jn) = TRIM( sn_tracer(jn)%clsname )
@@ -353,9 +358,6 @@ CONTAINS
          ln_trc_wri(jn) =       sn_tracer(jn)%llsave
       END DO
      
-      ! +++>>> FABM
-      if (lk_fabm) CALL trc_nam_fabm_override
-      ! FABM <<<+++
     END SUBROUTINE trc_nam_trc
 
 

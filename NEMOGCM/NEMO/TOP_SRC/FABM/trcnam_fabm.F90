@@ -36,18 +36,21 @@ CONTAINS
    SUBROUTINE trc_nam_fabm
    END SUBROUTINE trc_nam_fabm
 
-   SUBROUTINE trc_nam_fabm_override
+   SUBROUTINE trc_nam_fabm_override(sn_tracer)
+      TYPE(PTRACER), DIMENSION(jpmaxtrc), INTENT(INOUT) :: sn_tracer
+
       INTEGER :: jn
       CHARACTER(LEN=3) :: index
 
       DO jn=1,jp_fabm
-         IF (ctrcnm(jp_fabm_m1+jn) /= model%state_variables(jn)%name) THEN
+         IF (sn_tracer(jn)%clsname /= 'NONAME' .AND. sn_tracer(jn)%clsname /= model%state_variables(jn)%name) THEN
             WRITE (index,'(i0)') jn
-            CALL ctl_stop('Tracer name mismatch in namtrc: '//TRIM(ctrcnm(jp_fabm_m1+jn))//' found at sn_tracer('//TRIM(index)//') where '//TRIM(model%state_variables(jn)%name)//' was expected.')
+            CALL ctl_stop('Tracer name mismatch in namtrc: '//TRIM(sn_tracer(jn)%clsname)//' found at sn_tracer('//TRIM(index)//') where '//TRIM(model%state_variables(jn)%name)//' was expected.')
          END IF
-         ctrcln(jp_fabm_m1+jn) = model%state_variables(jn)%long_name
-         ctrcun(jp_fabm_m1+jn) = model%state_variables(jn)%units
-         ln_trc_ini(jp_fabm_m1+jn) = .FALSE.
+         sn_tracer(jn)%clsname = TRIM(model%state_variables(jn)%name)
+         sn_tracer(jn)%cllname = TRIM(model%state_variables(jn)%long_name)
+         sn_tracer(jn)%clunit = TRIM(model%state_variables(jn)%units)
+         sn_tracer(jn)%llinit = .FALSE.
       END DO
    END SUBROUTINE trc_nam_fabm_override
 
