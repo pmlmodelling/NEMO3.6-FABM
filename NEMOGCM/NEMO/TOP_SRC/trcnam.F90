@@ -324,7 +324,7 @@ CONTAINS
       sn_tracer(:)%llsbc = .FALSE.
       sn_tracer(:)%llcbc = .FALSE.
       sn_tracer(:)%llcbc = .FALSE.
-      sn_tracer(jn)%clsname = 'NONAME'
+      sn_tracer(:)%clsname = 'NONAME'
 #endif
 
       REWIND( numnat_ref )              ! Namelist namtrc in reference namelist : Passive tracer variables
