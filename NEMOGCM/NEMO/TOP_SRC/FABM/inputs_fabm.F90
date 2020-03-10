@@ -5,6 +5,8 @@ MODULE inputs_fabm
    !!======================================================================
 
 #if defined key_fabm
+#  include "fabm_version.h"
+
    !!----------------------------------------------------------------------
    !!   'key_fabm'                                               FABM tracers
    !!----------------------------------------------------------------------
@@ -19,6 +21,9 @@ MODULE inputs_fabm
    USE fldread
    USE par_fabm
    USE fabm
+#  if _FABM_API_VERSION_ >= 1
+   USE fabm_v0_compatibility
+#  endif
 
    IMPLICIT NONE
 

@@ -1,5 +1,3 @@
-#include "fabm_version.h"
-
 MODULE trcsms_fabm
    !!======================================================================
    !!                         ***  MODULE trcsms_fabm  ***
@@ -8,6 +6,7 @@ MODULE trcsms_fabm
    !! History :   1.0  !  2015-04  (PML) Original code
    !!----------------------------------------------------------------------
 #if defined key_fabm
+#  include "fabm_version.h"
    !!----------------------------------------------------------------------
    !!   'key_fabm'                                               FABM tracers
    !!----------------------------------------------------------------------
@@ -38,6 +37,9 @@ MODULE trcsms_fabm
    !USE fldread         !  time interpolation
 
    USE fabm
+#  if _FABM_API_VERSION_ >= 1
+   USE fabm_v0_compatibility
+#  endif
 
    IMPLICIT NONE
 

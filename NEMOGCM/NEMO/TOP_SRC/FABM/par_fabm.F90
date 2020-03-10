@@ -1,7 +1,11 @@
 MODULE par_fabm
 
 #if defined key_fabm
+#  include "fabm_version.h"
    USE fabm
+#  if _FABM_API_VERSION_ >= 1
+   USE fabm_v0_compatibility
+#  endif
 #endif
 
    IMPLICIT NONE

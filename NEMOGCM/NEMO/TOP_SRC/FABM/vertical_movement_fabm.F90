@@ -5,6 +5,7 @@ MODULE vertical_movement_fabm
    !!======================================================================
 
 #if defined key_fabm
+#  include "fabm_version.h"
    !!----------------------------------------------------------------------
    !!   'key_fabm'                                               FABM tracers
    !!----------------------------------------------------------------------
@@ -15,6 +16,9 @@ MODULE vertical_movement_fabm
    USE trc
    USE par_fabm
    USE fabm
+#  if _FABM_API_VERSION_ >= 1
+   USE fabm_v0_compatibility
+#  endif
    USE dom_oce
 #if defined key_trdtrc && defined key_iomput
    USE iom
