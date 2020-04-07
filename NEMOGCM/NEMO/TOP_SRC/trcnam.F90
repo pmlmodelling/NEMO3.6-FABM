@@ -341,7 +341,11 @@ CONTAINS
          ctrcun    (jn) = TRIM( sn_tracer(jn)%clunit  )
          ln_trc_ini(jn) =       sn_tracer(jn)%llinit
 ! --->>> FABM
-!!#if defined key_my_trc
+#if defined key_my_trc && !defined key_fabm
+         ln_trc_sbc(jn) =       sn_tracer(jn)%llsbc
+         ln_trc_cbc(jn) =       sn_tracer(jn)%llcbc
+         ln_trc_obc(jn) =       sn_tracer(jn)%llobc
+#endif
 ! FABM <<<---
 ! +++>>> FABM
 #if defined key_fabm

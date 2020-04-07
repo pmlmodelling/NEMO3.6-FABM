@@ -101,11 +101,11 @@ MODULE trc
        CHARACTER(len = 20)  :: clunit   !: unit
 ! --->>> FABM
 !       LOGICAL              :: llinit   !: read in a file or not
-!!#if defined  key_my_trc
-!       LOGICAL              :: llsbc   !: read in a file or not
-!       LOGICAL              :: llcbc   !: read in a file or not
-!       LOGICAL              :: llobc   !: read in a file or not
-!#endif
+#if defined  key_my_trc && !defined key_fabm
+       LOGICAL              :: llsbc   !: read in a file or not
+       LOGICAL              :: llcbc   !: read in a file or not
+       LOGICAL              :: llobc   !: read in a file or not
+#endif
 !       LOGICAL              :: llsave   !: save the tracer or not
 ! FABM <<<---
 ! +++ FABM
@@ -246,7 +246,9 @@ CONTAINS
          &      cvol(jpi,jpj,jpk)     , rdttrc(jpk)           , trai(jptra)           ,       &
          &      ctrcnm(jptra)         , ctrcln(jptra)         , ctrcun(jptra)         ,       & 
 ! --->>> FABM
-!!#if defined key_my_trc
+#if defined key_my_trc && !defined key_fabm
+         &      ln_trc_sbc(jptra)     , ln_trc_cbc(jptra)     , ln_trc_obc(jptra)     ,       &
+#endif
 ! FABM <<<---
 ! +++>>> FABM
 #if defined key_fabm
