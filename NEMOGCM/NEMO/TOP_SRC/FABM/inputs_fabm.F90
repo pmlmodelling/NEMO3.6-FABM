@@ -29,9 +29,9 @@ MODULE inputs_fabm
    PUBLIC update_inputs
    PUBLIC trc_rnf_fabm
 
-   #if defined key_trdtrc && defined key_iomput
+#if defined key_trdtrc && defined key_iomput
       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:,:) :: tr_inp
-   #endif
+#endif
 
    TYPE, PUBLIC :: type_input_variable
       TYPE(FLD), ALLOCATABLE, DIMENSION(:) :: sf
