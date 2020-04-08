@@ -25,7 +25,9 @@ MODULE trcnam
    USE trcnam_c14b       ! C14 SMS namelist
    USE trcnam_my_trc     ! MY_TRC SMS namelist
    ! +++>>> FABM
+#if defined key_fabm
    USE trcnam_fabm       ! FABM SMS namelist
+#endif
    ! FABM <<<+++
    USE trd_oce       
    USE trdtrc_oce
@@ -182,9 +184,11 @@ CONTAINS
       ENDIF
 
       ! +++>>> FABM
+#if defined key_fabm
       IF( lk_fabm    ) THEN   ;   CALL trc_nam_fabm        ! FABM tracers
       ELSE                    ;   IF(lwp) WRITE(numout,*) '          FABM not used'
       ENDIF
+#endif
       ! FABM <<<+++
       !
    END SUBROUTINE trc_nam
@@ -253,10 +257,14 @@ CONTAINS
 
       ! --- Namelist declarations --- !
       ! --->>> FABM
-      !TYPE(TRC_I_NML), DIMENSION(jptra) :: sn_tri_tracer
+#if !defined key_fabm
+      TYPE(TRC_I_NML), DIMENSION(jptra) :: sn_tri_tracer
+#endif
       ! FABM <<<--- 
       ! +++>>> FABM
+#if defined key_fabm
       TYPE(TRC_I_NML), DIMENSION(jpmaxtrc) :: sn_tri_tracer
+#endif
       ! FABM <<<+++ 
       NAMELIST/namtrc_ice/ nn_ice_tr, sn_tri_tracer
 
@@ -302,10 +310,14 @@ CONTAINS
       !!
       !!---------------------------------------------------------------------
       ! --->>> FABM
-      !TYPE(PTRACER), DIMENSION(jptra) :: sn_tracer  ! type of tracer for saving if not key_iomput
+#if !defined key_fabm
+      TYPE(PTRACER), DIMENSION(jptra) :: sn_tracer  ! type of tracer for saving if not key_iomput
+#endif
       ! FABM <<<---
       ! +++>>> FABM
+#if defined key_fabm
       TYPE(PTRACER), DIMENSION(jpmaxtrc) :: sn_tracer  ! type of tracer for saving if not key_iomput
+#endif
       ! FABM <<<+++
       !!
       NAMELIST/namtrc/ sn_tracer, ln_trcdta, ln_trcdmp, ln_trcdmp_clo
@@ -358,7 +370,9 @@ CONTAINS
       END DO
      
       ! +++>>> FABM
+#if defined key_fabm
       if (lk_fabm) CALL trc_nam_fabm_override
+#endif
       ! FABM <<<+++
     END SUBROUTINE trc_nam_trc
 

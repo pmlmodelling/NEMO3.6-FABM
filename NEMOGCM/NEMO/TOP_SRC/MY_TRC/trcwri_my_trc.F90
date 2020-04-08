@@ -13,6 +13,7 @@ MODULE trcwri_my_trc
    !!----------------------------------------------------------------------
    USE trc         ! passive tracers common variables 
    USE iom         ! I/O manager
+   USE trdtrc_oce
 
    IMPLICIT NONE
    PRIVATE
@@ -59,7 +60,7 @@ CONTAINS
           IF(ln_trdtrc (jn))THEN
             trpool(:,:,:) = 0.5 * ( trn(:,:,:,jn) * fse3t_a(:,:,:) +  &
                                         trb_temp(:,:,:,jn) * fse3t(:,:,:) )
-            cltra = TRIM( ctrcnm(jn) )//"e3t"     ! depth integrated output
+            cltra = TRIM( ctrcnm(jn) )//"_e3t"     ! depth integrated output
             IF( kt == nittrc000 ) write(6,*)'output pool ',cltra
             DO jk = 1, jpk
                trpool(:,:,jk) = trpool(:,:,jk)

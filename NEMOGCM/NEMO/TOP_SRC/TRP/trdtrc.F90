@@ -54,6 +54,8 @@ CONTAINS
 !         IF(lwp)WRITE(numout,*) 'trd_trc:'
 !         IF(lwp)WRITE(numout,*) '~~~~~~~~~~~~'
       ENDIF
+  
+      cltra='                   '
 
       !>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
       ! Mixed layer trends for passive tracers
@@ -102,7 +104,7 @@ CONTAINS
          END SELECT
                                           cltra = TRIM(cltra)//TRIM(ctrcnm(kjn))
          ! +++>>>FABM
-#if defined key_tracer_budget
+#if defined key_tracer_budget && defined key_fabm
 ! for outputting depth integrated
          SELECT CASE( ktrd )
          CASE( jptra_xad, jptra_yad, jptra_zad  ) 

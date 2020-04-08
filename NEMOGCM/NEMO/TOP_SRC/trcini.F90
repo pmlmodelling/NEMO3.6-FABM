@@ -24,8 +24,10 @@ MODULE trcini
    USE trcini_c14b     ! C14 bomb initialisation
    USE trcini_my_trc   ! MY_TRC   initialisation
    ! +++>>> FABM
+#if defined key_fabm
    USE trcsms_fabm     ! FABM initialisation
    USE trcini_fabm     ! FABM initialisation
+#endif
    ! FABM <<<FABM
    USE trcdta          ! initialisation from files
    USE daymod          ! calendar manager
@@ -74,8 +76,10 @@ CONTAINS
       IF(lwp) WRITE(numout,*) 'trc_init : initial set up of the passive tracers'
       IF(lwp) WRITE(numout,*) '~~~~~~~'
       ! +++>>> FABM
+#if defined key_fabm
       ! Allow FABM to update numbers of biogeochemical tracers, diagnostics (jptra etc.)
       IF( lk_fabm ) CALL nemo_fabm_init
+#endif
       ! FABM <<<+++
 
       CALL top_alloc()              ! allocate TOP arrays
@@ -110,7 +114,9 @@ CONTAINS
       IF( lk_c14b    )       CALL trc_ini_c14b         ! C14 bomb  tracer
       IF( lk_my_trc  )       CALL trc_ini_my_trc       ! MY_TRC  tracers
       ! +++>>> FABM
+#if defined key_fabm
       IF( lk_fabm    )       CALL trc_ini_fabm         ! FABM    tracers
+#endif
       ! FABM <<<+++
 
       CALL trc_ice_ini                                 ! Tracers in sea ice
@@ -157,16 +163,20 @@ CONTAINS
       ENDIF
       ! --->>> FABM
 ! Initialisation of tracers Boundary Conditions  - here so that you can use initial condition as boundary
-      !IF( lk_my_trc )     CALL trc_bc_init(jptra)
+#if !defined key_fabm
+      IF( lk_my_trc )     CALL trc_bc_init(jptra)
+#endif
       ! FABM <<<---
       ! FABM +++>>>
 ! Initialisation of FABM diagnostics and tracer boundary conditions (so that you can use initial condition as boundary)
+#if defined key_fabm
       IF( lk_fabm )     THEN
           wndm=0._wp !uninitiased field at this point
           qsr=0._wp !uninitiased field at this point
           CALL compute_fabm ! only needed to set-up diagnostics
           CALL trc_bc_init(jptra)
       ENDIF
+#endif
       ! FABM <<<+++
  
       tra(:,:,:,:) = 0._wp

@@ -1,10 +1,11 @@
 MODULE par_fabm
 
+#if defined key_fabm
    USE fabm
-
+#endif
    IMPLICIT NONE
 
-   TYPE (type_model) :: model !FABM model instance
+   !TYPE (type_model) :: model !FABM model instance
 
    INTEGER, PUBLIC :: jp_fabm0, jp_fabm1, jp_fabm, &
                       jp_fabm_surface, jp_fabm_bottom, &

@@ -22,10 +22,14 @@ MODULE trdtrc_oce
    CHARACTER(len=50) ::  cn_trdrst_trc_in     !: suffix of pass. tracer restart name (input)
    CHARACTER(len=50) ::  cn_trdrst_trc_out    !: suffix of pass. tracer restart name (output)
    ! --->>> FABM
-   ! LOGICAL, DIMENSION(jptra) ::   ln_trdtrc   !: large trends diagnostic to write or not (namelist)
+#if !defined key_fabm
+    LOGICAL, DIMENSION(jptra) ::   ln_trdtrc   !: large trends diagnostic to write or not (namelist)
+#endif 
    ! FABM <<<---
    ! +++>>> FABM
+#if defined key_fabm
    LOGICAL, DIMENSION(jpmaxtrc) ::   ln_trdtrc   !: large trends diagnostic to write or not (namelist)
+#endif
    ! FABM <<<+++
 
 # if defined key_trdtrc && defined key_iomput

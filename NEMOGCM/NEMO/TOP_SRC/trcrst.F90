@@ -28,7 +28,9 @@ MODULE trcrst
    USE iom
    USE daymod
    ! +++>>> FABM
+#if defined key_fabm
    USE trcrst_fabm
+#endif
    ! FABM <<<+++
    IMPLICIT NONE
    PRIVATE
@@ -120,8 +122,9 @@ CONTAINS
          CALL iom_get( numrtr, jpdom_autoglo, 'TRB'//ctrcnm(jn), trb(:,:,:,jn) )
       END DO
       ! +++>>> FABM
-
+#if defined key_fabm
       IF (lk_fabm) CALL trc_rst_read_fabm
+#endif
       ! FABM <<<+++
       !
    END SUBROUTINE trc_rst_read
@@ -149,7 +152,9 @@ CONTAINS
          CALL iom_rstput( kt, nitrst, numrtw, 'TRB'//ctrcnm(jn), trb(:,:,:,jn) )
       END DO
       ! +++>>> FABM
+#if defined key_fabm
       IF (lk_fabm) CALL trc_rst_wri_fabm(kt)
+#endif
       ! FABM <<<+++
       !
       IF( kt == nitrst ) THEN
