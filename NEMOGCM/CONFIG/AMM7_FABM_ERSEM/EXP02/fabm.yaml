@@ -181,7 +181,6 @@ instances:
     parameters:
       composition: cnpsf
       resuspension: true
-      vel_crit: 0.008                                       # critical shear velocity for resuspension
       sdQ5: 0.3
       ndeposition: 3                                        # number of target pools where the sedimentation flux goes (-)
       #                                                    # fraction for target pool number 1 is calculated by difference
@@ -211,7 +210,6 @@ instances:
     parameters:
       composition: cnpsf                                   # elemental composition
       resuspension: true                                   # enable resuspension, default = false
-      vel_crit: 0.02                                       # critical shear velocity for resuspension
       c0: 0.001                                            # background carbon concentration (mg C/m^2)
     initialization:
       c: 3052.0                                            # carbon (mg C/m^2)
