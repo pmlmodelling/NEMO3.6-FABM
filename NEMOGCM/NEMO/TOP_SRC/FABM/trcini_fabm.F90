@@ -17,12 +17,7 @@ MODULE trcini_fabm
    USE trc
    USE par_fabm
    USE trcsms_fabm
-   USE fabm_config,ONLY: fabm_create_model_from_yaml_file
-#  if _FABM_API_VERSION_ >= 1
-   USE fabm,ONLY: type_external_variable => type_fabm_variable, fabm_initialize_library
-#  else
-   USE fabm,ONLY: type_external_variable, fabm_initialize_library
-#  endif
+   USE type_fabm_variable, fabm_initialize_library
    USE fabm_driver
    USE inputs_fabm,ONLY: initialize_inputs,link_inputs, &
      type_input_variable,type_input_data,type_river_data, &
@@ -72,9 +67,9 @@ CONTAINS
       ALLOCATE(type_nemo_fabm_driver::driver)
 
       ! Allow FABM to parse fabm.yaml. This ensures numbers of variables are known.
-      call fabm_create_model_from_yaml_file(model)
+      model => fabm_create_model()
 
-      jp_fabm = size(model%state_variables)
+      jp_fabm = size(model%interior_state_variables)
       jp_fabm_bottom = size(model%bottom_state_variables)
       jp_fabm_surface = size(model%surface_state_variables)
       jp_fabm0 = jptra + 1
@@ -82,7 +77,7 @@ CONTAINS
       jp_fabm_m1=jptra
       jptra = jptra + jp_fabm
       jpdia2d = jpdia2d + size(model%horizontal_diagnostic_variables)
-      jpdia3d = jpdia3d + size(model%diagnostic_variables)
+      jpdia3d = jpdia3d + size(model%interior_diagnostic_variables)
       jpdiabio = jpdiabio + jp_fabm
 
       nn_adv = 3
@@ -111,9 +106,9 @@ CONTAINS
 
          WRITE (xml_unit,1000) ' <field_group id="ptrc_T" grid_ref="grid_T_3D">'
          DO jn=1,jp_fabm
-            CALL write_variable_xml(xml_unit,model%state_variables(jn))
+            CALL write_variable_xml(xml_unit,model%interior_state_variables(jn))
 #if defined key_trdtrc
-            CALL write_trends_xml(xml_unit,model%state_variables(jn))
+            CALL write_trends_xml(xml_unit,model%interior_state_variables(jn))
 #endif
          END DO
          WRITE (xml_unit,1000) ' </field_group>'
@@ -128,17 +123,17 @@ CONTAINS
          WRITE (xml_unit,1000) ' </field_group>'
 
          WRITE (xml_unit,1000) ' <field_group id="diad_T" grid_ref="grid_T_2D">'
-         DO jn=1,size(model%diagnostic_variables)
-            CALL write_variable_xml(xml_unit,model%diagnostic_variables(jn),3)
+         DO jn=1,size(model%interior_diagnostic_variables)
+            CALL write_variable_xml(xml_unit,model%interior_diagnostic_variables(jn),3)
          END DO
          DO jn=1,size(model%horizontal_diagnostic_variables)
             CALL write_variable_xml(xml_unit,model%horizontal_diagnostic_variables(jn))
          END DO
-         DO jn=1,size(model%state_variables)
-            WRITE (xml_unit,'(A)') '  <field id="'//TRIM(model%state_variables(jn)%name)//'_VINT" long_name="depth-integrated '//TRIM(model%state_variables(jn)%long_name)//'" unit="'//TRIM(model%state_variables(jn)%units)//'*m" default_value="0.0" />'
+         DO jn=1,size(model%interior_state_variables)
+            WRITE (xml_unit,'(A)') '  <field id="'//TRIM(model%interior_state_variables(jn)%name)//'_VINT" long_name="depth-integrated '//TRIM(model%interior_state_variables(jn)%long_name)//'" unit="'//TRIM(model%interior_state_variables(jn)%units)//'*m" default_value="0.0" />'
          END DO
-         DO jn=1,size(model%diagnostic_variables)
-            WRITE (xml_unit,'(A)') '  <field id="'//TRIM(model%diagnostic_variables(jn)%name)//'_VINT" long_name="depth-integrated '//TRIM(model%diagnostic_variables(jn)%long_name)//'" unit="'//TRIM(model%diagnostic_variables(jn)%units)//'*m" default_value="0.0" />'
+         DO jn=1,size(model%interior_diagnostic_variables)
+            WRITE (xml_unit,'(A)') '  <field id="'//TRIM(model%interior_diagnostic_variables(jn)%name)//'_VINT" long_name="depth-integrated '//TRIM(model%interior_diagnostic_variables(jn)%long_name)//'" unit="'//TRIM(model%interior_diagnostic_variables(jn)%units)//'*m" default_value="0.0" />'
          END DO
          WRITE (xml_unit,1000) ' </field_group>'
 
@@ -176,7 +171,7 @@ CONTAINS
    SUBROUTINE write_variable_xml(xml_unit,variable,flag_grid_ref)
       INTEGER,INTENT(IN) :: xml_unit
       INTEGER,INTENT(IN),OPTIONAL :: flag_grid_ref
-      CLASS (type_external_variable),INTENT(IN) :: variable
+      CLASS (type_fabm_variable),INTENT(IN) :: variable
 
       CHARACTER(LEN=20) :: missing_value,string_dimensions
       INTEGER :: number_dimensions
@@ -209,7 +204,7 @@ CONTAINS
    SUBROUTINE write_trends_xml(xml_unit,variable,flag_grid_ref)
       INTEGER,INTENT(IN) :: xml_unit
       INTEGER,INTENT(IN),OPTIONAL :: flag_grid_ref
-      CLASS (type_external_variable),INTENT(IN) :: variable
+      CLASS (type_fabm_variable),INTENT(IN) :: variable
 
       INTEGER :: number_dimensions,i
       CHARACTER(LEN=20) :: missing_value,string_dimensions
@@ -329,9 +324,9 @@ CONTAINS
       IF (lwp) THEN
          IF (jp_fabm.gt.0) WRITE(numout,*) " FABM tracers:"
          DO jn=1,jp_fabm
-            WRITE(numout,*) "   State",jn,":",trim(model%state_variables(jn)%name), &
-               " (",trim(model%state_variables(jn)%long_name), &
-               ") [",trim(model%state_variables(jn)%units),"]"
+            WRITE(numout,*) "   State",jn,":",trim(model%interior_state_variables(jn)%name), &
+               " (",trim(model%interior_state_variables(jn)%long_name), &
+               ") [",trim(model%interior_state_variables(jn)%units),"]"
          ENDDO
          IF (jp_fabm_surface.gt.0) WRITE(numout,*) "FABM seasurface states:"
          DO jn=1,jp_fabm_surface

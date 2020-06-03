@@ -37,9 +37,6 @@ MODULE trcsms_fabm
    !USE fldread         !  time interpolation
 
    USE fabm
-#  if _FABM_API_VERSION_ >= 1
-   USE fabm_v0_compatibility
-#  endif
 
    IMPLICIT NONE
 
@@ -126,19 +123,19 @@ CONTAINS
       CALL trc_rnf_fabm ( kt ) ! River forcings
 
       ! Send 3D diagnostics to output (these apply to time "n")
-      DO jn = 1, size(model%diagnostic_variables)
-         IF (model%diagnostic_variables(jn)%save) THEN
+      DO jn = 1, size(model%interior_diagnostic_variables)
+         IF (model%interior_diagnostic_variables(jn)%save) THEN
             ! Save 3D field
-            pdat => fabm_get_interior_diagnostic_data(model,jn)
-            CALL iom_put(model%diagnostic_variables(jn)%name, pdat)
+            pdat => model%get_interior_diagnostic_data(jn)
+            CALL iom_put(model%interior_diagnostic_variables(jn)%name, pdat)
 
             ! Save depth integral if selected for output in XIOS
-            IF (iom_use(TRIM(model%diagnostic_variables(jn)%name)//'_VINT')) THEN
+            IF (iom_use(TRIM(model%interior_diagnostic_variables(jn)%name)//'_VINT')) THEN
                vint = 0._wp
                DO jk = 1, jpk
                   vint = vint + pdat(:,:,jk) * fse3t(:,:,jk) * tmask(:,:,jk)
                END DO
-               CALL iom_put(TRIM(model%diagnostic_variables(jn)%name)//'_VINT', vint)
+               CALL iom_put(TRIM(model%interior_diagnostic_variables(jn)%name)//'_VINT', vint)
             END IF
          END IF
       END DO
@@ -146,7 +143,7 @@ CONTAINS
       ! Send 2D diagnostics to output (these apply to time "n")
       DO jn = 1, size(model%horizontal_diagnostic_variables)
          IF (model%horizontal_diagnostic_variables(jn)%save) &
-             CALL iom_put( model%horizontal_diagnostic_variables(jn)%name, fabm_get_horizontal_diagnostic_data(model,jn))
+             CALL iom_put( model%horizontal_diagnostic_variables(jn)%name, model%get_horizontal_diagnostic_data(jn))
       END DO
 
       IF( l_trdtrc ) THEN      ! Save the trends in the mixed layer
@@ -225,26 +222,7 @@ CONTAINS
          END DO
       END IF
 
-      ! Inform FABM about new time, allowing it to update temporal means
-      CALL fabm_update_time(model,real(kt, wp),nyear,nmonth,nday,REAL(nsec_day,wp))
-
-#if _FABM_API_VERSION_ >= 1
-      CALL model%process(model%prepare_job)
-#else
-      ! Compute light extinction
-      DO jk=1,jpk
-          DO jj=1,jpj
-            call fabm_get_light_extinction(model,1,jpi,jj,jk,ext)
-         END DO
-      END DO
-
-      ! Compute light field (stored among FABM's internal diagnostics)
-      DO jj=1,jpj
-          DO ji=1,jpi
-            call fabm_get_light(model,1,jpk,ji,jj)
-         END DO
-      END DO
-#endif
+      CALL model%prepare_inputs(real(kt, wp),nyear,nmonth,nday,REAL(nsec_day,wp))
 
       ! TODO: retrieve 3D shortwave and store in etot3
 
@@ -255,7 +233,7 @@ CONTAINS
       DO jj=1,jpj
          ! Process bottom (fabm_do_bottom increments rather than sets, so zero flux array first)
          flux = 0._wp
-         CALL fabm_do_bottom(model,1,jpi,jj,flux,fabm_st2Da(:,jj,jp_fabm_surface+1:))
+         CALL model%get_bottom_sources(1,jpi,jj,flux,fabm_st2Da(:,jj,jp_fabm_surface+1:))
          DO jn=1,jp_fabm
              DO ji=1,jpi
                  ! Divide bottom fluxes by height of bottom layer and add to source terms.
@@ -266,7 +244,7 @@ CONTAINS
 
          ! Process surface (fabm_do_surface increments rather than sets, so zero flux array first)
          flux = 0._wp
-         CALL fabm_do_surface(model,1,jpi,jj,flux,fabm_st2Da(:,jj,1:jp_fabm_surface))
+         CALL model%get_surface_sources(1,jpi,jj,flux,fabm_st2Da(:,jj,1:jp_fabm_surface))
          DO jn=1,jp_fabm
              ! Divide surface fluxes by height of surface layer and add to source terms.
              tra(:,jj,1,jp_fabm_m1+jn) = tra(:,jj,1,jp_fabm_m1+jn) + flux(:,jn)/fse3t(:,jj,1)
@@ -276,13 +254,11 @@ CONTAINS
       ! Compute interior source terms (NB fabm_do increments rather than sets)
       DO jk=1,jpk
           DO jj=1,jpj
-              CALL fabm_do(model,1,jpi,jj,jk,tra(:,jj,jk,jp_fabm0:jp_fabm1))
+              CALL model%get_interior_sources(1,jpi,jj,jk,tra(:,jj,jk,jp_fabm0:jp_fabm1))
           END DO
       END DO
 
-#if _FABM_API_VERSION_ >= 1
-      CALL model%process(model%get_diagnostics_job)
-#endif
+      CALL model%finalize_outputs()
    END SUBROUTINE compute_fabm
 
    FUNCTION check_state(repair) RESULT(exit_state)
@@ -296,7 +272,7 @@ CONTAINS
       exit_state%repaired =.FALSE.
       DO jk=1,jpk
          DO jj=1,jpj
-            CALL fabm_check_state(model,1,jpi,jj,jk,repair,valid_int)
+            CALL model%check_interior_state(1,jpi,jj,jk,repair,valid_int)
             IF (repair.AND..NOT.valid_int) THEN
                repair_interior_count = repair_interior_count + 1
                exit_state%repaired = .TRUE.
@@ -305,13 +281,13 @@ CONTAINS
          END DO
       END DO
       DO jj=1,jpj
-         CALL fabm_check_surface_state(model,1,jpi,jj,repair,valid_sf)
+         CALL model%check_surface_state(1,jpi,jj,repair,valid_sf)
          IF (repair.AND..NOT.valid_sf) THEN
             repair_surface_count = repair_surface_count + 1
             exit_state%repaired = .TRUE.
          END IF
          IF (.NOT.(valid_sf.AND.valid_bt).AND..NOT.repair) exit_state%valid = .FALSE.
-         CALL fabm_check_bottom_state(model,1,jpi,jj,repair,valid_bt)
+         CALL model%check_bottom_state(1,jpi,jj,repair,valid_bt)
          IF (repair.AND..NOT.valid_bt) THEN
             repair_bottom_count = repair_bottom_count + 1
             exit_state%repaired = .TRUE.
@@ -328,7 +304,7 @@ CONTAINS
 
       DO jk=1,jpk
          DO jj=1,jpj
-            CALL fabm_get_conserved_quantities(model,1,jpi,jj,jk,current_total)
+            CALL model%get_interior_conserved_quantities(1,jpi,jj,jk,current_total)
             DO jn=1,SIZE(model%conserved_quantities)
                total(jn) = total(jn) + SUM(cvol(:,jj,jk)*current_total(:,jn)*tmask_i(:,jj))
             END DO
@@ -336,7 +312,7 @@ CONTAINS
       END DO
 
       DO jj=1,jpj
-         CALL fabm_get_horizontal_conserved_quantities(model,1,jpi,jj,current_total)
+         CALL model%get_horizontal_conserved_quantities(1,jpi,jj,current_total)
          DO jn=1,SIZE(model%conserved_quantities)
             total(jn) = total(jn) + SUM(e1e2t(:,jj)*current_total(:,jn)*tmask_i(:,jj))
          END DO
@@ -432,7 +408,7 @@ CONTAINS
       !
 
       ! Make FABM aware of diagnostics that are not needed [not included in output]
-      DO jn=1,size(model%diagnostic_variables)
+      DO jn=1,size(model%interior_diagnostic_variables)
           !model%diagnostic_variables(jn)%save = iom_use(model%diagnostic_variables(jn)%name)
       END DO
       DO jn=1,size(model%horizontal_diagnostic_variables)
@@ -440,12 +416,11 @@ CONTAINS
       END DO
 
       ! Provide FABM with domain extents [after this, the save attribute of diagnostic variables can no longe change!]
-      call fabm_set_domain(model,jpi, jpj, jpk, rdt)
+      call model%set_domain(jpi, jpj, jpk, rdt)
 
-      ! Provide FABM with the vertical indices of the surface and bottom, and the land-sea mask.
+      ! Provide FABM with the vertical indices of the bottom, and the land-sea mask.
       call model%set_bottom_index(mbkt)  ! NB mbkt extents should match dimension lengths provided to fabm_set_domain
-      call model%set_surface_index(1)
-      call fabm_set_mask(model,tmask,tmask(:,:,1)) ! NB tmask extents should match dimension lengths provided to fabm_set_domain
+      call model%set_mask(tmask,tmask(:,:,1)) ! NB tmask extents should match dimension lengths provided to fabm_set_domain
 
       ! Send pointers to state data to FABM
       DO jn=1,jp_fabm
@@ -480,25 +455,25 @@ CONTAINS
       call update_inputs( nit000, .false. )
 
       ! Check whether FABM has all required data
-      call fabm_check_ready(model)
+      call model%start()
 
       ! Initialize state
       DO jj=1,jpj
-         CALL fabm_initialize_surface_state(model,1,jpi,jj)
-         CALL fabm_initialize_bottom_state(model,1,jpi,jj)
+         CALL model%initialize_surface_state(1,jpi,jj)
+         CALL model%initialize_bottom_state(1,jpi,jj)
       END DO
       DO jk=1,jpk
          DO jj=1,jpj
-            CALL fabm_initialize_state(model,1,jpi,jj,jk)
+            CALL model%initialize_interior_state(1,jpi,jj,jk)
          END DO
       END DO
 
       ! Set mask for negativity corrections to the relevant states
       lk_rad_fabm = .FALSE.
       DO jn=1,jp_fabm
-        IF (model%state_variables(jn)%minimum.ge.0) THEN
+        IF (model%interior_state_variables(jn)%minimum.ge.0) THEN
           lk_rad_fabm(jn)=.TRUE.
-          IF(lwp) WRITE(numout,*) 'FABM clipping for '//TRIM(model%state_variables(jn)%name)//' activated.'
+          IF(lwp) WRITE(numout,*) 'FABM clipping for '//TRIM(model%interior_state_variables(jn)%name)//' activated.'
         END IF
       END DO
 

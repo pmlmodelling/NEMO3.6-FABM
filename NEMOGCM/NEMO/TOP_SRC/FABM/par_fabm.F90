@@ -2,10 +2,10 @@ MODULE par_fabm
 
 #if defined key_fabm
 #  include "fabm_version.h"
-   USE fabm
-#  if _FABM_API_VERSION_ >= 1
-   USE fabm_v0_compatibility
+#  if _FABM_API_VERSION_ < 1
+#    error You need FABM 1.0 or later
 #  endif
+   USE fabm
 #endif
 
    IMPLICIT NONE
@@ -17,7 +17,7 @@ MODULE par_fabm
    LOGICAL, PUBLIC, ALLOCATABLE, DIMENSION(:) ::   lk_rad_fabm !: FABM negativity correction flag array
 
 #if defined key_fabm
-   TYPE (type_model) :: model !FABM model instance
+   CLASS (type_model), POINTER :: model !FABM model instance
 
    !!---------------------------------------------------------------------
    !!   'key_fabm'                     FABM tracers

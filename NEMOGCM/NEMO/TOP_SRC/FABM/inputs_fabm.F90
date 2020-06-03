@@ -21,9 +21,6 @@ MODULE inputs_fabm
    USE fldread
    USE par_fabm
    USE fabm
-#  if _FABM_API_VERSION_ >= 1
-   USE fabm_v0_compatibility
-#  endif
 
    IMPLICIT NONE
 
@@ -91,7 +88,7 @@ MODULE inputs_fabm
            ! Transfer namelist settings to new input_data object
            ALLOCATE(input_data, STAT=ierr)
            IF( ierr > 0 ) CALL ctl_stop( 'STOP', 'inputs_fabm:initialize_inputs: unable to allocate input_data object for variable '//TRIM(name) )
-           input_data%horizontal_id = fabm_get_horizontal_variable_id(model,name)
+           input_data%horizontal_id = model%get_horizontal_variable_id(name)
            IF (.NOT.fabm_is_variable_used(input_data%horizontal_id)) THEN
               ! This variable was not found among FABM's horizontal variables (at least, those that are read by one or more FABM modules)
               CALL ctl_stop('STOP', 'inputs_fabm:initialize_inputs: variable "'//TRIM(name)//'" was not found among horizontal FABM variables.')
@@ -134,7 +131,7 @@ MODULE inputs_fabm
            ! provide NEMO with position of the respective state variable
            ! within tracer field
            DO jn=1,jp_fabm
-             IF (TRIM(name) == TRIM(model%state_variables(jn)%name)) THEN
+             IF (TRIM(name) == TRIM(model%interior_state_variables(jn)%name)) THEN
                river_data%jp_pos = jp_fabm_m1+jn
              END IF
            END DO
@@ -177,7 +174,7 @@ MODULE inputs_fabm
       DO WHILE (ASSOCIATED(input_data))
          ! Provide FABM with pointer to field that will receive prescribed data.
          ! NB source=data_source_user guarantees that the prescribed data takes priority over any data FABM may already have for that variable.
-         CALL fabm_link_horizontal_data(model,input_data%horizontal_id,input_data%sf(1)%fnow(:,:,1),source=data_source_user)
+         CALL model%link_horizontal_data(input_data%horizontal_id,input_data%sf(1)%fnow(:,:,1),source=data_source_user)
          input_data => input_data%next
       END DO
 

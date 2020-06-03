@@ -16,9 +16,6 @@ MODULE vertical_movement_fabm
    USE trc
    USE par_fabm
    USE fabm
-#  if _FABM_API_VERSION_ >= 1
-   USE fabm_v0_compatibility
-#  endif
    USE dom_oce
 #if defined key_trdtrc && defined key_iomput
    USE iom
@@ -75,7 +72,7 @@ MODULE vertical_movement_fabm
       DO jj=1,jpj ! j-loop
          ! Get vertical velocities at layer centres (entire 1:jpi,1:jpk slice).
          DO jk=1,jpk
-            CALL fabm_get_vertical_movement(model,1,jpi,jj,jk,w_ct(:,jk,:))
+            CALL model%get_vertical_movement(1,jpi,jj,jk,w_ct(:,jk,:))
          END DO
          DO ji=1,jpi ! i-loop
             ! Only process this horizontal point (ji,jj) if number of layers exceeds 1

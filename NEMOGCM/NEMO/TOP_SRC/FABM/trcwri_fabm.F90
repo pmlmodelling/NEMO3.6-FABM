@@ -59,7 +59,7 @@ CONTAINS
         IF(ln_trdtrc (jn))THEN
          trpool(:,:,:) = 0.5 * ( trn(:,:,:,jp_fabm0+jn-1)*fse3t_a(:,:,:) + &
                              tr_temp(:,:,:,jn)*fse3t(:,:,:) )
-         cltra = TRIM( model%state_variables(jn)%name )//"_e3t"     ! depth integrated output
+         cltra = TRIM( model%interior_state_variables(jn)%name )//"_e3t"     ! depth integrated output
          IF( kt == nittrc000 ) write(6,*)'output pool ',cltra
          CALL iom_put( cltra, trpool)
         ENDIF
@@ -89,15 +89,15 @@ CONTAINS
 #endif
       DO jn = 1, jp_fabm
          ! Save 3D field
-         CALL iom_put(model%state_variables(jn)%name, trn(:,:,:,jp_fabm0+jn-1))
+         CALL iom_put(model%interior_state_variables(jn)%name, trn(:,:,:,jp_fabm0+jn-1))
 
          ! Save depth integral if selected for output in XIOS
-         IF (iom_use(TRIM(model%state_variables(jn)%name)//'_VINT')) THEN
+         IF (iom_use(TRIM(model%interior_state_variables(jn)%name)//'_VINT')) THEN
             vint = 0._wp
             DO jk = 1, jpk
                vint = vint + trn(:,:,jk,jp_fabm0+jn-1) * fse3t(:,:,jk) * tmask(:,:,jk)
             END DO
-            CALL iom_put(TRIM(model%state_variables(jn)%name)//'_VINT', vint)
+            CALL iom_put(TRIM(model%interior_state_variables(jn)%name)//'_VINT', vint)
          END IF
       END DO
       DO jn = 1, jp_fabm_surface
