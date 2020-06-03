@@ -231,7 +231,7 @@ CONTAINS
 
       ! Compute interfacial source terms and fluxes
       DO jj=1,jpj
-         ! Process bottom (fabm_do_bottom increments rather than sets, so zero flux array first)
+         ! Process bottom (get_bottom_sources increments rather than sets, so zero flux array first)
          flux = 0._wp
          CALL model%get_bottom_sources(1,jpi,jj,flux,fabm_st2Da(:,jj,jp_fabm_surface+1:))
          DO jn=1,jp_fabm
@@ -242,7 +242,7 @@ CONTAINS
              END DO
          END DO
 
-         ! Process surface (fabm_do_surface increments rather than sets, so zero flux array first)
+         ! Process surface (get_surface_sources increments rather than sets, so zero flux array first)
          flux = 0._wp
          CALL model%get_surface_sources(1,jpi,jj,flux,fabm_st2Da(:,jj,1:jp_fabm_surface))
          DO jn=1,jp_fabm
@@ -251,7 +251,7 @@ CONTAINS
          END DO
       END DO
 
-      ! Compute interior source terms (NB fabm_do increments rather than sets)
+      ! Compute interior source terms (NB get_interior_sources increments rather than sets)
       DO jk=1,jpk
           DO jj=1,jpj
               CALL model%get_interior_sources(1,jpi,jj,jk,tra(:,jj,jk,jp_fabm0:jp_fabm1))
@@ -409,18 +409,18 @@ CONTAINS
 
       ! Make FABM aware of diagnostics that are not needed [not included in output]
       DO jn=1,size(model%interior_diagnostic_variables)
-          !model%diagnostic_variables(jn)%save = iom_use(model%diagnostic_variables(jn)%name)
+          !model%interior_diagnostic_variables(jn)%save = iom_use(model%interior_diagnostic_variables(jn)%name)
       END DO
       DO jn=1,size(model%horizontal_diagnostic_variables)
           !model%horizontal_diagnostic_variables(jn)%save = iom_use(model%horizontal_diagnostic_variables(jn)%name)
       END DO
 
-      ! Provide FABM with domain extents [after this, the save attribute of diagnostic variables can no longe change!]
+      ! Provide FABM with domain extents
       call model%set_domain(jpi, jpj, jpk, rdt)
 
       ! Provide FABM with the vertical indices of the bottom, and the land-sea mask.
-      call model%set_bottom_index(mbkt)  ! NB mbkt extents should match dimension lengths provided to fabm_set_domain
-      call model%set_mask(tmask,tmask(:,:,1)) ! NB tmask extents should match dimension lengths provided to fabm_set_domain
+      call model%set_bottom_index(mbkt)  ! NB mbkt extents should match dimension lengths provided to set_domain
+      call model%set_mask(tmask,tmask(:,:,1)) ! NB tmask extents should match dimension lengths provided to set_domain
 
       ! Send pointers to state data to FABM
       DO jn=1,jp_fabm
@@ -454,7 +454,7 @@ CONTAINS
       call link_inputs
       call update_inputs( nit000, .false. )
 
-      ! Check whether FABM has all required data
+      ! Check whether FABM has all required data [after this, the save attribute of diagnostic variables can no longe change!]
       call model%start()
 
       ! Initialize state

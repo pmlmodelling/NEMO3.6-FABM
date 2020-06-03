@@ -89,7 +89,7 @@ MODULE inputs_fabm
            ALLOCATE(input_data, STAT=ierr)
            IF( ierr > 0 ) CALL ctl_stop( 'STOP', 'inputs_fabm:initialize_inputs: unable to allocate input_data object for variable '//TRIM(name) )
            input_data%horizontal_id = model%get_horizontal_variable_id(name)
-           IF (.NOT.fabm_is_variable_used(input_data%horizontal_id)) THEN
+           IF (.NOT.model%is_variable_used(input_data%horizontal_id)) THEN
               ! This variable was not found among FABM's horizontal variables (at least, those that are read by one or more FABM modules)
               CALL ctl_stop('STOP', 'inputs_fabm:initialize_inputs: variable "'//TRIM(name)//'" was not found among horizontal FABM variables.')
            END IF
