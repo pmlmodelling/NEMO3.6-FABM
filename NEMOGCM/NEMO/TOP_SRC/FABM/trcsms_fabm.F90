@@ -447,7 +447,7 @@ CONTAINS
       call model%link_horizontal_data(fabm_standard_variables%surface_downwelling_shortwave_flux,qsr(:,:))
       call model%link_horizontal_data(fabm_standard_variables%bottom_depth_below_geoid,bathy(:,:))
       call model%link_horizontal_data(fabm_standard_variables%ice_area_fraction,fr_i(:,:))
-      swr_id = model%get_bulk_variable_id(fabm_standard_variables%downwelling_shortwave_flux)
+      swr_id = model%get_interior_variable_id(fabm_standard_variables%downwelling_shortwave_flux)
 
       ! Obtain user-specified input variables (read from NetCDF file)
       call link_inputs
