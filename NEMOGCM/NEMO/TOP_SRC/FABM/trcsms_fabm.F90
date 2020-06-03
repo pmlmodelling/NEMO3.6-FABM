@@ -6,7 +6,6 @@ MODULE trcsms_fabm
    !! History :   1.0  !  2015-04  (PML) Original code
    !!----------------------------------------------------------------------
 #if defined key_fabm
-#  include "fabm_version.h"
    !!----------------------------------------------------------------------
    !!   'key_fabm'                                               FABM tracers
    !!----------------------------------------------------------------------
@@ -35,8 +34,6 @@ MODULE trcsms_fabm
    USE vertical_movement_fabm
 
    !USE fldread         !  time interpolation
-
-   USE fabm
 
    IMPLICIT NONE
 

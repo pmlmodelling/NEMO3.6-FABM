@@ -20,7 +20,6 @@ MODULE inputs_fabm
    USE iom
    USE fldread
    USE par_fabm
-   USE fabm
 
    IMPLICIT NONE
 
