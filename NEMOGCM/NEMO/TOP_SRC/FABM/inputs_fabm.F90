@@ -40,8 +40,8 @@ MODULE inputs_fabm
    END TYPE
 
    TYPE, PUBLIC, EXTENDS(type_input_variable) :: type_input_data
-      TYPE(type_horizontal_variable_id)   :: horizontal_id
-      TYPE(type_input_data), POINTER   :: next => null()
+      TYPE(type_fabm_horizontal_variable_id) :: horizontal_id
+      TYPE(type_input_data), POINTER         :: next => null()
    END TYPE
    TYPE (type_input_data), POINTER, PUBLIC :: first_input_data => NULL()
 
