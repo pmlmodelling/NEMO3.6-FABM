@@ -6,7 +6,6 @@ MODULE trcini_fabm
    !! History :   2.0  !  2007-12  (C. Ethe, G. Madec) Original code
    !!----------------------------------------------------------------------
 #if defined key_fabm
-#  include "fabm_version.h"
    !!----------------------------------------------------------------------
    !!   'key_fabm'                                               FABM tracers
    !!----------------------------------------------------------------------
@@ -17,7 +16,7 @@ MODULE trcini_fabm
    USE trc
    USE par_fabm
    USE trcsms_fabm
-   USE type_fabm_variable, fabm_initialize_library
+   USE fabm, only: fabm_create_model, type_fabm_variable, fabm_initialize_library
    USE fabm_driver
    USE inputs_fabm,ONLY: initialize_inputs,link_inputs, &
      type_input_variable,type_input_data,type_river_data, &
