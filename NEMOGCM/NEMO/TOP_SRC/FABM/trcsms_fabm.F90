@@ -33,6 +33,8 @@ MODULE trcsms_fabm
    USE inputs_fabm
    USE vertical_movement_fabm
 
+   USE fabm, only: type_fabm_interior_variable_id
+
    !USE fldread         !  time interpolation
 
    IMPLICIT NONE
@@ -71,7 +73,7 @@ MODULE trcsms_fabm
 
    REAL(wp), PUBLIC :: daynumber_in_year
 
-   TYPE (type_bulk_variable_id),SAVE :: swr_id
+   TYPE (type_fabm_interior_variable_id), SAVE :: swr_id
 
    INTEGER, PUBLIC :: nn_adv
 
@@ -374,9 +376,9 @@ CONTAINS
       !
       ! ALLOCATE here the arrays specific to FABM
       ALLOCATE( lk_rad_fabm(jp_fabm))
-      IF (model%variable_needs_values(standard_variables%pressure)) ALLOCATE(prn(jpi, jpj, jpk))
-      IF (ALLOCATED(prn) .or. model%variable_needs_values(standard_variables%density)) ALLOCATE(rho(jpi, jpj, jpk))
-      IF (model%variable_needs_values(standard_variables%bottom_stress)) ALLOCATE(taubot(jpi, jpj))
+      IF (model%variable_needs_values(fabm_standard_variables%pressure)) ALLOCATE(prn(jpi, jpj, jpk))
+      IF (ALLOCATED(prn) .or. model%variable_needs_values(fabm_standard_variables%density)) ALLOCATE(rho(jpi, jpj, jpk))
+      IF (model%variable_needs_values(fabm_standard_variables%bottom_stress)) ALLOCATE(taubot(jpi, jpj))
       ! ALLOCATE( tab(...) , STAT=trc_sms_fabm_alloc )
 
       ! Allocate arrays to hold state for surface-attached and bottom-attached state variables
@@ -431,21 +433,21 @@ CONTAINS
       END DO
 
       ! Send pointers to environmental data to FABM
-      call model%link_interior_data(standard_variables%depth,fsdept(:,:,:))
-      call model%link_interior_data(standard_variables%temperature,tsn(:,:,:,jp_tem))
-      call model%link_interior_data(standard_variables%practical_salinity,tsn(:,:,:,jp_sal))
-      IF (ALLOCATED(rho)) call model%link_interior_data(standard_variables%density,rho(:,:,:))
-      IF (ALLOCATED(prn)) call model%link_interior_data(standard_variables%pressure,prn)
-      IF (ALLOCATED(taubot)) call model%link_horizontal_data(standard_variables%bottom_stress,taubot(:,:))
-      call model%link_interior_data(standard_variables%cell_thickness,fse3t(:,:,:))
-      call model%link_horizontal_data(standard_variables%latitude,gphit)
-      call model%link_horizontal_data(standard_variables%longitude,glamt)
-      call model%link_scalar(standard_variables%number_of_days_since_start_of_the_year,daynumber_in_year)
-      call model%link_horizontal_data(standard_variables%wind_speed,wndm(:,:))
-      call model%link_horizontal_data(standard_variables%surface_downwelling_shortwave_flux,qsr(:,:))
-      call model%link_horizontal_data(standard_variables%bottom_depth_below_geoid,bathy(:,:))
-      call model%link_horizontal_data(standard_variables%ice_area_fraction,fr_i(:,:))
-      swr_id = model%get_bulk_variable_id(standard_variables%downwelling_shortwave_flux)
+      call model%link_interior_data(fabm_standard_variables%depth,fsdept(:,:,:))
+      call model%link_interior_data(fabm_standard_variables%temperature,tsn(:,:,:,jp_tem))
+      call model%link_interior_data(fabm_standard_variables%practical_salinity,tsn(:,:,:,jp_sal))
+      IF (ALLOCATED(rho)) call model%link_interior_data(fabm_standard_variables%density,rho(:,:,:))
+      IF (ALLOCATED(prn)) call model%link_interior_data(fabm_standard_variables%pressure,prn)
+      IF (ALLOCATED(taubot)) call model%link_horizontal_data(fabm_standard_variables%bottom_stress,taubot(:,:))
+      call model%link_interior_data(fabm_standard_variables%cell_thickness,fse3t(:,:,:))
+      call model%link_horizontal_data(fabm_standard_variables%latitude,gphit)
+      call model%link_horizontal_data(fabm_standard_variables%longitude,glamt)
+      call model%link_scalar(fabm_standard_variables%number_of_days_since_start_of_the_year,daynumber_in_year)
+      call model%link_horizontal_data(fabm_standard_variables%wind_speed,wndm(:,:))
+      call model%link_horizontal_data(fabm_standard_variables%surface_downwelling_shortwave_flux,qsr(:,:))
+      call model%link_horizontal_data(fabm_standard_variables%bottom_depth_below_geoid,bathy(:,:))
+      call model%link_horizontal_data(fabm_standard_variables%ice_area_fraction,fr_i(:,:))
+      swr_id = model%get_bulk_variable_id(fabm_standard_variables%downwelling_shortwave_flux)
 
       ! Obtain user-specified input variables (read from NetCDF file)
       call link_inputs
