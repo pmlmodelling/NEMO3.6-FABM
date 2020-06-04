@@ -33,9 +33,9 @@ MODULE trcsms_fabm
    USE inputs_fabm
    USE vertical_movement_fabm
 
-   USE fabm, only: type_fabm_interior_variable_id
-
    !USE fldread         !  time interpolation
+
+   USE fabm, only: type_fabm_interior_variable_id
 
    IMPLICIT NONE
 

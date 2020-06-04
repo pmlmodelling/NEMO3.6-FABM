@@ -98,7 +98,7 @@ MODULE vertical_movement_fabm
                      CALL advect_3(k_floor, trb(ji,jj,1:k_floor,jp_fabm_m1+jn), w_if(1:k_floor-1), h(1:k_floor), z2dt, dc(1:k_floor))
                   END IF
 
-                  ! Incorporate chnage due to verticla movement in sources-sinks
+                  ! Incorporate change due to vertical movement in sources-sinks
                   tra(ji,jj,1:k_floor,jp_fabm_m1+jn) = tra(ji,jj,1:k_floor,jp_fabm_m1+jn) + dc(1:k_floor)
 
 #if defined key_trdtrc && defined key_iomput
