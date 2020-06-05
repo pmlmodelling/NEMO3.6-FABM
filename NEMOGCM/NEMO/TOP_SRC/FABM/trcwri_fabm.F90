@@ -94,7 +94,7 @@ CONTAINS
          ! Save depth integral if selected for output in XIOS
          IF (iom_use(TRIM(model%interior_state_variables(jn)%name)//'_VINT')) THEN
             vint = 0._wp
-            DO jk = 1, jpk
+            DO jk = 1, jpkm1
                vint = vint + trn(:,:,jk,jp_fabm0+jn-1) * fse3t(:,:,jk) * tmask(:,:,jk)
             END DO
             CALL iom_put(TRIM(model%interior_state_variables(jn)%name)//'_VINT', vint)

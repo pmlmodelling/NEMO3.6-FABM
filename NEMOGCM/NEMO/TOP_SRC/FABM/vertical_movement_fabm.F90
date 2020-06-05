@@ -51,7 +51,7 @@ MODULE vertical_movement_fabm
       INTEGER, INTENT(in) ::   method ! advection method (1: 1st order upstream, 3: 3rd order TVD with QUICKEST limiter)
 
       INTEGER :: ji,jj,jk,jn,k_floor
-      REAL(wp) :: zwgt_if(1:jpk-1), dc(1:jpk), w_if(1:jpk-1), z2dt, h(1:jpk)
+      REAL(wp) :: zwgt_if(1:jpkm1-1), dc(1:jpkm1), w_if(1:jpkm1-1), z2dt, h(1:jpkm1)
 #if defined key_trdtrc
       CHARACTER (len=20) :: cltra
 #endif
@@ -67,19 +67,19 @@ MODULE vertical_movement_fabm
       ENDIF
 
       ! Compute interior vertical velocities and include them in source array.
-      DO jj=1,jpj ! j-loop
-         ! Get vertical velocities at layer centres (entire 1:jpi,1:jpk slice).
-         DO jk=1,jpk
-            CALL model%get_vertical_movement(1,jpi,jj,jk,w_ct(:,jk,:))
+      DO jj=2,jpjm1 ! j-loop
+         ! Get vertical velocities at layer centres (entire i-k slice).
+         DO jk=1,jpkm1
+            CALL model%get_vertical_movement(fs_2,fs_jpim1,jj,jk,w_ct(:,jk,:))
          END DO
-         DO ji=1,jpi ! i-loop
+         DO ji=fs_2,fs_jpim1 ! i-loop
             ! Only process this horizontal point (ji,jj) if number of layers exceeds 1
             k_floor = mbkt(ji,jj)
             IF (k_floor > 1) THEN
                ! Linearly interpolate to velocities at the interfaces between layers
                ! Note:
                !    - interface k sits between cell centre k and k+1 (k=0 for surface)
-               !    - k [1,jpk] increases downwards
+               !    - k [1,jpkm1] increases downwards
                !    - upward velocity is positive, downward velocity is negative
                h(1:k_floor) = fse3t(ji,jj,1:k_floor)
                zwgt_if(1:k_floor-1) = h(2:k_floor) / (h(1:k_floor-1) + h(2:k_floor))

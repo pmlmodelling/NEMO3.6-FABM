@@ -52,8 +52,6 @@ MODULE trcsms_fabm
 
    REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) :: flux    ! Cross-interface flux of pelagic variables (# m-2 s-1)
 
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:)   :: ext     ! Light extinction coefficient (m-1)
-
    ! Work array for mass aggregation
    REAL(wp), ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)   :: current_total
 
@@ -131,7 +129,7 @@ CONTAINS
             ! Save depth integral if selected for output in XIOS
             IF (iom_use(TRIM(model%interior_diagnostic_variables(jn)%name)//'_VINT')) THEN
                vint = 0._wp
-               DO jk = 1, jpk
+               DO jk = 1, jpkm1
                   vint = vint + pdat(:,:,jk) * fse3t(:,:,jk) * tmask(:,:,jk)
                END DO
                CALL iom_put(TRIM(model%interior_diagnostic_variables(jn)%name)//'_VINT', vint)
@@ -196,7 +194,7 @@ CONTAINS
       IF (ALLOCATED(prn)) THEN
          zalfg = 0.5e-4_wp * grav ! FABM wants dbar, convert from Pa (and multiply with 0.5 to average 2 cell thicknesses below)
          prn(:,:,1) = 10.1325_wp + zalfg * fse3t(:,:,1) * rho(:,:,1)
-         DO jk = 2, jpk                                              ! Vertical integration from the surface
+         DO jk = 2, jpkm1                                              ! Vertical integration from the surface
             prn(:,:,jk) = prn(:,:,jk-1) + zalfg * ( &
                         fse3t(:,:,jk-1) * rho(:,:,jk-1)  &
                         + fse3t(:,:,jk) * rho(:,:,jk) )
@@ -229,32 +227,33 @@ CONTAINS
       fabm_st2Da = 0._wp
 
       ! Compute interfacial source terms and fluxes
-      DO jj=1,jpj
+      DO jj=2,jpjm1
          ! Process bottom (get_bottom_sources increments rather than sets, so zero flux array first)
          flux = 0._wp
-         CALL model%get_bottom_sources(1,jpi,jj,flux,fabm_st2Da(:,jj,jp_fabm_surface+1:))
+         CALL model%get_bottom_sources(fs_2,fs_jpim1,jj,flux,fabm_st2Da(fs_2:fs_jpim1,jj,jp_fabm_surface+1:))
          DO jn=1,jp_fabm
-             DO ji=1,jpi
-                 ! Divide bottom fluxes by height of bottom layer and add to source terms.
-                 ! TODO: is there perhaps an existing variable for fse3t(ji,jj,mbkt(ji,jj))??
-                 tra(ji,jj,mbkt(ji,jj),jp_fabm_m1+jn) = tra(ji,jj,mbkt(ji,jj),jp_fabm_m1+jn) + flux(ji,jn)/fse3t(ji,jj,mbkt(ji,jj))
-             END DO
+            ! Divide bottom fluxes by height of bottom layer and add to source terms.
+            DO ji=fs_2,fs_jpim1
+               tra(ji,jj,mbkt(ji,jj),jp_fabm_m1+jn) = tra(ji,jj,mbkt(ji,jj),jp_fabm_m1+jn) + flux(ji,jn)/fse3t(ji,jj,mbkt(ji,jj))
+            END DO
          END DO
 
          ! Process surface (get_surface_sources increments rather than sets, so zero flux array first)
          flux = 0._wp
-         CALL model%get_surface_sources(1,jpi,jj,flux,fabm_st2Da(:,jj,1:jp_fabm_surface))
+         CALL model%get_surface_sources(fs_2,fs_jpim1,jj,flux,fabm_st2Da(fs_2:fs_jpim1,jj,1:jp_fabm_surface))
+         ! Divide surface fluxes by height of surface layer and add to source terms.
          DO jn=1,jp_fabm
-             ! Divide surface fluxes by height of surface layer and add to source terms.
-             tra(:,jj,1,jp_fabm_m1+jn) = tra(:,jj,1,jp_fabm_m1+jn) + flux(:,jn)/fse3t(:,jj,1)
+            DO ji=fs_2,fs_jpim1
+               tra(ji,jj,1,jp_fabm_m1+jn) = tra(ji,jj,1,jp_fabm_m1+jn) + flux(ji,jn)/fse3t(ji,jj,1)
+            END DO
          END DO
       END DO
 
       ! Compute interior source terms (NB get_interior_sources increments rather than sets)
-      DO jk=1,jpk
-          DO jj=1,jpj
-              CALL model%get_interior_sources(1,jpi,jj,jk,tra(:,jj,jk,jp_fabm0:jp_fabm1))
-          END DO
+      DO jk=1,jpkm1
+         DO jj=2,jpjm1
+            CALL model%get_interior_sources(fs_2,fs_jpim1,jj,jk,tra(fs_2:fs_jpim1,jj,jk,jp_fabm0:jp_fabm1))
+         END DO
       END DO
 
       CALL model%finalize_outputs()
@@ -269,9 +268,9 @@ CONTAINS
 
       exit_state%valid = .TRUE.
       exit_state%repaired =.FALSE.
-      DO jk=1,jpk
-         DO jj=1,jpj
-            CALL model%check_interior_state(1,jpi,jj,jk,repair,valid_int)
+      DO jk=1,jpkm1
+         DO jj=2,jpjm1
+            CALL model%check_interior_state(fs_2,fs_jpim1,jj,jk,repair,valid_int)
             IF (repair.AND..NOT.valid_int) THEN
                repair_interior_count = repair_interior_count + 1
                exit_state%repaired = .TRUE.
@@ -279,14 +278,14 @@ CONTAINS
             IF (.NOT.(valid_int.OR.repair)) exit_state%valid = .FALSE.
          END DO
       END DO
-      DO jj=1,jpj
-         CALL model%check_surface_state(1,jpi,jj,repair,valid_sf)
+      DO jj=2,jpjm1
+         CALL model%check_surface_state(fs_2,fs_jpim1,jj,repair,valid_sf)
          IF (repair.AND..NOT.valid_sf) THEN
             repair_surface_count = repair_surface_count + 1
             exit_state%repaired = .TRUE.
          END IF
          IF (.NOT.(valid_sf.AND.valid_bt).AND..NOT.repair) exit_state%valid = .FALSE.
-         CALL model%check_bottom_state(1,jpi,jj,repair,valid_bt)
+         CALL model%check_bottom_state(fs_2,fs_jpim1,jj,repair,valid_bt)
          IF (repair.AND..NOT.valid_bt) THEN
             repair_bottom_count = repair_bottom_count + 1
             exit_state%repaired = .TRUE.
@@ -297,23 +296,27 @@ CONTAINS
 
    SUBROUTINE trc_sms_fabm_check_mass()
       REAL(wp) :: total(SIZE(model%conserved_quantities))
-      INTEGER :: jk,jj,jn
+      INTEGER :: ji,jk,jj,jn
 
       total = 0._wp
 
-      DO jk=1,jpk
-         DO jj=1,jpj
-            CALL model%get_interior_conserved_quantities(1,jpi,jj,jk,current_total)
+      DO jk=1,jpkm1
+         DO jj=2,jpjm1
+            CALL model%get_interior_conserved_quantities(fs_2,fs_jpim1,jj,jk,current_total)
             DO jn=1,SIZE(model%conserved_quantities)
-               total(jn) = total(jn) + SUM(cvol(:,jj,jk)*current_total(:,jn)*tmask_i(:,jj))
+               DO ji=fs_2,fs_jpim1
+                  total(jn) = total(jn) + cvol(ji,jj,jk) * current_total(ji,jn) * tmask_i(ji,jj)
+               END DO
             END DO
          END DO
       END DO
 
-      DO jj=1,jpj
-         CALL model%get_horizontal_conserved_quantities(1,jpi,jj,current_total)
+      DO jj=2,jpjm1
+         CALL model%get_horizontal_conserved_quantities(fs_2,fs_jpim1,jj,current_total)
          DO jn=1,SIZE(model%conserved_quantities)
-            total(jn) = total(jn) + SUM(e1e2t(:,jj)*current_total(:,jn)*tmask_i(:,jj))
+            DO ji=fs_2,fs_jpim1
+               total(jn) = total(jn) + e1e2t(ji,jj) * current_total(ji,jn) * tmask_i(ji,jj)
+            END DO
          END DO
       END DO
 
@@ -387,15 +390,11 @@ CONTAINS
       ALLOCATE(fabm_st2Db(jpi, jpj, jp_fabm_surface+jp_fabm_bottom))
 
       ! Work array to hold surface and bottom fluxes
-      ALLOCATE(flux(jpi,jp_fabm))
-
-      ! Work array to hold extinction coefficients
-      ALLOCATE(ext(jpi))
-      ext=0._wp
+      ALLOCATE(flux(fs_2:fs_jpim1,jp_fabm))
 
       ! Allocate work arrays for vertical movement
-      ALLOCATE(w_ct(jpi,jpk,jp_fabm))
-      ALLOCATE(current_total(jpi,SIZE(model%conserved_quantities)))
+      ALLOCATE(w_ct(fs_2:fs_jpim1,1:jpkm1,jp_fabm))
+      ALLOCATE(current_total(fs_2:fs_jpim1,SIZE(model%conserved_quantities)))
 #if defined key_trdtrc && defined key_iomput
       IF( lk_trdtrc ) ALLOCATE(tr_vmv(jpi,jpj,jpk,jp_fabm))
       IF( lk_trdtrc ) ALLOCATE(tr_inp(jpi,jpj,jpk))
@@ -406,16 +405,10 @@ CONTAINS
       IF( trc_sms_fabm_alloc /= 0 ) CALL ctl_warn('trc_sms_fabm_alloc : failed to allocate arrays')
       !
 
-      ! Make FABM aware of diagnostics that are not needed [not included in output]
-      DO jn=1,size(model%interior_diagnostic_variables)
-          !model%interior_diagnostic_variables(jn)%save = iom_use(model%interior_diagnostic_variables(jn)%name)
-      END DO
-      DO jn=1,size(model%horizontal_diagnostic_variables)
-          !model%horizontal_diagnostic_variables(jn)%save = iom_use(model%horizontal_diagnostic_variables(jn)%name)
-      END DO
-
       ! Provide FABM with domain extents
       call model%set_domain(jpi, jpj, jpk, rdt)
+      call model%set_domain_start(fs_2, 2, 1)
+      call model%set_domain_stop(fs_jpim1, jpjm1, jpkm1)
 
       ! Provide FABM with the vertical indices of the bottom, and the land-sea mask.
       call model%set_bottom_index(mbkt)  ! NB mbkt extents should match dimension lengths provided to set_domain
@@ -453,17 +446,25 @@ CONTAINS
       call link_inputs
       call update_inputs( nit000, .false. )
 
+      ! Make FABM aware of diagnostics that are not needed [not included in output]
+      DO jn=1,size(model%interior_diagnostic_variables)
+         !model%interior_diagnostic_variables(jn)%save = iom_use(model%interior_diagnostic_variables(jn)%name)
+      END DO
+      DO jn=1,size(model%horizontal_diagnostic_variables)
+         !model%horizontal_diagnostic_variables(jn)%save = iom_use(model%horizontal_diagnostic_variables(jn)%name)
+      END DO
+
       ! Check whether FABM has all required data [after this, the save attribute of diagnostic variables can no longe change!]
       call model%start()
 
       ! Initialize state
-      DO jj=1,jpj
-         CALL model%initialize_surface_state(1,jpi,jj)
-         CALL model%initialize_bottom_state(1,jpi,jj)
+      DO jj=2,jpjm1
+         CALL model%initialize_surface_state(fs_2,fs_jpim1,jj)
+         CALL model%initialize_bottom_state(fs_2,fs_jpim1,jj)
       END DO
-      DO jk=1,jpk
-         DO jj=1,jpj
-            CALL model%initialize_interior_state(1,jpi,jj,jk)
+      DO jk=1,jpkm1
+         DO jj=2,jpjm1
+            CALL model%initialize_interior_state(fs_2,fs_jpim1,jj,jk)
          END DO
       END DO
 

@@ -225,8 +225,8 @@ MODULE inputs_fabm
         tr_inp = 0.0_wp
 #endif
         IF( kt == nit000 .OR. ( kt /= nit000 ) ) THEN
-            DO jj = 1, jpj
-              DO ji = 1, jpi
+            DO jj = 2, jpjm1
+              DO ji = fs_2, fs_jpim1
                 ! convert units and divide by surface area
                 ! loading / cell volume * vertical fraction of riverload
                 ! dtrc / dt (river) = riverload / e1e2t / e3t * e3t * h_rnf
