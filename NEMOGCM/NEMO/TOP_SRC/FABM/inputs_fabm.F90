@@ -22,6 +22,8 @@ MODULE inputs_fabm
 
    IMPLICIT NONE
 
+#  include "vectopt_loop_substitute.h90"
+
    PRIVATE
 
    PUBLIC initialize_inputs

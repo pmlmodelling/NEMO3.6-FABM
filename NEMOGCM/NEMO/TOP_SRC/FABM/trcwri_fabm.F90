@@ -3,7 +3,8 @@ MODULE trcwri_fabm
    !!                       *** MODULE trcwri_fabm ***
    !!    fabm :   Output of FABM tracers
    !!======================================================================
-   !! History :   1.0  !  2009-05 (C. Ethe)  Original code
+   !! History :   1.0  !  2015-04  (PML) Original code
+   !! History :   1.1  !  2020-06  (PML) Update to FABM 1.0, improved performance
    !!----------------------------------------------------------------------
 #if defined key_top && key_fabm && defined key_iomput
    !!----------------------------------------------------------------------
@@ -55,9 +56,9 @@ CONTAINS
       ! ---------------------------------------
 ! depth integrated
 ! for strict budgetting write this out at end of timestep as an average between 'now' and 'after' at kt
-      DO jn = 1, jp_fabm1
-        IF(ln_trdtrc (jn))THEN
-         trpool(:,:,:) = 0.5 * ( trn(:,:,:,jp_fabm0+jn-1)*fse3t_a(:,:,:) + &
+      DO jn = 1, jp_fabm
+        IF(ln_trdtrc (jp_fabm_m1+jn))THEN
+         trpool(:,:,:) = 0.5 * ( trn(:,:,:,jp_fabm_m1+jn)*fse3t_a(:,:,:) + &
                              tr_temp(:,:,:,jn)*fse3t(:,:,:) )
          cltra = TRIM( model%interior_state_variables(jn)%name )//"_e3t"     ! depth integrated output
          IF( kt == nittrc000 ) write(6,*)'output pool ',cltra
@@ -89,13 +90,13 @@ CONTAINS
 #endif
       DO jn = 1, jp_fabm
          ! Save 3D field
-         CALL iom_put(model%interior_state_variables(jn)%name, trn(:,:,:,jp_fabm0+jn-1))
+         CALL iom_put(model%interior_state_variables(jn)%name, trn(:,:,:,jp_fabm_m1+jn))
 
          ! Save depth integral if selected for output in XIOS
          IF (iom_use(TRIM(model%interior_state_variables(jn)%name)//'_VINT')) THEN
             vint = 0._wp
             DO jk = 1, jpkm1
-               vint = vint + trn(:,:,jk,jp_fabm0+jn-1) * fse3t(:,:,jk) * tmask(:,:,jk)
+               vint = vint + trn(:,:,jk,jp_fabm_m1+jn) * fse3t(:,:,jk) * tmask(:,:,jk)
             END DO
             CALL iom_put(TRIM(model%interior_state_variables(jn)%name)//'_VINT', vint)
          END IF

@@ -23,6 +23,7 @@ MODULE vertical_movement_fabm
    IMPLICIT NONE
 
 #  include "domzgr_substitute.h90"
+#  include "vectopt_loop_substitute.h90"
 
    PRIVATE
 

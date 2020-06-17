@@ -75,7 +75,7 @@ CONTAINS
       IF(lwp) WRITE(numout,*) '~~~~~~~'
       ! +++>>> FABM
       ! Allow FABM to update numbers of biogeochemical tracers, diagnostics (jptra etc.)
-      IF( lk_fabm ) CALL nemo_fabm_init
+      IF( lk_fabm ) CALL nemo_fabm_configure
       ! FABM <<<+++
 
       CALL top_alloc()              ! allocate TOP arrays
@@ -161,14 +161,9 @@ CONTAINS
       ! FABM <<<---
       ! FABM +++>>>
 ! Initialisation of FABM diagnostics and tracer boundary conditions (so that you can use initial condition as boundary)
-      IF( lk_fabm )     THEN
-          wndm=0._wp !uninitiased field at this point
-          qsr=0._wp !uninitiased field at this point
-          CALL compute_fabm( nit000 ) ! only needed to initialise diagnostics
-          CALL trc_bc_init(jptra)
-      ENDIF
+      IF( lk_fabm )     CALL trc_bc_init(jptra) 
       ! FABM <<<+++
- 
+
       tra(:,:,:,:) = 0._wp
       IF( ln_zps .AND. .NOT. lk_c1d .AND. .NOT. ln_isfcav )   &              ! Partial steps: before horizontal gradient of passive
         &    CALL zps_hde    ( nit000, jptra, trn, gtru, gtrv  )  ! Partial steps: before horizontal gradient

@@ -3,7 +3,8 @@ MODULE trcnam_fabm
    !!                      ***  MODULE trcnam_fabm  ***
    !! TOP :   initialisation of some run parameters for FABM bio-model
    !!======================================================================
-   !! History :   2.0  !  2007-12  (C. Ethe, G. Madec) Original code
+   !! History :   1.0  !  2015-04  (PML) Original code
+   !! History :   1.1  !  2020-06  (PML) Update to FABM 1.0, improved performance
    !!----------------------------------------------------------------------
 #if defined key_fabm
    !!----------------------------------------------------------------------
@@ -17,7 +18,6 @@ MODULE trcnam_fabm
 
    USE par_fabm
    USE trcsms_fabm
-
 
    IMPLICIT NONE
    PRIVATE
@@ -34,6 +34,25 @@ MODULE trcnam_fabm
 CONTAINS
 
    SUBROUTINE trc_nam_fabm
+      LOGICAL :: l_ext
+      INTEGER :: nmlunit, ios
+      NAMELIST/namfabm/ nn_adv
+
+      ! Read NEMO-FABM coupler settings from namfabm
+      nn_adv = 3
+      INQUIRE( FILE='namelist_fabm_ref', EXIST=l_ext )
+      IF (l_ext) then
+         CALL ctl_opn( nmlunit, 'namelist_fabm_ref', 'OLD', 'FORMATTED', 'SEQUENTIAL', -1, 6, .FALSE.)
+         READ(nmlunit, nml=namfabm, iostat=ios)
+         IF( ios /= 0 ) CALL ctl_nam ( ios , 'namfabm in namelist_fabm_ref', .TRUE. )
+      END IF
+      INQUIRE( FILE='namelist_fabm_cfg', EXIST=l_ext )
+      IF (l_ext) then
+         CALL ctl_opn( nmlunit, 'namelist_fabm_cfg', 'OLD', 'FORMATTED', 'SEQUENTIAL', -1, 6, .FALSE.)
+         READ(nmlunit, nml=namfabm, iostat=ios)
+         IF( ios /= 0 ) CALL ctl_nam ( ios , 'namfabm in namelist_fabm_cfg', .TRUE. )
+      END IF
+      IF (nn_adv /= 1 .and. nn_adv /= 3) CALL ctl_stop( 'STOP', 'trc_ini_fabm: nn_adv must be 1 or 3.' )
    END SUBROUTINE trc_nam_fabm
 
    SUBROUTINE trc_nam_fabm_override(sn_tracer)

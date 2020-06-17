@@ -4,6 +4,7 @@ MODULE trcsms_fabm
    !! TOP :   Main module of the FABM tracers
    !!======================================================================
    !! History :   1.0  !  2015-04  (PML) Original code
+   !! History :   1.1  !  2020-06  (PML) Update to FABM 1.0, improved performance
    !!----------------------------------------------------------------------
 #if defined key_fabm
    !!----------------------------------------------------------------------
@@ -35,8 +36,6 @@ MODULE trcsms_fabm
 
    !USE fldread         !  time interpolation
 
-   USE fabm, only: type_fabm_interior_variable_id
-
    IMPLICIT NONE
 
 #  include "domzgr_substitute.h90"
@@ -44,36 +43,30 @@ MODULE trcsms_fabm
 
    PRIVATE
 
-   PUBLIC   trc_sms_fabm       ! called by trcsms.F90 module
-   PUBLIC   trc_sms_fabm_alloc ! called by trcini_fabm.F90 module
-   PUBLIC   trc_sms_fabm_check_mass
-   PUBLIC   st2d_fabm_nxt ! 2D state intergration
-   PUBLIC   compute_fabm ! Compute FABM sources, sinks and diagnostics
+   PUBLIC   trc_sms_fabm            ! called by trcsms.F90 module
+   PUBLIC   trc_sms_fabm_alloc      ! called by trcini_fabm.F90 module
+   PUBLIC   trc_sms_fabm_check_mass ! called by trcwri_fabm.F90
 
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:,:) :: flux    ! Cross-interface flux of pelagic variables (# m-2 s-1)
+   ! Work arrays
+   REAL(wp), ALLOCATABLE, DIMENSION(:,:) :: flux          ! Cross-interface flux of pelagic variables (# m-2 s-1)
+   REAL(wp), ALLOCATABLE, DIMENSION(:,:) :: current_total ! Totals of conserved quantities
 
-   ! Work array for mass aggregation
-   REAL(wp), ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:)   :: current_total
+   ! Arrays for environmental variables that are computed by the coupler
+   REAL(wp), PUBLIC, TARGET, ALLOCATABLE, DIMENSION(:,:,:) :: prn,rho
+   REAL(wp), PUBLIC, TARGET, ALLOCATABLE, DIMENSION(:,:) :: taubot
+   REAL(wp), PUBLIC, TARGET :: daynumber_in_year
 
+   ! State repair counters
+   INTEGER, SAVE :: repair_interior_count = 0
+   INTEGER, SAVE :: repair_surface_count  = 0
+   INTEGER, SAVE :: repair_bottom_count   = 0
 
-   ! Arrays for environmental variables
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:,:) :: prn,rho
-   REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:) :: taubot
+   ! Coupler parameters
+   INTEGER, PUBLIC :: nn_adv  ! Vertical advection scheme for sinking/floating/movement
+                              ! (1: 1st order upwind, 3: 3rd order TVD)
 
-   ! repair counters
-   INTEGER :: repair_interior_count,repair_surface_count,repair_bottom_count
-
-   ! state check type
-   TYPE type_state
-      LOGICAL             :: valid
-      LOGICAL             :: repaired
-   END TYPE
-
-   REAL(wp), PUBLIC :: daynumber_in_year
-
-   TYPE (type_fabm_interior_variable_id), SAVE :: swr_id
-
-   INTEGER, PUBLIC :: nn_adv
+   ! Flag indicating whether model%start has been called (will be done on-demand)
+   LOGICAL, SAVE :: started = .false.
 
    !!----------------------------------------------------------------------
    !! NEMO/TOP 3.3 , NEMO Consortium (2010)
@@ -105,6 +98,8 @@ CONTAINS
           ' trc_sms_fabm:  FABM model, iteration ',kt,' ', &
           nyear,'-',nmonth,'-',nday,' ',nsec_day," secs"
       IF(lwp) WRITE(numout,*) ' ~~~~~~~~~~~~~~'
+
+      IF (.NOT. started) CALL nemo_fabm_start
 
       CALL update_inputs( kt )
 
@@ -156,15 +151,15 @@ CONTAINS
    END SUBROUTINE trc_sms_fabm
 
    SUBROUTINE compute_fabm( kt )
-      INTEGER, INTENT(in) ::   kt   ! ocean time-step index
+      INTEGER, INTENT(in) :: kt   ! ocean time-step index
 
       INTEGER :: ji,jj,jk,jn
-      TYPE(type_state) :: valid_state
+      LOGICAL :: valid, repaired
       REAL(wp) :: zalfg,zztmpx,zztmpy
 
       ! Validate current model state (setting argument to .TRUE. enables repair=clipping)
-      valid_state = check_state(.TRUE.)
-      IF (.NOT.valid_state%valid) THEN
+      CALL check_state(.TRUE., valid, repaired)
+      IF (.NOT. valid) THEN
          WRITE(numout,*) "Invalid value in FABM encountered in area ",narea,"!!!"
 #if defined key_iomput
          CALL xios_finalize                ! end mpp communications with xios
@@ -177,7 +172,7 @@ CONTAINS
          ENDIF
 #endif
       END IF
-      IF (valid_state%repaired) THEN
+      IF (repaired) THEN
          WRITE(numout,*) "Total interior repairs up to now on process",narea,":",repair_interior_count
          WRITE(numout,*) "Total surface repairs up to now on process",narea,":",repair_surface_count
          WRITE(numout,*) "Total bottom repairs up to now on process",narea,":",repair_bottom_count
@@ -259,46 +254,48 @@ CONTAINS
       CALL model%finalize_outputs()
    END SUBROUTINE compute_fabm
 
-   FUNCTION check_state(repair) RESULT(exit_state)
-      LOGICAL, INTENT(IN) :: repair
-      TYPE(type_state) :: exit_state
+   SUBROUTINE check_state(repair, valid, repaired)
+      LOGICAL, INTENT(IN)  :: repair
+      LOGICAL, INTENT(OUT) :: valid, repaired
 
-      INTEGER             :: jj,jk
-      LOGICAL             :: valid_int,valid_sf,valid_bt
+      INTEGER :: jj, jk
+      LOGICAL :: valid_int, valid_sf, valid_bt
 
-      exit_state%valid = .TRUE.
-      exit_state%repaired =.FALSE.
+      valid = .TRUE.     ! Whether the model state is valid after this subroutine returns
+      repaired = .FALSE. ! Whether the model state has been repaired by this subroutine
       DO jk=1,jpkm1
          DO jj=2,jpjm1
-            CALL model%check_interior_state(fs_2,fs_jpim1,jj,jk,repair,valid_int)
-            IF (repair.AND..NOT.valid_int) THEN
+            CALL model%check_interior_state(fs_2, fs_jpim1, jj, jk, repair, valid_int)
+            IF (repair .AND. .NOT. valid_int) THEN
                repair_interior_count = repair_interior_count + 1
-               exit_state%repaired = .TRUE.
+               repaired = .TRUE.
             END IF
-            IF (.NOT.(valid_int.OR.repair)) exit_state%valid = .FALSE.
+            IF (.NOT. (valid_int .OR. repair)) valid = .FALSE.
          END DO
       END DO
       DO jj=2,jpjm1
-         CALL model%check_surface_state(fs_2,fs_jpim1,jj,repair,valid_sf)
-         IF (repair.AND..NOT.valid_sf) THEN
+         CALL model%check_surface_state(fs_2, fs_jpim1, jj, repair, valid_sf)
+         IF (repair .AND. .NOT. valid_sf) THEN
             repair_surface_count = repair_surface_count + 1
-            exit_state%repaired = .TRUE.
+            repaired = .TRUE.
          END IF
-         IF (.NOT.(valid_sf.AND.valid_bt).AND..NOT.repair) exit_state%valid = .FALSE.
-         CALL model%check_bottom_state(fs_2,fs_jpim1,jj,repair,valid_bt)
-         IF (repair.AND..NOT.valid_bt) THEN
+         IF (.NOT. (valid_sf .AND. valid_bt) .AND. .NOT. repair) valid = .FALSE.
+         CALL model%check_bottom_state(fs_2, fs_jpim1, jj, repair, valid_bt)
+         IF (repair .AND. .NOT. valid_bt) THEN
             repair_bottom_count = repair_bottom_count + 1
-            exit_state%repaired = .TRUE.
+            repaired = .TRUE.
          END IF
-         IF (.NOT.(valid_sf.AND.valid_bt).AND..NOT.repair) exit_state%valid = .FALSE.
+         IF (.NOT. (valid_sf .AND. valid_bt) .AND. .NOT. repair) valid = .FALSE.
       END DO
-   END FUNCTION
+   END SUBROUTINE
 
    SUBROUTINE trc_sms_fabm_check_mass()
       REAL(wp) :: total(SIZE(model%conserved_quantities))
       INTEGER :: ji,jk,jj,jn
 
       total = 0._wp
+
+      IF (.NOT. started) CALL nemo_fabm_start
 
       DO jk=1,jpkm1
          DO jj=2,jpjm1
@@ -372,7 +369,7 @@ CONTAINS
    END SUBROUTINE st2d_fabm_nxt
 
    INTEGER FUNCTION trc_sms_fabm_alloc()
-      INTEGER :: jj,jk,jn
+      INTEGER :: jn
       !!----------------------------------------------------------------------
       !!              ***  ROUTINE trc_sms_fabm_alloc  ***
       !!----------------------------------------------------------------------
@@ -406,100 +403,85 @@ CONTAINS
       !
 
       ! Provide FABM with domain extents
-      call model%set_domain(jpi, jpj, jpk, rdt)
-      call model%set_domain_start(fs_2, 2, 1)
-      call model%set_domain_stop(fs_jpim1, jpjm1, jpkm1)
+      CALL model%set_domain(jpi, jpj, jpk, rdt)
+      CALL model%set_domain_start(fs_2, 2, 1)
+      CALL model%set_domain_stop(fs_jpim1, jpjm1, jpkm1)
 
       ! Provide FABM with the vertical indices of the bottom, and the land-sea mask.
-      call model%set_bottom_index(mbkt)  ! NB mbkt extents should match dimension lengths provided to set_domain
-      call model%set_mask(tmask,tmask(:,:,1)) ! NB tmask extents should match dimension lengths provided to set_domain
+      CALL model%set_bottom_index(mbkt)  ! NB mbkt extents should match dimension lengths provided to set_domain
+      CALL model%set_mask(tmask,tmask(:,:,1)) ! NB tmask extents should match dimension lengths provided to set_domain
 
-      ! Send pointers to state data to FABM
+      ! Initialize state and send pointers to state data to FABM
+      ! We mask land points in states with zeros, as per with NEMO "convention"
+      ! NB we cannot call model%initialize_*_state at this point, because model%start has not been called yet.
       DO jn=1,jp_fabm
+         trn(:,:,:,jp_fabm_m1+jn) = model%interior_state_variables(jn)%initial_value * tmask
          CALL model%link_interior_state_data(jn,trn(:,:,:,jp_fabm_m1+jn))
       END DO
       DO jn=1,jp_fabm_surface
+         fabm_st2Dn(:,:,jn) = model%surface_state_variables(jn)%initial_value * tmask(:,:,1)
          CALL model%link_surface_state_data(jn,fabm_st2Dn(:,:,jn))
       END DO
       DO jn=1,jp_fabm_bottom
+         fabm_st2Dn(:,:,jp_fabm_surface+jn) = model%bottom_state_variables(jn)%initial_value * tmask(:,:,1)
          CALL model%link_bottom_state_data(jn,fabm_st2Dn(:,:,jp_fabm_surface+jn))
       END DO
 
       ! Send pointers to environmental data to FABM
-      call model%link_interior_data(fabm_standard_variables%depth,fsdept(:,:,:))
-      call model%link_interior_data(fabm_standard_variables%temperature,tsn(:,:,:,jp_tem))
-      call model%link_interior_data(fabm_standard_variables%practical_salinity,tsn(:,:,:,jp_sal))
-      IF (ALLOCATED(rho)) call model%link_interior_data(fabm_standard_variables%density,rho(:,:,:))
-      IF (ALLOCATED(prn)) call model%link_interior_data(fabm_standard_variables%pressure,prn)
-      IF (ALLOCATED(taubot)) call model%link_horizontal_data(fabm_standard_variables%bottom_stress,taubot(:,:))
-      call model%link_interior_data(fabm_standard_variables%cell_thickness,fse3t(:,:,:))
-      call model%link_horizontal_data(fabm_standard_variables%latitude,gphit)
-      call model%link_horizontal_data(fabm_standard_variables%longitude,glamt)
-      call model%link_scalar(fabm_standard_variables%number_of_days_since_start_of_the_year,daynumber_in_year)
-      call model%link_horizontal_data(fabm_standard_variables%wind_speed,wndm(:,:))
-      call model%link_horizontal_data(fabm_standard_variables%surface_downwelling_shortwave_flux,qsr(:,:))
-      call model%link_horizontal_data(fabm_standard_variables%bottom_depth_below_geoid,bathy(:,:))
-      call model%link_horizontal_data(fabm_standard_variables%ice_area_fraction,fr_i(:,:))
-      swr_id = model%get_interior_variable_id(fabm_standard_variables%downwelling_shortwave_flux)
+      CALL model%link_interior_data(fabm_standard_variables%depth, fsdept(:,:,:))
+      CALL model%link_interior_data(fabm_standard_variables%temperature, tsn(:,:,:,jp_tem))
+      CALL model%link_interior_data(fabm_standard_variables%practical_salinity, tsn(:,:,:,jp_sal))
+      IF (ALLOCATED(rho)) CALL model%link_interior_data(fabm_standard_variables%density, rho(:,:,:))
+      IF (ALLOCATED(prn)) CALL model%link_interior_data(fabm_standard_variables%pressure, prn)
+      IF (ALLOCATED(taubot)) CALL model%link_horizontal_data(fabm_standard_variables%bottom_stress, taubot(:,:))
+      CALL model%link_interior_data(fabm_standard_variables%cell_thickness, fse3t(:,:,:))
+      CALL model%link_horizontal_data(fabm_standard_variables%latitude, gphit)
+      CALL model%link_horizontal_data(fabm_standard_variables%longitude, glamt)
+      CALL model%link_scalar(fabm_standard_variables%number_of_days_since_start_of_the_year, daynumber_in_year)
+      CALL model%link_horizontal_data(fabm_standard_variables%wind_speed, wndm(:,:))
+      CALL model%link_horizontal_data(fabm_standard_variables%surface_downwelling_shortwave_flux, qsr(:,:))
+      CALL model%link_horizontal_data(fabm_standard_variables%bottom_depth_below_geoid, bathy(:,:))
+      CALL model%link_horizontal_data(fabm_standard_variables%ice_area_fraction, fr_i(:,:))
 
       ! Obtain user-specified input variables (read from NetCDF file)
-      call link_inputs
-      call update_inputs( nit000, .false. )
-
-      ! Make FABM aware of diagnostics that are not needed [not included in output]
-      DO jn=1,size(model%interior_diagnostic_variables)
-         !model%interior_diagnostic_variables(jn)%save = iom_use(model%interior_diagnostic_variables(jn)%name)
-      END DO
-      DO jn=1,size(model%horizontal_diagnostic_variables)
-         !model%horizontal_diagnostic_variables(jn)%save = iom_use(model%horizontal_diagnostic_variables(jn)%name)
-      END DO
-
-      ! Check whether FABM has all required data [after this, the save attribute of diagnostic variables can no longe change!]
-      call model%start()
-
-      ! Initialize state
-      DO jj=2,jpjm1
-         CALL model%initialize_surface_state(fs_2,fs_jpim1,jj)
-         CALL model%initialize_bottom_state(fs_2,fs_jpim1,jj)
-      END DO
-      DO jk=1,jpkm1
-         DO jj=2,jpjm1
-            CALL model%initialize_interior_state(fs_2,fs_jpim1,jj,jk)
-         END DO
-      END DO
+      CALL link_inputs
+      CALL update_inputs(nit000, .FALSE.)
 
       ! Set mask for negativity corrections to the relevant states
-      lk_rad_fabm = .FALSE.
+      lk_rad_fabm(:) = .FALSE.
       DO jn=1,jp_fabm
-        IF (model%interior_state_variables(jn)%minimum.ge.0) THEN
-          lk_rad_fabm(jn)=.TRUE.
+        IF (model%interior_state_variables(jn)%minimum >= 0._wp) THEN
+          lk_rad_fabm(jn) = .TRUE.
           IF(lwp) WRITE(numout,*) 'FABM clipping for '//TRIM(model%interior_state_variables(jn)%name)//' activated.'
         END IF
       END DO
 
-      ! Mask land points in states with zeros, not nice, but coherent
-      ! with NEMO "convention":
-      DO jn=jp_fabm0,jp_fabm1
-        WHERE (tmask==0._wp)
-          trn(:,:,:,jn)=0._wp
-        END WHERE
-      END DO
-      DO jn=1,jp_fabm_surface+jp_fabm_bottom
-        WHERE (tmask(:,:,1)==0._wp)
-          fabm_st2Dn(:,:,jn)=0._wp
-        END WHERE
-      END DO
 
       ! Copy initial condition for interface-attached state variables to "previous" state field
       ! NB NEMO does this itself for pelagic state variables (trb) in TOP_SRC/trcini.F90.
       fabm_st2Db = fabm_st2Dn
 
-      ! Initialise repair counters
-      repair_interior_count = 0
-      repair_surface_count = 0
-      repair_bottom_count = 0
-
    END FUNCTION trc_sms_fabm_alloc
+
+   SUBROUTINE nemo_fabm_start()
+      INTEGER :: jn
+
+      ! Make FABM aware of diagnostics that are not needed [not included in output]
+      ! This works only after iom has completely initialised, because it depends on iom_use
+      DO jn=1,size(model%interior_diagnostic_variables)
+         model%interior_diagnostic_variables(jn)%save = iom_use(model%interior_diagnostic_variables(jn)%name) &
+            .or. iom_use(TRIM(model%interior_diagnostic_variables(jn)%name)//'_VINT')
+      END DO
+      DO jn=1,size(model%horizontal_diagnostic_variables)
+         model%horizontal_diagnostic_variables(jn)%save = iom_use(model%horizontal_diagnostic_variables(jn)%name)
+      END DO
+
+      ! Check whether FABM has all required data
+      ! [after this, the save attribute of diagnostic variables can no longer change!]
+      CALL model%start()
+
+      started = .TRUE.
+   END SUBROUTINE
 
 #else
    !!----------------------------------------------------------------------
