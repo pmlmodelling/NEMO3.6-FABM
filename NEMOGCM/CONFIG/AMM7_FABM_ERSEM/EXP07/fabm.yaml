@@ -1,0 +1,27 @@
+check_conservation: false
+require_initialization: true
+instances:
+  zenithAngle:
+    model: ersem/zenith_angle
+  light:
+  TRC1:
+    long_name: phosphate
+    model: ersem/pelagic_base
+    parameters:
+      composition: p                                       # elemental composition
+    initialization:
+      p: 1.0                                               # phosphorus (mmol P/m^3)
+  TRC2:
+    long_name: nitrate
+    model: ersem/pelagic_base
+    parameters:
+      composition: n                                       # elemental composition
+    initialization:
+      n: 1.0                                               # nitrogen (mmol N/m^3)
+  TRC3:
+    long_name: silicate
+    model: ersem/pelagic_base
+    parameters:
+      composition: s                                       # elemental composition
+    initialization:
+      s: 1.0                                               # silicate (mmol Si/m^3)

@@ -349,7 +349,7 @@ CONTAINS
 !!#if defined key_my_trc
 ! FABM <<<---
 ! +++>>> FABM
-#if defined key_fabm
+#if defined key_my_trc || defined key_fabm
 ! FABM <<<+++
          ln_trc_sbc(jn) =       sn_tracer(jn)%llsbc
          ln_trc_cbc(jn) =       sn_tracer(jn)%llcbc

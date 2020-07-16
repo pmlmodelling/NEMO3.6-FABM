@@ -249,7 +249,7 @@ CONTAINS
 !!#if defined key_my_trc
 ! FABM <<<---
 ! +++>>> FABM
-#if defined key_fabm
+#if defined key_my_trc || defined key_fabm
 ! FABM <<<+++
          &      ln_trc_sbc(jptra)     , ln_trc_cbc(jptra)     , ln_trc_obc(jptra)     ,       &
 #endif

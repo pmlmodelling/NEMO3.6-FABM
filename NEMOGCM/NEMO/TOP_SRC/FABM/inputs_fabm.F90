@@ -31,9 +31,9 @@ MODULE inputs_fabm
    PUBLIC update_inputs
    PUBLIC trc_rnf_fabm
 
-   #if defined key_trdtrc && defined key_iomput
+#if defined key_trdtrc && defined key_iomput
       REAL(wp), PUBLIC, ALLOCATABLE, SAVE, TARGET, DIMENSION(:,:,:) :: tr_inp
-   #endif
+#endif
 
    TYPE, PUBLIC :: type_input_variable
       TYPE(FLD), ALLOCATABLE, DIMENSION(:) :: sf
@@ -236,7 +236,13 @@ MODULE inputs_fabm
                 zcoef = river_data%rn_trrnfac / e1e2t(ji,jj) / h_rnf(ji,jj)
                 DO jk = 1,nk_rnf(ji,jj)
                   ! Add river loadings
-                  tra(ji,jj,jk,river_data%jp_pos) = tra(ji,jj,jk,river_data%jp_pos) + river_data%sf(1)%fnow(ji,jj,1)*zcoef
+                  if (river_data%rn_trrnfac>=0) then
+                    tra(ji,jj,jk,river_data%jp_pos) = tra(ji,jj,jk,river_data%jp_pos) + river_data%sf(1)%fnow(ji,jj,1)*zcoef
+                  else
+                    !this is for the no river dilution option, where we give the runoff as riverload and we multiply by the current concentration
+                    ! no need to use the full zcoeff because the run off is already surface specific, 1000. is to convert kg freshwater to m3
+                    tra(ji,jj,jk,river_data%jp_pos) = tra(ji,jj,jk,river_data%jp_pos) + river_data%sf(1)%fnow(ji,jj,1)/1000._wp*trn(ji,jj,jk,river_data%jp_pos) / h_rnf(ji,jj)
+                  endif
 #if defined key_trdtrc && defined key_iomput
                   tr_inp(ji,jj,jk) = river_data%sf(1)%fnow(ji,jj,1)*zcoef
 #endif

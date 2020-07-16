@@ -161,7 +161,7 @@ CONTAINS
       ! FABM <<<---
       ! FABM +++>>>
 ! Initialisation of FABM diagnostics and tracer boundary conditions (so that you can use initial condition as boundary)
-      IF( lk_fabm )     CALL trc_bc_init(jptra) 
+      IF( lk_my_trc .or. lk_fabm )     CALL trc_bc_init(jptra) 
       ! FABM <<<+++
 
       tra(:,:,:,:) = 0._wp

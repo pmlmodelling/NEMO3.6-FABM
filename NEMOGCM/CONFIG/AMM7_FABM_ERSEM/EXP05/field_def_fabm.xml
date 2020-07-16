@@ -825,7 +825,9 @@
   <field id="light_ADY_sms" long_name="light gelbstoff absorption sources-sinks" unit="1/m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="light_ADY_w" long_name="light gelbstoff absorption vertical movement" unit="m/s" default_value="0.000E+00" grid_ref="grid_T_3D" />
   <field id="light_EIR" long_name="light shortwave radiation" unit="W/m^2" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="light_secchi" long_name="Secchi depth (1.7/Kd)" unit="m" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="light_parEIR" long_name="light photosynthetically active radiation" unit="W/m^2" default_value="-.200E+21" grid_ref="grid_T_3D" />
+  <field id="light_secchi" long_name="Secchi depth (1.7/Kd)" unit="m" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="light_xEPS" long_name="light attenuation coefficient of shortwave flux" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="light_iopABS" long_name="light absorption coefficient of shortwave flux" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />
   <field id="light_iopBBS" long_name="light backscatter coefficient of shortwave flux" unit="1/m" default_value="-.200E+21" grid_ref="grid_T_3D" />

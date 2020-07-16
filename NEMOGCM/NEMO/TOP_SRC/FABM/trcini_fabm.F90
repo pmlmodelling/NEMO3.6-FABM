@@ -342,8 +342,8 @@ CONTAINS
    !!   Dummy module                                        No FABM model
    !!----------------------------------------------------------------------
 CONTAINS
-   SUBROUTINE nemo_fabm_init
-   END SUBROUTINE nemo_fabm_init
+   SUBROUTINE nemo_fabm_configure
+   END SUBROUTINE nemo_fabm_configure
 
    SUBROUTINE trc_ini_fabm            ! Empty routine
    END SUBROUTINE trc_ini_fabm
