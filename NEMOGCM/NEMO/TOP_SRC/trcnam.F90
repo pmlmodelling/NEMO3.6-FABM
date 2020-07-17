@@ -320,7 +320,7 @@ CONTAINS
       ! Initialise logical flags to .FALSE.:
       sn_tracer(:)%llinit = .FALSE.
       sn_tracer(:)%llsave = .FALSE.
-#ifdef key_fabm
+#if defined key_my_trc || defined  key_fabm
       sn_tracer(:)%llsbc = .FALSE.
       sn_tracer(:)%llcbc = .FALSE.
       sn_tracer(:)%llcbc = .FALSE.

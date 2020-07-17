@@ -99,24 +99,18 @@ MODULE trc
        CHARACTER(len = 20)  :: clsname  !: short name
        CHARACTER(len = 80)  :: cllname  !: long name
        CHARACTER(len = 20)  :: clunit   !: unit
+       LOGICAL              :: llinit   !: read in a file or not
 ! --->>> FABM
-!       LOGICAL              :: llinit   !: read in a file or not
-!!#if defined  key_my_trc
-!       LOGICAL              :: llsbc   !: read in a file or not
-!       LOGICAL              :: llcbc   !: read in a file or not
-!       LOGICAL              :: llobc   !: read in a file or not
-!#endif
-!       LOGICAL              :: llsave   !: save the tracer or not
+!!#if defined key_my_trc
 ! FABM <<<---
-! +++ FABM
-       LOGICAL              :: llinit=.FALSE.   !: read in a file or not
-#if defined  key_fabm
-       LOGICAL              :: llsbc=.FALSE.   !: read in a file or not
-       LOGICAL              :: llcbc=.FALSE.   !: read in a file or not
-       LOGICAL              :: llobc=.FALSE.   !: read in a file or not
-#endif
-       LOGICAL              :: llsave=.FALSE.   !: save the tracer or not
+! +++>>> FABM
+#if defined key_my_trc || defined key_fabm
 ! FABM <<<+++
+       LOGICAL              :: llsbc   !: read in a file or not
+       LOGICAL              :: llcbc   !: read in a file or not
+       LOGICAL              :: llobc   !: read in a file or not
+#endif
+       LOGICAL              :: llsave   !: save the tracer or not
    END TYPE PTRACER
    CHARACTER(len = 20), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:)    ::  ctrcnm         !: tracer name 
    CHARACTER(len = 80), PUBLIC, ALLOCATABLE, SAVE, DIMENSION(:)    ::  ctrcln         !: trccer field long name
