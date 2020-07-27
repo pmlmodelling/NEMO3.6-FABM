@@ -1,0 +1,14 @@
+#!/bin/bash --login
+#
+#PBS -l select=serial=true:ncpus=1
+#PBS -l walltime=4:00:00
+#PBS -A n01-PML
+#PBS -N archAMM7
+#PBS -j oe
+#
+
+# RUNDIR is now assed as argument
+#RUNDIR=<put here the full path to the running folder>
+
+cd $RUNDIR
+./archiveFolder.sh $folder 
