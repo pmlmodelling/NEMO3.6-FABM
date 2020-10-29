@@ -8,15 +8,16 @@ set -u
 MERGETOOL=$HOME/local/bin/nocscombine-5
 
 folder=$1
-ARCHIVEDIR=./ARCHIVE/
+RUNDIR=$2
+ARCHIVEDIR=$2/ARCHIVE/
 
 module load cray-netcdf
 
 if [ -d $folder ]
 then
-  cd $folder
   echo "Archiving $folder:"
   mkdir -p $ARCHIVEDIR/$folder
+  cd $folder
   $MERGETOOL -f restart_0000.nc # && nccopy -k 4 -d 9 restart.nc $ARCHIVEDIR/$folder/restart.nc && echo "   restart.nc" || echo '   restart.nc failed!!!'
   $MERGETOOL -f restart_trc_0000.nc # && nccopy -k 4 -d 9 restart_trc.nc $ARCHIVEDIR/$folder/restart_trc.nc && echo "   restart_trc.nc" || echo '   restart_trc.nc failed!!!' 
   rsync -a ocean.output.bz2 $ARCHIVEDIR/$folder  

@@ -11,4 +11,4 @@
 #RUNDIR=<put here the full path to the running folder>
 
 cd $RUNDIR
-./archiveFolder.sh $folder 
+./archiveFolder.sh $folder Â$RUNDIR 
