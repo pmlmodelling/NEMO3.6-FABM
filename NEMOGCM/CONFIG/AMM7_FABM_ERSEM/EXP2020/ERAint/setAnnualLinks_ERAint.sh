@@ -1,11 +1,11 @@
 #!/bin/bash
 # Command line arguments:
 #   1: simulation year
+#   2: path to the running folder
 
 # TODO: is there a way to "homogeneize" the different input paths?
 
 INPUTPATH="/work/n01/n01/momme/AMM7-INPUTS"
-ERA5PATH="/work/n01/n01/gle/AMM7/AMM7-INPUTS/ERA5"
 RUNPATH=$2
 y0=1995
 
@@ -14,19 +14,16 @@ yb=$(( $yn-1 ))
 ya=$(( $yn+1 ))
 
 #rivers:
-#if [ $(( yn % 4)) -ne 0 -o $(( yn % 100)) -eq 0 -a $(( yn % 400)) -ne 0 ]
-#then
-#    ln -sf "$INPUTPATH"/RIVERS/rivers.ersem.nc "$RUNPATH"/rivers.nc
-#else
-#    ln -sf "$INPUTPATH"/RIVERS/rivers.ersem.leap.nc "$RUNPATH"/rivers.nc
-#fi
-ln -sf /work/n01/n01/gle/AMM7/AMM7-INPUTS/LOCATE_rivers/LOCATE_rivers.${yn}.alk.nc "$RUNPATH"/rivers.nc
+if [ $(( yn % 4)) -ne 0 -o $(( yn % 100)) -eq 0 -a $(( yn % 400)) -ne 0 ]
+then
+    ln -sf "$INPUTPATH"/RIVERS/rivers.ersem.nc "$RUNPATH"/rivers.nc
+else
+    ln -sf "$INPUTPATH"/RIVERS/rivers.ersem.leap.nc "$RUNPATH"/rivers.nc
+fi
 
 #prepare folders for annual atmospheric and lateral forcings:
 mkdir -p "$RUNPATH"/fluxes
-#rm -rf "$RUNPATH"/fluxes/CUT_ERAI_INCLUDE_MSLP_y????m??d??.nc
-rm -rf "$RUNPATH"/fluxes/ERA5_*y????.nc
-
+rm -rf "$RUNPATH"/fluxes/CUT_ERAI_INCLUDE_MSLP_y????m??d??.nc
 mkdir -p "$RUNPATH"/bdy
 rm -rf "$RUNPATH"/bdy/amm7*_y????m??d??.nc
 
@@ -40,16 +37,7 @@ do
   ln -sf "$INPUTPATH"/pCO2a/AMM7-pCO2a_y$y.nc "$RUNPATH"/
 
   #atmospheric forcings:
-# ln -sf "$INPUTPATH"/FLUXES/CUT_ERAI_INCLUDE_MSLP_y"$y"m??d??.nc "$RUNPATH"/fluxes/
-  ln -sf "$ERA5PATH"/ERA5_V10_y"$y".nc "$RUNPATH"/fluxes/
-  ln -sf "$ERA5PATH"/ERA5_U10_y"$y".nc "$RUNPATH"/fluxes/
-  ln -sf "$ERA5PATH"/ERA5_T2M_y"$y".nc "$RUNPATH"/fluxes/
-  ln -sf "$ERA5PATH"/ERA5_MSDWLWRF_y"$y".nc "$RUNPATH"/fluxes/
-  ln -sf "$ERA5PATH"/ERA5_MTPR_y"$y".nc "$RUNPATH"/fluxes/
-  ln -sf "$ERA5PATH"/ERA5_SPH_y"$y".nc "$RUNPATH"/fluxes/
-  ln -sf "$ERA5PATH"/ERA5_MSL_y"$y".nc "$RUNPATH"/fluxes/
-  ln -sf "$ERA5PATH"/ERA5_MSDWSWRF_y"$y".nc "$RUNPATH"/fluxes/
-  ln -sf "$ERA5PATH"/ERA5_MSR_y"$y".nc "$RUNPATH"/fluxes/
+  ln -sf "$INPUTPATH"/FLUXES/CUT_ERAI_INCLUDE_MSLP_y"$y"m??d??.nc "$RUNPATH"/fluxes/
 
   #lateral boundary conditions:
   ln -sf "$INPUTPATH"/BDY/amm7_bdyT_y"$y"m??d??.nc "$RUNPATH"/bdy

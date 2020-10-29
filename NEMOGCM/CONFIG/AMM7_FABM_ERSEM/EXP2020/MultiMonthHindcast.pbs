@@ -18,7 +18,7 @@
 set -u
 
 NNODES=64
-#NNODES=8
+#NNODES=7
 NCORES=$(( NNODES*24 ))
 
 #number of month to launch:

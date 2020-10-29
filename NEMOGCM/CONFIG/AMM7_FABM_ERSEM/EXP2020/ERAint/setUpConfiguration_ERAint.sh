@@ -1,21 +1,18 @@
 #!/bin/bash
 # arguments:
-#   1: RUNPATH
+#   1: RUNDIR
 
-RUNPATH=$1
+RUNDIR=$1
 INPUTPATH="/work/n01/n01/momme/AMM7-INPUTS"
-ERA5PATH="/work/n01/n01/gle/AMM7/AMM7-INPUTS/ERA5"
 #RUNPATH="/work/n01/n01/momme/AMM7-v0"
 
 #prepare folders for annual atmospheric and lateral forcings:
 
 mkdir -p "$RUNPATH"/fluxes
-rm -rf "$RUNPATH"/fluxes/*
-
-#rm -rf "$RUNPATH"/fluxes/flx_y????.nc
-#rm -rf "$RUNPATH"/fluxes/met_y????.nc
-#rm -rf "$RUNPATH"/fluxes/strd_y????.nc
-#rm -rf "$RUNPATH"/fluxes/ssrd24_y????.nc
+rm -rf "$RUNPATH"/fluxes/flx_y????.nc
+rm -rf "$RUNPATH"/fluxes/met_y????.nc
+rm -rf "$RUNPATH"/fluxes/strd_y????.nc
+rm -rf "$RUNPATH"/fluxes/ssrd24_y????.nc
 
 mkdir -p "$RUNPATH"/bdy
 
@@ -31,16 +28,12 @@ ln -sf "$INPUTPATH"/Light/AMM7-ADY-broadband.nc "$RUNPATH/"
 ln -sf "$INPUTPATH"/Light/kd490.nc "$RUNPATH/"
 
 #interpolation weigths for surface flux forcing:
-#ln -sf "$INPUTPATH"/FLUXES/weights_erai_amm7_bicubic.nc "$RUNPATH"/fluxes/
-#ln -sf "$INPUTPATH"/FLUXES/weights_erai_amm7_bilin.nc "$RUNPATH"/fluxes/
-#ln -sf "$INPUTPATH"/FLUXES/CUT_ERAI_LSM.nc "$RUNPATH"/fluxes/
-
-ln -sf "$ERA5PATH"/weights_era5_gle_bicubic.nc "$RUNPATH"/fluxes/
-ln -sf "$ERA5PATH"/weights_era5_gle_bilinear.nc "$RUNPATH"/fluxes/
-ln -sf "$ERA5PATH"/ERA5_LSM.nc "$RUNPATH"/fluxes/
+ln -sf "$INPUTPATH"/FLUXES/weights_erai_amm7_bicubic.nc "$RUNPATH"/fluxes/
+ln -sf "$INPUTPATH"/FLUXES/weights_erai_amm7_bilin.nc "$RUNPATH"/fluxes/
+ln -sf "$INPUTPATH"/FLUXES/CUT_ERAI_LSM.nc "$RUNPATH"/fluxes/
 
 #lateral boundaries from climatology:
-ln -sf "$INPUTPATH"/BDY/amm7skagbdy_trc.lowP.O2.nc "$RUNPATH"/amm7skagbdy_trc.nc
+ln -sf "$INPUTPATH"/BDY/amm7skagbdy_trc.lowP.nc "$RUNPATH"/amm7skagbdy_trc.nc
 #ln -sf "$INPUTPATH"/BDY/amm7bdy_trc.nc "$RUNPATH"/
 ln -sf "$INPUTPATH"/BDY/amm7bdy_trc.lowP.nc "$RUNPATH"/amm7bdy_trc.nc
 ln -sf "$INPUTPATH"/BDY/amm7_bdytide_K1_grid_T.nc "$RUNPATH"/bdy/
