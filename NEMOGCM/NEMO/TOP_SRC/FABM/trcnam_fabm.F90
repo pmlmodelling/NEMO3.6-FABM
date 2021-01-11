@@ -6,6 +6,7 @@ MODULE trcnam_fabm
    !! History :   1.0  !  2015-04  (PML) Original code
    !! History :   1.1  !  2020-06  (PML) Update to FABM 1.0, improved performance
    !!----------------------------------------------------------------------
+   USE trc             ! TOP variables
 #if defined key_fabm
    !!----------------------------------------------------------------------
    !!   'key_fabm'   :                                       FABM model
@@ -14,7 +15,6 @@ MODULE trcnam_fabm
    !!----------------------------------------------------------------------
    USE oce_trc         ! Ocean variables
    USE par_trc         ! TOP parameters
-   USE trc             ! TOP variables
 
    USE par_fabm
    USE trcsms_fabm
@@ -81,7 +81,8 @@ CONTAINS
    SUBROUTINE trc_nam_fabm                      ! Empty routine
    END  SUBROUTINE  trc_nam_fabm
 
-   SUBROUTINE trc_nam_fabm_override
+   SUBROUTINE trc_nam_fabm_override (dummy)
+       TYPE(PTRACER), DIMENSION(jpmaxtrc), INTENT(INOUT), optional :: dummy
    END SUBROUTINE trc_nam_fabm_override
 #endif  
 
