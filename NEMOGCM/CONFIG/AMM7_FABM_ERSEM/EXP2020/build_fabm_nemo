@@ -1,0 +1,13 @@
+old=`pwd`
+
+workdir=/work/n01/n01/gle
+
+mkdir -p $workdir/build/nemo-fabm-ersem
+
+cd $workdir/build/nemo-fabm-ersem
+
+cmake $workdir/fabm/src -DFABM_HOST=nemo -DFABM_ERSEM_BASE=$workdir/ersem -DFABM_EMBED_VERSION=ON -DCMAKE_INSTALL_PREFIX=$workdir/local/fabm/nemo-fabm-ersem -DCMAKE_Fortran_FLAGS:STRING="-em -s integer32 -s real64 -O 1 -hflex_mp=intolerant"
+
+make install -j4
+cd  $old
+

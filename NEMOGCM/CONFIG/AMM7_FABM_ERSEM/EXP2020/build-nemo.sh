@@ -1,22 +1,27 @@
 #!/bin/bash 
 
-module unload PrgEnv-cray PrgEnv-gnu
-module load PrgEnv-intel
-module unload cray-netcdf
-module load cray-netcdf-hdf5parallel
+module -s restore /work/n01/shared/acc/n01_modules/ucx_env
 
-NEMO_BUILD_DIR=<put here the path to the CONFIG folder, e.g. .../NEMO-shelf/NEMOGCM/CONFIG>
-RUNDIR=<put here the path to the running folder>
-export XIOS_HOME=<puth here the path to the compiled XIOS, e.g. $HOME/local/xios-intel>
-export FABM_HOME=<puth here the path to the compiled FABM, e.g. $HOME/local/fabm/nemo>
+work=/work/n01/n01/gle
 
-#ARCH is the name of the Architecture file to be used in compilation
-ARCH=XC_ARCHER_INTEL_NOSIGNEDZERO
+NEMO_BUILD_DIR=$work/NEMO-ERSEM-shelf/NEMOGCM/CONFIG
+
+MY_CONFIG=MY_AMM7_FABM_ERSEM
+
+RUNDIR=`pwd`
+
+export XIOS_HOME=$work/XIOS1
+export FABM_HOME=$work/local/fabm/nemo-fabm-ersem
+
+ARCH=X86_ARCHER2-Cray
 
 cd $NEMO_BUILD_DIR
+
 echo "Cleaning old build..."
-rm -f $RUNDIR/nemo.exe $NEMO_BUILD_DIR/AMM7_BLD_SCRATCH/BLD/bin/nemo.exe
-./makenemo -m $ARCH -n AMM7_BLD_SCRATCH clean_config
+
+rm -f $RUNDIR/nemo.exe $NEMO_BUILD_DIR/$MY_CONFIG/BLD/bin/nemo.exe
+./makenemo -m $ARCH -n $MY_CONFIG clean_config
 
 echo "Building NEMO-FABM..."
-./makenemo -m $ARCH -r AMM7_FABM_ERSEM -n AMM7_BLD_SCRATCH > $RUNDIR/compile.log && mv $NEMO_BUILD_DIR/AMM7_BLD_SCRATCH/BLD/bin/nemo.exe $RUNDIR/ && echo "Done."
+
+./makenemo -n $MY_CONFIG -r AMM7_FABM_ERSEM -m $ARCH -j 16 > $RUNDIR/compile.log && mv $NEMO_BUILD_DIR/$MY_CONFIG/BLD/bin/nemo.exe $RUNDIR/ && echo "Done."
