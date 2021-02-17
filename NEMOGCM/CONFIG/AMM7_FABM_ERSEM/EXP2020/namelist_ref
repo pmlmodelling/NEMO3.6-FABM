@@ -46,7 +46,7 @@ nn_write = 1440
 !-----------------------------------------------------------------------
    cp_cfg      =  "AMM60"                !  name of the configuration
    cp_cfz      =         ''            !  name of the zoom of configuration
-   jp_cfg      =     0.01667                !  resolution of the configuration
+   jp_cfg      =      0                !  resolution of the configuration
    jpidta      =      297               !  1st lateral dimension ( >= jpi )
    jpjdta      =      375               !  2nd    "         "    ( >= jpj )
    jpkdta      =      51               !  number of levels      ( >= jpk )
@@ -105,7 +105,7 @@ nn_write = 1440
 &namdom        !   space and time domain (bathymetry, mesh, timestep)
 !-----------------------------------------------------------------------
    nn_bathy    =    1      !  compute (=0) or read (=1) the bathymetry file
-   rn_bathy    =    0     !  value of the bathymetry. if (=0) bottom flat at jpkm1
+   rn_bathy    =    0.     !  value of the bathymetry. if (=0) bottom flat at jpkm1
    rn_e3zps_min=   20.     !  partial step thickness is set larger than the minimum of
    rn_e3zps_rat=    0.1    !  rn_e3zps_min and rn_e3zps_rat*e3t, with 0<rn_e3zps_rat<1
                            !
@@ -178,8 +178,8 @@ nn_write = 1440
 !-----------------------------------------------------------------------
 &namc1d        !   1D configuration options                             ("key_c1d")
 !-----------------------------------------------------------------------
-   rn_lat1d    =      50   !  Column latitude (default at PAPA station)
-   rn_lon1d    =    -145   !  Column longitude (default at PAPA station)
+   rn_lat1d    =      50.  !  Column latitude (default at PAPA station)
+   rn_lon1d    =    -145.   !  Column longitude (default at PAPA station)
    ln_c1d_locpt=  .true.   ! Localization of 1D config in a grid (T) or independant point (F)
 /
 !-----------------------------------------------------------------------
@@ -393,7 +393,7 @@ sn_rcv_co2    =       'coupled'              ,    'no'    ,     ''      ,       
 !  ln_rnf_emp   = .false.   !  runoffs included into precipitation field (T) or into a file (F)
    ln_rnf_mouth = .false.   !  specific treatment at rivers mouths
    rn_hrnf      =  1000.e0  !  depth over which enhanced vertical mixing is used
-   rn_avt_rnf   =   10      !  value of the additional vertical mixing coef. [m2/s]
+   rn_avt_rnf   =   10.     !  value of the additional vertical mixing coef. [m2/s]
    rn_rfact     =   1.e0    !  multiplicative factor for runoff
    ln_rnf_depth = .true.    !  read in depth information for runoff
    ln_rnf_tem   = .false.   !  read in temperature information for runoff
@@ -450,7 +450,7 @@ sn_rcv_co2    =       'coupled'              ,    'no'    ,     ''      ,       
       rn_distribution          = 0.24, 0.12, 0.15, 0.18, 0.12, 0.07, 0.03, 0.03, 0.03, 0.02
                                                       ! Ratio between effective and real iceberg mass (non-dim)
                                                       ! i.e. number of icebergs represented at a point
-      rn_mass_scaling          = 2000, 200, 50, 20, 10, 5, 2, 1, 1, 1
+      rn_mass_scaling          = 2000., 200., 50., 20., 10., 5., 2., 1., 1., 1.
                                                       ! thickness of newly calved bergs (m)
       rn_initial_thickness     = 40., 67., 133., 175., 250., 250., 250., 250., 250., 250.
       rn_rho_bergs             = 850.                 ! Density of icebergs
