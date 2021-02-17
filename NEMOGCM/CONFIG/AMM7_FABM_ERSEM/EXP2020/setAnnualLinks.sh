@@ -4,8 +4,8 @@
 
 # TODO: is there a way to "homogeneize" the different input paths?
 
-INPUTPATH="/work/n01/n01/momme/AMM7-INPUTS"
-ERA5PATH="/work/n01/n01/gle/AMM7/AMM7-INPUTS/ERA5"
+INPUTPATH="/work/n01/n01/yuti/AMM7-INPUTS"
+ERA5PATH="/work/n01/n01/gle/INPUTS/AMM7/ERA5"
 RUNPATH=$2
 y0=1995
 
@@ -20,7 +20,7 @@ ya=$(( $yn+1 ))
 #else
 #    ln -sf "$INPUTPATH"/RIVERS/rivers.ersem.leap.nc "$RUNPATH"/rivers.nc
 #fi
-ln -sf /work/n01/n01/gle/AMM7/AMM7-INPUTS/LOCATE_rivers/LOCATE_rivers.${yn}.alk.nc "$RUNPATH"/rivers.nc
+ln -sf /work/n01/n01/gle/INPUTS/AMM7/LOCATE_rivers/LOCATE_rivers.${yn}.alk.nc "$RUNPATH"/rivers.nc
 
 #prepare folders for annual atmospheric and lateral forcings:
 mkdir -p "$RUNPATH"/fluxes
