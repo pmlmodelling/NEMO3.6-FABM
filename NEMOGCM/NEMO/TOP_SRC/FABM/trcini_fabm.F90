@@ -113,10 +113,12 @@ CONTAINS
             CALL write_variable_xml(xml_unit,model%horizontal_diagnostic_variables(jn))
          END DO
          DO jn=1,size(model%interior_state_variables)
-            WRITE (xml_unit,'(A)') '  <field id="'//TRIM(model%interior_state_variables(jn)%name)//'_VINT" long_name="depth-integrated '//TRIM(model%interior_state_variables(jn)%long_name)//'" unit="'//TRIM(model%interior_state_variables(jn)%units)//'*m" default_value="0.0" />'
+            WRITE (xml_unit,'(A)') '  <field id="'//TRIM(model%interior_state_variables(jn)%name)//'_VINT" &
+            long_name="depth-integrated '//TRIM(model%interior_state_variables(jn)%long_name)//'" unit="'//TRIM(model%interior_state_variables(jn)%units)//'*m" default_value="0.0" />'
          END DO
          DO jn=1,size(model%interior_diagnostic_variables)
-            WRITE (xml_unit,'(A)') '  <field id="'//TRIM(model%interior_diagnostic_variables(jn)%name)//'_VINT" long_name="depth-integrated '//TRIM(model%interior_diagnostic_variables(jn)%long_name)//'" unit="'//TRIM(model%interior_diagnostic_variables(jn)%units)//'*m" default_value="0.0" />'
+            WRITE (xml_unit,'(A)') '  <field id="'//TRIM(model%interior_diagnostic_variables(jn)%name)//'_VINT" &
+            long_name="depth-integrated '//TRIM(model%interior_diagnostic_variables(jn)%long_name)//'" unit="'//TRIM(model%interior_diagnostic_variables(jn)%units)//'*m" default_value="0.0" />'
          END DO
          WRITE (xml_unit,1000) ' </field_group>'
 
@@ -216,21 +218,25 @@ CONTAINS
       SELECT CASE (number_dimensions)
       CASE (3)
         DO i=1,size(trd_tags)
-         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_tags(i))//'_'//TRIM(variable%name)//'" long_name="'//TRIM(variable%long_name)//' '//TRIM(trd_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
+         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_tags(i))//'_'//TRIM(variable%name)//'" long_name="&
+         '//TRIM(variable%long_name)//' '//TRIM(trd_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
         END DO
 #if defined key_tracer_budget
         DO i=1,size(trd_e3t_tags)
-         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_e3t_tags(i))//'_'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated '//TRIM(trd_e3t_tags(i))//' trend" unit="'//TRIM(variable%units)//'*m/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
+         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_e3t_tags(i))//'_'//TRIM(variable%name)//'_e3t" long_name="&
+         '//TRIM(variable%long_name)//' cell depth integrated '//TRIM(trd_e3t_tags(i))//' trend" unit="'//TRIM(variable%units)//'*m/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
         END DO
         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated" unit="'//TRIM(variable%units)//'*m" default_value="'//TRIM(ADJUSTL(missing_value))//'" grid_ref="grid_T_3D" />'
 #endif
       CASE (-1)
         DO i=1,size(trd_tags)
-         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_tags(i))//'_'//TRIM(variable%name)//'" long_name="'//TRIM(variable%long_name)//' '//TRIM(trd_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
+         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_tags(i))//'_'//TRIM(variable%name)//'" long_name="&
+         '//TRIM(variable%long_name)//' '//TRIM(trd_tags(i))//' trend" unit="'//TRIM(variable%units)//'/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
         END DO
 #if defined key_tracer_budget
         DO i=1,size(trd_e3t_tags)
-         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_e3t_tags(i))//'_'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated '//TRIM(trd_e3t_tags(i))//' trend" unit="'//TRIM(variable%units)//'*m/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
+         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(trd_e3t_tags(i))//'_'//TRIM(variable%name)//'_e3t" long_name="&
+         '//TRIM(variable%long_name)//' cell depth integrated '//TRIM(trd_e3t_tags(i))//' trend" unit="'//TRIM(variable%units)//'*m/s" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
         END DO
         WRITE (xml_unit,'(A)') '  <field id="'//TRIM(variable%name)//'_e3t" long_name="'//TRIM(variable%long_name)//' cell depth integrated" unit="'//TRIM(variable%units)//'*m" default_value="'//TRIM(ADJUSTL(missing_value))//'" />'
 #endif
