@@ -3,7 +3,7 @@
 #   1: RUNPATH
 
 RUNPATH=$1
-INPUTPATH="/work/n01/n01/momme/AMM7-INPUTS"
+INPUTPATH="/work/n01/n01/yuti/AMM7-INPUTS"
 ERA5PATH="/work/n01/n01/gle/AMM7/AMM7-INPUTS/ERA5"
 #RUNPATH="/work/n01/n01/momme/AMM7-v0"
 
