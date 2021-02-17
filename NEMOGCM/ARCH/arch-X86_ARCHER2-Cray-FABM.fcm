@@ -50,8 +50,8 @@
 
 %CPP	             cpp
 %FC                  ftn
-%FCFLAGS             -em -s integer32 -s real64 -O 1 -hflex_mp=intolerant -G0
-%FFLAGS              -em -s integer32 -s real64 -O 1 -hflex_mp=intolerant -G0
+%FCFLAGS             -em -s integer32 -s real64 -O 1 -hflex_mp=intolerant
+%FFLAGS              -em -s integer32 -s real64 -O 1 -hflex_mp=intolerant 
 #%FCFLAGS             -em -s integer32 -s real64 -O0 -e0 -eZ
 #%FFLAGS              -em -s integer32 -s real64 -O0 -e0 -eZ
 %LD                  CC -Wl,"--allow-multiple-definition"
