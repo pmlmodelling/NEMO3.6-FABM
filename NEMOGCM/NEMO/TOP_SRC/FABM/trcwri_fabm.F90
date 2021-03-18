@@ -18,7 +18,7 @@ MODULE trcwri_fabm
    USE trcsms_fabm, only: trc_sms_fabm_check_mass
    USE par_fabm
    USE st2d_fabm
-   USE,INTRINSIC iso_fortran_env, only: output_unit
+   USE,INTRINSIC :: iso_fortran_env, only: output_unit
 
    IMPLICIT NONE
    PRIVATE
