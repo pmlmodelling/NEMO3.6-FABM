@@ -1325,8 +1325,8 @@ CONTAINS
       IF ( xios_is_valid_grid     (cdid) )   CALL xios_set_grid_attr     ( cdid, mask=mask )
       IF ( xios_is_valid_gridgroup(cdid) )   CALL xios_set_gridgroup_attr( cdid, mask=mask )
 #else
-      IF ( xios_is_valid_grid     (cdid) )   CALL xios_set_grid_attr     ( cdid, mask3=mask )
-      IF ( xios_is_valid_gridgroup(cdid) )   CALL xios_set_gridgroup_attr( cdid, mask3=mask )
+      IF ( xios_is_valid_grid     (cdid) )   CALL xios_set_grid_attr     ( cdid, mask_3d=mask )
+      IF ( xios_is_valid_gridgroup(cdid) )   CALL xios_set_gridgroup_attr( cdid, mask_3d=mask )
 #endif
       CALL xios_solve_inheritance()
    END SUBROUTINE iom_set_grid_attr
@@ -1776,8 +1776,17 @@ CONTAINS
             END DO
 #else
             idx = INDEX(clname,'@freq@') + INDEX(clname,'@FREQ@')
-            DO WHILE ( idx /= 0 ) 
-              IF ( output_freq%hour /= 0 ) THEN
+            DO WHILE ( idx /= 0 )
+              IF ( output_freq%timestep /= 0) THEN
+                  WRITE(clfreq,'(I18,A2)')INT(output_freq%timestep),'ts' 
+                  itrlen = LEN_TRIM(ADJUSTL(clfreq))
+              ELSE IF ( output_freq%second /= 0 ) THEN
+                  WRITE(clfreq,'(I19,A1)')INT(output_freq%second),'s' 
+                  itrlen = LEN_TRIM(ADJUSTL(clfreq))
+              ELSE IF ( output_freq%minute /= 0 ) THEN
+                  WRITE(clfreq,'(I18,A2)')INT(output_freq%minute),'mi' 
+                  itrlen = LEN_TRIM(ADJUSTL(clfreq)) 
+              ELSE IF ( output_freq%hour /= 0 ) THEN
                   WRITE(clfreq,'(I19,A1)')INT(output_freq%hour),'h' 
                   itrlen = LEN_TRIM(ADJUSTL(clfreq))
               ELSE IF ( output_freq%day /= 0 ) THEN
