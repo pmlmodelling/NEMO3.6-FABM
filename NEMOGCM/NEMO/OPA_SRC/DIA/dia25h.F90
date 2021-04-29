@@ -301,7 +301,7 @@ CONTAINS
             CALL iom_put("vomecrty25h", zw3d  )   ! j-current
 
             zw3d(:,:,:) = wn_25h(:,:,:)*tmask(:,:,:) + zmdi*(1.0-tmask(:,:,:))
-            CALL iom_put("vomecrtz25h", zw3d )   ! k-current
+            CALL iom_put("vovecrtz25h", zw3d )   ! k-current
             zw3d(:,:,:) = avt_25h(:,:,:)*tmask(:,:,:) + zmdi*(1.0-tmask(:,:,:))
             CALL iom_put("avt25h", zw3d )   ! diffusivity
             zw3d(:,:,:) = avm_25h(:,:,:)*tmask(:,:,:) + zmdi*(1.0-tmask(:,:,:))
