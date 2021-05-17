@@ -192,7 +192,7 @@ do
    mv amm7_1m_${d0}_[1-2]???????_ptrc_T.nc $ARCHIVEDIR
    mv amm7_1m_${d0}_[1-2]???????_grid_?.nc $ARCHIVEDIR
    bzip2 ocean.output && mv -f ocean.output.bz2 $ARCHIVEDIR
-   #mv timing.output $ARCHIVEDIR
+   mv timing.output $ARCHIVEDIR
    mv -f time.step $ARCHIVEDIR
 
    #archive:

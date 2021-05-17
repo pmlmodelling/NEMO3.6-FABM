@@ -978,7 +978,7 @@ sn_rcv_co2    =       'coupled'              ,    'no'    ,     ''      ,       
    nn_jsplt    =    1      !  number of processors in j-direction
    nn_bench    =    0      !  Bench mode (1/0): CAUTION use zero except for bench
                            !     (no physical validity of the results)
-   nn_timing   =    0      !  timing by routine activated (=1) creates timing.output file, or not (=0)
+   nn_timing   =    1      !  timing by routine activated (=1) creates timing.output file, or not (=0)
 /
 !-----------------------------------------------------------------------
 &namc1d_uvd    !   data: U & V currents                                 ("key_c1d")
