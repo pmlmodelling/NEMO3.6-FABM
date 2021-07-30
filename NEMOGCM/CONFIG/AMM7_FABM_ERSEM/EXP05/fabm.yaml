@@ -691,14 +691,17 @@ instances:
       O3c: O3/c                                            # total dissolved inorganic carbon (mmol C/m^3)
   bL2:
     long_name: benthic calcite
-    model: ersem/benthic_base
+    model: ersem/benthic_calcite
     parameters:
-      composition: c                                       # elemental composition
-      remin: 0.05                                          # remineralisation rate (1/d), default = 0.0
-      c0: 1.e-05                                           # background value for benthic calcite
+      iswcal: 1                                            # dissolution dependence on calcite saturation (0: none, 1: power law, 2: hyperbolic)
+      ndiss: 2.22                                          # power of the dissolution law (Keir 1980) (-)
+      fdissmax: 30.0                                       # maximum specific dissolution rate (1/d), default = 0.0
+      fdissmin: 0.05                                       # minimum specific dissolution rate (1/d), default = 0.03
+      c0: 1e-05                                            # background calcite concentration (mg C/m^2), default = 0.0
     initialization:
       c: 0.05                                              # carbon (mg C/m^2)
     coupling:
+      Om_Cal: O3/Om_cal                                    # calcite saturation (-)
       O3c: O3/c                                            # dissolved inorganic carbon (mmol/m^3)
   ben_col:
     long_name: benthic column
