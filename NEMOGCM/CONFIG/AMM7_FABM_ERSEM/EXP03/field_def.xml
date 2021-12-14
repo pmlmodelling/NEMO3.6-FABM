@@ -424,7 +424,7 @@
       <field_group id="grid_W" grid_ref="grid_W_3D">
         <field id="e3w"          long_name="W-cell thickness"                            unit="m"   />
         <field id="woce"         long_name="ocean vertical velocity"                  unit="m/s"    />
-        <field id="vomecrtz25h"  long_name="ocean vertical velocity: 25h mean"        unit="m/s"    />
+        <field id="vovecrtz25h"  long_name="ocean vertical velocity: 25h mean"        unit="m/s"    />
         <field id="woce_e3w"     long_name="ocean vertical velocity * e3v"            unit="m2/s"    > woce * e3w </field>
         <field id="wocetr_eff"   long_name="effective ocean vertical transport"       unit="m3/s"   />
         <!-- woce_eiv: available with key_traldf_eiv and key_diaeiv -->
