@@ -112,7 +112,7 @@
           <field field_ref="K5_s_pb_flux" operation="average" />
           <field field_ref="G2_o_pb_flux" operation="average" />
           <field field_ref="bL2_bremin" operation="average" />
-          <field field_ref="net_PelBen_POC_result" unit="mg/m^3/d" operation="average" />
+          <field field_ref="net_PelBen_POC_result" unit="mg/m^2/d" operation="average" />
           <field field_ref="e3t"      operation="average" />
           <field field_ref="light_xEPS" operation="average" />
           <field field_ref="O3_wind" operation="average" />
