@@ -130,7 +130,7 @@ the only change you need to make is to add ``-DBOOST_DETAIL_NO_CONTAINER_FWD`` t
 
 Note that you can also use the following repository for a customized NEMO 3.6 compatible version of XIOS-1:
 
-https://gitlab.ecosystem-modelling.pml.ac.uk/momm/XIOS1/tree/nemo3.6-fix
+https://github.com/pmlmodelling/XIOS1/tree/nemo3.6-fix
 
 This has files for architecture ``GCC_PMPC`` included.
 
